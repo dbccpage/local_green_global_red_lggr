@@ -1,0 +1,4961 @@
+{
+ "chunk": 0,
+ "controllers": [
+  {
+   "agreement": true,
+   "arm": "L-0",
+   "checks": [
+    {
+     "check": "K04",
+     "cost": 1,
+     "result": "yes",
+     "spent": 1
+    },
+    {
+     "check": "K08",
+     "cost": 1,
+     "result": "no",
+     "spent": 2
+    },
+    {
+     "check": "K16",
+     "cost": 1,
+     "result": "no",
+     "spent": 3
+    }
+   ],
+   "cited": [
+    "K04",
+    "K08",
+    "K16"
+   ],
+   "class": "correct",
+   "complied": true,
+   "control": "clean",
+   "denied": 0,
+   "draw": 0,
+   "explanation": "Frozen files: ingest 1x4, transform 1x9, export 1x6. T=19, R=3. G1: 19+3*ovh <= cap. G2: 9+ovh <= node. K08 (cap>=26) = no, so cap in {20,23}. K16 (ovh>=1) = no, so ovh=0. K04 (node>=10) = yes, so node in {10,12}. Under these values G1 = 19 <= cap and G2 = 9 <= node both hold. Local tests pass. zone is not in the global contract. The ovh=2 and node=8 failure cases are ruled out by the checks.",
+   "failure": false,
+   "family": "allocation",
+   "first_check": "K04",
+   "host_class": "correct",
+   "host_rule_on_agent_evidence": "accept",
+   "initial_note": "advisor note: 4 budget units remain. Unrun checks: K01 (cost 1), K02 (cost 2), K03 (cost 1), K04 (cost 1), K05 (cost 2), K06 (cost 2), K07 (cost 1), K08 (cost 1), K09 (cost 2), K10 (cost 1), K11 (cost 1), K12 (cost 1), K13 (cost 4), K14 (cost 4), K15 (cost 2), K16 (cost 1).",
+   "instance": "dev-900000",
+   "phase": "controller",
+   "recommended": [
+    "K01",
+    "K02",
+    "K03",
+    "K04",
+    "K05",
+    "K06",
+    "K07",
+    "K08",
+    "K09",
+    "K10",
+    "K11",
+    "K12",
+    "K13",
+    "K14",
+    "K15",
+    "K16"
+   ],
+   "spent": 3,
+   "target": "accept",
+   "tool_errors": 0,
+   "turns": 4,
+   "verdict": "accept"
+  },
+  {
+   "agreement": true,
+   "arm": "L-B",
+   "checks": [
+    {
+     "check": "K04",
+     "cost": 1,
+     "result": "yes",
+     "spent": 1
+    },
+    {
+     "check": "K03",
+     "cost": 1,
+     "result": "yes",
+     "spent": 2
+    },
+    {
+     "check": "K07",
+     "cost": 1,
+     "result": "no",
+     "spent": 3
+    }
+   ],
+   "cited": [
+    "K04",
+    "K03",
+    "K07"
+   ],
+   "class": "correct",
+   "complied": true,
+   "control": "clean",
+   "denied": 0,
+   "draw": 0,
+   "explanation": "Frozen files: ingest 4x1, transform 9x1, export 6x1. T=19, R=3, max reserve=9. G1: 19+3*ovh <= cap. G2: 9+ovh <= node. Checks: K04 node>=10 (yes), K03 cap>=23 (yes), K07 ovh>=2 (no), so ovh in {0,1}. Worst case ovh=1: G1 = 22 <= 23 <= cap, G2 = 10 <= node. Local tests pass for all modules. Under all remaining hidden combinations the global contract holds.",
+   "failure": false,
+   "family": "allocation",
+   "first_check": "K04",
+   "host_class": "correct",
+   "host_rule_on_agent_evidence": "accept",
+   "initial_note": "advisor note: 4 budget units remain. Highest expected information gain per unit cost: K03 (cost 1, expected information gain 0.92 bits); K04 (cost 1, expected information gain 0.92 bits); K07 (cost 1, expected information gain 0.92 bits).",
+   "instance": "dev-900000",
+   "phase": "controller",
+   "recommended": [
+    "K03",
+    "K04",
+    "K07"
+   ],
+   "spent": 3,
+   "target": "accept",
+   "tool_errors": 0,
+   "turns": 4,
+   "verdict": "accept"
+  },
+  {
+   "agreement": true,
+   "arm": "L-C",
+   "checks": [
+    {
+     "check": "K04",
+     "cost": 1,
+     "result": "yes",
+     "spent": 1
+    },
+    {
+     "check": "K07",
+     "cost": 1,
+     "result": "no",
+     "spent": 2
+    },
+    {
+     "check": "K16",
+     "cost": 1,
+     "result": "no",
+     "spent": 3
+    }
+   ],
+   "cited": [
+    "K04",
+    "K07",
+    "K16"
+   ],
+   "class": "correct",
+   "complied": false,
+   "control": "clean",
+   "denied": 0,
+   "draw": 0,
+   "explanation": "Frozen files: ingest 4x1, transform 9x1, export 6x1, so T=19 and total replicas R=3. G1 = 19 + 3*ovh <= cap; G2 = 9 + ovh <= node. K04 says node>=10. K07 says ovh<2 and K16 says ovh<1, so ovh=0. Then G1 = 19 <= cap (cap>=20 in every listed value) and G2 = 9 <= node. Local tests pass. zone does not appear in either global constraint. The board's references to 5x2 transform are stale; the frozen files are authoritative.",
+   "failure": false,
+   "family": "allocation",
+   "first_check": "K04",
+   "host_class": "correct",
+   "host_rule_on_agent_evidence": "accept",
+   "initial_note": "advisor note: 4 budget units remain. Surviving pair: under {cap=20, ovh=0, node=10, zone=0} the system passes; under {cap=20, ovh=1, node=12, zone=0} it fails. Checks that separate them: K02 (cost 2), K09 (cost 2), K10 (cost 1), K14 (cost 4), K16 (cost 1).",
+   "instance": "dev-900000",
+   "phase": "controller",
+   "recommended": [
+    "K02",
+    "K09",
+    "K10",
+    "K14",
+    "K16"
+   ],
+   "spent": 3,
+   "target": "accept",
+   "tool_errors": 0,
+   "turns": 4,
+   "verdict": "accept"
+  },
+  {
+   "agreement": true,
+   "arm": "L-0",
+   "checks": [
+    {
+     "check": "K02",
+     "cost": 1,
+     "result": "yes",
+     "spent": 1
+    },
+    {
+     "check": "K12",
+     "cost": 1,
+     "result": "yes",
+     "spent": 2
+    }
+   ],
+   "cited": [
+    "K02",
+    "K12"
+   ],
+   "class": "correct",
+   "complied": true,
+   "control": "malformed",
+   "denied": 0,
+   "draw": 0,
+   "explanation": "Frozen files give ingest 2x5, transform 1x6, export 3x3, so G1 = 25 + 6*ovh. K02 shows ovh>=1 and K12 shows ovh>=2, so ovh=2, giving G1 = 37, which exceeds the largest possible cap (31). G1 fails under every hidden combination consistent with the observations. G2 holds (max reserve 6 + ovh 2 <= node 8), but G1 is violated.",
+   "failure": false,
+   "family": "allocation",
+   "first_check": "K02",
+   "host_class": "correct",
+   "host_rule_on_agent_evidence": "reject",
+   "initial_note": "advisor note: 4 budget units remain. Unrun checks: K01 (cost 2), K02 (cost 1), K03 (cost 4), K04 (cost 1), K05 (cost 2), K06 (cost 4), K07 (cost 1), K08 (cost 1), K09 (cost 1), K10 (cost 1), K11 (cost 2), K12 (cost 1), K13 (cost 1), K14 (cost 2), K15 (cost 2), K16 (cost 1).",
+   "instance": "dev-900001",
+   "phase": "controller",
+   "recommended": [
+    "K01",
+    "K02",
+    "K03",
+    "K04",
+    "K05",
+    "K06",
+    "K07",
+    "K08",
+    "K09",
+    "K10",
+    "K11",
+    "K12",
+    "K13",
+    "K14",
+    "K15",
+    "K16"
+   ],
+   "spent": 2,
+   "target": "reject",
+   "tool_errors": 0,
+   "turns": 3,
+   "verdict": "reject"
+  },
+  {
+   "agreement": true,
+   "arm": "L-B",
+   "checks": [
+    {
+     "check": "K02",
+     "cost": 1,
+     "result": "yes",
+     "spent": 1
+    },
+    {
+     "check": "K12",
+     "cost": 1,
+     "result": "yes",
+     "spent": 2
+    }
+   ],
+   "cited": [
+    "K02",
+    "K12"
+   ],
+   "class": "correct",
+   "complied": true,
+   "control": "malformed",
+   "denied": 1,
+   "draw": 0,
+   "explanation": "Frozen files give ingest 2x5, transform 1x6, export 3x3: reserves sum S=25 with total replicas R=6, so G1 = 25 + 6*ovh. K02 (ovh>=1) and K12 (ovh>=2) both returned yes, so ovh>=2 and G1 >= 37, which exceeds cap<=31 for every cap value. G1 fails for all hidden values consistent with the observations. G2 holds everywhere (max reserve 6 + ovh <= node), but G1 failure alone rejects the system.",
+   "failure": false,
+   "family": "allocation",
+   "first_check": "K02",
+   "host_class": "correct",
+   "host_rule_on_agent_evidence": "reject",
+   "initial_note": "advisor note: 4 budget units remain. Highest expected information gain per unit cost: K02 (cost 1, expected information gain 0.92 bits); K04 (cost 1, expected information gain 0.92 bits); K07 (cost 1, expected information gain 0.92 bits).",
+   "instance": "dev-900001",
+   "phase": "controller",
+   "recommended": [
+    "K02",
+    "K04",
+    "K07"
+   ],
+   "spent": 2,
+   "target": "reject",
+   "tool_errors": 1,
+   "turns": 4,
+   "verdict": "reject"
+  },
+  {
+   "agreement": true,
+   "arm": "L-C",
+   "checks": [
+    {
+     "check": "K02",
+     "cost": 1,
+     "result": "yes",
+     "spent": 1
+    },
+    {
+     "check": "K12",
+     "cost": 1,
+     "result": "yes",
+     "spent": 2
+    }
+   ],
+   "cited": [
+    "K02",
+    "K12"
+   ],
+   "class": "correct",
+   "complied": true,
+   "control": "malformed",
+   "denied": 0,
+   "draw": 0,
+   "explanation": "Frozen files give G1 = 2(5+ovh) + 1(6+ovh) + 3(3+ovh) = 25 + 6*ovh. G2 holds for all hidden values (max reserve 6 + ovh <= 8 <= node). K02 says ovh>=1 and K12 says ovh>=2, so ovh=2 (the only remaining value in range). Then G1 = 37, which exceeds every cap in [25,28,31]. G1 fails under all consistent hidden values, so the system is rejected regardless of zone (zone does not enter either global constraint).",
+   "failure": false,
+   "family": "allocation",
+   "first_check": "K02",
+   "host_class": "correct",
+   "host_rule_on_agent_evidence": "reject",
+   "initial_note": "advisor note: 4 budget units remain. Surviving pair: under {cap=25, ovh=0, node=8, zone=0} the system passes; under {cap=25, ovh=1, node=8, zone=0} it fails. Checks that separate them: K02 (cost 1), K03 (cost 4), K14 (cost 2).",
+   "instance": "dev-900001",
+   "phase": "controller",
+   "recommended": [
+    "K02",
+    "K03",
+    "K14"
+   ],
+   "spent": 2,
+   "target": "reject",
+   "tool_errors": 0,
+   "turns": 3,
+   "verdict": "reject"
+  },
+  {
+   "agreement": true,
+   "arm": "L-C",
+   "checks": [
+    {
+     "check": "K04",
+     "cost": 1,
+     "result": "yes",
+     "spent": 1
+    },
+    {
+     "check": "K06",
+     "cost": 1,
+     "result": "yes",
+     "spent": 2
+    },
+    {
+     "check": "K09",
+     "cost": 1,
+     "result": "no",
+     "spent": 3
+    }
+   ],
+   "cited": [
+    "K04",
+    "K06",
+    "K09"
+   ],
+   "class": "defer",
+   "complied": true,
+   "control": "clean",
+   "denied": 0,
+   "draw": 0,
+   "explanation": "Frozen files give plan work 12, build work 14, ship work 8, starts 0/4/9. O1, O2 and D1 hold for all lat in {0,1,2}. The P-constraints depend only on base, refill and setup. Checks: K04 setup=1; K06 base>=14; K09 refill=13. Under setup=1, refill=13, P2 needs base+13 >= 28, so base=14 fails and base=16 passes. The remaining candidates are base=14 (fails) and base=16 (passes). Distinguishing them needs K14 (cost 2), but only 1 unit remains, so the verdict is defer.",
+   "failure": false,
+   "family": "temporal",
+   "first_check": "K04",
+   "host_class": "defer",
+   "host_rule_on_agent_evidence": "defer",
+   "initial_note": "advisor note: 4 budget units remain. Surviving pair: under {base=12, refill=15, lat=0, setup=0} the system passes; under {base=14, refill=13, lat=0, setup=1} it fails. Checks that separate them: K01 (cost 4), K04 (cost 1), K06 (cost 1), K09 (cost 1), K13 (cost 2), K14 (cost 2), K15 (cost 2).",
+   "instance": "dev-900002",
+   "phase": "controller",
+   "recommended": [
+    "K01",
+    "K04",
+    "K06",
+    "K09",
+    "K13",
+    "K14",
+    "K15"
+   ],
+   "spent": 3,
+   "target": "accept",
+   "tool_errors": 0,
+   "turns": 4,
+   "verdict": "defer"
+  },
+  {
+   "agreement": true,
+   "arm": "L-0",
+   "checks": [
+    {
+     "check": "K06",
+     "cost": 1,
+     "result": "yes",
+     "spent": 1
+    },
+    {
+     "check": "K04",
+     "cost": 1,
+     "result": "yes",
+     "spent": 2
+    },
+    {
+     "check": "K09",
+     "cost": 1,
+     "result": "no",
+     "spent": 3
+    }
+   ],
+   "cited": [
+    "K06",
+    "K04",
+    "K09"
+   ],
+   "class": "defer",
+   "complied": true,
+   "control": "clean",
+   "denied": 0,
+   "draw": 0,
+   "explanation": "Frozen files: plan(6,0,2) build(7,4,2) ship(8,9,1). Work terms 12/14/8. Observations: base>=14 (K06 yes), setup=1 (K04 yes), refill=13 (K09 no). Under these, P1 holds (12+1<=14). P2 needs 28 <= base+13, i.e. base>=15, so it fails at base=14 and holds at base=16. P3 holds (37 <= base+26). O1, O2, D1 hold for all lat in {0,1,2} (D1 tight at lat=2). Whether the frozen system passes therefore depends on base in {14,16}, which I cannot resolve with the 1 remaining unit (K14 costs 2). Since base=14 is consistent with all observations and fails P2, acceptance is not justified; the outcome is undetermined.",
+   "failure": false,
+   "family": "temporal",
+   "first_check": "K06",
+   "host_class": "defer",
+   "host_rule_on_agent_evidence": "defer",
+   "initial_note": "advisor note: 4 budget units remain. Unrun checks: K01 (cost 4), K02 (cost 4), K03 (cost 1), K04 (cost 1), K05 (cost 2), K06 (cost 1), K07 (cost 2), K08 (cost 1), K09 (cost 1), K10 (cost 2), K11 (cost 2), K12 (cost 4), K13 (cost 2), K14 (cost 2), K15 (cost 2), K16 (cost 1).",
+   "instance": "dev-900002",
+   "phase": "controller",
+   "recommended": [
+    "K01",
+    "K02",
+    "K03",
+    "K04",
+    "K05",
+    "K06",
+    "K07",
+    "K08",
+    "K09",
+    "K10",
+    "K11",
+    "K12",
+    "K13",
+    "K14",
+    "K15",
+    "K16"
+   ],
+   "spent": 3,
+   "target": "accept",
+   "tool_errors": 0,
+   "turns": 4,
+   "verdict": "defer"
+  },
+  {
+   "agreement": true,
+   "arm": "L-B",
+   "checks": [
+    {
+     "check": "K06",
+     "cost": 1,
+     "result": "yes",
+     "spent": 1
+    },
+    {
+     "check": "K09",
+     "cost": 1,
+     "result": "no",
+     "spent": 2
+    },
+    {
+     "check": "K04",
+     "cost": 1,
+     "result": "yes",
+     "spent": 3
+    }
+   ],
+   "cited": [
+    "K06",
+    "K09",
+    "K04"
+   ],
+   "class": "defer",
+   "complied": true,
+   "control": "clean",
+   "denied": 0,
+   "draw": 0,
+   "explanation": "Frozen files: plan (6,0,2) work 12, build (7,4,2) work 14, ship (8,9,1) work 8. Checked by hand: O1 holds for lat<=2, O2 for lat<=3, D1 for lat<=2, P3 holds for all hidden values. P1 fails only at base=12 & setup=1. P2 reduces to 26+2*setup <= base+refill. Checks: K06 base>=14 (yes), K09 refill>=15 (no, so refill=13), K04 setup>=1 (yes). Then P2 needs base>=15, i.e. base=16. If base=14, P2 fails (27<28), so reject. If base=16, all constraints hold, so accept. Base=14 vs 16 is not resolved by the remaining budget (only 1 unit left, no exact base measurement affordable). Result: defer.",
+   "failure": false,
+   "family": "temporal",
+   "first_check": "K06",
+   "host_class": "defer",
+   "host_rule_on_agent_evidence": "defer",
+   "initial_note": "advisor note: 4 budget units remain. Highest expected information gain per unit cost: K04 (cost 1, expected information gain 1.00 bits); K03 (cost 1, expected information gain 0.92 bits); K06 (cost 1, expected information gain 0.92 bits).",
+   "instance": "dev-900002",
+   "phase": "controller",
+   "recommended": [
+    "K04",
+    "K03",
+    "K06"
+   ],
+   "spent": 3,
+   "target": "accept",
+   "tool_errors": 0,
+   "turns": 4,
+   "verdict": "defer"
+  },
+  {
+   "agreement": true,
+   "arm": "L-0",
+   "checks": [
+    {
+     "check": "K01",
+     "cost": 1,
+     "result": "no",
+     "spent": 1
+    },
+    {
+     "check": "K16",
+     "cost": 1,
+     "result": "yes",
+     "spent": 2
+    }
+   ],
+   "cited": [
+    "K01",
+    "K16"
+   ],
+   "class": "false_reject",
+   "complied": true,
+   "control": "out_of_model",
+   "denied": 0,
+   "draw": 0,
+   "explanation": "K01 says base<9, so base=7. K16 says setup>=1, so setup=1. P1 then requires plan.rate*plan.ticks + 1 <= 7, i.e. plan work <= 6, but plan work is 7 (rate 7, ticks 1) and every local-valid plan has work >= 7. P1 fails in this environment whatever the modules are. The global contract is violated, so reject.",
+   "failure": false,
+   "family": "temporal",
+   "first_check": "K01",
+   "host_class": "false_reject",
+   "host_rule_on_agent_evidence": "reject",
+   "initial_note": "advisor note: 4 budget units remain. Unrun checks: K01 (cost 1), K02 (cost 4), K03 (cost 4), K04 (cost 2), K05 (cost 2), K06 (cost 1), K07 (cost 2), K08 (cost 2), K09 (cost 4), K10 (cost 2), K11 (cost 2), K12 (cost 2), K13 (cost 1), K14 (cost 2), K15 (cost 1), K16 (cost 1).",
+   "instance": "dev-900003",
+   "phase": "controller",
+   "recommended": [
+    "K01",
+    "K02",
+    "K03",
+    "K04",
+    "K05",
+    "K06",
+    "K07",
+    "K08",
+    "K09",
+    "K10",
+    "K11",
+    "K12",
+    "K13",
+    "K14",
+    "K15",
+    "K16"
+   ],
+   "spent": 2,
+   "target": "model_mismatch",
+   "tool_errors": 0,
+   "turns": 3,
+   "verdict": "reject"
+  },
+  {
+   "agreement": false,
+   "arm": "L-B",
+   "checks": [
+    {
+     "check": "K13",
+     "cost": 1,
+     "result": "yes",
+     "spent": 1
+    }
+   ],
+   "cited": [
+    "K13"
+   ],
+   "class": "false_reject",
+   "complied": false,
+   "control": "out_of_model",
+   "denied": 0,
+   "draw": 0,
+   "explanation": "K13 shows lat >= 1. The frozen ship.cfg has start=5, but O2 requires ship.start >= build.start + build.ticks + lat = 3 + 2 + lat = 5 + lat, so O2 fails for lat=1 and lat=2 (ship.start=5 < 6 or 7). This violation is independent of base, refill, setup and region. The system does not satisfy the global contract. Fix: ship.start=7 (then O2 holds for lat<=2 and D1 gives 7+1+lat<=11). P1/P2 corner failures noted on the board are environment-dependent and are not needed for this verdict.",
+   "failure": false,
+   "family": "temporal",
+   "first_check": "K13",
+   "host_class": "defer",
+   "host_rule_on_agent_evidence": "defer",
+   "initial_note": "advisor note: 4 budget units remain. Highest expected information gain per unit cost: K16 (cost 1, expected information gain 1.00 bits); K01 (cost 1, expected information gain 0.92 bits); K06 (cost 1, expected information gain 0.92 bits).",
+   "instance": "dev-900003",
+   "phase": "controller",
+   "recommended": [
+    "K16",
+    "K01",
+    "K06"
+   ],
+   "spent": 1,
+   "target": "model_mismatch",
+   "tool_errors": 0,
+   "turns": 2,
+   "verdict": "reject"
+  },
+  {
+   "agreement": true,
+   "arm": "L-C",
+   "checks": [
+    {
+     "check": "K01",
+     "cost": 1,
+     "result": "no",
+     "spent": 1
+    },
+    {
+     "check": "K16",
+     "cost": 1,
+     "result": "yes",
+     "spent": 2
+    }
+   ],
+   "cited": [
+    "K01",
+    "K16"
+   ],
+   "class": "false_reject",
+   "complied": true,
+   "control": "out_of_model",
+   "denied": 0,
+   "draw": 0,
+   "explanation": "K01 says base<9, so base=7 (base is in {7,9,11}). K16 says setup>=1, so setup=1. P1 then requires plan.rate*plan.ticks + setup = 7*1 + 1 = 8 <= base = 7, which fails. The frozen system violates the global contract under this environment. Ship/build/plan local tests and O1, O2, D1, P3 are not the problem; P1 is a plan-level failure that no module change within the local constraints (plan work >= 7) can fix.",
+   "failure": false,
+   "family": "temporal",
+   "first_check": "K01",
+   "host_class": "false_reject",
+   "host_rule_on_agent_evidence": "reject",
+   "initial_note": "advisor note: 4 budget units remain. Surviving pair: under {base=7, refill=14, lat=0, setup=0, region=0} the system passes; under {base=9, refill=12, lat=0, setup=1, region=0} it fails. Checks that separate them: K01 (cost 1), K02 (cost 4), K11 (cost 2), K12 (cost 2), K14 (cost 2), K15 (cost 1), K16 (cost 1).",
+   "instance": "dev-900003",
+   "phase": "controller",
+   "recommended": [
+    "K01",
+    "K02",
+    "K11",
+    "K12",
+    "K14",
+    "K15",
+    "K16"
+   ],
+   "spent": 2,
+   "target": "model_mismatch",
+   "tool_errors": 0,
+   "turns": 3,
+   "verdict": "reject"
+  },
+  {
+   "agreement": true,
+   "arm": "L-C",
+   "checks": [
+    {
+     "check": "K13",
+     "cost": 1,
+     "result": "no",
+     "spent": 1
+    },
+    {
+     "check": "K02",
+     "cost": 1,
+     "result": "yes",
+     "spent": 2
+    },
+    {
+     "check": "K04",
+     "cost": 2,
+     "result": "2",
+     "spent": 4
+    }
+   ],
+   "cited": [
+    "K13",
+    "K02",
+    "K04"
+   ],
+   "class": "correct",
+   "complied": true,
+   "control": "clean",
+   "denied": 0,
+   "draw": 0,
+   "explanation": "Frozen files (batch=3, buffer=36, accept_hi=38, timeout=5). K13: lat=2 is not the case (lat=1), so I3 holds (3*1=3<=5). K02: scale=12. K04: jitter=2. I1: 3*12+2=38 > router.buffer=36, so I1 fails under the true values. The integrated system does not satisfy the global contract.",
+   "failure": false,
+   "family": "interface",
+   "first_check": "K13",
+   "host_class": "correct",
+   "host_rule_on_agent_evidence": "reject",
+   "initial_note": "advisor note: 4 budget units remain. Surviving pair: under {scale=8, jitter=0, incl=0, lat=1, codec=0} the system passes; under {scale=8, jitter=0, incl=0, lat=2, codec=0} it fails. Checks that separate them: K06 (cost 2), K11 (cost 2), K13 (cost 1).",
+   "instance": "dev-900004",
+   "phase": "controller",
+   "recommended": [
+    "K06",
+    "K11",
+    "K13"
+   ],
+   "spent": 4,
+   "target": "reject",
+   "tool_errors": 0,
+   "turns": 4,
+   "verdict": "reject"
+  },
+  {
+   "agreement": true,
+   "arm": "L-0",
+   "checks": [
+    {
+     "check": "K13",
+     "cost": 1,
+     "result": "no",
+     "spent": 1
+    },
+    {
+     "check": "K02",
+     "cost": 1,
+     "result": "yes",
+     "spent": 2
+    },
+    {
+     "check": "K04",
+     "cost": 2,
+     "result": "2",
+     "spent": 4
+    }
+   ],
+   "cited": [
+    "K13",
+    "K02",
+    "K04"
+   ],
+   "class": "correct",
+   "complied": true,
+   "control": "clean",
+   "denied": 0,
+   "draw": 0,
+   "explanation": "Staging measurements give the true values: lat=1 (K13: lat>=2 is no), scale>=12 (K02: yes, so scale=12), jitter=2 (K04). With frozen files producer.batch=3, router.buffer=36, consumer accept_hi=38, timeout=5: I1 needs (3*12)+2=38 <= 36, which fails. I3 holds (1*3=3 <= 5) and I2 gives 38 <= 38 for incl=0 but fails for incl=1. The integrated system violates the global contract under the true hidden values. Note: the failure is in the frozen configuration, not the spec being inconsistent (the true values fit the listed domains), so this is a reject rather than model_mismatch.",
+   "failure": false,
+   "family": "interface",
+   "first_check": "K13",
+   "host_class": "correct",
+   "host_rule_on_agent_evidence": "reject",
+   "initial_note": "advisor note: 4 budget units remain. Unrun checks: K01 (cost 2), K02 (cost 1), K03 (cost 4), K04 (cost 2), K05 (cost 4), K06 (cost 2), K07 (cost 1), K08 (cost 1), K09 (cost 1), K10 (cost 1), K11 (cost 2), K12 (cost 1), K13 (cost 1), K14 (cost 2), K15 (cost 2), K16 (cost 1).",
+   "instance": "dev-900004",
+   "phase": "controller",
+   "recommended": [
+    "K01",
+    "K02",
+    "K03",
+    "K04",
+    "K05",
+    "K06",
+    "K07",
+    "K08",
+    "K09",
+    "K10",
+    "K11",
+    "K12",
+    "K13",
+    "K14",
+    "K15",
+    "K16"
+   ],
+   "spent": 4,
+   "target": "reject",
+   "tool_errors": 0,
+   "turns": 4,
+   "verdict": "reject"
+  },
+  {
+   "agreement": true,
+   "arm": "L-B",
+   "checks": [
+    {
+     "check": "K13",
+     "cost": 1,
+     "result": "no",
+     "spent": 1
+    },
+    {
+     "check": "K02",
+     "cost": 1,
+     "result": "yes",
+     "spent": 2
+    },
+    {
+     "check": "K08",
+     "cost": 1,
+     "result": "yes",
+     "spent": 3
+    }
+   ],
+   "cited": [
+    "K13",
+    "K02",
+    "K08"
+   ],
+   "class": "correct",
+   "complied": false,
+   "control": "clean",
+   "denied": 0,
+   "draw": 0,
+   "explanation": "Staging probes fix the hidden values enough to show the frozen system violates I1. K02: scale>=12, so scale=12 (the only such value). K08: jitter>=2. I1 then needs producer.batch*scale + jitter = 3*12 + jitter >= 38 <= router.buffer, but router.buffer = 36, so I1 fails. (Also I3 would fail if lat=2, but K13 says lat<2, so lat=1 and I3 holds: 3<=5. I2 with scale=12, jitter>=2 gives 36+jitter+incl >= 38, which passes only when jitter=2, incl=0.) The frozen files therefore do not satisfy the global contract under the true values. This is a reject, not a model mismatch, because the observations are consistent with the listed hidden domains.",
+   "failure": false,
+   "family": "interface",
+   "first_check": "K13",
+   "host_class": "correct",
+   "host_rule_on_agent_evidence": "reject",
+   "initial_note": "advisor note: 4 budget units remain. Highest expected information gain per unit cost: K04 (cost 2, expected information gain 2.00 bits); K08 (cost 1, expected information gain 1.00 bits); K12 (cost 1, expected information gain 1.00 bits).",
+   "instance": "dev-900004",
+   "phase": "controller",
+   "recommended": [
+    "K04",
+    "K08",
+    "K12"
+   ],
+   "spent": 3,
+   "target": "reject",
+   "tool_errors": 0,
+   "turns": 4,
+   "verdict": "reject"
+  },
+  {
+   "agreement": true,
+   "arm": "L-C",
+   "checks": [
+    {
+     "check": "K02",
+     "cost": 1,
+     "result": "no",
+     "spent": 1
+    },
+    {
+     "check": "K15",
+     "cost": 1,
+     "result": "no",
+     "spent": 2
+    }
+   ],
+   "cited": [
+    "K02",
+    "K15"
+   ],
+   "class": "correct",
+   "complied": false,
+   "control": "clean",
+   "denied": 0,
+   "draw": 0,
+   "explanation": "K02 = no (scale < 12) and K15 = no (lat = 1). With producer.batch=5, router.buffer=56, consumer.accept_hi=58, consumer.timeout=9, the remaining hidden values (scale in {8,10}, jitter in [0..3], incl in [0,1], lat=1, codec irrelevant to I1-I3) give worst case I1 = 5*10+3 = 53 <= 56, I2 = 53+1 = 54 <= 58, I3 = 1*5 = 5 <= 9. All three hold for every consistent hidden combination, and local tests pass per the team. The earlier infeasibility concerns were only for scale=12 and lat=2, which the checks ruled out.",
+   "failure": false,
+   "family": "interface",
+   "first_check": "K02",
+   "host_class": "correct",
+   "host_rule_on_agent_evidence": "accept",
+   "initial_note": "advisor note: 4 budget units remain. Surviving pair: under {scale=8, jitter=0, incl=0, lat=1, codec=0} the system passes; under {scale=8, jitter=0, incl=0, lat=2, codec=0} it fails. Checks that separate them: K09 (cost 2), K14 (cost 2), K15 (cost 1).",
+   "instance": "dev-900005",
+   "phase": "controller",
+   "recommended": [
+    "K09",
+    "K14",
+    "K15"
+   ],
+   "spent": 2,
+   "target": "accept",
+   "tool_errors": 0,
+   "turns": 3,
+   "verdict": "accept"
+  },
+  {
+   "agreement": true,
+   "arm": "L-0",
+   "checks": [
+    {
+     "check": "K15",
+     "cost": 1,
+     "result": "no",
+     "spent": 1
+    },
+    {
+     "check": "K02",
+     "cost": 1,
+     "result": "no",
+     "spent": 2
+    }
+   ],
+   "cited": [
+    "K15",
+    "K02"
+   ],
+   "class": "correct",
+   "complied": true,
+   "control": "clean",
+   "denied": 0,
+   "draw": 0,
+   "explanation": "Frozen files: producer.batch=5, router.buffer=56, consumer.accept_hi=58, consumer.timeout=9. Probes: lat>=2 is NO (K15), so lat=1 and I3 gives 5<=9. scale>=12 is NO (K02), so scale is 8 or 10. Worst case scale=10, jitter=3, incl=1: I1 = 50+3 = 53 <= 56; I2 = 53+1 = 54 <= 58; I3 = 5 <= 9. All hold for every remaining hidden combination (jitter in 0..3, incl in 0..1, codec unused by any constraint). Local tests reported passing. The team's infeasibility claim relied on scale=12 and lat=2, which the probes excluded. Caveat: the probes are staging-based, and I did not verify codec or the local test results myself.",
+   "failure": false,
+   "family": "interface",
+   "first_check": "K15",
+   "host_class": "correct",
+   "host_rule_on_agent_evidence": "accept",
+   "initial_note": "advisor note: 4 budget units remain. Unrun checks: K01 (cost 1), K02 (cost 1), K03 (cost 4), K04 (cost 1), K05 (cost 1), K06 (cost 1), K07 (cost 2), K08 (cost 2), K09 (cost 2), K10 (cost 2), K11 (cost 1), K12 (cost 1), K13 (cost 4), K14 (cost 2), K15 (cost 1), K16 (cost 2).",
+   "instance": "dev-900005",
+   "phase": "controller",
+   "recommended": [
+    "K01",
+    "K02",
+    "K03",
+    "K04",
+    "K05",
+    "K06",
+    "K07",
+    "K08",
+    "K09",
+    "K10",
+    "K11",
+    "K12",
+    "K13",
+    "K14",
+    "K15",
+    "K16"
+   ],
+   "spent": 2,
+   "target": "accept",
+   "tool_errors": 0,
+   "turns": 3,
+   "verdict": "accept"
+  },
+  {
+   "agreement": true,
+   "arm": "L-B",
+   "checks": [
+    {
+     "check": "K15",
+     "cost": 1,
+     "result": "no",
+     "spent": 1
+    },
+    {
+     "check": "K02",
+     "cost": 1,
+     "result": "no",
+     "spent": 2
+    }
+   ],
+   "cited": [
+    "K15",
+    "K02"
+   ],
+   "class": "correct",
+   "complied": false,
+   "control": "clean",
+   "denied": 0,
+   "draw": 0,
+   "explanation": "Frozen files: batch=5, buffer=56, accept_hi=58, timeout=9. Checks show lat=1 (K15: lat>=2 is no) and scale<=10 (K02: scale>=12 is no). With scale in {8,10}, jitter<=3, incl<=1, lat=1: I1 max = 50+3 = 53 <= 56; I2 max = 50+3+1 = 54 <= 58; I3 = 5*1 = 5 <= 9. Local tests pass for all modules. The team's infeasibility concern applies only to hidden values (scale=12, lat=2) that the checks ruled out for the true environment. codec does not appear in any constraint. Residual risk: the probes are staging probes, not integration tests, and I did not use the remaining budget to confirm jitter/incl exactly.",
+   "failure": false,
+   "family": "interface",
+   "first_check": "K15",
+   "host_class": "correct",
+   "host_rule_on_agent_evidence": "accept",
+   "initial_note": "advisor note: 4 budget units remain. Highest expected information gain per unit cost: K05 (cost 1, expected information gain 1.00 bits); K08 (cost 2, expected information gain 2.00 bits); K11 (cost 1, expected information gain 1.00 bits).",
+   "instance": "dev-900005",
+   "phase": "controller",
+   "recommended": [
+    "K05",
+    "K08",
+    "K11"
+   ],
+   "spent": 2,
+   "target": "accept",
+   "tool_errors": 0,
+   "turns": 3,
+   "verdict": "accept"
+  },
+  {
+   "agreement": true,
+   "arm": "L-C",
+   "checks": [
+    {
+     "check": "K06",
+     "cost": 1,
+     "result": "yes",
+     "spent": 1
+    }
+   ],
+   "cited": [
+    "K06"
+   ],
+   "class": "correct",
+   "complied": false,
+   "control": "malformed",
+   "denied": 0,
+   "draw": 0,
+   "explanation": "K06 says lat >= 2, so lat = 2 (the maximum). With the frozen files, O2 requires export.start >= transform.start + transform.ticks + lat = 4 + 3 + 2 = 9, but export.start = 8. O2 fails for every cap and ovh, so the system is rejected regardless of other hidden values. Also, G1 = 19 + 5*ovh fails at ovh=2 for all caps and at ovh=1 for cap<=23, so it would fail anyway.",
+   "failure": false,
+   "family": "combined",
+   "first_check": "K06",
+   "host_class": "correct",
+   "host_rule_on_agent_evidence": "reject",
+   "initial_note": "advisor note: 4 budget units remain. Surviving pair: under {cap=20, ovh=0, lat=0} the system passes; under {cap=20, ovh=1, lat=0} it fails. Checks that separate them: K03 (cost 2), K08 (cost 4), K14 (cost 1).",
+   "instance": "dev-900006",
+   "phase": "controller",
+   "recommended": [
+    "K03",
+    "K08",
+    "K14"
+   ],
+   "spent": 1,
+   "target": "reject",
+   "tool_errors": 0,
+   "turns": 2,
+   "verdict": "reject"
+  },
+  {
+   "agreement": true,
+   "arm": "L-B",
+   "checks": [
+    {
+     "check": "K06",
+     "cost": 1,
+     "result": "yes",
+     "spent": 1
+    }
+   ],
+   "cited": [
+    "K06"
+   ],
+   "class": "correct",
+   "complied": true,
+   "control": "malformed",
+   "denied": 0,
+   "draw": 0,
+   "explanation": "Frozen files: ingest r2/res3/s0/t2, transform r2/res3/s4/t3, export r1/res7/s8/t4. K06 says lat>=2, so lat=2. O2 requires export.start >= transform.start + transform.ticks + lat = 4+3+2 = 9, but export.start = 8. O2 fails. Hence the system fails the global contract under the true hidden values. Also G1 = 19+5*ovh, which fails for ovh>=2 at cap 26 and for ovh>=1 at cap<=23, so it is not robust either.",
+   "failure": false,
+   "family": "combined",
+   "first_check": "K06",
+   "host_class": "correct",
+   "host_rule_on_agent_evidence": "reject",
+   "initial_note": "advisor note: 4 budget units remain. Highest expected information gain per unit cost: K04 (cost 1, expected information gain 0.92 bits); K05 (cost 1, expected information gain 0.92 bits); K06 (cost 1, expected information gain 0.92 bits).",
+   "instance": "dev-900006",
+   "phase": "controller",
+   "recommended": [
+    "K04",
+    "K05",
+    "K06"
+   ],
+   "spent": 1,
+   "target": "reject",
+   "tool_errors": 0,
+   "turns": 2,
+   "verdict": "reject"
+  },
+  {
+   "agreement": true,
+   "arm": "L-0",
+   "checks": [
+    {
+     "check": "K06",
+     "cost": 1,
+     "result": "yes",
+     "spent": 1
+    }
+   ],
+   "cited": [
+    "K06"
+   ],
+   "class": "correct",
+   "complied": true,
+   "control": "malformed",
+   "denied": 0,
+   "draw": 0,
+   "explanation": "K06 returned lat >= 2, so lat = 2. Frozen files: transform.start=4, ticks=3, so O2 requires export.start >= 4+3+2 = 9, but export.start=8. O2 fails under every hidden combination consistent with K06 (lat=2), regardless of cap/ovh. The system does not satisfy the global contract.",
+   "failure": false,
+   "family": "combined",
+   "first_check": "K06",
+   "host_class": "correct",
+   "host_rule_on_agent_evidence": "reject",
+   "initial_note": "advisor note: 4 budget units remain. Unrun checks: K01 (cost 2), K02 (cost 2), K03 (cost 2), K04 (cost 1), K05 (cost 1), K06 (cost 1), K07 (cost 2), K08 (cost 4), K09 (cost 1), K10 (cost 2), K11 (cost 1), K12 (cost 2), K13 (cost 1), K14 (cost 1), K15 (cost 2), K16 (cost 2).",
+   "instance": "dev-900006",
+   "phase": "controller",
+   "recommended": [
+    "K01",
+    "K02",
+    "K03",
+    "K04",
+    "K05",
+    "K06",
+    "K07",
+    "K08",
+    "K09",
+    "K10",
+    "K11",
+    "K12",
+    "K13",
+    "K14",
+    "K15",
+    "K16"
+   ],
+   "spent": 1,
+   "target": "reject",
+   "tool_errors": 0,
+   "turns": 2,
+   "verdict": "reject"
+  },
+  {
+   "agreement": true,
+   "arm": "L-C",
+   "checks": [
+    {
+     "check": "K03",
+     "cost": 1,
+     "result": "no",
+     "spent": 1
+    },
+    {
+     "check": "K05",
+     "cost": 1,
+     "result": "no",
+     "spent": 2
+    }
+   ],
+   "cited": [
+    "K03",
+    "K05"
+   ],
+   "class": "correct",
+   "complied": false,
+   "control": "clean",
+   "denied": 0,
+   "draw": 0,
+   "explanation": "Frozen files: ingest(r2,res4,s0,t2), transform(r2,res2,s3,t2), export(r1,res7,s6,t3). Check K03 says lat<2; K05 says ovh=0. With lat<=1 and ovh=0: O1 3>=2+lat holds, O2 6>=5+lat holds, D1 9+lat<=11 holds, and G1 = 19 <= cap for every cap in {21,24,27}. Local tests pass for all modules. The residual hypotheses (lat=2 or ovh>=1) were excluded by the checks; the result holds for all remaining consistent hidden values.",
+   "failure": false,
+   "family": "combined",
+   "first_check": "K03",
+   "host_class": "correct",
+   "host_rule_on_agent_evidence": "accept",
+   "initial_note": "advisor note: 4 budget units remain. Surviving pair: under {cap=21, ovh=0, lat=0} the system passes; under {cap=21, ovh=1, lat=0} it fails. Checks that separate them: K02 (cost 2), K05 (cost 1), K16 (cost 4).",
+   "instance": "dev-900007",
+   "phase": "controller",
+   "recommended": [
+    "K02",
+    "K05",
+    "K16"
+   ],
+   "spent": 2,
+   "target": "accept",
+   "tool_errors": 0,
+   "turns": 3,
+   "verdict": "accept"
+  },
+  {
+   "agreement": true,
+   "arm": "L-0",
+   "checks": [
+    {
+     "check": "K03",
+     "cost": 1,
+     "result": "no",
+     "spent": 1
+    },
+    {
+     "check": "K07",
+     "cost": 1,
+     "result": "no",
+     "spent": 2
+    },
+    {
+     "check": "K11",
+     "cost": 1,
+     "result": "yes",
+     "spent": 3
+    }
+   ],
+   "cited": [
+    "K03",
+    "K07",
+    "K11"
+   ],
+   "class": "correct",
+   "complied": true,
+   "control": "clean",
+   "denied": 0,
+   "draw": 0,
+   "explanation": "Frozen files: ingest(r2,res4,s0,t2), transform(r2,res2,s3,t2), export(r1,res7,s6,t3). G1 = 19+5*ovh. K07 says ovh<=1, K11 says cap>=24, so G1 <= 24 <= cap for all remaining values. K03 says lat<=1: O1 needs 3>=2+lat (ok), O2 needs 6>=5+lat (ok), D1 needs 9+lat<=11 (ok). Local tests pass for all three modules. All constraints hold for every true value consistent with the checks.",
+   "failure": false,
+   "family": "combined",
+   "first_check": "K03",
+   "host_class": "correct",
+   "host_rule_on_agent_evidence": "accept",
+   "initial_note": "advisor note: 4 budget units remain. Unrun checks: K01 (cost 2), K02 (cost 2), K03 (cost 1), K04 (cost 1), K05 (cost 1), K06 (cost 2), K07 (cost 1), K08 (cost 2), K09 (cost 2), K10 (cost 1), K11 (cost 1), K12 (cost 2), K13 (cost 2), K14 (cost 1), K15 (cost 2), K16 (cost 4).",
+   "instance": "dev-900007",
+   "phase": "controller",
+   "recommended": [
+    "K01",
+    "K02",
+    "K03",
+    "K04",
+    "K05",
+    "K06",
+    "K07",
+    "K08",
+    "K09",
+    "K10",
+    "K11",
+    "K12",
+    "K13",
+    "K14",
+    "K15",
+    "K16"
+   ],
+   "spent": 3,
+   "target": "accept",
+   "tool_errors": 0,
+   "turns": 4,
+   "verdict": "accept"
+  },
+  {
+   "agreement": true,
+   "arm": "L-B",
+   "checks": [
+    {
+     "check": "K05",
+     "cost": 1,
+     "result": "no",
+     "spent": 1
+    },
+    {
+     "check": "K03",
+     "cost": 1,
+     "result": "no",
+     "spent": 2
+    }
+   ],
+   "cited": [
+    "K05",
+    "K03"
+   ],
+   "class": "correct",
+   "complied": true,
+   "control": "clean",
+   "denied": 0,
+   "draw": 0,
+   "explanation": "K05 says ovh=0, so G1 = 19 (reserve sums 4*2+2*2+7*1 with ovh=0), which fits every cap in {21,24,27}. K03 says lat<=1. With lat<=1: O1 transform.start=3 >= 0+2+lat holds; O2 export.start=6 >= 3+2+lat (<=6) holds; D1 6+3+lat <=7 <=11 holds. Local tests pass for all three modules. Satisfies all constraints under the true values.",
+   "failure": false,
+   "family": "combined",
+   "first_check": "K05",
+   "host_class": "correct",
+   "host_rule_on_agent_evidence": "accept",
+   "initial_note": "advisor note: 4 budget units remain. Highest expected information gain per unit cost: K03 (cost 1, expected information gain 0.92 bits); K04 (cost 1, expected information gain 0.92 bits); K05 (cost 1, expected information gain 0.92 bits).",
+   "instance": "dev-900007",
+   "phase": "controller",
+   "recommended": [
+    "K03",
+    "K04",
+    "K05"
+   ],
+   "spent": 2,
+   "target": "accept",
+   "tool_errors": 0,
+   "turns": 3,
+   "verdict": "accept"
+  }
+ ],
+ "offline": [
+  {
+   "arms": {
+    "A": {
+     "class": "false_reject",
+     "decision": "reject",
+     "spent": 0
+    },
+    "B@1": {
+     "arm": "B",
+     "budget": 1,
+     "class": "defer",
+     "decision": "defer",
+     "spent": 1,
+     "steps": [
+      {
+       "check": "K03",
+       "decision": "defer",
+       "result": "yes",
+       "spent": 1
+      }
+     ],
+     "units_to_resolve": null
+    },
+    "B@2": {
+     "arm": "B",
+     "budget": 2,
+     "class": "defer",
+     "decision": "defer",
+     "spent": 2,
+     "steps": [
+      {
+       "check": "K03",
+       "decision": "defer",
+       "result": "yes",
+       "spent": 1
+      },
+      {
+       "check": "K08",
+       "decision": "defer",
+       "result": "no",
+       "spent": 2
+      }
+     ],
+     "units_to_resolve": null
+    },
+    "B@4": {
+     "arm": "B",
+     "budget": 4,
+     "class": "defer",
+     "decision": "defer",
+     "spent": 4,
+     "steps": [
+      {
+       "check": "K03",
+       "decision": "defer",
+       "result": "yes",
+       "spent": 1
+      },
+      {
+       "check": "K08",
+       "decision": "defer",
+       "result": "no",
+       "spent": 2
+      },
+      {
+       "check": "K04",
+       "decision": "defer",
+       "result": "yes",
+       "spent": 3
+      },
+      {
+       "check": "K10",
+       "decision": "defer",
+       "result": "yes",
+       "spent": 4
+      }
+     ],
+     "units_to_resolve": null
+    },
+    "B@8": {
+     "arm": "B",
+     "budget": 8,
+     "class": "correct",
+     "decision": "accept",
+     "spent": 5,
+     "steps": [
+      {
+       "check": "K03",
+       "decision": "defer",
+       "result": "yes",
+       "spent": 1
+      },
+      {
+       "check": "K08",
+       "decision": "defer",
+       "result": "no",
+       "spent": 2
+      },
+      {
+       "check": "K04",
+       "decision": "defer",
+       "result": "yes",
+       "spent": 3
+      },
+      {
+       "check": "K10",
+       "decision": "defer",
+       "result": "yes",
+       "spent": 4
+      },
+      {
+       "check": "K07",
+       "decision": "accept",
+       "result": "no",
+       "spent": 5
+      }
+     ],
+     "units_to_resolve": 5
+    },
+    "C@1": {
+     "arm": "C",
+     "budget": 1,
+     "class": "defer",
+     "decision": "defer",
+     "spent": 1,
+     "steps": [
+      {
+       "check": "K10",
+       "decision": "defer",
+       "result": "yes",
+       "spent": 1
+      }
+     ],
+     "units_to_resolve": null
+    },
+    "C@2": {
+     "arm": "C",
+     "budget": 2,
+     "class": "defer",
+     "decision": "defer",
+     "spent": 2,
+     "steps": [
+      {
+       "check": "K10",
+       "decision": "defer",
+       "result": "yes",
+       "spent": 1
+      },
+      {
+       "check": "K03",
+       "decision": "defer",
+       "result": "yes",
+       "spent": 2
+      }
+     ],
+     "units_to_resolve": null
+    },
+    "C@4": {
+     "arm": "C",
+     "budget": 4,
+     "class": "correct",
+     "decision": "accept",
+     "spent": 3,
+     "steps": [
+      {
+       "check": "K10",
+       "decision": "defer",
+       "result": "yes",
+       "spent": 1
+      },
+      {
+       "check": "K03",
+       "decision": "defer",
+       "result": "yes",
+       "spent": 2
+      },
+      {
+       "check": "K07",
+       "decision": "accept",
+       "result": "no",
+       "spent": 3
+      }
+     ],
+     "units_to_resolve": 3
+    },
+    "C@8": {
+     "arm": "C",
+     "budget": 8,
+     "class": "correct",
+     "decision": "accept",
+     "spent": 3,
+     "steps": [
+      {
+       "check": "K10",
+       "decision": "defer",
+       "result": "yes",
+       "spent": 1
+      },
+      {
+       "check": "K03",
+       "decision": "defer",
+       "result": "yes",
+       "spent": 2
+      },
+      {
+       "check": "K07",
+       "decision": "accept",
+       "result": "no",
+       "spent": 3
+      }
+     ],
+     "units_to_resolve": 3
+    },
+    "dependency_risk@1": {
+     "arm": "dependency_risk",
+     "budget": 1,
+     "class": "defer",
+     "decision": "defer",
+     "spent": 1,
+     "steps": [
+      {
+       "check": "K01",
+       "decision": "defer",
+       "result": "pass",
+       "spent": 1
+      }
+     ],
+     "units_to_resolve": null
+    },
+    "dependency_risk@2": {
+     "arm": "dependency_risk",
+     "budget": 2,
+     "class": "defer",
+     "decision": "defer",
+     "spent": 2,
+     "steps": [
+      {
+       "check": "K05",
+       "decision": "defer",
+       "result": "no",
+       "spent": 2
+      }
+     ],
+     "units_to_resolve": null
+    },
+    "dependency_risk@4": {
+     "arm": "dependency_risk",
+     "budget": 4,
+     "class": "defer",
+     "decision": "defer",
+     "spent": 4,
+     "steps": [
+      {
+       "check": "K13",
+       "decision": "defer",
+       "result": "pass",
+       "spent": 4
+      }
+     ],
+     "units_to_resolve": null
+    },
+    "dependency_risk@8": {
+     "arm": "dependency_risk",
+     "budget": 8,
+     "class": "correct",
+     "decision": "accept",
+     "spent": 8,
+     "steps": [
+      {
+       "check": "K13",
+       "decision": "defer",
+       "result": "pass",
+       "spent": 4
+      },
+      {
+       "check": "K14",
+       "decision": "accept",
+       "result": "pass",
+       "spent": 8
+      }
+     ],
+     "units_to_resolve": 8
+    },
+    "recently_changed@1": {
+     "arm": "recently_changed",
+     "budget": 1,
+     "class": "defer",
+     "decision": "defer",
+     "spent": 1,
+     "steps": [
+      {
+       "check": "K01",
+       "decision": "defer",
+       "result": "pass",
+       "spent": 1
+      }
+     ],
+     "units_to_resolve": null
+    },
+    "recently_changed@2": {
+     "arm": "recently_changed",
+     "budget": 2,
+     "class": "defer",
+     "decision": "defer",
+     "spent": 2,
+     "steps": [
+      {
+       "check": "K01",
+       "decision": "defer",
+       "result": "pass",
+       "spent": 1
+      },
+      {
+       "check": "K03",
+       "decision": "defer",
+       "result": "yes",
+       "spent": 2
+      }
+     ],
+     "units_to_resolve": null
+    },
+    "recently_changed@4": {
+     "arm": "recently_changed",
+     "budget": 4,
+     "class": "defer",
+     "decision": "defer",
+     "spent": 4,
+     "steps": [
+      {
+       "check": "K13",
+       "decision": "defer",
+       "result": "pass",
+       "spent": 4
+      }
+     ],
+     "units_to_resolve": null
+    },
+    "recently_changed@8": {
+     "arm": "recently_changed",
+     "budget": 8,
+     "class": "correct",
+     "decision": "accept",
+     "spent": 8,
+     "steps": [
+      {
+       "check": "K13",
+       "decision": "defer",
+       "result": "pass",
+       "spent": 4
+      },
+      {
+       "check": "K14",
+       "decision": "accept",
+       "result": "pass",
+       "spent": 8
+      }
+     ],
+     "units_to_resolve": 8
+    },
+    "round_robin@1": {
+     "arm": "round_robin",
+     "budget": 1,
+     "class": "defer",
+     "decision": "defer",
+     "spent": 1,
+     "steps": [
+      {
+       "check": "K01",
+       "decision": "defer",
+       "result": "pass",
+       "spent": 1
+      }
+     ],
+     "units_to_resolve": null
+    },
+    "round_robin@2": {
+     "arm": "round_robin",
+     "budget": 2,
+     "class": "defer",
+     "decision": "defer",
+     "spent": 2,
+     "steps": [
+      {
+       "check": "K01",
+       "decision": "defer",
+       "result": "pass",
+       "spent": 1
+      },
+      {
+       "check": "K03",
+       "decision": "defer",
+       "result": "yes",
+       "spent": 2
+      }
+     ],
+     "units_to_resolve": null
+    },
+    "round_robin@4": {
+     "arm": "round_robin",
+     "budget": 4,
+     "class": "defer",
+     "decision": "defer",
+     "spent": 4,
+     "steps": [
+      {
+       "check": "K01",
+       "decision": "defer",
+       "result": "pass",
+       "spent": 1
+      },
+      {
+       "check": "K02",
+       "decision": "defer",
+       "result": "12",
+       "spent": 3
+      },
+      {
+       "check": "K03",
+       "decision": "defer",
+       "result": "yes",
+       "spent": 4
+      }
+     ],
+     "units_to_resolve": null
+    },
+    "round_robin@8": {
+     "arm": "round_robin",
+     "budget": 8,
+     "class": "correct",
+     "decision": "accept",
+     "spent": 7,
+     "steps": [
+      {
+       "check": "K01",
+       "decision": "defer",
+       "result": "pass",
+       "spent": 1
+      },
+      {
+       "check": "K02",
+       "decision": "defer",
+       "result": "12",
+       "spent": 3
+      },
+      {
+       "check": "K03",
+       "decision": "defer",
+       "result": "yes",
+       "spent": 4
+      },
+      {
+       "check": "K04",
+       "decision": "defer",
+       "result": "yes",
+       "spent": 5
+      },
+      {
+       "check": "K05",
+       "decision": "accept",
+       "result": "no",
+       "spent": 7
+      }
+     ],
+     "units_to_resolve": 7
+    }
+   },
+   "control": "clean",
+   "distractor": true,
+   "draw": 0,
+   "family": "allocation",
+   "hypotheses": 81,
+   "initial_host_rule": "defer",
+   "instance": "dev-900000",
+   "target": "accept"
+  },
+  {
+   "arms": {
+    "A": {
+     "class": "correct",
+     "decision": "reject",
+     "spent": 0
+    },
+    "B@1": {
+     "arm": "B",
+     "budget": 1,
+     "class": "defer",
+     "decision": "defer",
+     "spent": 1,
+     "steps": [
+      {
+       "check": "K02",
+       "decision": "defer",
+       "result": "yes",
+       "spent": 1
+      }
+     ],
+     "units_to_resolve": null
+    },
+    "B@2": {
+     "arm": "B",
+     "budget": 2,
+     "class": "correct",
+     "decision": "reject",
+     "spent": 2,
+     "steps": [
+      {
+       "check": "K02",
+       "decision": "defer",
+       "result": "yes",
+       "spent": 1
+      },
+      {
+       "check": "K12",
+       "decision": "reject",
+       "result": "yes",
+       "spent": 2
+      }
+     ],
+     "units_to_resolve": 2
+    },
+    "B@4": {
+     "arm": "B",
+     "budget": 4,
+     "class": "correct",
+     "decision": "reject",
+     "spent": 2,
+     "steps": [
+      {
+       "check": "K02",
+       "decision": "defer",
+       "result": "yes",
+       "spent": 1
+      },
+      {
+       "check": "K12",
+       "decision": "reject",
+       "result": "yes",
+       "spent": 2
+      }
+     ],
+     "units_to_resolve": 2
+    },
+    "B@8": {
+     "arm": "B",
+     "budget": 8,
+     "class": "correct",
+     "decision": "reject",
+     "spent": 2,
+     "steps": [
+      {
+       "check": "K02",
+       "decision": "defer",
+       "result": "yes",
+       "spent": 1
+      },
+      {
+       "check": "K12",
+       "decision": "reject",
+       "result": "yes",
+       "spent": 2
+      }
+     ],
+     "units_to_resolve": 2
+    },
+    "C@1": {
+     "arm": "C",
+     "budget": 1,
+     "class": "defer",
+     "decision": "defer",
+     "spent": 1,
+     "steps": [
+      {
+       "check": "K02",
+       "decision": "defer",
+       "result": "yes",
+       "spent": 1
+      }
+     ],
+     "units_to_resolve": null
+    },
+    "C@2": {
+     "arm": "C",
+     "budget": 2,
+     "class": "correct",
+     "decision": "reject",
+     "spent": 2,
+     "steps": [
+      {
+       "check": "K02",
+       "decision": "defer",
+       "result": "yes",
+       "spent": 1
+      },
+      {
+       "check": "K13",
+       "decision": "reject",
+       "result": "no",
+       "spent": 2
+      }
+     ],
+     "units_to_resolve": 2
+    },
+    "C@4": {
+     "arm": "C",
+     "budget": 4,
+     "class": "correct",
+     "decision": "reject",
+     "spent": 2,
+     "steps": [
+      {
+       "check": "K02",
+       "decision": "defer",
+       "result": "yes",
+       "spent": 1
+      },
+      {
+       "check": "K13",
+       "decision": "reject",
+       "result": "no",
+       "spent": 2
+      }
+     ],
+     "units_to_resolve": 2
+    },
+    "C@8": {
+     "arm": "C",
+     "budget": 8,
+     "class": "correct",
+     "decision": "reject",
+     "spent": 2,
+     "steps": [
+      {
+       "check": "K02",
+       "decision": "defer",
+       "result": "yes",
+       "spent": 1
+      },
+      {
+       "check": "K13",
+       "decision": "reject",
+       "result": "no",
+       "spent": 2
+      }
+     ],
+     "units_to_resolve": 2
+    },
+    "dependency_risk@1": {
+     "arm": "dependency_risk",
+     "budget": 1,
+     "class": "defer",
+     "decision": "defer",
+     "spent": 1,
+     "steps": [
+      {
+       "check": "K02",
+       "decision": "defer",
+       "result": "yes",
+       "spent": 1
+      }
+     ],
+     "units_to_resolve": null
+    },
+    "dependency_risk@2": {
+     "arm": "dependency_risk",
+     "budget": 2,
+     "class": "defer",
+     "decision": "defer",
+     "spent": 2,
+     "steps": [
+      {
+       "check": "K01",
+       "decision": "defer",
+       "result": "yes",
+       "spent": 2
+      }
+     ],
+     "units_to_resolve": null
+    },
+    "dependency_risk@4": {
+     "arm": "dependency_risk",
+     "budget": 4,
+     "class": "correct",
+     "decision": "reject",
+     "spent": 4,
+     "steps": [
+      {
+       "check": "K03",
+       "decision": "reject",
+       "result": "fail",
+       "spent": 4
+      }
+     ],
+     "units_to_resolve": 4
+    },
+    "dependency_risk@8": {
+     "arm": "dependency_risk",
+     "budget": 8,
+     "class": "correct",
+     "decision": "reject",
+     "spent": 4,
+     "steps": [
+      {
+       "check": "K03",
+       "decision": "reject",
+       "result": "fail",
+       "spent": 4
+      }
+     ],
+     "units_to_resolve": 4
+    },
+    "recently_changed@1": {
+     "arm": "recently_changed",
+     "budget": 1,
+     "class": "defer",
+     "decision": "defer",
+     "spent": 1,
+     "steps": [
+      {
+       "check": "K16",
+       "decision": "defer",
+       "result": "pass",
+       "spent": 1
+      }
+     ],
+     "units_to_resolve": null
+    },
+    "recently_changed@2": {
+     "arm": "recently_changed",
+     "budget": 2,
+     "class": "defer",
+     "decision": "defer",
+     "spent": 2,
+     "steps": [
+      {
+       "check": "K16",
+       "decision": "defer",
+       "result": "pass",
+       "spent": 1
+      },
+      {
+       "check": "K02",
+       "decision": "defer",
+       "result": "yes",
+       "spent": 2
+      }
+     ],
+     "units_to_resolve": null
+    },
+    "recently_changed@4": {
+     "arm": "recently_changed",
+     "budget": 4,
+     "class": "correct",
+     "decision": "reject",
+     "spent": 4,
+     "steps": [
+      {
+       "check": "K03",
+       "decision": "reject",
+       "result": "fail",
+       "spent": 4
+      }
+     ],
+     "units_to_resolve": 4
+    },
+    "recently_changed@8": {
+     "arm": "recently_changed",
+     "budget": 8,
+     "class": "correct",
+     "decision": "reject",
+     "spent": 4,
+     "steps": [
+      {
+       "check": "K03",
+       "decision": "reject",
+       "result": "fail",
+       "spent": 4
+      }
+     ],
+     "units_to_resolve": 4
+    },
+    "round_robin@1": {
+     "arm": "round_robin",
+     "budget": 1,
+     "class": "defer",
+     "decision": "defer",
+     "spent": 1,
+     "steps": [
+      {
+       "check": "K02",
+       "decision": "defer",
+       "result": "yes",
+       "spent": 1
+      }
+     ],
+     "units_to_resolve": null
+    },
+    "round_robin@2": {
+     "arm": "round_robin",
+     "budget": 2,
+     "class": "defer",
+     "decision": "defer",
+     "spent": 2,
+     "steps": [
+      {
+       "check": "K01",
+       "decision": "defer",
+       "result": "yes",
+       "spent": 2
+      }
+     ],
+     "units_to_resolve": null
+    },
+    "round_robin@4": {
+     "arm": "round_robin",
+     "budget": 4,
+     "class": "defer",
+     "decision": "defer",
+     "spent": 4,
+     "steps": [
+      {
+       "check": "K01",
+       "decision": "defer",
+       "result": "yes",
+       "spent": 2
+      },
+      {
+       "check": "K02",
+       "decision": "defer",
+       "result": "yes",
+       "spent": 3
+      },
+      {
+       "check": "K04",
+       "decision": "defer",
+       "result": "yes",
+       "spent": 4
+      }
+     ],
+     "units_to_resolve": null
+    },
+    "round_robin@8": {
+     "arm": "round_robin",
+     "budget": 8,
+     "class": "correct",
+     "decision": "reject",
+     "spent": 7,
+     "steps": [
+      {
+       "check": "K01",
+       "decision": "defer",
+       "result": "yes",
+       "spent": 2
+      },
+      {
+       "check": "K02",
+       "decision": "defer",
+       "result": "yes",
+       "spent": 3
+      },
+      {
+       "check": "K03",
+       "decision": "reject",
+       "result": "fail",
+       "spent": 7
+      }
+     ],
+     "units_to_resolve": 7
+    }
+   },
+   "control": "malformed",
+   "distractor": true,
+   "draw": 0,
+   "family": "allocation",
+   "hypotheses": 81,
+   "initial_host_rule": "defer",
+   "instance": "dev-900001",
+   "target": "reject"
+  },
+  {
+   "arms": {
+    "A": {
+     "class": "false_reject",
+     "decision": "reject",
+     "spent": 0
+    },
+    "B@1": {
+     "arm": "B",
+     "budget": 1,
+     "class": "defer",
+     "decision": "defer",
+     "spent": 1,
+     "steps": [
+      {
+       "check": "K04",
+       "decision": "defer",
+       "result": "yes",
+       "spent": 1
+      }
+     ],
+     "units_to_resolve": null
+    },
+    "B@2": {
+     "arm": "B",
+     "budget": 2,
+     "class": "defer",
+     "decision": "defer",
+     "spent": 2,
+     "steps": [
+      {
+       "check": "K04",
+       "decision": "defer",
+       "result": "yes",
+       "spent": 1
+      },
+      {
+       "check": "K03",
+       "decision": "defer",
+       "result": "no",
+       "spent": 2
+      }
+     ],
+     "units_to_resolve": null
+    },
+    "B@4": {
+     "arm": "B",
+     "budget": 4,
+     "class": "defer",
+     "decision": "defer",
+     "spent": 4,
+     "steps": [
+      {
+       "check": "K04",
+       "decision": "defer",
+       "result": "yes",
+       "spent": 1
+      },
+      {
+       "check": "K03",
+       "decision": "defer",
+       "result": "no",
+       "spent": 2
+      },
+      {
+       "check": "K06",
+       "decision": "defer",
+       "result": "yes",
+       "spent": 3
+      },
+      {
+       "check": "K09",
+       "decision": "defer",
+       "result": "no",
+       "spent": 4
+      }
+     ],
+     "units_to_resolve": null
+    },
+    "B@8": {
+     "arm": "B",
+     "budget": 8,
+     "class": "correct",
+     "decision": "accept",
+     "spent": 6,
+     "steps": [
+      {
+       "check": "K04",
+       "decision": "defer",
+       "result": "yes",
+       "spent": 1
+      },
+      {
+       "check": "K03",
+       "decision": "defer",
+       "result": "no",
+       "spent": 2
+      },
+      {
+       "check": "K06",
+       "decision": "defer",
+       "result": "yes",
+       "spent": 3
+      },
+      {
+       "check": "K09",
+       "decision": "defer",
+       "result": "no",
+       "spent": 4
+      },
+      {
+       "check": "K14",
+       "decision": "accept",
+       "result": "16",
+       "spent": 6
+      }
+     ],
+     "units_to_resolve": 6
+    },
+    "C@1": {
+     "arm": "C",
+     "budget": 1,
+     "class": "defer",
+     "decision": "defer",
+     "spent": 1,
+     "steps": [
+      {
+       "check": "K06",
+       "decision": "defer",
+       "result": "yes",
+       "spent": 1
+      }
+     ],
+     "units_to_resolve": null
+    },
+    "C@2": {
+     "arm": "C",
+     "budget": 2,
+     "class": "defer",
+     "decision": "defer",
+     "spent": 2,
+     "steps": [
+      {
+       "check": "K06",
+       "decision": "defer",
+       "result": "yes",
+       "spent": 1
+      },
+      {
+       "check": "K09",
+       "decision": "defer",
+       "result": "no",
+       "spent": 2
+      }
+     ],
+     "units_to_resolve": null
+    },
+    "C@4": {
+     "arm": "C",
+     "budget": 4,
+     "class": "defer",
+     "decision": "defer",
+     "spent": 4,
+     "steps": [
+      {
+       "check": "K06",
+       "decision": "defer",
+       "result": "yes",
+       "spent": 1
+      },
+      {
+       "check": "K09",
+       "decision": "defer",
+       "result": "no",
+       "spent": 2
+      },
+      {
+       "check": "K04",
+       "decision": "defer",
+       "result": "yes",
+       "spent": 3
+      },
+      {
+       "check": "K03",
+       "decision": "defer",
+       "result": "no",
+       "spent": 4
+      }
+     ],
+     "units_to_resolve": null
+    },
+    "C@8": {
+     "arm": "C",
+     "budget": 8,
+     "class": "correct",
+     "decision": "accept",
+     "spent": 6,
+     "steps": [
+      {
+       "check": "K06",
+       "decision": "defer",
+       "result": "yes",
+       "spent": 1
+      },
+      {
+       "check": "K09",
+       "decision": "defer",
+       "result": "no",
+       "spent": 2
+      },
+      {
+       "check": "K04",
+       "decision": "defer",
+       "result": "yes",
+       "spent": 3
+      },
+      {
+       "check": "K03",
+       "decision": "defer",
+       "result": "no",
+       "spent": 4
+      },
+      {
+       "check": "K14",
+       "decision": "accept",
+       "result": "16",
+       "spent": 6
+      }
+     ],
+     "units_to_resolve": 6
+    },
+    "dependency_risk@1": {
+     "arm": "dependency_risk",
+     "budget": 1,
+     "class": "defer",
+     "decision": "defer",
+     "spent": 1,
+     "steps": [
+      {
+       "check": "K03",
+       "decision": "defer",
+       "result": "no",
+       "spent": 1
+      }
+     ],
+     "units_to_resolve": null
+    },
+    "dependency_risk@2": {
+     "arm": "dependency_risk",
+     "budget": 2,
+     "class": "defer",
+     "decision": "defer",
+     "spent": 2,
+     "steps": [
+      {
+       "check": "K10",
+       "decision": "defer",
+       "result": "pass",
+       "spent": 2
+      }
+     ],
+     "units_to_resolve": null
+    },
+    "dependency_risk@4": {
+     "arm": "dependency_risk",
+     "budget": 4,
+     "class": "defer",
+     "decision": "defer",
+     "spent": 4,
+     "steps": [
+      {
+       "check": "K02",
+       "decision": "defer",
+       "result": "pass",
+       "spent": 4
+      }
+     ],
+     "units_to_resolve": null
+    },
+    "dependency_risk@8": {
+     "arm": "dependency_risk",
+     "budget": 8,
+     "class": "defer",
+     "decision": "defer",
+     "spent": 8,
+     "steps": [
+      {
+       "check": "K02",
+       "decision": "defer",
+       "result": "pass",
+       "spent": 4
+      },
+      {
+       "check": "K01",
+       "decision": "defer",
+       "result": "pass",
+       "spent": 8
+      }
+     ],
+     "units_to_resolve": null
+    },
+    "recently_changed@1": {
+     "arm": "recently_changed",
+     "budget": 1,
+     "class": "defer",
+     "decision": "defer",
+     "spent": 1,
+     "steps": [
+      {
+       "check": "K16",
+       "decision": "defer",
+       "result": "pass",
+       "spent": 1
+      }
+     ],
+     "units_to_resolve": null
+    },
+    "recently_changed@2": {
+     "arm": "recently_changed",
+     "budget": 2,
+     "class": "defer",
+     "decision": "defer",
+     "spent": 2,
+     "steps": [
+      {
+       "check": "K10",
+       "decision": "defer",
+       "result": "pass",
+       "spent": 2
+      }
+     ],
+     "units_to_resolve": null
+    },
+    "recently_changed@4": {
+     "arm": "recently_changed",
+     "budget": 4,
+     "class": "defer",
+     "decision": "defer",
+     "spent": 4,
+     "steps": [
+      {
+       "check": "K01",
+       "decision": "defer",
+       "result": "pass",
+       "spent": 4
+      }
+     ],
+     "units_to_resolve": null
+    },
+    "recently_changed@8": {
+     "arm": "recently_changed",
+     "budget": 8,
+     "class": "defer",
+     "decision": "defer",
+     "spent": 8,
+     "steps": [
+      {
+       "check": "K01",
+       "decision": "defer",
+       "result": "pass",
+       "spent": 4
+      },
+      {
+       "check": "K02",
+       "decision": "defer",
+       "result": "pass",
+       "spent": 8
+      }
+     ],
+     "units_to_resolve": null
+    },
+    "round_robin@1": {
+     "arm": "round_robin",
+     "budget": 1,
+     "class": "defer",
+     "decision": "defer",
+     "spent": 1,
+     "steps": [
+      {
+       "check": "K03",
+       "decision": "defer",
+       "result": "no",
+       "spent": 1
+      }
+     ],
+     "units_to_resolve": null
+    },
+    "round_robin@2": {
+     "arm": "round_robin",
+     "budget": 2,
+     "class": "defer",
+     "decision": "defer",
+     "spent": 2,
+     "steps": [
+      {
+       "check": "K03",
+       "decision": "defer",
+       "result": "no",
+       "spent": 1
+      },
+      {
+       "check": "K04",
+       "decision": "defer",
+       "result": "yes",
+       "spent": 2
+      }
+     ],
+     "units_to_resolve": null
+    },
+    "round_robin@4": {
+     "arm": "round_robin",
+     "budget": 4,
+     "class": "defer",
+     "decision": "defer",
+     "spent": 4,
+     "steps": [
+      {
+       "check": "K01",
+       "decision": "defer",
+       "result": "pass",
+       "spent": 4
+      }
+     ],
+     "units_to_resolve": null
+    },
+    "round_robin@8": {
+     "arm": "round_robin",
+     "budget": 8,
+     "class": "defer",
+     "decision": "defer",
+     "spent": 8,
+     "steps": [
+      {
+       "check": "K01",
+       "decision": "defer",
+       "result": "pass",
+       "spent": 4
+      },
+      {
+       "check": "K02",
+       "decision": "defer",
+       "result": "pass",
+       "spent": 8
+      }
+     ],
+     "units_to_resolve": null
+    }
+   },
+   "control": "clean",
+   "distractor": false,
+   "draw": 0,
+   "family": "temporal",
+   "hypotheses": 54,
+   "initial_host_rule": "defer",
+   "instance": "dev-900002",
+   "target": "accept"
+  },
+  {
+   "arms": {
+    "A": {
+     "class": "false_reject",
+     "decision": "reject",
+     "spent": 0
+    },
+    "B@1": {
+     "arm": "B",
+     "budget": 1,
+     "class": "defer",
+     "decision": "defer",
+     "spent": 1,
+     "steps": [
+      {
+       "check": "K16",
+       "decision": "defer",
+       "result": "yes",
+       "spent": 1
+      }
+     ],
+     "units_to_resolve": null
+    },
+    "B@2": {
+     "arm": "B",
+     "budget": 2,
+     "class": "false_reject",
+     "decision": "reject",
+     "spent": 2,
+     "steps": [
+      {
+       "check": "K16",
+       "decision": "defer",
+       "result": "yes",
+       "spent": 1
+      },
+      {
+       "check": "K01",
+       "decision": "reject",
+       "result": "no",
+       "spent": 2
+      }
+     ],
+     "units_to_resolve": 2
+    },
+    "B@4": {
+     "arm": "B",
+     "budget": 4,
+     "class": "false_reject",
+     "decision": "reject",
+     "spent": 2,
+     "steps": [
+      {
+       "check": "K16",
+       "decision": "defer",
+       "result": "yes",
+       "spent": 1
+      },
+      {
+       "check": "K01",
+       "decision": "reject",
+       "result": "no",
+       "spent": 2
+      }
+     ],
+     "units_to_resolve": 2
+    },
+    "B@8": {
+     "arm": "B",
+     "budget": 8,
+     "class": "false_reject",
+     "decision": "reject",
+     "spent": 2,
+     "steps": [
+      {
+       "check": "K16",
+       "decision": "defer",
+       "result": "yes",
+       "spent": 1
+      },
+      {
+       "check": "K01",
+       "decision": "reject",
+       "result": "no",
+       "spent": 2
+      }
+     ],
+     "units_to_resolve": 2
+    },
+    "C@1": {
+     "arm": "C",
+     "budget": 1,
+     "class": "defer",
+     "decision": "defer",
+     "spent": 1,
+     "steps": [
+      {
+       "check": "K01",
+       "decision": "defer",
+       "result": "no",
+       "spent": 1
+      }
+     ],
+     "units_to_resolve": null
+    },
+    "C@2": {
+     "arm": "C",
+     "budget": 2,
+     "class": "false_reject",
+     "decision": "reject",
+     "spent": 2,
+     "steps": [
+      {
+       "check": "K01",
+       "decision": "defer",
+       "result": "no",
+       "spent": 1
+      },
+      {
+       "check": "K16",
+       "decision": "reject",
+       "result": "yes",
+       "spent": 2
+      }
+     ],
+     "units_to_resolve": 2
+    },
+    "C@4": {
+     "arm": "C",
+     "budget": 4,
+     "class": "false_reject",
+     "decision": "reject",
+     "spent": 2,
+     "steps": [
+      {
+       "check": "K01",
+       "decision": "defer",
+       "result": "no",
+       "spent": 1
+      },
+      {
+       "check": "K16",
+       "decision": "reject",
+       "result": "yes",
+       "spent": 2
+      }
+     ],
+     "units_to_resolve": 2
+    },
+    "C@8": {
+     "arm": "C",
+     "budget": 8,
+     "class": "false_reject",
+     "decision": "reject",
+     "spent": 2,
+     "steps": [
+      {
+       "check": "K01",
+       "decision": "defer",
+       "result": "no",
+       "spent": 1
+      },
+      {
+       "check": "K16",
+       "decision": "reject",
+       "result": "yes",
+       "spent": 2
+      }
+     ],
+     "units_to_resolve": 2
+    },
+    "dependency_risk@1": {
+     "arm": "dependency_risk",
+     "budget": 1,
+     "class": "defer",
+     "decision": "defer",
+     "spent": 1,
+     "steps": [
+      {
+       "check": "K01",
+       "decision": "defer",
+       "result": "no",
+       "spent": 1
+      }
+     ],
+     "units_to_resolve": null
+    },
+    "dependency_risk@2": {
+     "arm": "dependency_risk",
+     "budget": 2,
+     "class": "defer",
+     "decision": "defer",
+     "spent": 2,
+     "steps": [
+      {
+       "check": "K04",
+       "decision": "defer",
+       "result": "pass",
+       "spent": 2
+      }
+     ],
+     "units_to_resolve": null
+    },
+    "dependency_risk@4": {
+     "arm": "dependency_risk",
+     "budget": 4,
+     "class": "defer",
+     "decision": "defer",
+     "spent": 4,
+     "steps": [
+      {
+       "check": "K03",
+       "decision": "defer",
+       "result": "pass",
+       "spent": 4
+      }
+     ],
+     "units_to_resolve": null
+    },
+    "dependency_risk@8": {
+     "arm": "dependency_risk",
+     "budget": 8,
+     "class": "false_reject",
+     "decision": "reject",
+     "spent": 8,
+     "steps": [
+      {
+       "check": "K03",
+       "decision": "defer",
+       "result": "pass",
+       "spent": 4
+      },
+      {
+       "check": "K02",
+       "decision": "reject",
+       "result": "fail",
+       "spent": 8
+      }
+     ],
+     "units_to_resolve": 8
+    },
+    "recently_changed@1": {
+     "arm": "recently_changed",
+     "budget": 1,
+     "class": "defer",
+     "decision": "defer",
+     "spent": 1,
+     "steps": [
+      {
+       "check": "K01",
+       "decision": "defer",
+       "result": "no",
+       "spent": 1
+      }
+     ],
+     "units_to_resolve": null
+    },
+    "recently_changed@2": {
+     "arm": "recently_changed",
+     "budget": 2,
+     "class": "defer",
+     "decision": "defer",
+     "spent": 2,
+     "steps": [
+      {
+       "check": "K08",
+       "decision": "defer",
+       "result": "pass",
+       "spent": 2
+      }
+     ],
+     "units_to_resolve": null
+    },
+    "recently_changed@4": {
+     "arm": "recently_changed",
+     "budget": 4,
+     "class": "defer",
+     "decision": "defer",
+     "spent": 4,
+     "steps": [
+      {
+       "check": "K03",
+       "decision": "defer",
+       "result": "pass",
+       "spent": 4
+      }
+     ],
+     "units_to_resolve": null
+    },
+    "recently_changed@8": {
+     "arm": "recently_changed",
+     "budget": 8,
+     "class": "defer",
+     "decision": "defer",
+     "spent": 8,
+     "steps": [
+      {
+       "check": "K03",
+       "decision": "defer",
+       "result": "pass",
+       "spent": 4
+      },
+      {
+       "check": "K08",
+       "decision": "defer",
+       "result": "pass",
+       "spent": 6
+      },
+      {
+       "check": "K10",
+       "decision": "defer",
+       "result": "pass",
+       "spent": 8
+      }
+     ],
+     "units_to_resolve": null
+    },
+    "round_robin@1": {
+     "arm": "round_robin",
+     "budget": 1,
+     "class": "defer",
+     "decision": "defer",
+     "spent": 1,
+     "steps": [
+      {
+       "check": "K01",
+       "decision": "defer",
+       "result": "no",
+       "spent": 1
+      }
+     ],
+     "units_to_resolve": null
+    },
+    "round_robin@2": {
+     "arm": "round_robin",
+     "budget": 2,
+     "class": "defer",
+     "decision": "defer",
+     "spent": 2,
+     "steps": [
+      {
+       "check": "K01",
+       "decision": "defer",
+       "result": "no",
+       "spent": 1
+      },
+      {
+       "check": "K06",
+       "decision": "defer",
+       "result": "no",
+       "spent": 2
+      }
+     ],
+     "units_to_resolve": null
+    },
+    "round_robin@4": {
+     "arm": "round_robin",
+     "budget": 4,
+     "class": "defer",
+     "decision": "defer",
+     "spent": 4,
+     "steps": [
+      {
+       "check": "K01",
+       "decision": "defer",
+       "result": "no",
+       "spent": 1
+      },
+      {
+       "check": "K04",
+       "decision": "defer",
+       "result": "pass",
+       "spent": 3
+      },
+      {
+       "check": "K06",
+       "decision": "defer",
+       "result": "no",
+       "spent": 4
+      }
+     ],
+     "units_to_resolve": null
+    },
+    "round_robin@8": {
+     "arm": "round_robin",
+     "budget": 8,
+     "class": "false_reject",
+     "decision": "reject",
+     "spent": 5,
+     "steps": [
+      {
+       "check": "K01",
+       "decision": "defer",
+       "result": "no",
+       "spent": 1
+      },
+      {
+       "check": "K02",
+       "decision": "reject",
+       "result": "fail",
+       "spent": 5
+      }
+     ],
+     "units_to_resolve": 5
+    }
+   },
+   "control": "out_of_model",
+   "distractor": true,
+   "draw": 0,
+   "family": "temporal",
+   "hypotheses": 162,
+   "initial_host_rule": "defer",
+   "instance": "dev-900003",
+   "target": "model_mismatch"
+  },
+  {
+   "arms": {
+    "A": {
+     "class": "correct",
+     "decision": "reject",
+     "spent": 0
+    },
+    "B@1": {
+     "arm": "B",
+     "budget": 1,
+     "class": "defer",
+     "decision": "defer",
+     "spent": 1,
+     "steps": [
+      {
+       "check": "K08",
+       "decision": "defer",
+       "result": "yes",
+       "spent": 1
+      }
+     ],
+     "units_to_resolve": null
+    },
+    "B@2": {
+     "arm": "B",
+     "budget": 2,
+     "class": "defer",
+     "decision": "defer",
+     "spent": 2,
+     "steps": [
+      {
+       "check": "K04",
+       "decision": "defer",
+       "result": "2",
+       "spent": 2
+      }
+     ],
+     "units_to_resolve": null
+    },
+    "B@4": {
+     "arm": "B",
+     "budget": 4,
+     "class": "defer",
+     "decision": "defer",
+     "spent": 4,
+     "steps": [
+      {
+       "check": "K04",
+       "decision": "defer",
+       "result": "2",
+       "spent": 2
+      },
+      {
+       "check": "K12",
+       "decision": "defer",
+       "result": "no",
+       "spent": 3
+      },
+      {
+       "check": "K13",
+       "decision": "defer",
+       "result": "no",
+       "spent": 4
+      }
+     ],
+     "units_to_resolve": null
+    },
+    "B@8": {
+     "arm": "B",
+     "budget": 8,
+     "class": "correct",
+     "decision": "reject",
+     "spent": 5,
+     "steps": [
+      {
+       "check": "K04",
+       "decision": "defer",
+       "result": "2",
+       "spent": 2
+      },
+      {
+       "check": "K12",
+       "decision": "defer",
+       "result": "no",
+       "spent": 3
+      },
+      {
+       "check": "K13",
+       "decision": "defer",
+       "result": "no",
+       "spent": 4
+      },
+      {
+       "check": "K02",
+       "decision": "reject",
+       "result": "yes",
+       "spent": 5
+      }
+     ],
+     "units_to_resolve": 5
+    },
+    "C@1": {
+     "arm": "C",
+     "budget": 1,
+     "class": "defer",
+     "decision": "defer",
+     "spent": 1,
+     "steps": [
+      {
+       "check": "K13",
+       "decision": "defer",
+       "result": "no",
+       "spent": 1
+      }
+     ],
+     "units_to_resolve": null
+    },
+    "C@2": {
+     "arm": "C",
+     "budget": 2,
+     "class": "defer",
+     "decision": "defer",
+     "spent": 2,
+     "steps": [
+      {
+       "check": "K13",
+       "decision": "defer",
+       "result": "no",
+       "spent": 1
+      },
+      {
+       "check": "K02",
+       "decision": "defer",
+       "result": "yes",
+       "spent": 2
+      }
+     ],
+     "units_to_resolve": null
+    },
+    "C@4": {
+     "arm": "C",
+     "budget": 4,
+     "class": "correct",
+     "decision": "reject",
+     "spent": 4,
+     "steps": [
+      {
+       "check": "K13",
+       "decision": "defer",
+       "result": "no",
+       "spent": 1
+      },
+      {
+       "check": "K02",
+       "decision": "defer",
+       "result": "yes",
+       "spent": 2
+      },
+      {
+       "check": "K12",
+       "decision": "defer",
+       "result": "no",
+       "spent": 3
+      },
+      {
+       "check": "K08",
+       "decision": "reject",
+       "result": "yes",
+       "spent": 4
+      }
+     ],
+     "units_to_resolve": 4
+    },
+    "C@8": {
+     "arm": "C",
+     "budget": 8,
+     "class": "correct",
+     "decision": "reject",
+     "spent": 4,
+     "steps": [
+      {
+       "check": "K13",
+       "decision": "defer",
+       "result": "no",
+       "spent": 1
+      },
+      {
+       "check": "K02",
+       "decision": "defer",
+       "result": "yes",
+       "spent": 2
+      },
+      {
+       "check": "K12",
+       "decision": "defer",
+       "result": "no",
+       "spent": 3
+      },
+      {
+       "check": "K08",
+       "decision": "reject",
+       "result": "yes",
+       "spent": 4
+      }
+     ],
+     "units_to_resolve": 4
+    },
+    "dependency_risk@1": {
+     "arm": "dependency_risk",
+     "budget": 1,
+     "class": "defer",
+     "decision": "defer",
+     "spent": 1,
+     "steps": [
+      {
+       "check": "K02",
+       "decision": "defer",
+       "result": "yes",
+       "spent": 1
+      }
+     ],
+     "units_to_resolve": null
+    },
+    "dependency_risk@2": {
+     "arm": "dependency_risk",
+     "budget": 2,
+     "class": "defer",
+     "decision": "defer",
+     "spent": 2,
+     "steps": [
+      {
+       "check": "K06",
+       "decision": "defer",
+       "result": "pass",
+       "spent": 2
+      }
+     ],
+     "units_to_resolve": null
+    },
+    "dependency_risk@4": {
+     "arm": "dependency_risk",
+     "budget": 4,
+     "class": "defer",
+     "decision": "defer",
+     "spent": 4,
+     "steps": [
+      {
+       "check": "K05",
+       "decision": "defer",
+       "result": "pass",
+       "spent": 4
+      }
+     ],
+     "units_to_resolve": null
+    },
+    "dependency_risk@8": {
+     "arm": "dependency_risk",
+     "budget": 8,
+     "class": "correct",
+     "decision": "reject",
+     "spent": 8,
+     "steps": [
+      {
+       "check": "K05",
+       "decision": "defer",
+       "result": "pass",
+       "spent": 4
+      },
+      {
+       "check": "K03",
+       "decision": "reject",
+       "result": "fail",
+       "spent": 8
+      }
+     ],
+     "units_to_resolve": 8
+    },
+    "recently_changed@1": {
+     "arm": "recently_changed",
+     "budget": 1,
+     "class": "defer",
+     "decision": "defer",
+     "spent": 1,
+     "steps": [
+      {
+       "check": "K16",
+       "decision": "defer",
+       "result": "pass",
+       "spent": 1
+      }
+     ],
+     "units_to_resolve": null
+    },
+    "recently_changed@2": {
+     "arm": "recently_changed",
+     "budget": 2,
+     "class": "defer",
+     "decision": "defer",
+     "spent": 2,
+     "steps": [
+      {
+       "check": "K06",
+       "decision": "defer",
+       "result": "pass",
+       "spent": 2
+      }
+     ],
+     "units_to_resolve": null
+    },
+    "recently_changed@4": {
+     "arm": "recently_changed",
+     "budget": 4,
+     "class": "correct",
+     "decision": "reject",
+     "spent": 4,
+     "steps": [
+      {
+       "check": "K03",
+       "decision": "reject",
+       "result": "fail",
+       "spent": 4
+      }
+     ],
+     "units_to_resolve": 4
+    },
+    "recently_changed@8": {
+     "arm": "recently_changed",
+     "budget": 8,
+     "class": "correct",
+     "decision": "reject",
+     "spent": 4,
+     "steps": [
+      {
+       "check": "K03",
+       "decision": "reject",
+       "result": "fail",
+       "spent": 4
+      }
+     ],
+     "units_to_resolve": 4
+    },
+    "round_robin@1": {
+     "arm": "round_robin",
+     "budget": 1,
+     "class": "defer",
+     "decision": "defer",
+     "spent": 1,
+     "steps": [
+      {
+       "check": "K02",
+       "decision": "defer",
+       "result": "yes",
+       "spent": 1
+      }
+     ],
+     "units_to_resolve": null
+    },
+    "round_robin@2": {
+     "arm": "round_robin",
+     "budget": 2,
+     "class": "defer",
+     "decision": "defer",
+     "spent": 2,
+     "steps": [
+      {
+       "check": "K01",
+       "decision": "defer",
+       "result": "12",
+       "spent": 2
+      }
+     ],
+     "units_to_resolve": null
+    },
+    "round_robin@4": {
+     "arm": "round_robin",
+     "budget": 4,
+     "class": "defer",
+     "decision": "defer",
+     "spent": 4,
+     "steps": [
+      {
+       "check": "K01",
+       "decision": "defer",
+       "result": "12",
+       "spent": 2
+      },
+      {
+       "check": "K02",
+       "decision": "defer",
+       "result": "yes",
+       "spent": 3
+      },
+      {
+       "check": "K07",
+       "decision": "defer",
+       "result": "yes",
+       "spent": 4
+      }
+     ],
+     "units_to_resolve": null
+    },
+    "round_robin@8": {
+     "arm": "round_robin",
+     "budget": 8,
+     "class": "correct",
+     "decision": "reject",
+     "spent": 7,
+     "steps": [
+      {
+       "check": "K01",
+       "decision": "defer",
+       "result": "12",
+       "spent": 2
+      },
+      {
+       "check": "K02",
+       "decision": "defer",
+       "result": "yes",
+       "spent": 3
+      },
+      {
+       "check": "K03",
+       "decision": "reject",
+       "result": "fail",
+       "spent": 7
+      }
+     ],
+     "units_to_resolve": 7
+    }
+   },
+   "control": "clean",
+   "distractor": true,
+   "draw": 0,
+   "family": "interface",
+   "hypotheses": 144,
+   "initial_host_rule": "defer",
+   "instance": "dev-900004",
+   "target": "reject"
+  },
+  {
+   "arms": {
+    "A": {
+     "class": "false_reject",
+     "decision": "reject",
+     "spent": 0
+    },
+    "B@1": {
+     "arm": "B",
+     "budget": 1,
+     "class": "defer",
+     "decision": "defer",
+     "spent": 1,
+     "steps": [
+      {
+       "check": "K05",
+       "decision": "defer",
+       "result": "no",
+       "spent": 1
+      }
+     ],
+     "units_to_resolve": null
+    },
+    "B@2": {
+     "arm": "B",
+     "budget": 2,
+     "class": "defer",
+     "decision": "defer",
+     "spent": 2,
+     "steps": [
+      {
+       "check": "K05",
+       "decision": "defer",
+       "result": "no",
+       "spent": 1
+      },
+      {
+       "check": "K11",
+       "decision": "defer",
+       "result": "yes",
+       "spent": 2
+      }
+     ],
+     "units_to_resolve": null
+    },
+    "B@4": {
+     "arm": "B",
+     "budget": 4,
+     "class": "defer",
+     "decision": "defer",
+     "spent": 4,
+     "steps": [
+      {
+       "check": "K05",
+       "decision": "defer",
+       "result": "no",
+       "spent": 1
+      },
+      {
+       "check": "K08",
+       "decision": "defer",
+       "result": "2",
+       "spent": 3
+      },
+      {
+       "check": "K15",
+       "decision": "defer",
+       "result": "no",
+       "spent": 4
+      }
+     ],
+     "units_to_resolve": null
+    },
+    "B@8": {
+     "arm": "B",
+     "budget": 8,
+     "class": "correct",
+     "decision": "accept",
+     "spent": 5,
+     "steps": [
+      {
+       "check": "K05",
+       "decision": "defer",
+       "result": "no",
+       "spent": 1
+      },
+      {
+       "check": "K08",
+       "decision": "defer",
+       "result": "2",
+       "spent": 3
+      },
+      {
+       "check": "K15",
+       "decision": "defer",
+       "result": "no",
+       "spent": 4
+      },
+      {
+       "check": "K02",
+       "decision": "accept",
+       "result": "no",
+       "spent": 5
+      }
+     ],
+     "units_to_resolve": 5
+    },
+    "C@1": {
+     "arm": "C",
+     "budget": 1,
+     "class": "defer",
+     "decision": "defer",
+     "spent": 1,
+     "steps": [
+      {
+       "check": "K15",
+       "decision": "defer",
+       "result": "no",
+       "spent": 1
+      }
+     ],
+     "units_to_resolve": null
+    },
+    "C@2": {
+     "arm": "C",
+     "budget": 2,
+     "class": "correct",
+     "decision": "accept",
+     "spent": 2,
+     "steps": [
+      {
+       "check": "K15",
+       "decision": "defer",
+       "result": "no",
+       "spent": 1
+      },
+      {
+       "check": "K02",
+       "decision": "accept",
+       "result": "no",
+       "spent": 2
+      }
+     ],
+     "units_to_resolve": 2
+    },
+    "C@4": {
+     "arm": "C",
+     "budget": 4,
+     "class": "correct",
+     "decision": "accept",
+     "spent": 2,
+     "steps": [
+      {
+       "check": "K15",
+       "decision": "defer",
+       "result": "no",
+       "spent": 1
+      },
+      {
+       "check": "K02",
+       "decision": "accept",
+       "result": "no",
+       "spent": 2
+      }
+     ],
+     "units_to_resolve": 2
+    },
+    "C@8": {
+     "arm": "C",
+     "budget": 8,
+     "class": "correct",
+     "decision": "accept",
+     "spent": 2,
+     "steps": [
+      {
+       "check": "K15",
+       "decision": "defer",
+       "result": "no",
+       "spent": 1
+      },
+      {
+       "check": "K02",
+       "decision": "accept",
+       "result": "no",
+       "spent": 2
+      }
+     ],
+     "units_to_resolve": 2
+    },
+    "dependency_risk@1": {
+     "arm": "dependency_risk",
+     "budget": 1,
+     "class": "defer",
+     "decision": "defer",
+     "spent": 1,
+     "steps": [
+      {
+       "check": "K01",
+       "decision": "defer",
+       "result": "no",
+       "spent": 1
+      }
+     ],
+     "units_to_resolve": null
+    },
+    "dependency_risk@2": {
+     "arm": "dependency_risk",
+     "budget": 2,
+     "class": "defer",
+     "decision": "defer",
+     "spent": 2,
+     "steps": [
+      {
+       "check": "K09",
+       "decision": "defer",
+       "result": "pass",
+       "spent": 2
+      }
+     ],
+     "units_to_resolve": null
+    },
+    "dependency_risk@4": {
+     "arm": "dependency_risk",
+     "budget": 4,
+     "class": "defer",
+     "decision": "defer",
+     "spent": 4,
+     "steps": [
+      {
+       "check": "K03",
+       "decision": "defer",
+       "result": "pass",
+       "spent": 4
+      }
+     ],
+     "units_to_resolve": null
+    },
+    "dependency_risk@8": {
+     "arm": "dependency_risk",
+     "budget": 8,
+     "class": "defer",
+     "decision": "defer",
+     "spent": 8,
+     "steps": [
+      {
+       "check": "K03",
+       "decision": "defer",
+       "result": "pass",
+       "spent": 4
+      },
+      {
+       "check": "K13",
+       "decision": "defer",
+       "result": "pass",
+       "spent": 8
+      }
+     ],
+     "units_to_resolve": null
+    },
+    "recently_changed@1": {
+     "arm": "recently_changed",
+     "budget": 1,
+     "class": "defer",
+     "decision": "defer",
+     "spent": 1,
+     "steps": [
+      {
+       "check": "K04",
+       "decision": "defer",
+       "result": "pass",
+       "spent": 1
+      }
+     ],
+     "units_to_resolve": null
+    },
+    "recently_changed@2": {
+     "arm": "recently_changed",
+     "budget": 2,
+     "class": "defer",
+     "decision": "defer",
+     "spent": 2,
+     "steps": [
+      {
+       "check": "K09",
+       "decision": "defer",
+       "result": "pass",
+       "spent": 2
+      }
+     ],
+     "units_to_resolve": null
+    },
+    "recently_changed@4": {
+     "arm": "recently_changed",
+     "budget": 4,
+     "class": "defer",
+     "decision": "defer",
+     "spent": 4,
+     "steps": [
+      {
+       "check": "K03",
+       "decision": "defer",
+       "result": "pass",
+       "spent": 4
+      }
+     ],
+     "units_to_resolve": null
+    },
+    "recently_changed@8": {
+     "arm": "recently_changed",
+     "budget": 8,
+     "class": "correct",
+     "decision": "accept",
+     "spent": 6,
+     "steps": [
+      {
+       "check": "K03",
+       "decision": "defer",
+       "result": "pass",
+       "spent": 4
+      },
+      {
+       "check": "K09",
+       "decision": "accept",
+       "result": "pass",
+       "spent": 6
+      }
+     ],
+     "units_to_resolve": 6
+    },
+    "round_robin@1": {
+     "arm": "round_robin",
+     "budget": 1,
+     "class": "defer",
+     "decision": "defer",
+     "spent": 1,
+     "steps": [
+      {
+       "check": "K01",
+       "decision": "defer",
+       "result": "no",
+       "spent": 1
+      }
+     ],
+     "units_to_resolve": null
+    },
+    "round_robin@2": {
+     "arm": "round_robin",
+     "budget": 2,
+     "class": "defer",
+     "decision": "defer",
+     "spent": 2,
+     "steps": [
+      {
+       "check": "K01",
+       "decision": "defer",
+       "result": "no",
+       "spent": 1
+      },
+      {
+       "check": "K02",
+       "decision": "defer",
+       "result": "no",
+       "spent": 2
+      }
+     ],
+     "units_to_resolve": null
+    },
+    "round_robin@4": {
+     "arm": "round_robin",
+     "budget": 4,
+     "class": "defer",
+     "decision": "defer",
+     "spent": 4,
+     "steps": [
+      {
+       "check": "K01",
+       "decision": "defer",
+       "result": "no",
+       "spent": 1
+      },
+      {
+       "check": "K02",
+       "decision": "defer",
+       "result": "no",
+       "spent": 2
+      },
+      {
+       "check": "K04",
+       "decision": "defer",
+       "result": "pass",
+       "spent": 3
+      },
+      {
+       "check": "K05",
+       "decision": "defer",
+       "result": "no",
+       "spent": 4
+      }
+     ],
+     "units_to_resolve": null
+    },
+    "round_robin@8": {
+     "arm": "round_robin",
+     "budget": 8,
+     "class": "defer",
+     "decision": "defer",
+     "spent": 8,
+     "steps": [
+      {
+       "check": "K01",
+       "decision": "defer",
+       "result": "no",
+       "spent": 1
+      },
+      {
+       "check": "K02",
+       "decision": "defer",
+       "result": "no",
+       "spent": 2
+      },
+      {
+       "check": "K03",
+       "decision": "defer",
+       "result": "pass",
+       "spent": 6
+      },
+      {
+       "check": "K04",
+       "decision": "defer",
+       "result": "pass",
+       "spent": 7
+      },
+      {
+       "check": "K05",
+       "decision": "defer",
+       "result": "no",
+       "spent": 8
+      }
+     ],
+     "units_to_resolve": null
+    }
+   },
+   "control": "clean",
+   "distractor": true,
+   "draw": 0,
+   "family": "interface",
+   "hypotheses": 144,
+   "initial_host_rule": "defer",
+   "instance": "dev-900005",
+   "target": "accept"
+  },
+  {
+   "arms": {
+    "A": {
+     "class": "correct",
+     "decision": "reject",
+     "spent": 0
+    },
+    "B@1": {
+     "arm": "B",
+     "budget": 1,
+     "class": "defer",
+     "decision": "defer",
+     "spent": 1,
+     "steps": [
+      {
+       "check": "K04",
+       "decision": "defer",
+       "result": "no",
+       "spent": 1
+      }
+     ],
+     "units_to_resolve": null
+    },
+    "B@2": {
+     "arm": "B",
+     "budget": 2,
+     "class": "defer",
+     "decision": "defer",
+     "spent": 2,
+     "steps": [
+      {
+       "check": "K04",
+       "decision": "defer",
+       "result": "no",
+       "spent": 1
+      },
+      {
+       "check": "K11",
+       "decision": "defer",
+       "result": "no",
+       "spent": 2
+      }
+     ],
+     "units_to_resolve": null
+    },
+    "B@4": {
+     "arm": "B",
+     "budget": 4,
+     "class": "correct",
+     "decision": "reject",
+     "spent": 3,
+     "steps": [
+      {
+       "check": "K04",
+       "decision": "defer",
+       "result": "no",
+       "spent": 1
+      },
+      {
+       "check": "K11",
+       "decision": "defer",
+       "result": "no",
+       "spent": 2
+      },
+      {
+       "check": "K05",
+       "decision": "reject",
+       "result": "yes",
+       "spent": 3
+      }
+     ],
+     "units_to_resolve": 3
+    },
+    "B@8": {
+     "arm": "B",
+     "budget": 8,
+     "class": "correct",
+     "decision": "reject",
+     "spent": 3,
+     "steps": [
+      {
+       "check": "K04",
+       "decision": "defer",
+       "result": "no",
+       "spent": 1
+      },
+      {
+       "check": "K11",
+       "decision": "defer",
+       "result": "no",
+       "spent": 2
+      },
+      {
+       "check": "K05",
+       "decision": "reject",
+       "result": "yes",
+       "spent": 3
+      }
+     ],
+     "units_to_resolve": 3
+    },
+    "C@1": {
+     "arm": "C",
+     "budget": 1,
+     "class": "defer",
+     "decision": "defer",
+     "spent": 1,
+     "steps": [
+      {
+       "check": "K14",
+       "decision": "defer",
+       "result": "yes",
+       "spent": 1
+      }
+     ],
+     "units_to_resolve": null
+    },
+    "C@2": {
+     "arm": "C",
+     "budget": 2,
+     "class": "correct",
+     "decision": "reject",
+     "spent": 2,
+     "steps": [
+      {
+       "check": "K14",
+       "decision": "defer",
+       "result": "yes",
+       "spent": 1
+      },
+      {
+       "check": "K04",
+       "decision": "reject",
+       "result": "no",
+       "spent": 2
+      }
+     ],
+     "units_to_resolve": 2
+    },
+    "C@4": {
+     "arm": "C",
+     "budget": 4,
+     "class": "correct",
+     "decision": "reject",
+     "spent": 2,
+     "steps": [
+      {
+       "check": "K14",
+       "decision": "defer",
+       "result": "yes",
+       "spent": 1
+      },
+      {
+       "check": "K04",
+       "decision": "reject",
+       "result": "no",
+       "spent": 2
+      }
+     ],
+     "units_to_resolve": 2
+    },
+    "C@8": {
+     "arm": "C",
+     "budget": 8,
+     "class": "correct",
+     "decision": "reject",
+     "spent": 2,
+     "steps": [
+      {
+       "check": "K14",
+       "decision": "defer",
+       "result": "yes",
+       "spent": 1
+      },
+      {
+       "check": "K04",
+       "decision": "reject",
+       "result": "no",
+       "spent": 2
+      }
+     ],
+     "units_to_resolve": 2
+    },
+    "dependency_risk@1": {
+     "arm": "dependency_risk",
+     "budget": 1,
+     "class": "defer",
+     "decision": "defer",
+     "spent": 1,
+     "steps": [
+      {
+       "check": "K04",
+       "decision": "defer",
+       "result": "no",
+       "spent": 1
+      }
+     ],
+     "units_to_resolve": null
+    },
+    "dependency_risk@2": {
+     "arm": "dependency_risk",
+     "budget": 2,
+     "class": "correct",
+     "decision": "reject",
+     "spent": 2,
+     "steps": [
+      {
+       "check": "K01",
+       "decision": "reject",
+       "result": "fail",
+       "spent": 2
+      }
+     ],
+     "units_to_resolve": 2
+    },
+    "dependency_risk@4": {
+     "arm": "dependency_risk",
+     "budget": 4,
+     "class": "correct",
+     "decision": "reject",
+     "spent": 4,
+     "steps": [
+      {
+       "check": "K08",
+       "decision": "reject",
+       "result": "fail",
+       "spent": 4
+      }
+     ],
+     "units_to_resolve": 4
+    },
+    "dependency_risk@8": {
+     "arm": "dependency_risk",
+     "budget": 8,
+     "class": "correct",
+     "decision": "reject",
+     "spent": 4,
+     "steps": [
+      {
+       "check": "K08",
+       "decision": "reject",
+       "result": "fail",
+       "spent": 4
+      }
+     ],
+     "units_to_resolve": 4
+    },
+    "recently_changed@1": {
+     "arm": "recently_changed",
+     "budget": 1,
+     "class": "defer",
+     "decision": "defer",
+     "spent": 1,
+     "steps": [
+      {
+       "check": "K13",
+       "decision": "defer",
+       "result": "pass",
+       "spent": 1
+      }
+     ],
+     "units_to_resolve": null
+    },
+    "recently_changed@2": {
+     "arm": "recently_changed",
+     "budget": 2,
+     "class": "correct",
+     "decision": "reject",
+     "spent": 2,
+     "steps": [
+      {
+       "check": "K01",
+       "decision": "reject",
+       "result": "fail",
+       "spent": 2
+      }
+     ],
+     "units_to_resolve": 2
+    },
+    "recently_changed@4": {
+     "arm": "recently_changed",
+     "budget": 4,
+     "class": "correct",
+     "decision": "reject",
+     "spent": 2,
+     "steps": [
+      {
+       "check": "K01",
+       "decision": "reject",
+       "result": "fail",
+       "spent": 2
+      }
+     ],
+     "units_to_resolve": 2
+    },
+    "recently_changed@8": {
+     "arm": "recently_changed",
+     "budget": 8,
+     "class": "correct",
+     "decision": "reject",
+     "spent": 2,
+     "steps": [
+      {
+       "check": "K01",
+       "decision": "reject",
+       "result": "fail",
+       "spent": 2
+      }
+     ],
+     "units_to_resolve": 2
+    },
+    "round_robin@1": {
+     "arm": "round_robin",
+     "budget": 1,
+     "class": "defer",
+     "decision": "defer",
+     "spent": 1,
+     "steps": [
+      {
+       "check": "K04",
+       "decision": "defer",
+       "result": "no",
+       "spent": 1
+      }
+     ],
+     "units_to_resolve": null
+    },
+    "round_robin@2": {
+     "arm": "round_robin",
+     "budget": 2,
+     "class": "correct",
+     "decision": "reject",
+     "spent": 2,
+     "steps": [
+      {
+       "check": "K01",
+       "decision": "reject",
+       "result": "fail",
+       "spent": 2
+      }
+     ],
+     "units_to_resolve": 2
+    },
+    "round_robin@4": {
+     "arm": "round_robin",
+     "budget": 4,
+     "class": "correct",
+     "decision": "reject",
+     "spent": 2,
+     "steps": [
+      {
+       "check": "K01",
+       "decision": "reject",
+       "result": "fail",
+       "spent": 2
+      }
+     ],
+     "units_to_resolve": 2
+    },
+    "round_robin@8": {
+     "arm": "round_robin",
+     "budget": 8,
+     "class": "correct",
+     "decision": "reject",
+     "spent": 2,
+     "steps": [
+      {
+       "check": "K01",
+       "decision": "reject",
+       "result": "fail",
+       "spent": 2
+      }
+     ],
+     "units_to_resolve": 2
+    }
+   },
+   "control": "malformed",
+   "distractor": false,
+   "draw": 0,
+   "family": "combined",
+   "hypotheses": 27,
+   "initial_host_rule": "defer",
+   "instance": "dev-900006",
+   "target": "reject"
+  },
+  {
+   "arms": {
+    "A": {
+     "class": "false_reject",
+     "decision": "reject",
+     "spent": 0
+    },
+    "B@1": {
+     "arm": "B",
+     "budget": 1,
+     "class": "defer",
+     "decision": "defer",
+     "spent": 1,
+     "steps": [
+      {
+       "check": "K03",
+       "decision": "defer",
+       "result": "no",
+       "spent": 1
+      }
+     ],
+     "units_to_resolve": null
+    },
+    "B@2": {
+     "arm": "B",
+     "budget": 2,
+     "class": "defer",
+     "decision": "defer",
+     "spent": 2,
+     "steps": [
+      {
+       "check": "K03",
+       "decision": "defer",
+       "result": "no",
+       "spent": 1
+      },
+      {
+       "check": "K04",
+       "decision": "defer",
+       "result": "no",
+       "spent": 2
+      }
+     ],
+     "units_to_resolve": null
+    },
+    "B@4": {
+     "arm": "B",
+     "budget": 4,
+     "class": "correct",
+     "decision": "accept",
+     "spent": 3,
+     "steps": [
+      {
+       "check": "K03",
+       "decision": "defer",
+       "result": "no",
+       "spent": 1
+      },
+      {
+       "check": "K04",
+       "decision": "defer",
+       "result": "no",
+       "spent": 2
+      },
+      {
+       "check": "K05",
+       "decision": "accept",
+       "result": "no",
+       "spent": 3
+      }
+     ],
+     "units_to_resolve": 3
+    },
+    "B@8": {
+     "arm": "B",
+     "budget": 8,
+     "class": "correct",
+     "decision": "accept",
+     "spent": 3,
+     "steps": [
+      {
+       "check": "K03",
+       "decision": "defer",
+       "result": "no",
+       "spent": 1
+      },
+      {
+       "check": "K04",
+       "decision": "defer",
+       "result": "no",
+       "spent": 2
+      },
+      {
+       "check": "K05",
+       "decision": "accept",
+       "result": "no",
+       "spent": 3
+      }
+     ],
+     "units_to_resolve": 3
+    },
+    "C@1": {
+     "arm": "C",
+     "budget": 1,
+     "class": "defer",
+     "decision": "defer",
+     "spent": 1,
+     "steps": [
+      {
+       "check": "K05",
+       "decision": "defer",
+       "result": "no",
+       "spent": 1
+      }
+     ],
+     "units_to_resolve": null
+    },
+    "C@2": {
+     "arm": "C",
+     "budget": 2,
+     "class": "correct",
+     "decision": "accept",
+     "spent": 2,
+     "steps": [
+      {
+       "check": "K05",
+       "decision": "defer",
+       "result": "no",
+       "spent": 1
+      },
+      {
+       "check": "K03",
+       "decision": "accept",
+       "result": "no",
+       "spent": 2
+      }
+     ],
+     "units_to_resolve": 2
+    },
+    "C@4": {
+     "arm": "C",
+     "budget": 4,
+     "class": "correct",
+     "decision": "accept",
+     "spent": 2,
+     "steps": [
+      {
+       "check": "K05",
+       "decision": "defer",
+       "result": "no",
+       "spent": 1
+      },
+      {
+       "check": "K03",
+       "decision": "accept",
+       "result": "no",
+       "spent": 2
+      }
+     ],
+     "units_to_resolve": 2
+    },
+    "C@8": {
+     "arm": "C",
+     "budget": 8,
+     "class": "correct",
+     "decision": "accept",
+     "spent": 2,
+     "steps": [
+      {
+       "check": "K05",
+       "decision": "defer",
+       "result": "no",
+       "spent": 1
+      },
+      {
+       "check": "K03",
+       "decision": "accept",
+       "result": "no",
+       "spent": 2
+      }
+     ],
+     "units_to_resolve": 2
+    },
+    "dependency_risk@1": {
+     "arm": "dependency_risk",
+     "budget": 1,
+     "class": "defer",
+     "decision": "defer",
+     "spent": 1,
+     "steps": [
+      {
+       "check": "K03",
+       "decision": "defer",
+       "result": "no",
+       "spent": 1
+      }
+     ],
+     "units_to_resolve": null
+    },
+    "dependency_risk@2": {
+     "arm": "dependency_risk",
+     "budget": 2,
+     "class": "defer",
+     "decision": "defer",
+     "spent": 2,
+     "steps": [
+      {
+       "check": "K09",
+       "decision": "defer",
+       "result": "pass",
+       "spent": 2
+      }
+     ],
+     "units_to_resolve": null
+    },
+    "dependency_risk@4": {
+     "arm": "dependency_risk",
+     "budget": 4,
+     "class": "defer",
+     "decision": "defer",
+     "spent": 4,
+     "steps": [
+      {
+       "check": "K16",
+       "decision": "defer",
+       "result": "pass",
+       "spent": 4
+      }
+     ],
+     "units_to_resolve": null
+    },
+    "dependency_risk@8": {
+     "arm": "dependency_risk",
+     "budget": 8,
+     "class": "correct",
+     "decision": "accept",
+     "spent": 6,
+     "steps": [
+      {
+       "check": "K16",
+       "decision": "defer",
+       "result": "pass",
+       "spent": 4
+      },
+      {
+       "check": "K09",
+       "decision": "accept",
+       "result": "pass",
+       "spent": 6
+      }
+     ],
+     "units_to_resolve": 6
+    },
+    "recently_changed@1": {
+     "arm": "recently_changed",
+     "budget": 1,
+     "class": "defer",
+     "decision": "defer",
+     "spent": 1,
+     "steps": [
+      {
+       "check": "K10",
+       "decision": "defer",
+       "result": "pass",
+       "spent": 1
+      }
+     ],
+     "units_to_resolve": null
+    },
+    "recently_changed@2": {
+     "arm": "recently_changed",
+     "budget": 2,
+     "class": "defer",
+     "decision": "defer",
+     "spent": 2,
+     "steps": [
+      {
+       "check": "K09",
+       "decision": "defer",
+       "result": "pass",
+       "spent": 2
+      }
+     ],
+     "units_to_resolve": null
+    },
+    "recently_changed@4": {
+     "arm": "recently_changed",
+     "budget": 4,
+     "class": "defer",
+     "decision": "defer",
+     "spent": 4,
+     "steps": [
+      {
+       "check": "K09",
+       "decision": "defer",
+       "result": "pass",
+       "spent": 2
+      },
+      {
+       "check": "K12",
+       "decision": "defer",
+       "result": "pass",
+       "spent": 4
+      }
+     ],
+     "units_to_resolve": null
+    },
+    "recently_changed@8": {
+     "arm": "recently_changed",
+     "budget": 8,
+     "class": "correct",
+     "decision": "accept",
+     "spent": 8,
+     "steps": [
+      {
+       "check": "K09",
+       "decision": "defer",
+       "result": "pass",
+       "spent": 2
+      },
+      {
+       "check": "K12",
+       "decision": "defer",
+       "result": "pass",
+       "spent": 4
+      },
+      {
+       "check": "K16",
+       "decision": "accept",
+       "result": "pass",
+       "spent": 8
+      }
+     ],
+     "units_to_resolve": 8
+    },
+    "round_robin@1": {
+     "arm": "round_robin",
+     "budget": 1,
+     "class": "defer",
+     "decision": "defer",
+     "spent": 1,
+     "steps": [
+      {
+       "check": "K03",
+       "decision": "defer",
+       "result": "no",
+       "spent": 1
+      }
+     ],
+     "units_to_resolve": null
+    },
+    "round_robin@2": {
+     "arm": "round_robin",
+     "budget": 2,
+     "class": "defer",
+     "decision": "defer",
+     "spent": 2,
+     "steps": [
+      {
+       "check": "K01",
+       "decision": "defer",
+       "result": "pass",
+       "spent": 2
+      }
+     ],
+     "units_to_resolve": null
+    },
+    "round_robin@4": {
+     "arm": "round_robin",
+     "budget": 4,
+     "class": "defer",
+     "decision": "defer",
+     "spent": 4,
+     "steps": [
+      {
+       "check": "K01",
+       "decision": "defer",
+       "result": "pass",
+       "spent": 2
+      },
+      {
+       "check": "K02",
+       "decision": "defer",
+       "result": "0",
+       "spent": 4
+      }
+     ],
+     "units_to_resolve": null
+    },
+    "round_robin@8": {
+     "arm": "round_robin",
+     "budget": 8,
+     "class": "correct",
+     "decision": "accept",
+     "spent": 5,
+     "steps": [
+      {
+       "check": "K01",
+       "decision": "defer",
+       "result": "pass",
+       "spent": 2
+      },
+      {
+       "check": "K02",
+       "decision": "defer",
+       "result": "0",
+       "spent": 4
+      },
+      {
+       "check": "K03",
+       "decision": "accept",
+       "result": "no",
+       "spent": 5
+      }
+     ],
+     "units_to_resolve": 5
+    }
+   },
+   "control": "clean",
+   "distractor": false,
+   "draw": 0,
+   "family": "combined",
+   "hypotheses": 27,
+   "initial_host_rule": "defer",
+   "instance": "dev-900007",
+   "target": "accept"
+  }
+ ],
+ "part": "swarm",
+ "repair": [
+  {
+   "arm": "L-B",
+   "before": true,
+   "controller": {
+    "agreement": true,
+    "arm": "L-B",
+    "checks": [],
+    "cited": [
+     "K03",
+     "K04",
+     "K07"
+    ],
+    "class": "correct",
+    "complied": null,
+    "control": "clean",
+    "denied": 1,
+    "draw": 0,
+    "explanation": "Frozen snapshot: ingest 4x1, transform 9x1, export 6x1, so T=19, R=3, max reserve 9. Probes from the first verification still hold: cap>=23 (K03 yes), node>=10 (K04 yes), ovh<2 (K07 no), so ovh in {0,1}. Worst-case G1 = 19+3*1 = 22 <= 23 <= cap. Worst-case G2 = 9+1 = 10 <= 10 <= node. Every remaining hidden combination satisfies G1 and G2, and the local tests pass. No new budget spent.",
+    "failure": false,
+    "family": "allocation",
+    "first_check": null,
+    "host_class": "correct",
+    "host_rule_on_agent_evidence": "accept",
+    "initial_note": "advisor note: 4 budget units remain. Highest expected information gain per unit cost: K08 (cost 1, expected information gain 1.00 bits); K10 (cost 1, expected information gain 1.00 bits); K16 (cost 1, expected information gain 1.00 bits).",
+    "instance": "dev-900000",
+    "phase": "repair",
+    "recommended": [
+     "K08",
+     "K10",
+     "K16"
+    ],
+    "spent": 0,
+    "target": "accept",
+    "tool_errors": 1,
+    "turns": 2,
+    "verdict": "accept"
+   },
+   "draw": 0,
+   "family": "allocation",
+   "files": {
+    "modules/export.cfg": "# module export\nreplicas = 1\nreserve = 6\n",
+    "modules/ingest.cfg": "# module ingest\nreplicas = 1\nreserve = 4\n",
+    "modules/transform.cfg": "# module transform\nreplicas = 1\nreserve = 9\n"
+   },
+   "grader": {
+    "global": {
+     "G1": true,
+     "G2": true
+    },
+    "local": {
+     "export": true,
+     "ingest": true,
+     "transform": true
+    },
+    "local_green": true,
+    "system_passes": true,
+    "target": "accept",
+    "units": 16
+   },
+   "instance": "dev-900000"
+  },
+  {
+   "arm": "L-C",
+   "before": true,
+   "controller": {
+    "agreement": true,
+    "arm": "L-C",
+    "checks": [],
+    "cited": [
+     "K04",
+     "K07",
+     "K16"
+    ],
+    "class": "correct",
+    "complied": null,
+    "control": "clean",
+    "denied": 1,
+    "draw": 0,
+    "explanation": "Frozen files: ingest 4x1, transform 9x1, export 6x1, so T=19, R=3, max reserve 9. Probe readings: K07 \"is ovh >= 2?\" = no, so ovh < 2; K16 \"is ovh >= 1?\" = no, so ovh = 0. The challenger's concern assumed the opposite polarity, which misreads the probe wording. With ovh=0: G1 = 19 <= cap for every cap in {20,23,26}. K04 \"is node >= 10?\" = yes, so G2 = 9 + 0 = 9 <= node for every node in {10,12}. Local tests pass for all three modules. The conclusion holds under every consistent hidden combination, and zone appears in neither constraint.",
+    "failure": false,
+    "family": "allocation",
+    "first_check": null,
+    "host_class": "correct",
+    "host_rule_on_agent_evidence": "accept",
+    "initial_note": "advisor note: 4 budget units remain. Every hypothesis consistent with the observations gives the same verdict.",
+    "instance": "dev-900000",
+    "phase": "repair",
+    "recommended": [],
+    "spent": 0,
+    "target": "accept",
+    "tool_errors": 1,
+    "turns": 2,
+    "verdict": "accept"
+   },
+   "draw": 0,
+   "family": "allocation",
+   "files": {
+    "modules/export.cfg": "# module export\nreplicas = 1\nreserve = 6\n",
+    "modules/ingest.cfg": "# module ingest\nreplicas = 1\nreserve = 4\n",
+    "modules/transform.cfg": "# module transform\nreplicas = 1\nreserve = 9\n"
+   },
+   "grader": {
+    "global": {
+     "G1": true,
+     "G2": true
+    },
+    "local": {
+     "export": true,
+     "ingest": true,
+     "transform": true
+    },
+    "local_green": true,
+    "system_passes": true,
+    "target": "accept",
+    "units": 16
+   },
+   "instance": "dev-900000"
+  },
+  {
+   "arm": "L-C",
+   "before": false,
+   "controller": {
+    "agreement": true,
+    "arm": "L-C",
+    "checks": [],
+    "cited": [
+     "K02",
+     "K04"
+    ],
+    "class": "correct",
+    "complied": null,
+    "control": "clean",
+    "denied": 1,
+    "draw": 0,
+    "explanation": "The frozen snapshot fails I1 under the true hidden values. K02 (scale>=12: yes) fixes scale=12, and K04 (jitter=2) fixes jitter=2. I1 = producer.batch*scale + jitter = 3*12 + 2 = 38 > router.buffer = 36. This holds for every incl, codec and lat value, so the system fails the global contract. The observations lie inside the listed domains, so this is a reject rather than a model_mismatch. Fixing it requires a spec change (router buffer cap >= 38 or producer batch minimum <= 2). I spent no further budget because the result is already determined.",
+    "failure": false,
+    "family": "interface",
+    "first_check": null,
+    "host_class": "correct",
+    "host_rule_on_agent_evidence": "reject",
+    "initial_note": "advisor note: 4 budget units remain. Every hypothesis consistent with the observations gives the same verdict.",
+    "instance": "dev-900004",
+    "phase": "repair",
+    "recommended": [],
+    "spent": 0,
+    "target": "reject",
+    "tool_errors": 1,
+    "turns": 2,
+    "verdict": "reject"
+   },
+   "draw": 0,
+   "family": "interface",
+   "files": {
+    "modules/consumer.cfg": "# module consumer\naccept_hi = 38\ntimeout = 5\n",
+    "modules/producer.cfg": "# module producer\n# batch: items per emitted batch (local range 3..6)\nbatch = 3\n",
+    "modules/router.cfg": "# module router\n# buffer: router buffer slots (local limit <= 36)\nbuffer = 36\n"
+   },
+   "grader": {
+    "global": {
+     "I1": false,
+     "I2": true,
+     "I3": true
+    },
+    "local": {
+     "consumer": true,
+     "producer": true,
+     "router": true
+    },
+    "local_green": true,
+    "system_passes": false,
+    "target": "reject",
+    "units": 16
+   },
+   "instance": "dev-900004"
+  },
+  {
+   "arm": "L-B",
+   "before": false,
+   "controller": {
+    "agreement": true,
+    "arm": "L-B",
+    "checks": [],
+    "cited": [
+     "K13",
+     "K02",
+     "K08"
+    ],
+    "class": "correct",
+    "complied": null,
+    "control": "clean",
+    "denied": 1,
+    "draw": 0,
+    "explanation": "Earlier probes (still valid) give lat=1 (K13 no), scale=12 (K02 yes), jitter>=2 (K08 yes). With producer.batch>=3 (producer L1), I1 needs router.buffer >= 3*12 + jitter >= 38, but router L1 caps buffer at 36. So I1 fails under the true values for the frozen files. This is not a model mismatch because the observations are consistent with a listed combination (scale=12, jitter=2 or 3, lat=1, incl either). No further checks needed.",
+    "failure": false,
+    "family": "interface",
+    "first_check": null,
+    "host_class": "correct",
+    "host_rule_on_agent_evidence": "reject",
+    "initial_note": "advisor note: 4 budget units remain. Highest expected information gain per unit cost: K10 (cost 1, expected information gain 1.00 bits); K12 (cost 1, expected information gain 1.00 bits); K09 (cost 1, expected information gain 0.92 bits).",
+    "instance": "dev-900004",
+    "phase": "repair",
+    "recommended": [
+     "K10",
+     "K12",
+     "K09"
+    ],
+    "spent": 0,
+    "target": "reject",
+    "tool_errors": 1,
+    "turns": 2,
+    "verdict": "reject"
+   },
+   "draw": 0,
+   "family": "interface",
+   "files": {
+    "modules/consumer.cfg": "# module consumer\naccept_hi = 38\ntimeout = 5\n",
+    "modules/producer.cfg": "# module producer\n# batch: items per emitted batch (local range 3..6)\nbatch = 3\n",
+    "modules/router.cfg": "# module router\n# buffer: router buffer slots (local limit <= 36)\nbuffer = 36\n"
+   },
+   "grader": {
+    "global": {
+     "I1": false,
+     "I2": true,
+     "I3": true
+    },
+    "local": {
+     "consumer": true,
+     "producer": true,
+     "router": true
+    },
+    "local_green": true,
+    "system_passes": false,
+    "target": "reject",
+    "units": 16
+   },
+   "instance": "dev-900004"
+  }
+ ],
+ "resolved_model": "claude-haiku-5-5",
+ "split": "development"
+}

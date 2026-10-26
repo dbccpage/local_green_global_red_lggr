@@ -1,0 +1,72 @@
+{
+ "dev": {
+  "by_category": {
+   "controller": {
+    "cache_read_share": 0.7389317619764941,
+    "max_counted_input": 8040,
+    "mean_output_tokens": 457.1518987341772,
+    "mean_prompt_tokens": 6285.518987341772,
+    "requests": 79,
+    "usd": 0.037885,
+    "usd_per_request": 0.00047955696202531647
+   },
+   "proposal": {
+    "cache_read_share": 0.668290264149416,
+    "max_counted_input": 7519,
+    "mean_output_tokens": 1206.625,
+    "mean_prompt_tokens": 3705.7625,
+    "requests": 80,
+    "usd": 0.062491,
+    "usd_per_request": 0.0007811375
+   },
+   "repair-controller": {
+    "cache_read_share": 0.5633192659377197,
+    "max_counted_input": 8409,
+    "mean_output_tokens": 525.375,
+    "mean_prompt_tokens": 7819.5,
+    "requests": 8,
+    "usd": 0.005864,
+    "usd_per_request": 0.000733
+   },
+   "repair-wave": {
+    "cache_read_share": 0.779113807825914,
+    "max_counted_input": 10622,
+    "mean_output_tokens": 396.9,
+    "mean_prompt_tokens": 6534.7,
+    "requests": 40,
+    "usd": 0.017168,
+    "usd_per_request": 0.00042919999999999997
+   },
+   "rsi": {
+    "cache_read_share": 0.5798831703541458,
+    "max_counted_input": 8011,
+    "mean_output_tokens": 914.3416666666667,
+    "mean_prompt_tokens": 4398.141666666666,
+    "requests": 120,
+    "usd": 0.085565,
+    "usd_per_request": 0.0007130416666666667
+   }
+  },
+  "failures": {
+   "proposal:stop_max_tokens": 1,
+   "repair-wave:input_over_limit": 2
+  }
+ },
+ "projection": {
+  "requests": {
+   "controller": 10800.0,
+   "proposal": 12000,
+   "repair-controller": 1440.0,
+   "repair-wave": 3600,
+   "rsi": 5400
+  },
+  "total_usd": 21.00393018987342,
+  "usd": {
+   "controller": 5.179215189873418,
+   "proposal": 9.37365,
+   "repair-controller": 1.05552,
+   "repair-wave": 1.5451199999999998,
+   "rsi": 3.8504250000000004
+  }
+ }
+}
