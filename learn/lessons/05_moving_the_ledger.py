@@ -7,6 +7,7 @@ nonrepairability the other way.
 
 AuthorityEffect: None.
 Standard library only: Python 3.10+.
+Used by learn/guides/04_checked_memory.md.
 
 Artifact Summary:
 1. What it supports: The two supplied transport fixtures, including the require_reflection flag on the lossy map.

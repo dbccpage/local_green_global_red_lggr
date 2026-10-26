@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 370" width="800" height="370" role="img" aria-labelledby="t d">
+<title id="t">Collision-guided check selection</title>
+<desc id="d">Four hypotheses and five priced checks. The selector buys the check that separates the current colliding pass/fail pair: schema, then fee_e2e, and accepts with 4 units. Cheapest-first spends 3 units on checks that cannot separate any pair and must defer.</desc>
+<style>
+  .bg{fill:#ffffff} .panel{fill:#f6f8fa;stroke:#d0d7de} .ink{fill:#1f2328} .muted{fill:#59636e}
+  .g{fill:#dafbe1;stroke:#1a7f37} .gt{fill:#1a7f37} .r{fill:#ffebe9;stroke:#cf222e} .rt{fill:#cf222e}
+  .b{fill:#ddf4ff;stroke:#0969da} .bt{fill:#0969da} .a{fill:#fff8c5;stroke:#9a6700} .at{fill:#9a6700}
+  .line{stroke:#59636e;fill:none} .al{stroke:#9a6700;fill:none} .gl{stroke:#1a7f37;fill:none} .rl{stroke:#cf222e;fill:none} .bl{stroke:#0969da;fill:none}
+  .head{fill:#59636e} .ghead{fill:#1a7f37} .rhead{fill:#cf222e} .bhead{fill:#0969da}
+  text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;font-size:14px}
+  .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12.5px}
+  .h{font-size:15px;font-weight:600} .s{font-size:12.5px} .cap{font-size:13px}
+  @media (prefers-color-scheme: dark){
+    .bg{fill:#0d1117} .panel{fill:#151b23;stroke:#3d444d} .ink{fill:#e6edf3} .muted{fill:#9198a1}
+    .g{fill:#0f2a1a;stroke:#3fb950} .gt{fill:#3fb950} .r{fill:#3a1418;stroke:#f85149} .rt{fill:#f85149}
+    .b{fill:#0c2340;stroke:#4493f8} .bt{fill:#4493f8} .a{fill:#2e2405;stroke:#d29922} .at{fill:#d29922}
+    .line{stroke:#9198a1} .al{stroke:#d29922} .gl{stroke:#3fb950} .rl{stroke:#f85149} .bl{stroke:#4493f8}
+    .head{fill:#9198a1} .ghead{fill:#3fb950} .rhead{fill:#f85149} .bhead{fill:#4493f8}
+  }
+</style>
+<defs><marker id="m" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="head"/></marker><marker id="mg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="ghead"/></marker><marker id="mr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="rhead"/></marker><marker id="mb" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="bhead"/></marker></defs>
+<rect class="bg" width="800" height="370" rx="8"/>
+<text x="30" y="32" class="ink h" text-anchor="start">Hypotheses × checks (cost in units). Budget: 4 units.</text>
+<text x="237.0" y="56" class="muted mono" text-anchor="middle">unit_a</text>
+<text x="237.0" y="72" class="muted s" text-anchor="middle">cost 1</text>
+<text x="311.0" y="56" class="muted mono" text-anchor="middle">unit_b</text>
+<text x="311.0" y="72" class="muted s" text-anchor="middle">cost 1</text>
+<text x="385.0" y="56" class="muted mono" text-anchor="middle">lint</text>
+<text x="385.0" y="72" class="muted s" text-anchor="middle">cost 1</text>
+<text x="459.0" y="56" class="bt mono" text-anchor="middle">schema</text>
+<text x="459.0" y="72" class="bt s" text-anchor="middle">cost 2</text>
+<rect x="426" y="80" width="66" height="164" rx="6" class="b" stroke-width="1.5"/>
+<text x="533.0" y="56" class="bt mono" text-anchor="middle">fee_e2e</text>
+<text x="533.0" y="72" class="bt s" text-anchor="middle">cost 2</text>
+<rect x="500" y="80" width="66" height="164" rx="6" class="b" stroke-width="1.5"/>
+<text x="30" y="108" class="ink" text-anchor="start">H1 clean</text>
+<text x="178" y="108" class="gt s" text-anchor="middle">pass</text>
+<text x="237.0" y="108" class="gt" text-anchor="middle">✓</text>
+<text x="311.0" y="108" class="gt" text-anchor="middle">✓</text>
+<text x="385.0" y="108" class="gt" text-anchor="middle">✓</text>
+<text x="459.0" y="108" class="gt" text-anchor="middle">✓</text>
+<text x="533.0" y="108" class="gt" text-anchor="middle">✓</text>
+<text x="30" y="148" class="ink" text-anchor="start">H2 key mismatch</text>
+<text x="178" y="148" class="rt s" text-anchor="middle">fail</text>
+<text x="237.0" y="148" class="gt" text-anchor="middle">✓</text>
+<text x="311.0" y="148" class="gt" text-anchor="middle">✓</text>
+<text x="385.0" y="148" class="gt" text-anchor="middle">✓</text>
+<text x="459.0" y="148" class="rt" text-anchor="middle">✗</text>
+<text x="533.0" y="148" class="gt" text-anchor="middle">✓</text>
+<text x="30" y="188" class="ink" text-anchor="start">H3 fee drift</text>
+<text x="178" y="188" class="rt s" text-anchor="middle">fail</text>
+<text x="237.0" y="188" class="gt" text-anchor="middle">✓</text>
+<text x="311.0" y="188" class="gt" text-anchor="middle">✓</text>
+<text x="385.0" y="188" class="gt" text-anchor="middle">✓</text>
+<text x="459.0" y="188" class="gt" text-anchor="middle">✓</text>
+<text x="533.0" y="188" class="rt" text-anchor="middle">✗</text>
+<text x="30" y="228" class="ink" text-anchor="start">H4 both</text>
+<text x="178" y="228" class="rt s" text-anchor="middle">fail</text>
+<text x="237.0" y="228" class="gt" text-anchor="middle">✓</text>
+<text x="311.0" y="228" class="rt" text-anchor="middle">✗</text>
+<text x="385.0" y="228" class="gt" text-anchor="middle">✓</text>
+<text x="459.0" y="228" class="rt" text-anchor="middle">✗</text>
+<text x="533.0" y="228" class="rt" text-anchor="middle">✗</text>
+<text x="459.0" y="268" class="bt s" text-anchor="middle">round 1</text>
+<text x="533.0" y="268" class="bt s" text-anchor="middle">round 2</text>
+<rect x="590" y="56" width="190" height="224" rx="8" class="panel" stroke-width="1.5"/>
+<text x="685" y="84" class="ink s" text-anchor="middle">1. H1 (pass) and H2 (fail)</text>
+<text x="685" y="105" class="ink s" text-anchor="middle">collide on nothing seen.</text>
+<text x="685" y="126" class="bt s" text-anchor="middle">schema separates them.</text>
+<text x="685" y="147" class="ink s" text-anchor="middle">2. Now H1 vs H3 collide.</text>
+<text x="685" y="168" class="bt s" text-anchor="middle">fee_e2e separates them.</text>
+<text x="685" y="189" class="ink s" text-anchor="middle">3. Only H1 survives.</text>
+<text x="685" y="210" class="gt s" text-anchor="middle">accept, 4 of 4 units.</text>
+<rect x="30" y="300" width="750" height="50" rx="8" class="a" stroke-width="1.5"/>
+<text x="405" y="321" class="ink s" text-anchor="middle">Toy contrast: cheapest-first buys unit_a, unit_b, lint (3 units). Nothing separates H1 from H2, so it must defer.</text>
+<text x="405" y="339" class="muted s" text-anchor="middle">unit_a and lint are ✓ in every hypothesis: buying them cannot change the verdict.</text>
+</svg>

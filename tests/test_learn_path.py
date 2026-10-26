@@ -1,10 +1,14 @@
 """Prepared-half locks for the learn/ course. Your-turn dicts are not read."""
 from __future__ import annotations
 
+import io
+import json
+import re
 import unittest
+from pathlib import Path
 
 from learn.harness_adapter import bind, wire_handoff, wire_review_cycle, wire_tool_loop
-from learn.support import LESSONS, load_lesson
+from learn.support import LESSONS, RECIPES, load_lesson, load_recipe
 
 
 EXPECTED = {
@@ -298,6 +302,134 @@ class LearnPathTests(unittest.TestCase):
         })
         self.assertEqual(scored["status"], "RSI_FIBER_CEILING_LOCKED_LGGR")
         self.assertEqual(scored["monitor_receipt"]["coarse_half_spread_ceiling"], "1/2")
+
+
+class RecipeTests(unittest.TestCase):
+    """Guide snippets import these recipes, so these locks cover the guides too."""
+
+    def _demo(self, name: str) -> dict:
+        module = load_recipe(name)
+        row = module.demo()
+        self.assertEqual(row["recipe_id"], name)
+        self.assertEqual(row["status"], module.EXPECTED_STATUS)
+        self.assertEqual(row["authority_effect"], "None")
+        return row
+
+    def test_every_recipe_is_registered(self) -> None:
+        on_disk = {p.stem for p in Path("learn/recipes").glob("*.py") if p.stem != "__init__"}
+        self.assertEqual(on_disk, set(RECIPES))
+
+    def test_collision_guard_blocks_second_handoff(self) -> None:
+        row = self._demo("collision_guard")
+        self.assertEqual(row["thin_allowed"], [True, False])
+        self.assertEqual(row["colliding_pair"]["left"]["state_id"], "task-a")
+        self.assertEqual(row["enriched_status"], "DECODER_VERIFIED")
+        self.assertEqual(row["enriched_allowed"], [True, True])
+
+    def test_authority_firewall(self) -> None:
+        row = self._demo("authority_firewall")
+        self.assertEqual(row["tampered_codes"], ["POLICY_MANIFEST_CHANGED"])
+        self.assertEqual(row["honest_status"], "COMPOSITION_VERIFIED")
+        self.assertIs(row["honest_certified"], True)
+        self.assertEqual(row["self_signed_status"], "GLOBAL_SAMPLE_REJECTED")
+        self.assertEqual(row["owed_status"], "WITNESS_INCOMPLETE")
+        self.assertEqual(row["owed_obligations"], ["recheck_schema"])
+
+    def test_authority_firewall_scope_fields(self) -> None:
+        import dataclasses
+        from lggr import StateRef, make_witness
+        module = load_recipe("authority_firewall")
+        policy = module._policy()
+        for field in ("evaluator_id", "spec_id", "authority_id"):
+            fw = module.AuthorityFirewall(policy, StateRef("s0", 0))
+            changed = dataclasses.replace(policy, **{field: "agent-chosen"})
+            fw.admit_witness(make_witness(changed, StateRef("s0", 0), StateRef("s1", 1), witness_id="w001"),
+                             global_sample=1, sample_source="external")
+            verdict = fw.verdict()
+            self.assertEqual(verdict["status"], "AUTHORITY_REQUIRED")
+            self.assertIn("SEMANTIC_SCOPE_CHANGED", {f["code"] for f in verdict["findings"]})
+
+    def test_check_selector_never_accepts_a_failing_world(self) -> None:
+        row = self._demo("check_selector")
+        self.assertEqual(row["bought"], ["schema", "fee_e2e"])
+        self.assertEqual(row["spent"], 4)
+        for world in row["every_world"]:
+            expected = "accept" if world["world"] == "H1-clean" else "reject"
+            self.assertEqual(world["decision"], expected)
+            self.assertLessEqual(world["spent"], 4)
+        self.assertEqual(row["cheapest_first_decision"], "defer")
+
+    def test_check_selector_host_rule(self) -> None:
+        module = load_recipe("check_selector")
+        self.assertEqual(module.host_rule([]), "model_mismatch")
+        both = [{"id": "p", "verdict": "pass"}, {"id": "f", "verdict": "fail"}]
+        self.assertEqual(module.host_rule(both), "defer")
+
+    def test_checked_memory_labels(self) -> None:
+        row = self._demo("checked_memory")
+        self.assertEqual(row["after_restart"], "FRESH")
+        self.assertEqual(row["after_source_edit"], "STALE_SOURCE")
+        self.assertEqual(row["after_policy_change"], "STALE_CONTRACT")
+        self.assertEqual(row["two_writers"], ["CONFLICT", "CONFLICT"])
+        self.assertEqual(row["obligations_every_recall"], [1, 1, 1])
+
+    def test_checked_memory_representation_change(self) -> None:
+        import dataclasses
+        from lggr import BudgetPolicy
+        module = load_recipe("checked_memory")
+        policy = BudgetPolicy()
+        memory = module.CheckedMemory()
+        memory.append("k", "v", source_ref="a", source_text="x", policy=policy)
+        moved = dataclasses.replace(policy, representation_id="rep-v2")
+        hit = memory.recall("k", sources={"a": "x"}, policy=moved)["records"][0]
+        self.assertEqual(hit["status"], "TRANSPORT_REQUIRED")
+
+
+class SidecarTests(unittest.TestCase):
+    def _serve(self, lines: list[dict]) -> list[dict]:
+        from learn.sidecar import serve
+        out = io.StringIO()
+        serve(io.StringIO("\n".join(json.dumps(line) for line in lines) + "\n"), out)
+        return [json.loads(line) for line in out.getvalue().splitlines()]
+
+    _DECLARE = {"declare": {
+        "scope_id": "sidecar-test", "query_scope": "every_prefix", "bound": 1,
+        "global_sample_source": "external", "authority_id": "release-owner",
+        "evaluator_id": "ci-local/v1", "policy_id": "deploy-budget/v1",
+    }}
+
+    def test_round_trip_matches_adapter(self) -> None:
+        receipts = self._serve([
+            self._DECLARE,
+            {"event": "handoff", "state_id": "a", "report": {"s": "ship"}, "query": {"tier": 3}},
+            {"event": "handoff", "state_id": "b", "report": {"s": "ship"}, "query": {"tier": 1}},
+            {"event": "step", "before": {"state_id": "s0", "value": 0},
+             "after": {"state_id": "s1", "value": 1}, "global_sample": 1},
+            {"event": "summary"},
+        ])
+        self.assertEqual([r["status"] for r in receipts],
+                         ["DECLARED", "OK", "REPORT_INSUFFICIENT", "OK", "COMPOSITION_VERIFIED"])
+        self.assertTrue(all(r["authority_effect"] == "None" for r in receipts))
+
+    def test_bad_lines_are_reported_not_fatal(self) -> None:
+        receipts = self._serve([{"event": "summary"}, self._DECLARE, {"event": "bogus"}, {"event": "summary"}])
+        self.assertEqual([r["status"] for r in receipts],
+                         ["INVALID_EVENT", "DECLARED", "INVALID_EVENT", "WITNESS_INCOMPLETE"])
+
+    def test_proposer_sample_is_rejected_at_declaration(self) -> None:
+        declare = {"declare": {**self._DECLARE["declare"], "global_sample_source": "proposer"}}
+        receipts = self._serve([declare, {"event": "summary"}])
+        self.assertEqual([r["status"] for r in receipts], ["GLOBAL_SAMPLE_REJECTED", "GLOBAL_SAMPLE_REJECTED"])
+
+
+class GuideLinkTests(unittest.TestCase):
+    def test_relative_links_in_learn_markdown_resolve(self) -> None:
+        for doc in list(Path("learn").glob("*.md")) + list(Path("learn/guides").glob("*.md")):
+            text = doc.read_text(encoding="utf-8")
+            for target in re.findall(r"\]\(([^)#]+)(?:#[^)]*)?\)", text):
+                if target.startswith(("http://", "https://", "mailto:")):
+                    continue
+                self.assertTrue((doc.parent / target).exists(), f"{doc}: broken link {target}")
 
 
 if __name__ == "__main__":

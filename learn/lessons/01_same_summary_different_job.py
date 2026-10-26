@@ -6,6 +6,7 @@ splits those reports on this table.
 
 AuthorityEffect: None.
 Standard library only: Python 3.10+.
+Used by learn/guides/01_report_collision.md.
 See also cookbooks/01_online_fiber_monitoring.py.
 
 Artifact Summary:

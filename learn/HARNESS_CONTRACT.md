@@ -4,6 +4,8 @@
 
 This is the piece to copy into a harness that is not this repository. The field names match `learn/harness_adapter.py`. That file is a Python reference. A Go loop, a TypeScript graph, or a shell pipeline can emit the same events and compare receipts on the fixtures in `learn/traces/`.
 
+`python -m learn.sidecar` runs that reference over stdin and stdout: one JSON object per line in, one receipt per line out. The first line is `{"declare": <declaration>}`; each later line is `{"event": "handoff", ...}` with the fields below, or `{"event": "summary"}`. [csharp/LggrSidecar.cs](csharp/LggrSidecar.cs) is a C# client.
+
 The adapter calls the existing `lggr` monitors. It does not call a model. It does not clear obligations. It does not treat a receipt as permission to merge, deploy, or spend.
 
 ## Run declaration

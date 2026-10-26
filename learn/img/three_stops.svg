@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 310" width="800" height="310" role="img" aria-labelledby="t d">
+<title id="t">Three ways a loop stops</title>
+<desc id="d">From a stopped loop to one of three reasons: report collision (REPORT_INSUFFICIENT, lesson 01), budget exhaustion (ALERT, lesson 03), and gluing refusal (CYCLE_CLOSED with nonzero defect, lessons 04 and 05).</desc>
+<style>
+  .bg{fill:#ffffff} .panel{fill:#f6f8fa;stroke:#d0d7de} .ink{fill:#1f2328} .muted{fill:#59636e}
+  .g{fill:#dafbe1;stroke:#1a7f37} .gt{fill:#1a7f37} .r{fill:#ffebe9;stroke:#cf222e} .rt{fill:#cf222e}
+  .b{fill:#ddf4ff;stroke:#0969da} .bt{fill:#0969da} .a{fill:#fff8c5;stroke:#9a6700} .at{fill:#9a6700}
+  .line{stroke:#59636e;fill:none} .al{stroke:#9a6700;fill:none} .gl{stroke:#1a7f37;fill:none} .rl{stroke:#cf222e;fill:none} .bl{stroke:#0969da;fill:none}
+  .head{fill:#59636e} .ghead{fill:#1a7f37} .rhead{fill:#cf222e} .bhead{fill:#0969da}
+  text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;font-size:14px}
+  .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12.5px}
+  .h{font-size:15px;font-weight:600} .s{font-size:12.5px} .cap{font-size:13px}
+  @media (prefers-color-scheme: dark){
+    .bg{fill:#0d1117} .panel{fill:#151b23;stroke:#3d444d} .ink{fill:#e6edf3} .muted{fill:#9198a1}
+    .g{fill:#0f2a1a;stroke:#3fb950} .gt{fill:#3fb950} .r{fill:#3a1418;stroke:#f85149} .rt{fill:#f85149}
+    .b{fill:#0c2340;stroke:#4493f8} .bt{fill:#4493f8} .a{fill:#2e2405;stroke:#d29922} .at{fill:#d29922}
+    .line{stroke:#9198a1} .al{stroke:#d29922} .gl{stroke:#3fb950} .rl{stroke:#f85149} .bl{stroke:#4493f8}
+    .head{fill:#9198a1} .ghead{fill:#3fb950} .rhead{fill:#f85149} .bhead{fill:#4493f8}
+  }
+</style>
+<defs><marker id="m" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="head"/></marker><marker id="mg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="ghead"/></marker><marker id="mr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="rhead"/></marker><marker id="mb" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="bhead"/></marker></defs>
+<rect class="bg" width="800" height="310" rx="8"/>
+<rect x="300" y="20" width="200" height="44" rx="8" class="panel" stroke-width="1.5"/>
+<text x="400" y="47" class="ink h" text-anchor="middle">A loop stopped. Why?</text>
+<path d="M 400 64 C 400 90, 145 80, 145 102" class="line" stroke-width="1.6" marker-end="url(#m)"/>
+<rect x="30" y="104" width="230" height="54" rx="8" class="panel" stroke-width="1.5"/>
+<text x="145" y="126" class="ink s" text-anchor="middle">Same report,</text>
+<text x="145" y="144" class="ink s" text-anchor="middle">different query?</text>
+<line x1="145" y1="158" x2="145" y2="182" class="rl" stroke-width="1.6" marker-end="url(#mr)"/>
+<rect x="30" y="184" width="230" height="76" rx="8" class="r" stroke-width="1.5"/>
+<text x="145" y="207" class="rt mono" text-anchor="middle">REPORT_COLLISION</text>
+<text x="145" y="228" class="ink mono" text-anchor="middle">REPORT_INSUFFICIENT</text>
+<text x="145" y="249" class="muted s" text-anchor="middle">lesson 01 · guide 01</text>
+<path d="M 400 64 C 400 90, 400 80, 400 102" class="line" stroke-width="1.6" marker-end="url(#m)"/>
+<rect x="285" y="104" width="230" height="54" rx="8" class="panel" stroke-width="1.5"/>
+<text x="400" y="126" class="ink s" text-anchor="middle">Running total past</text>
+<text x="400" y="144" class="ink s" text-anchor="middle">the bound?</text>
+<line x1="400" y1="158" x2="400" y2="182" class="rl" stroke-width="1.6" marker-end="url(#mr)"/>
+<rect x="285" y="184" width="230" height="76" rx="8" class="r" stroke-width="1.5"/>
+<text x="400" y="207" class="rt mono" text-anchor="middle">LIFT_BUDGET_EXHAUSTION</text>
+<text x="400" y="228" class="ink mono" text-anchor="middle">ALERT</text>
+<text x="400" y="249" class="muted s" text-anchor="middle">lesson 03</text>
+<path d="M 400 64 C 400 90, 655 80, 655 102" class="line" stroke-width="1.6" marker-end="url(#m)"/>
+<rect x="540" y="104" width="230" height="54" rx="8" class="panel" stroke-width="1.5"/>
+<text x="655" y="126" class="ink s" text-anchor="middle">Review cycle sums</text>
+<text x="655" y="144" class="ink s" text-anchor="middle">to non-zero?</text>
+<line x1="655" y1="158" x2="655" y2="182" class="rl" stroke-width="1.6" marker-end="url(#mr)"/>
+<rect x="540" y="184" width="230" height="76" rx="8" class="r" stroke-width="1.5"/>
+<text x="655" y="207" class="rt mono" text-anchor="middle">OVERLAP_GLUING_REFUSAL</text>
+<text x="655" y="228" class="ink mono" text-anchor="middle">CYCLE_CLOSED, defect ≠ 0</text>
+<text x="655" y="249" class="muted s" text-anchor="middle">lessons 04, 05</text>
+<text x="400" y="292" class="muted cap" text-anchor="middle">Keep the receipt, not only the stop name. Adding agents can delay a repeat; it does not widen the report.</text>
+</svg>
