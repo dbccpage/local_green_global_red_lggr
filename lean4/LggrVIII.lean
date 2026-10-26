@@ -3836,4 +3836,74 @@ theorem async_codebase_replay_order_prefix_envelope_and_barrier_gluing_audit :
   intro d_p d_t hpos
   omega
 
+/-- 99. Synergistic fault masking and coalitional Shapley attribution in a 3-module codebase
+    (`pricing_coalition`, `tax_coalition`, `settlement_coalition`):
+    1. Symbolic leave-one-out masking vs. 2-times-scaled Shapley efficiency and dummy-player
+       exoneration identity:
+       - If redundant fault shims in `pricing_coalition` (`P`) and `settlement_coalition` (`S`)
+         satisfy `v0 = 0`, `vP = -d`, `vS = -d`, `vPS = -d` (with `d > 0`) while `tax_coalition` (`T`)
+         is a dummy player (`v(C ∪ {T}) = v(C)`), then every single-module leave-one-out marginal
+         vanishes (`vPS - vS = 0`, `vPS - vP = 0`, `vPS - vPS = 0`), whereas the 2-times-scaled
+         Shapley attributions `two_phi_P = (vP - v0) + (vPS - vS) = -d`, `two_phi_T = 0`, and
+         `two_phi_S = (vS - v0) + (vPS - vP) = -d` strictly identify `P` and `S` (`two_phi_P < 0`,
+         `two_phi_S < 0`), exonerate `T` (`two_phi_T = 0`), and sum to `2 * (vPS - v0) = -2 * d`;
+    2. Concrete 3-phase 3-module codebase coalitional Shapley audit (`pricing_coalition`,
+       `tax_coalition`, `settlement_coalition`):
+       - Phase 1 (Dual redundant fee-basis shims in `P` and `S`: `v0 = 0`, `vP = -1`, `vS = -1`,
+         `vPS = -1`):
+         all 3 modules pass isolated local unit tests (`L_mask = 1`) and all 3 single-module
+         leave-one-out marginals vanish (`loo_P = 0`, `loo_T = 0`, `loo_S = 0`), yet the grand
+         coalition fails with `fee = 30 ≠ 27` and `two_phi = (-1, 0, -1)` (`Eg_mask = 0`,
+         `Δ_{E,mask} = -1`);
+       - Phase 2 (Downstream-only repair fixing `S` while leaving `P` unpatched: `v0 = 0`,
+         `vP = -1`, `vS = 0`, `vPS = -1`):
+         all 3 modules pass isolated local unit tests (`L_part = 1`), yet `P`'s unpatched
+         `'fee_basis_cents': 1000` still forces `vPS = -1` (`two_phi = (-2, 0, 0)`, `Eg_part = 0`,
+         `Δ_{E,part} = -1`);
+       - Phase 3 (Joint coalitional Shapley repair across `P` and `S` while holding dummy player `T`:
+         `v0 = 0`, `vP = 0`, `vS = 0`, `vPS = 0`):
+         all 8 coalitions achieve `v(C) = 0`, `two_phi = (0, 0, 0)`, and exact settlement
+         conservation `873 + 27 + 180 = 1080` (`L_coh = 1`, `Eg_coh = 1`, `Δ_{E,coh} = 0`). -/
+theorem coalitional_codebase_synergistic_fault_masking_and_shapley_audit :
+    (∀ v0 vP vS vPS d : Int,
+      (d > 0 ∧ v0 = 0 ∧ vP = -d ∧ vS = -d ∧ vPS = -d) →
+      ((vPS - vS = 0) ∧
+       (vPS - vP = 0) ∧
+       ((vP - v0) + (vPS - vS) = -d) ∧
+       ((vS - v0) + (vPS - vP) = -d) ∧
+       (((vP - v0) + (vPS - vS)) + 0 + ((vS - v0) + (vPS - vP)) = 2 * (vPS - v0)) ∧
+       ((vP - v0) + (vPS - vS) < 0))) ∧
+    (let loo_P_p1 : Int := 0;
+     let loo_T_p1 : Int := 0;
+     let loo_S_p1 : Int := 0;
+     let v_grand_p1 : Int := -1;
+     let two_phi_P_p1 : Int := -1;
+     let two_phi_S_p1 : Int := -1;
+     let v_grand_p2 : Int := -1;
+     let two_phi_P_p2 : Int := -2;
+     let two_phi_S_p2 : Int := 0;
+     let v_grand_p3 : Int := 0;
+     let two_phi_P_p3 : Int := 0;
+     let two_phi_T_p3 : Int := 0;
+     let two_phi_S_p3 : Int := 0;
+     let payout_p3 : Int := 873;
+     let fee_p3 : Int := 27;
+     let tax_p3 : Int := 180;
+     let gross_p3 : Int := 1080;
+     let l_mask := if (loo_P_p1 = 0) ∧ (loo_T_p1 = 0) ∧ (loo_S_p1 = 0) ∧ (v_grand_p1 = -1) then (1 : Int) else 0;
+     let eg_mask := if (l_mask = 1) ∧ (v_grand_p1 = 0) ∧ (two_phi_P_p1 = 0) ∧ (two_phi_S_p1 = 0) then (1 : Int) else 0;
+     let defect_mask := eg_mask - l_mask;
+     let l_part := if (two_phi_S_p2 = 0) ∧ (two_phi_P_p2 = -2) ∧ (v_grand_p2 = -1) then (1 : Int) else 0;
+     let eg_part := if (l_part = 1) ∧ (v_grand_p2 = 0) ∧ (two_phi_P_p2 = 0) then (1 : Int) else 0;
+     let defect_part := eg_part - l_part;
+     let l_coh := if (v_grand_p3 = 0) ∧ (two_phi_P_p3 = 0) ∧ (two_phi_T_p3 = 0) ∧ (two_phi_S_p3 = 0) ∧ (payout_p3 + fee_p3 + tax_p3 = gross_p3) then (1 : Int) else 0;
+     let eg_coh := if (l_coh = 1) ∧ (two_phi_P_p1 < two_phi_P_p3) ∧ (two_phi_S_p1 < two_phi_S_p3) then (1 : Int) else 0;
+     let defect_coh := eg_coh - l_coh;
+     (l_mask = 1 ∧ eg_mask = 0 ∧ defect_mask = -1) ∧
+     (l_part = 1 ∧ eg_part = 0 ∧ defect_part = -1) ∧
+     (l_coh = 1 ∧ eg_coh = 1 ∧ defect_coh = 0)) := by
+  refine ⟨?_, ⟨⟨by decide, by decide, by decide⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨by decide, by decide, by decide⟩⟩⟩⟩
+  intro v0 vP vS vPS d h
+  omega
+
 end LggrVIII

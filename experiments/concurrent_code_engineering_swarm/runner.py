@@ -26,12 +26,14 @@ from experiments.live_five_agent_swarm.client import (
 )
 from lggr.streaming import (
     StreamingCodebaseCatalystEvolutionMonitor,
+    StreamingCodebaseCoalitionalMonitor,
     StreamingCodebaseInterfaceMergeMonitor,
     StreamingCodebaseReplayOrderMonitor,
     StreamingDiamondCodebasePullbackMonitor,
     StreamingStatefulCodebaseDFAMonitor,
 )
 from .domain import (
+    COALITIONAL_WORKER_MODULES,
     CODE_SWARM_MODELS,
     DFA_WORKER_MODULES,
     DIAMOND_SWARM_MODELS,
@@ -40,11 +42,13 @@ from .domain import (
     REPLAY_WORKER_MODULES,
     WORKER_MODULES,
     CatalystCodeWorkspace,
+    CoalitionalCodeWorkspace,
     CodeWorkspace,
     DiamondCodeWorkspace,
     ReplayOrderCodeWorkspace,
     StatefulDFACodeWorkspace,
     catalyst_fixture,
+    coalitional_fixture,
     dfa_fixture,
     diamond_fixture,
     fixture,
@@ -1241,6 +1245,179 @@ def replay_campaign(client: CodeBatchClient, events: Events, config: dict[str, A
     return summary
 
 
+def coalitional_system_prompt(worker: str) -> str:
+    module_name = COALITIONAL_WORKER_MODULES[worker]
+    return (
+        f"You are software engineering agent {worker}, owner of Python module `{module_name}.py` "
+        "in a 3-stage settlement codebase (`pricing_coalition` -> `tax_coalition` -> `settlement_coalition`). "
+        "Always call `inspect_workspace` first. "
+        "ONLY call `escalate` if `infeasible_constraint` in `inspect_workspace` is non-null. "
+        "Otherwise, NEVER call `escalate`: always call `submit_module_patch` with the complete Python "
+        "source code for your module (if your feedback or directive says no change or hold, submit your "
+        "existing `source_code` unchanged via `submit_module_patch`)."
+    )
+
+
+def coalitional_merge_gate(
+    events: Events,
+    workspace: CoalitionalCodeWorkspace,
+    arm: str,
+    step_tag: str,
+) -> tuple[dict[str, Any], dict[str, Any]]:
+    monitor = StreamingCodebaseCoalitionalMonitor(
+        scope_id=f"coalitional-code-swarm-gate-{arm}-{step_tag}",
+    )
+    eval_rec = monitor.evaluate_codebase_coalitions(
+        f"eval-{arm}-{step_tag}",
+        sources=workspace.state["sources"],
+        local_test_results=workspace.local_verdicts(),
+        infeasible_constraint=workspace.state["infeasible_constraint"],
+    )
+    full_receipt = monitor.current_receipt()
+    events.emit(
+        "gate",
+        {
+            "arm": arm,
+            "step_tag": step_tag,
+            "characteristic_values": eval_rec["characteristic_values"],
+            "grand_coalition_value": eval_rec["grand_coalition_value"],
+            "leave_one_out_marginals": eval_rec["leave_one_out_marginals"],
+            "shapley_attributions": eval_rec["shapley_attributions"],
+            "two_times_shapley_attributions": eval_rec["two_times_shapley_attributions"],
+            "dummy_players": eval_rec["dummy_players"],
+            "local_green": eval_rec["local_green"],
+            "global_green": eval_rec["global_green"],
+            "defect": eval_rec["defect"],
+            "status": eval_rec["status"],
+            "host_lggr_receipt_sha256": full_receipt["receipt_sha256"],
+            "host_lggr_receipt": full_receipt,
+        },
+    )
+    return eval_rec, full_receipt
+
+
+def coalitional_campaign(client: CodeBatchClient, events: Events, config: dict[str, Any]) -> dict[str, Any]:
+    cases: list[dict[str, Any]] = []
+    workers = ["worker-0", "worker-1", "worker-2"]
+    for seed in config["seeds"]:
+        base_state = coalitional_fixture(seed)
+        events.emit("case_start", {"seed": seed, "kind": base_state["kind"], "fixture": base_state})
+        arms_out: list[dict[str, Any]] = []
+        for arm in ("A", "B", "C"):
+            ws = CoalitionalCodeWorkspace(base_state)
+            histories = {w: [{"role": "system", "content": coalitional_system_prompt(w)}] for w in workers}
+            events.emit("arm_start", {"seed": seed, "arm": arm, "kind": base_state["kind"]})
+            start_calls = client.calls
+            start_cost = client.spent
+            escalations = 0
+            waves_run = 0
+            eval_rec, _ = coalitional_merge_gate(events, ws, arm, "wave-0")
+            initial_lggr = eval_rec["local_green"] == 1 and eval_rec["global_green"] == 0
+            feasible_case = base_state["infeasible_constraint"] is None
+
+            for wave_idx in range(1, 3):
+                if eval_rec["global_green"] == 1 or (not feasible_case and escalations > 0):
+                    break
+                waves_run += 1
+                per_worker_fb: dict[str, dict[str, Any]] = {}
+                for w in workers:
+                    mname = COALITIONAL_WORKER_MODULES[w]
+                    if arm == "A":
+                        # Arm A: Single-module leave-one-out ablation bisection (blind when Delta_{-i} = 0)
+                        per_worker_fb[w] = {
+                            "arm": "A_leave_one_out_ablation_bisection",
+                            "local_unit_test_passed": True,
+                            "leave_one_out_marginal": eval_rec["leave_one_out_marginals"][mname],
+                            "infeasible_constraint": base_state["infeasible_constraint"],
+                            "message": (
+                                f"Single-module leave-one-out ablation on `{mname}.py` measured marginal "
+                                f"Delta_{{-{mname}}} = {eval_rec['leave_one_out_marginals'][mname]} (reverting your "
+                                "module alone did not change the E2E verdict). If `infeasible_constraint` is non-null, "
+                                "call `escalate`; otherwise preserve your current implementation by submitting your "
+                                "existing `source_code` unchanged via `submit_module_patch`."
+                            ),
+                        }
+                    elif arm == "B":
+                        # Arm B: Downstream assertion-site blame (repairs only settlement_coalition where fee check fails)
+                        if w in ("worker-0", "worker-1"):
+                            per_worker_fb[w] = {
+                                "arm": "B_downstream_assertion_site_blame",
+                                "infeasible_constraint": base_state["infeasible_constraint"],
+                                "message": (
+                                    f"Upstream module `{mname}.py` returned without raising an assertion failure; "
+                                    "the E2E fee drift assertion failed in Stage 3 (`settlement_coalition.py`). "
+                                    "If `infeasible_constraint` is non-null, call `escalate`; otherwise keep your "
+                                    "existing `source_code` unchanged and submit via `submit_module_patch`."
+                                ),
+                            }
+                        else:
+                            per_worker_fb[w] = {
+                                "arm": "B_downstream_assertion_site_blame",
+                                "infeasible_constraint": base_state["infeasible_constraint"],
+                                "message": (
+                                    "E2E assertion failed in `settlement_coalition.py` (`platform_fee_cents = 30 != 27`). "
+                                    "If `infeasible_constraint` is non-null, call `escalate`; otherwise remove the "
+                                    "`max(..., 1000)` shim so `basis = int(taxed_quote.get('fee_basis_cents', net))` "
+                                    "and submit via `submit_module_patch`."
+                                ),
+                            }
+                    else:
+                        # Arm C: Explicit LGGR 2^3 Coalitional Shapley Attribution Directive
+                        per_worker_fb[w] = {
+                            "arm": "C_explicit_lggr_coalitional_shapley_directive",
+                            "role_directive": eval_rec["compact_role_directives"][w],
+                        }
+                escalations += round_turns(client, events, ws, histories, workers, per_worker_fb)
+                eval_rec, _ = coalitional_merge_gate(events, ws, arm, f"wave-{wave_idx}")
+            if eval_rec["global_green"] == 1 and feasible_case:
+                outcome = "completed"
+            elif not feasible_case and escalations > 0 and eval_rec["global_green"] == 0:
+                outcome = "safe_escalated"
+            else:
+                outcome = "blocked_unresolved"
+
+            arm_res = {
+                "arm": arm,
+                "outcome": outcome,
+                "initial_local_green_global_red": initial_lggr,
+                "final_local_green": eval_rec["local_green"],
+                "final_global_green": eval_rec["global_green"],
+                "final_defect": eval_rec["defect"],
+                "final_leave_one_out_marginals": eval_rec["leave_one_out_marginals"],
+                "final_two_times_shapley": eval_rec["two_times_shapley_attributions"],
+                "final_status": eval_rec["status"],
+                "waves_run": waves_run,
+                "escalations": escalations,
+                "api_attempts": client.calls - start_calls,
+                "cost_usd": str(client.spent - start_cost),
+            }
+            events.emit("arm_result", arm_res)
+            arms_out.append(arm_res)
+
+        case_res = {"seed": seed, "kind": base_state["kind"], "arms": arms_out}
+        events.emit("case_result", case_res)
+        cases.append(case_res)
+
+    summary = {
+        "schema": "lggr.coalitional_code_engineering_swarm.v1",
+        "topology": "coalitional",
+        "authority_effect": "None",
+        "cases": cases,
+        "api_attempts": client.calls,
+        "charged_or_reserved_usd": str(client.spent),
+        "max_inflight_requests": client.max_inflight,
+        "concurrent_waves": client.concurrent_waves,
+        "scope": (
+            "Concurrent 3-agent coalitional Python code-engineering swarm (`pricing_coalition` -> "
+            "`tax_coalition` -> `settlement_coalition`) comparing single-module leave-one-out ablation "
+            "bisection (A), downstream assertion-site blame (B), and explicit LGGR 2^3 coalitional Shapley "
+            "attribution directives (C) with full cryptographic receipts retained in the host audit log."
+        ),
+    }
+    events.emit("summary", summary)
+    return summary
+
+
 def replay(path: str | Path) -> dict[str, Any]:
     records = [json.loads(line) for line in Path(path).read_text(encoding="utf-8").splitlines()]
     metadata = records[0]["data"]
@@ -1259,6 +1436,8 @@ def replay(path: str | Path) -> dict[str, Any]:
             summary = dfa_campaign(client, events, config)
         elif config.get("topology") == "replay":
             summary = replay_campaign(client, events, config)
+        elif config.get("topology") == "coalitional":
+            summary = coalitional_campaign(client, events, config)
         else:
             summary = campaign(client, events, config)
     except RunStopped as error:
@@ -1282,7 +1461,7 @@ def main() -> None:
     parser.add_argument("path")
     parser.add_argument(
         "--topology",
-        choices=["linear", "diamond", "catalyst", "dfa", "replay"],
+        choices=["linear", "diamond", "catalyst", "dfa", "replay", "coalitional"],
         default="linear",
     )
     parser.add_argument("--seeds", nargs="+", type=int, default=None)
@@ -1315,6 +1494,8 @@ def main() -> None:
         seeds = [9400, 9401, 9402]
     elif args.topology == "replay":
         seeds = [9500, 9501, 9502]
+    elif args.topology == "coalitional":
+        seeds = [9600, 9601, 9602]
     else:
         seeds = [6100, 6101, 6102]
     if args.topology == "diamond":
@@ -1362,6 +1543,17 @@ def main() -> None:
         events.emit("start", {"config": config})
         client = CodeBatchClient(events, args.budget)
         summary = replay_campaign(client, events, config)
+    elif args.topology == "coalitional":
+        config = {
+            "topology": "coalitional",
+            "seeds": seeds,
+            "models": CODE_SWARM_MODELS,
+            "budget_usd": str(args.budget),
+        }
+        events = Events(events_path)
+        events.emit("start", {"config": config})
+        client = CodeBatchClient(events, args.budget)
+        summary = coalitional_campaign(client, events, config)
     else:
         config = {
             "seeds": seeds,
