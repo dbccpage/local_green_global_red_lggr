@@ -2677,7 +2677,7 @@ class ConcurrentCodeEngineeringSwarmTests(unittest.TestCase):
         self.assertFalse(locked_patch["accepted"])
 
     def test_concurrent_sheaf_campaign_replay_and_tamper_detection(self) -> None:
-        def stub_sheaf_transport(payload: dict[str, Any]) -> dict[str, Any]:
+        def stub_sheaf_transport(payload: dict) -> dict:
             messages = payload["messages"]
             sys_text = messages[0]["content"]
             worker = "worker-0"
