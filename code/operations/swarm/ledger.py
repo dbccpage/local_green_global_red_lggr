@@ -12,6 +12,7 @@ import json
 import os
 from pathlib import Path
 import threading
+import time
 
 RATES = {"input": Decimal("0.10"), "cache_write": Decimal("0.125"), "cache_read": Decimal("0.01"), "output": Decimal("0.50")}
 MAX_INPUT, MAX_OUTPUT = 10000, 4096
@@ -65,7 +66,14 @@ class Ledger:
             return
         tmp = self.path.with_suffix(".tmp")
         tmp.write_text(json.dumps(self.state, indent=1, sort_keys=True) + "\n", encoding="utf-8", newline="\n")
-        os.replace(tmp, self.path)
+        for attempt in range(50):  # Windows may briefly lock the target (indexers, scanners); local file op only
+            try:
+                os.replace(tmp, self.path)
+                return
+            except PermissionError:
+                if attempt == 49:
+                    raise
+                time.sleep(0.1)
 
     def committed(self, phase=None):
         phases = [phase] if phase else list(PHASE_CEILINGS)
