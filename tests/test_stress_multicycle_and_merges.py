@@ -38,6 +38,7 @@ from lggr.streaming import (
     StreamingCoalitionalSynergyMaskingMonitor,
     StreamingCochainMonitor,
     StreamingCodebaseCatalystEvolutionMonitor,
+    StreamingCodebaseCoalitionalMonitor,
     StreamingCodebaseInterfaceMergeMonitor,
     StreamingCodebaseReplayOrderMonitor,
     StreamingConcurrentLeaseOverlapMonitor,
@@ -5107,6 +5108,72 @@ class TestStreamingBaselineComparator(unittest.TestCase):
 
         receipt = mon.current_receipt()
         self.assertEqual(receipt["status"], "CODEBASE_REPLAY_ORDER_BARRIER_COHERENT_LGGG")
+        self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(receipt["lggr_obstruction_count"], 2)
+        self.assertEqual(receipt["lggg_coherent_count"], 1)
+
+    def test_coalitional_codebase_synergistic_fault_masking_and_shapley_audit(self) -> None:
+        """Verify Theorem 99: coalitional codebase leave-one-out masking vs exact Shapley attribution."""
+        mon = StreamingCodebaseCoalitionalMonitor(
+            scope_id="unit-codebase-coalitional-shapley-scope",
+        )
+        obs = mon.record_three_phase_codebase_coalitional_audit(
+            "codebase-coalitional-eval-01",
+        )
+        self.assertEqual(
+            obs["phase_1_leave_one_out_marginals"],
+            {"pricing_coalition": 0, "tax_coalition": 0, "settlement_coalition": 0},
+        )
+        self.assertEqual(obs["phase_1_grand_value"], -1)
+        self.assertEqual(
+            obs["phase_1_two_times_shapley"],
+            {"pricing_coalition": -1, "tax_coalition": 0, "settlement_coalition": -1},
+        )
+        self.assertEqual(obs["phase_1_local_green"], 1)
+        self.assertEqual(obs["phase_1_global_green"], 0)
+        self.assertEqual(obs["phase_1_defect"], -1)
+        self.assertEqual(obs["phase_1_status"], "LEAVE_ONE_OUT_MASKED_COALITIONAL_DEFECT_LGGR")
+        self.assertEqual(
+            obs["phase_1_directives"]["worker-0"]["action"],
+            "REPAIR_SHAPLEY_ATTRIBUTED_MODULE",
+        )
+        self.assertEqual(
+            obs["phase_1_directives"]["worker-1"]["action"],
+            "HOLD_EXONERATED_DUMMY_MODULE",
+        )
+        self.assertEqual(
+            obs["phase_1_directives"]["worker-2"]["action"],
+            "REPAIR_SHAPLEY_ATTRIBUTED_MODULE",
+        )
+
+        self.assertEqual(
+            obs["phase_2_leave_one_out_marginals"],
+            {"pricing_coalition": -1, "tax_coalition": 0, "settlement_coalition": 0},
+        )
+        self.assertEqual(
+            obs["phase_2_two_times_shapley"],
+            {"pricing_coalition": -2, "tax_coalition": 0, "settlement_coalition": 0},
+        )
+        self.assertEqual(obs["phase_2_local_green"], 1)
+        self.assertEqual(obs["phase_2_global_green"], 0)
+        self.assertEqual(obs["phase_2_defect"], -1)
+        self.assertEqual(obs["phase_2_status"], "SINGLE_MODULE_RESIDUAL_COALITIONAL_DEFECT_LGGR")
+
+        self.assertEqual(
+            obs["phase_3_leave_one_out_marginals"],
+            {"pricing_coalition": 0, "tax_coalition": 0, "settlement_coalition": 0},
+        )
+        self.assertEqual(
+            obs["phase_3_two_times_shapley"],
+            {"pricing_coalition": 0, "tax_coalition": 0, "settlement_coalition": 0},
+        )
+        self.assertEqual(obs["phase_3_local_green"], 1)
+        self.assertEqual(obs["phase_3_global_green"], 1)
+        self.assertEqual(obs["phase_3_defect"], 0)
+        self.assertEqual(obs["phase_3_status"], "CODEBASE_COALITIONAL_SHAPLEY_COHERENT_LGGG")
+
+        receipt = mon.current_receipt()
+        self.assertEqual(receipt["status"], "CODEBASE_COALITIONAL_SHAPLEY_COHERENT_LGGG")
         self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
         self.assertEqual(receipt["lggr_obstruction_count"], 2)
         self.assertEqual(receipt["lggg_coherent_count"], 1)

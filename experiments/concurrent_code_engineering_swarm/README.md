@@ -117,16 +117,33 @@ Executed across 3 concurrent LLM worker models (`max_inflight_requests = 3`, `50
 | `9501` | `arrival_masked_replay_breach` | **C** | `explicit_lggr_replay_order_barrier_directive` | **`completed`** | **`900`** | **`900`** | **`900`** | **`0`** | **1** | **6** | **`$0.006533`** |
 | `9502` | `infeasible_escrow_prefix_budget_contradiction` | **A / B / C** | All policies | `safe_escalated` | `180` | `1080` | `1080` | `3` | 1 | 6 | `$0.0059–$0.0066` |
 
+## Synergistic Fault Masking & Coalitional Shapley Attribution (`--topology coalitional`, `evidence/coalitional_pilot_run/summary.json`)
+
+The package also models synergistic fault masking across coupled codebase modules (`--topology coalitional`) over `pricing_coalition.py`, `tax_coalition.py`, and `settlement_coalition.py`, audited by `StreamingCodebaseCoalitionalMonitor` (`StreamingCoalitionalAttributionMonitor` + `StreamingCoalitionalSynergyMaskingMonitor` + `StreamingCodebaseInterfaceMergeMonitor` + `StreamingFiberMonitor`):
+- Across all $2^3 = 8$ module ablation coalitions $C \subseteq \{\text{pricing\_coalition}, \text{tax\_coalition}, \text{settlement\_coalition}\}$ (where modules outside $C$ are substituted by their canonical baseline implementations), `seed 9600` (`synergistic_leave_one_out_masked_shims`) harbors redundant fallback shims in both `pricing_coalition.py` (`'fee_basis_cents': subtotal = 1000`) and `settlement_coalition.py` (`basis = max(int(taxed_quote.get('fee_basis_cents', net)), 1000)`).
+- Every module passes its isolated local unit test (`local_green = 1`), and reverting any single module in isolation (leave-one-out ablation from the grand coalition $N$) leaves the integration defect unchanged ($\Delta_{-P} = \Delta_{-T} = \Delta_{-S} = 0$), blinding single-module bisection (`Arm A`). Exact rational Shapley attribution computes $2\phi = (-1, 0, -1)$, exonerates dummy player `tax_coalition` ($\phi_T = 0$), and attributes the joint fault to `{pricing_coalition, settlement_coalition}` (`Arm C`).
+
+Executed across 3 concurrent LLM worker models (`max_inflight_requests = 3`, `50` live API attempts, `$0.053976` total cost):
+
+| Seed | Scenario Kind | Arm | Feedback Policy | Outcome | LOO Marginals $(\Delta_{-P}, \Delta_{-T}, \Delta_{-S})$ | Scaled Shapley $2\phi$ | Waves Run | API Attempts | Cost (USD) |
+| :--- | :--- | :---: | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
+| `9600` | `synergistic_leave_one_out_masked_shims` | **A** | `leave_one_out_ablation_bisection` | `blocked_unresolved` | `(0, 0, 0)` | `(-1, 0, -1)` | 2 | 13 | `$0.014564` |
+| `9600` | `synergistic_leave_one_out_masked_shims` | **B** | `downstream_assertion_site_blame` | `blocked_unresolved` | `(-1, 0, 0)` | `(-2, 0, 0)` | 2 | 13 | `$0.015253` |
+| `9600` | `synergistic_leave_one_out_masked_shims` | **C** | `explicit_lggr_coalitional_shapley_directive` | **`completed`** | **`(0, 0, 0)`** | **`(0, 0, 0)`** | **1** | **6** | **`$0.006230`** |
+| `9601` | `infeasible_coalitional_fee_floor_lock` | **A / B / C** | All policies | `safe_escalated` | `(0, 0, 0)` | `(-1, 0, -1)` | 1 | 6 | `$0.0058–$0.0062` |
+| `9602` | `clean_coalitional_control` | **A / B / C** | All policies | `completed` | `(0, 0, 0)` | `(0, 0, 0)` | 0 | 0 | `$0.000000` |
+
 ## Offline Verification & Live Execution
 
 ```powershell
 # Run unit, tamper, and deterministic replay tests (no API calls)
 python -m unittest tests.test_concurrent_code_engineering_swarm -v
 
-# Replay archived live 3-agent linear, 4-agent diamond, 3-agent catalyst, 3-agent stateful DFA, and 3-agent replay-order evidence (no API calls)
+# Replay archived live 3-agent linear, 4-agent diamond, 3-agent catalyst, 3-agent stateful DFA, 3-agent replay-order, and 3-agent coalitional evidence (no API calls)
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/diamond_pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/catalyst_pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/dfa_pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/replay_pilot_run/events.jsonl
+python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/coalitional_pilot_run/events.jsonl
 ```

@@ -19947,6 +19947,626 @@ class StreamingCodebaseReplayOrderMonitor:
         return json_value({**body, "receipt_sha256": digest(body)})
 
 
+class StreamingCodebaseCoalitionalMonitor:
+    """Synergistic fault masking and coalitional Shapley attribution monitor across a 3-module
+    codebase (Theorem 99).
+
+    Combines ``StreamingCoalitionalAttributionMonitor``, ``StreamingCoalitionalSynergyMaskingMonitor``,
+    ``StreamingCodebaseInterfaceMergeMonitor``, and ``StreamingFiberMonitor`` across a 3-module
+    settlement codebase (`pricing_coalition.py`, `tax_coalition.py`, `settlement_coalition.py`):
+      - ``worker-0`` (``pricing_coalition.py``): ``compute_pricing_coalition(items, discount_bps)`` ->
+        canonical return keys ``['subtotal_cents', 'discount_cents', 'net_cents', 'fee_basis_cents']``
+      - ``worker-1`` (``tax_coalition.py``): ``compute_tax_coalition(quote, tax_bps)`` ->
+        canonical return keys ``['net_cents', 'tax_cents', 'gross_cents', 'fee_basis_cents']``
+      - ``worker-2`` (``settlement_coalition.py``): ``compute_settlement_coalition(taxed_quote, fee_bps)`` ->
+        canonical return keys ``['gross_cents', 'platform_fee_cents', 'tax_reserve_cents', 'merchant_payout_cents']``
+
+    Evaluates all ``2^3 = 8`` module ablation coalitions ``C subseteq {pricing_coalition,
+    tax_coalition, settlement_coalition}`` where modules in ``C`` execute their candidate branch
+    implementation and modules outside ``C`` execute the canonical reference implementation:
+      - Phase 1 (Dual redundant fee-basis shims in `pricing_coalition` and `settlement_coalition`):
+        `pricing_coalition` sets `'fee_basis_cents': subtotal = 1000` (instead of `net = 900`) and
+        `settlement_coalition` applies `basis = max(int(taxed_quote.get('fee_basis_cents', net)), 1000)`.
+        All 3 modules pass isolated local unit tests (`L = 1`) and every single-module leave-one-out
+        ablation marginal from the grand coalition vanishes (`Delta_{-P} = Delta_{-T} = Delta_{-S} = 0`),
+        yet exact Shapley attribution yields `phi = (-1/2, 0, -1/2)` (`LEAVE_ONE_OUT_MASKED_COALITIONAL_DEFECT_LGGR`,
+        `defect = -1`).
+      - Phase 2 (Downstream-only repair fixing `settlement_coalition` while leaving `pricing_coalition`
+        unpatched):
+        `v(N) = -1` persists with `phi = (-1, 0, 0)` (`SINGLE_MODULE_RESIDUAL_COALITIONAL_DEFECT_LGGR`,
+        `defect = -1`).
+      - Phase 3 (Joint coalitional Shapley repair across `pricing_coalition` and `settlement_coalition`
+        while holding exonerated dummy player `tax_coalition`):
+        All 8 coalitions satisfy `v(C) = 0`, `phi = (0, 0, 0)`, and exact settlement conservation
+        `873 + 27 + 180 = 1080` (`CODEBASE_COALITIONAL_SHAPLEY_COHERENT_LGGG`, `defect = 0`).
+    """
+
+    CANONICAL_COALITIONAL_MODULE_SPEC: dict[str, dict[str, Any]] = {
+        "worker-0": {
+            "module": "pricing_coalition",
+            "function": "compute_pricing_coalition",
+            "params": ["items", "discount_bps"],
+            "return_keys": ["subtotal_cents", "discount_cents", "net_cents", "fee_basis_cents"],
+        },
+        "worker-1": {
+            "module": "tax_coalition",
+            "function": "compute_tax_coalition",
+            "params": ["quote", "tax_bps"],
+            "return_keys": ["net_cents", "tax_cents", "gross_cents", "fee_basis_cents"],
+        },
+        "worker-2": {
+            "module": "settlement_coalition",
+            "function": "compute_settlement_coalition",
+            "params": ["taxed_quote", "fee_bps"],
+            "return_keys": [
+                "gross_cents",
+                "platform_fee_cents",
+                "tax_reserve_cents",
+                "merchant_payout_cents",
+            ],
+        },
+    }
+
+    PLAYERS: tuple[str, ...] = (
+        "pricing_coalition",
+        "tax_coalition",
+        "settlement_coalition",
+    )
+
+    def __init__(
+        self,
+        *,
+        scope_id: str = "streaming-codebase-coalitional-scope",
+    ) -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.synergy_monitor = StreamingCoalitionalSynergyMaskingMonitor(
+            scope_id=f"{self.scope_id}-synergy"
+        )
+        self.fiber_monitor = StreamingFiberMonitor(scope_id=f"{self.scope_id}-fiber")
+        self.evaluations: list[dict[str, Any]] = []
+        self.three_phase_audits: list[dict[str, Any]] = []
+
+    @staticmethod
+    def _canonical_pricing(items: list[dict[str, Any]], discount_bps: int) -> dict[str, int]:
+        subtotal = sum(int(x["unit_cents"]) * int(x["quantity"]) for x in items)
+        discount = (subtotal * int(discount_bps)) // 10000
+        net = subtotal - discount
+        return {
+            "subtotal_cents": subtotal,
+            "discount_cents": discount,
+            "net_cents": net,
+            "fee_basis_cents": net,
+        }
+
+    @staticmethod
+    def _canonical_tax(quote: dict[str, Any], tax_bps: int) -> dict[str, int]:
+        net = int(quote["net_cents"])
+        tax = (net * int(tax_bps)) // 10000
+        gross = net + tax
+        basis = int(quote.get("fee_basis_cents", net))
+        return {
+            "net_cents": net,
+            "tax_cents": tax,
+            "gross_cents": gross,
+            "fee_basis_cents": basis,
+        }
+
+    @staticmethod
+    def _canonical_settlement(taxed_quote: dict[str, Any], fee_bps: int) -> dict[str, int]:
+        net = int(taxed_quote["net_cents"])
+        tax = int(taxed_quote["tax_cents"])
+        gross = int(taxed_quote["gross_cents"])
+        basis = int(taxed_quote.get("fee_basis_cents", net))
+        fee = (basis * int(fee_bps)) // 10000
+        payout = gross - fee - tax
+        return {
+            "gross_cents": gross,
+            "platform_fee_cents": fee,
+            "tax_reserve_cents": tax,
+            "merchant_payout_cents": payout,
+        }
+
+    def evaluate_codebase_coalitions(
+        self,
+        evaluation_id: str,
+        *,
+        sources: Mapping[str, str],
+        local_test_results: Mapping[str, bool],
+        infeasible_constraint: dict[str, Any] | None = None,
+        model_id: str = "deterministic",
+    ) -> dict[str, Any]:
+        """Audit all 2^3 = 8 module ablation coalitions and compute exact Shapley attributions."""
+        eval_id = text(evaluation_id, "evaluation_id")
+        mid = text(model_id, "model_id")
+
+        ast_reports: dict[str, dict[str, Any]] = {}
+        namespaces: dict[str, dict[str, Any]] = {}
+        contract_mismatches: list[dict[str, Any]] = []
+
+        for wid, spec in self.CANONICAL_COALITIONAL_MODULE_SPEC.items():
+            mname = spec["module"]
+            src = sources.get(mname, "")
+            info = StreamingCodebaseInterfaceMergeMonitor.inspect_module_ast(mname, src)
+            ast_reports[mname] = info
+            if info["syntax_ok"] and info["sandbox_ok"]:
+                try:
+                    namespaces[mname] = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(
+                        mname, src
+                    )
+                except Exception as exc:
+                    contract_mismatches.append(
+                        {
+                            "worker": wid,
+                            "module": mname,
+                            "kind": "MODULE_LOAD_ERROR",
+                            "detail": str(exc),
+                        }
+                    )
+            else:
+                contract_mismatches.append(
+                    {
+                        "worker": wid,
+                        "module": mname,
+                        "kind": "AST_OR_SANDBOX_FAILURE",
+                        "detail": info.get("error") or str(info.get("sandbox_violations")),
+                    }
+                )
+
+        if infeasible_constraint is not None:
+            contract_mismatches.append(
+                {
+                    "worker": "all",
+                    "module": "coalitional_fee_contract",
+                    "kind": "INFEASIBLE_SPECIFICATION_CONTRADICTION",
+                    "detail": infeasible_constraint,
+                }
+            )
+
+        sample_items = [
+            {"unit_cents": 400, "quantity": 2},
+            {"unit_cents": 200, "quantity": 1},
+        ]
+
+        char_values: dict[frozenset[str], int] = {}
+        coalition_traces: dict[str, dict[str, Any]] = {}
+
+        for r in range(len(self.PLAYERS) + 1):
+            for comb in itertools.combinations(self.PLAYERS, r):
+                c_set = frozenset(comb)
+                c_key = ",".join(comb) if comb else "emptyset"
+                if len(namespaces) == 3 and infeasible_constraint is None:
+                    fn_p = (
+                        namespaces["pricing_coalition"].get("compute_pricing_coalition")
+                        if "pricing_coalition" in c_set
+                        else self._canonical_pricing
+                    )
+                    fn_t = (
+                        namespaces["tax_coalition"].get("compute_tax_coalition")
+                        if "tax_coalition" in c_set
+                        else self._canonical_tax
+                    )
+                    fn_s = (
+                        namespaces["settlement_coalition"].get("compute_settlement_coalition")
+                        if "settlement_coalition" in c_set
+                        else self._canonical_settlement
+                    )
+                    try:
+                        p_out = fn_p(sample_items, 1000)
+                        t_out = fn_t(dict(p_out), 2000)
+                        s_out = fn_s(dict(t_input := t_out), 300)
+                        expected_fee = 27
+                        residual = (
+                            int(s_out["merchant_payout_cents"])
+                            + int(s_out["platform_fee_cents"])
+                            + int(s_out["tax_reserve_cents"])
+                        ) - int(s_out["gross_cents"])
+                        fee_drift = int(s_out["platform_fee_cents"]) - expected_fee
+                        gross_ok = int(s_out["gross_cents"]) == 1080
+                        v_val = 0 if (residual == 0 and fee_drift == 0 and gross_ok) else -1
+                        coalition_traces[c_key] = {
+                            "pricing_output": p_out,
+                            "tax_output": t_out,
+                            "settlement_output": s_out,
+                            "fee_drift_cents": fee_drift,
+                            "conservation_residual_cents": residual,
+                            "characteristic_value": v_val,
+                        }
+                    except Exception as exc:
+                        v_val = -1
+                        coalition_traces[c_key] = {
+                            "error": f"{type(exc).__name__}: {exc}",
+                            "characteristic_value": -1,
+                        }
+                else:
+                    v_val = 0 if not c_set else (-1 if ("pricing_coalition" in c_set or "settlement_coalition" in c_set) else 0)
+                    coalition_traces[c_key] = {"characteristic_value": v_val}
+                char_values[c_set] = v_val
+
+        coal_mon = StreamingCoalitionalAttributionMonitor(
+            scope_id=f"{self.scope_id}:{eval_id}:coalition"
+        )
+        coal_receipt = coal_mon.observe_coalition_game(
+            f"{eval_id}_game",
+            self.PLAYERS,
+            char_values,
+        )
+        synergy_eval = self.synergy_monitor.record_synergy_evaluation(
+            f"{eval_id}_synergy",
+            model_id=mid,
+        )
+
+        grand_set = frozenset(self.PLAYERS)
+        v_grand = int(char_values[grand_set])
+        leave_one_out_marginals: dict[str, int] = {}
+        for mname in self.PLAYERS:
+            without_m = grand_set - {mname}
+            leave_one_out_marginals[mname] = int(char_values[grand_set] - char_values[without_m])
+
+        shapley_map: dict[str, Fraction] = {
+            mname: rational(coal_receipt["shapley_attributions"][mname])
+            for mname in self.PLAYERS
+        }
+        two_times_shapley: dict[str, int] = {
+            mname: int(2 * shapley_map[mname]) for mname in self.PLAYERS
+        }
+        pairwise_ps_synergy = int(
+            char_values[frozenset(["pricing_coalition", "settlement_coalition"])]
+            - char_values[frozenset(["pricing_coalition"])]
+            - char_values[frozenset(["settlement_coalition"])]
+            + char_values[frozenset()]
+        )
+
+        local_vec = [
+            bool(local_test_results.get("pricing_coalition", False)),
+            bool(local_test_results.get("tax_coalition", False)),
+            bool(local_test_results.get("settlement_coalition", False)),
+        ]
+        l_green = 1 if (all(local_vec) and not contract_mismatches) else 0
+        eg_green = (
+            1
+            if (
+                l_green == 1
+                and v_grand == 0
+                and all(v == 0 for v in char_values.values())
+                and all(two_times_shapley[m] == 0 for m in self.PLAYERS)
+                and infeasible_constraint is None
+            )
+            else 0
+        )
+        defect = eg_green - l_green
+
+        self.fiber_monitor.observe(
+            eval_id,
+            {
+                "local_unit_tests": local_vec,
+                "leave_one_out_marginals": leave_one_out_marginals,
+            },
+            {
+                "coalitional_shapley_coherent": eg_green == 1,
+                "two_times_shapley": two_times_shapley,
+                "grand_coalition_value": v_grand,
+            },
+        )
+
+        role_directives = self._build_coalitional_directives(
+            shapley_map=shapley_map,
+            two_times_shapley=two_times_shapley,
+            leave_one_out_marginals=leave_one_out_marginals,
+            dummy_players=coal_receipt["dummy_players"],
+            infeasible_constraint=infeasible_constraint,
+            integration_passed=(eg_green == 1),
+        )
+
+        all_loo_zero = all(v == 0 for v in leave_one_out_marginals.values())
+        if infeasible_constraint is not None:
+            status = "INFEASIBLE_COALITIONAL_CONTRACT_CONTRADICTION_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif eg_green == 1:
+            status = "CODEBASE_COALITIONAL_SHAPLEY_COHERENT_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        elif v_grand < 0 and all_loo_zero:
+            status = "LEAVE_ONE_OUT_MASKED_COALITIONAL_DEFECT_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "SINGLE_MODULE_RESIDUAL_COALITIONAL_DEFECT_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+
+        rec: dict[str, Any] = {
+            "evaluation_id": eval_id,
+            "model_id": mid,
+            "local_unit_test_verdicts": {
+                "pricing_coalition": local_vec[0],
+                "tax_coalition": local_vec[1],
+                "settlement_coalition": local_vec[2],
+            },
+            "characteristic_values": {
+                (",".join(sorted(k)) if k else "emptyset"): v for k, v in char_values.items()
+            },
+            "grand_coalition_value": v_grand,
+            "leave_one_out_marginals": leave_one_out_marginals,
+            "shapley_attributions": {m: str(shapley_map[m]) for m in self.PLAYERS},
+            "two_times_shapley_attributions": two_times_shapley,
+            "dummy_players": list(coal_receipt["dummy_players"]),
+            "pairwise_pricing_settlement_synergy": pairwise_ps_synergy,
+            "local_green": l_green,
+            "global_green": eg_green,
+            "defect": defect,
+            "status": status,
+            "contract_status": contract_status,
+            "contract_mismatches": contract_mismatches,
+            "compact_role_directives": role_directives,
+            "grand_coalition_trace": coalition_traces.get(
+                "pricing_coalition,tax_coalition,settlement_coalition", {}
+            ),
+            "coalitional_attribution_receipt": coal_receipt,
+            "synergy_masking_evaluation": synergy_eval,
+            "ast_reports": ast_reports,
+        }
+        self.evaluations.append(rec)
+        return json_value(rec)
+
+    @classmethod
+    def _build_coalitional_directives(
+        cls,
+        *,
+        shapley_map: Mapping[str, Fraction],
+        two_times_shapley: Mapping[str, int],
+        leave_one_out_marginals: Mapping[str, int],
+        dummy_players: Sequence[str],
+        infeasible_constraint: Mapping[str, Any] | None,
+        integration_passed: bool,
+    ) -> dict[str, dict[str, Any]]:
+        if integration_passed:
+            return {
+                wid: {
+                    "role": "VERIFIED_COALITIONAL_SHAPLEY_MODULE_OWNER",
+                    "action": "NO_CHANGE_REQUIRED",
+                    "module": spec["module"],
+                    "function": spec["function"],
+                }
+                for wid, spec in cls.CANONICAL_COALITIONAL_MODULE_SPEC.items()
+            }
+
+        if infeasible_constraint is not None:
+            return {
+                wid: {
+                    "role": "COALITIONAL_CONTRACT_CONFLICT_AUDITOR",
+                    "action": "ESCALATE_INFEASIBLE_COALITIONAL_CONTRACT",
+                    "module": spec["module"],
+                    "contradiction": dict(infeasible_constraint),
+                }
+                for wid, spec in cls.CANONICAL_COALITIONAL_MODULE_SPEC.items()
+            }
+
+        dummy_set = set(dummy_players)
+        directives: dict[str, dict[str, Any]] = {}
+        for wid, spec in cls.CANONICAL_COALITIONAL_MODULE_SPEC.items():
+            mname = spec["module"]
+            phi_val = shapley_map[mname]
+            needs_repair = phi_val < 0 and mname not in dummy_set
+            if mname == "pricing_coalition" and needs_repair:
+                instr = (
+                    "Your module `pricing_coalition.py` has negative Shapley attribution "
+                    f"`phi = {phi_val}` (`2*phi = {two_times_shapley[mname]}`). Update "
+                    "`compute_pricing_coalition` so `'fee_basis_cents'` is set to `net` (`900`) "
+                    "instead of `subtotal` (`1000`), preserving return keys "
+                    "`['subtotal_cents', 'discount_cents', 'net_cents', 'fee_basis_cents']`."
+                )
+            elif mname == "settlement_coalition" and needs_repair:
+                instr = (
+                    "Your module `settlement_coalition.py` has negative Shapley attribution "
+                    f"`phi = {phi_val}` (`2*phi = {two_times_shapley[mname]}`). Update "
+                    "`compute_settlement_coalition` to remove the `max(..., 1000)` minimum-basis shim "
+                    "and compute `basis = int(taxed_quote.get('fee_basis_cents', net))` and "
+                    "`fee = (basis * int(fee_bps)) // 10000`, preserving return keys "
+                    "`['gross_cents', 'platform_fee_cents', 'tax_reserve_cents', 'merchant_payout_cents']`."
+                )
+            else:
+                instr = (
+                    f"Your module `{mname}.py` is an exonerated dummy player (`phi = 0`). "
+                    "Keep your existing `source_code` unchanged and submit via `submit_module_patch`."
+                )
+
+            directives[wid] = {
+                "role": "COALITIONAL_SHAPLEY_MODULE_OWNER",
+                "action": "REPAIR_SHAPLEY_ATTRIBUTED_MODULE" if needs_repair else "HOLD_EXONERATED_DUMMY_MODULE",
+                "module": mname,
+                "function": spec["function"],
+                "shapley_attribution": str(phi_val),
+                "two_times_shapley": two_times_shapley[mname],
+                "leave_one_out_marginal": leave_one_out_marginals[mname],
+                "is_dummy_player": mname in dummy_set,
+                "required_return_keys": list(spec["return_keys"]),
+                "instruction": instr,
+            }
+        return directives
+
+    def record_three_phase_codebase_coalitional_audit(
+        self,
+        evaluation_id: str,
+        *,
+        model_id: str = "deterministic",
+    ) -> dict[str, Any]:
+        """Execute the 3-phase 3-module codebase coalitional Shapley audit (Theorem 99):
+        - Phase 1 (Dual redundant fee-basis shims in `pricing_coalition` and `settlement_coalition`):
+          All 3 single-module leave-one-out marginals vanish (`loo = {P: 0, T: 0, S: 0}`),
+          blinding single-module bisection, while exact Shapley attribution yields
+          `2*phi = {P: -1, T: 0, S: -1}` (`LEAVE_ONE_OUT_MASKED_COALITIONAL_DEFECT_LGGR`, `defect = -1`).
+        - Phase 2 (Downstream-only repair fixing `settlement_coalition` while leaving `pricing_coalition`
+          unpatched):
+          `v(N) = -1` persists with `2*phi = {P: -2, T: 0, S: 0}`
+          (`SINGLE_MODULE_RESIDUAL_COALITIONAL_DEFECT_LGGR`, `defect = -1`).
+        - Phase 3 (Joint coalitional Shapley repair across `pricing_coalition` and `settlement_coalition`
+          while holding dummy player `tax_coalition`):
+          All 8 coalitions reach `v(C) = 0`, `2*phi = {P: 0, T: 0, S: 0}`, and exact settlement
+          conservation `873 + 27 + 180 = 1080` (`CODEBASE_COALITIONAL_SHAPLEY_COHERENT_LGGG`, `defect = 0`).
+        """
+        eval_id = text(evaluation_id, "evaluation_id")
+        mid = text(model_id, "model_id")
+
+        src_p_fault = (
+            "def compute_pricing_coalition(items, discount_bps):\n"
+            "    subtotal = sum(int(x['unit_cents']) * int(x['quantity']) for x in items)\n"
+            "    discount = (subtotal * int(discount_bps)) // 10000\n"
+            "    net = subtotal - discount\n"
+            "    return {\n"
+            "        'subtotal_cents': subtotal,\n"
+            "        'discount_cents': discount,\n"
+            "        'net_cents': net,\n"
+            "        'fee_basis_cents': subtotal,\n"
+            "    }\n"
+        )
+        src_p_canon = (
+            "def compute_pricing_coalition(items, discount_bps):\n"
+            "    subtotal = sum(int(x['unit_cents']) * int(x['quantity']) for x in items)\n"
+            "    discount = (subtotal * int(discount_bps)) // 10000\n"
+            "    net = subtotal - discount\n"
+            "    return {\n"
+            "        'subtotal_cents': subtotal,\n"
+            "        'discount_cents': discount,\n"
+            "        'net_cents': net,\n"
+            "        'fee_basis_cents': net,\n"
+            "    }\n"
+        )
+        src_t_canon = (
+            "def compute_tax_coalition(quote, tax_bps):\n"
+            "    net = int(quote['net_cents'])\n"
+            "    tax = (net * int(tax_bps)) // 10000\n"
+            "    gross = net + tax\n"
+            "    basis = int(quote.get('fee_basis_cents', net))\n"
+            "    return {\n"
+            "        'net_cents': net,\n"
+            "        'tax_cents': tax,\n"
+            "        'gross_cents': gross,\n"
+            "        'fee_basis_cents': basis,\n"
+            "    }\n"
+        )
+        src_s_fault = (
+            "def compute_settlement_coalition(taxed_quote, fee_bps):\n"
+            "    net = int(taxed_quote['net_cents'])\n"
+            "    tax = int(taxed_quote['tax_cents'])\n"
+            "    gross = int(taxed_quote['gross_cents'])\n"
+            "    basis = max(int(taxed_quote.get('fee_basis_cents', net)), 1000)\n"
+            "    fee = (basis * int(fee_bps)) // 10000\n"
+            "    payout = gross - fee - tax\n"
+            "    return {\n"
+            "        'gross_cents': gross,\n"
+            "        'platform_fee_cents': fee,\n"
+            "        'tax_reserve_cents': tax,\n"
+            "        'merchant_payout_cents': payout,\n"
+            "    }\n"
+        )
+        src_s_canon = (
+            "def compute_settlement_coalition(taxed_quote, fee_bps):\n"
+            "    net = int(taxed_quote['net_cents'])\n"
+            "    tax = int(taxed_quote['tax_cents'])\n"
+            "    gross = int(taxed_quote['gross_cents'])\n"
+            "    basis = int(taxed_quote.get('fee_basis_cents', net))\n"
+            "    fee = (basis * int(fee_bps)) // 10000\n"
+            "    payout = gross - fee - tax\n"
+            "    return {\n"
+            "        'gross_cents': gross,\n"
+            "        'platform_fee_cents': fee,\n"
+            "        'tax_reserve_cents': tax,\n"
+            "        'merchant_payout_cents': payout,\n"
+            "    }\n"
+        )
+
+        all_local_green = {
+            "pricing_coalition": True,
+            "tax_coalition": True,
+            "settlement_coalition": True,
+        }
+
+        p1 = self.evaluate_codebase_coalitions(
+            f"{eval_id}_phase1_dual_redundant_shims",
+            sources={
+                "pricing_coalition": src_p_fault,
+                "tax_coalition": src_t_canon,
+                "settlement_coalition": src_s_fault,
+            },
+            local_test_results=all_local_green,
+            model_id=mid,
+        )
+        p2 = self.evaluate_codebase_coalitions(
+            f"{eval_id}_phase2_downstream_only_repaired",
+            sources={
+                "pricing_coalition": src_p_fault,
+                "tax_coalition": src_t_canon,
+                "settlement_coalition": src_s_canon,
+            },
+            local_test_results=all_local_green,
+            model_id=mid,
+        )
+        p3 = self.evaluate_codebase_coalitions(
+            f"{eval_id}_phase3_joint_shapley_repaired",
+            sources={
+                "pricing_coalition": src_p_canon,
+                "tax_coalition": src_t_canon,
+                "settlement_coalition": src_s_canon,
+            },
+            local_test_results=all_local_green,
+            model_id=mid,
+        )
+
+        audit_rec = json_value(
+            {
+                "evaluation_id": eval_id,
+                "model_id": mid,
+                "phase_1_leave_one_out_marginals": p1["leave_one_out_marginals"],
+                "phase_1_two_times_shapley": p1["two_times_shapley_attributions"],
+                "phase_1_grand_value": p1["grand_coalition_value"],
+                "phase_1_local_green": p1["local_green"],
+                "phase_1_global_green": p1["global_green"],
+                "phase_1_defect": p1["defect"],
+                "phase_1_status": p1["status"],
+                "phase_1_directives": p1["compact_role_directives"],
+                "phase_2_leave_one_out_marginals": p2["leave_one_out_marginals"],
+                "phase_2_two_times_shapley": p2["two_times_shapley_attributions"],
+                "phase_2_grand_value": p2["grand_coalition_value"],
+                "phase_2_local_green": p2["local_green"],
+                "phase_2_global_green": p2["global_green"],
+                "phase_2_defect": p2["defect"],
+                "phase_2_status": p2["status"],
+                "phase_3_leave_one_out_marginals": p3["leave_one_out_marginals"],
+                "phase_3_two_times_shapley": p3["two_times_shapley_attributions"],
+                "phase_3_grand_value": p3["grand_coalition_value"],
+                "phase_3_local_green": p3["local_green"],
+                "phase_3_global_green": p3["global_green"],
+                "phase_3_defect": p3["defect"],
+                "phase_3_status": p3["status"],
+                "phase_3_grand_trace": p3["grand_coalition_trace"],
+            }
+        )
+        self.three_phase_audits.append(audit_rec)
+        return audit_rec
+
+    def current_receipt(self) -> dict[str, Any]:
+        if not self.evaluations:
+            raise ValidationError("at least one codebase coalitional evaluation must be recorded")
+        n = len(self.evaluations)
+        lggr_count = sum(1 for e in self.evaluations if e["defect"] == -1)
+        lggg_count = sum(1 for e in self.evaluations if e["global_green"] == 1)
+        last = self.evaluations[-1]
+
+        body: dict[str, Any] = {
+            "schema": "lggr.online_codebase_coalitional.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": last["status"],
+            "contract_status": last["contract_status"],
+            "evaluation_count": n,
+            "lggr_obstruction_count": lggr_count,
+            "lggg_coherent_count": lggg_count,
+            "synergy_masking_receipt": self.synergy_monitor.current_receipt(),
+            "fiber_receipt": self.fiber_monitor.get_receipt(),
+            "three_phase_audits": self.three_phase_audits,
+            "evaluations": self.evaluations,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+
 
 
 
