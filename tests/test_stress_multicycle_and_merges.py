@@ -43,6 +43,7 @@ from lggr.streaming import (
     StreamingCodebaseCoalitionalMonitor,
     StreamingCodebaseContextualSheafMonitor,
     StreamingCodebaseDisagreementCouncilMonitor,
+    StreamingCodebaseDynamicSchemaMonitor,
     StreamingCodebaseFiberSplittingMonitor,
     StreamingCodebaseInterfaceMergeMonitor,
     StreamingCodebaseJacobianSoundnessMonitor,
@@ -5931,6 +5932,50 @@ class TestStreamingBaselineComparator(unittest.TestCase):
 
         receipt = mon.current_receipt()
         self.assertEqual(receipt["status"], "CODEBASE_PATH_KERNEL_DASHBOARD_COHERENT_LGGG")
+        self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(receipt["lggr_obstruction_count"], 2)
+        self.assertEqual(receipt["lggg_coherent_count"], 1)
+
+    def test_dynamic_schema_codebase_online_collision_and_refinement_audit(self) -> None:
+        """Verify Theorem 116: Dynamic boundary schema synthesis under online fiber collisions."""
+        mon = StreamingCodebaseDynamicSchemaMonitor(
+            scope_id="unit-codebase-dynamic-schema-scope",
+        )
+        obs = mon.evaluate_three_phase_dynamic_schema_audit(
+            "codebase-dynamic-schema-eval-01",
+        )
+        self.assertEqual(obs["phase_1_active_keys"], [])
+        self.assertEqual(obs["phase_1_collision_count"], 2)
+        self.assertEqual(obs["phase_1_decoder_size"], 0)
+        self.assertEqual(obs["phase_1_surcharge_cents"], 10)
+        self.assertEqual(obs["phase_1_payout_cents"], 863)
+        self.assertEqual(obs["phase_1_local_green"], 1)
+        self.assertEqual(obs["phase_1_global_green"], 0)
+        self.assertEqual(obs["phase_1_defect"], -1)
+        self.assertEqual(obs["phase_1_status"], "STATIC_SCHEMA_COLLISION_CODEBASE_LGGR")
+
+        self.assertEqual(obs["phase_2_active_keys"], ["k2"])
+        self.assertEqual(obs["phase_2_collision_count"], 1)
+        self.assertEqual(obs["phase_2_decoder_size"], 0)
+        self.assertEqual(obs["phase_2_surcharge_cents"], 5)
+        self.assertEqual(obs["phase_2_payout_cents"], 868)
+        self.assertEqual(obs["phase_2_local_green"], 1)
+        self.assertEqual(obs["phase_2_global_green"], 0)
+        self.assertEqual(obs["phase_2_defect"], -1)
+        self.assertEqual(obs["phase_2_status"], "MOVING_WITNESS_SCHEMA_COLLISION_CODEBASE_LGGR")
+
+        self.assertEqual(obs["phase_3_active_keys"], ["k1", "k2"])
+        self.assertEqual(obs["phase_3_collision_count"], 0)
+        self.assertEqual(obs["phase_3_decoder_size"], 4)
+        self.assertEqual(obs["phase_3_surcharge_cents"], 0)
+        self.assertEqual(obs["phase_3_payout_cents"], 873)
+        self.assertEqual(obs["phase_3_local_green"], 1)
+        self.assertEqual(obs["phase_3_global_green"], 1)
+        self.assertEqual(obs["phase_3_defect"], 0)
+        self.assertEqual(obs["phase_3_status"], "CODEBASE_DYNAMIC_SCHEMA_CONVERGED_LGGG")
+
+        receipt = mon.current_receipt()
+        self.assertEqual(receipt["status"], "CODEBASE_DYNAMIC_SCHEMA_CONVERGED_LGGG")
         self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
         self.assertEqual(receipt["lggr_obstruction_count"], 2)
         self.assertEqual(receipt["lggg_coherent_count"], 1)

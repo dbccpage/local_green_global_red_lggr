@@ -85,6 +85,10 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     ROLE_SETTLEMENT_RAW_P1_SRC,
     ROLE_SETTLEMENT_RAW_P2_SRC,
     ROLE_TAX_PRESERVED_SRC,
+    SCHEMA_PRICING_ANCHOR_SRC,
+    SCHEMA_SETTLEMENT_MOVING_K2_SRC,
+    SCHEMA_SETTLEMENT_REPAIRED_V2_SRC,
+    SCHEMA_TAX_UNLOCKED_V2_SRC,
     SHEAF_PRICING_SOURCE,
     SHEAF_SETTLEMENT_CONTEXTUAL_SOURCE,
     SHEAF_SETTLEMENT_RECONCILED_SOURCE,
@@ -101,6 +105,7 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     ContextualSheafCodeWorkspace,
     DiamondCodeWorkspace,
     DisagreementCouncilCodeWorkspace,
+    DynamicSchemaCodeWorkspace,
     FiberSplittingCodeWorkspace,
     JacobianCodeWorkspace,
     KInductionCodeWorkspace,
@@ -148,11 +153,13 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     run_quorum_local_unit_tests,
     run_regge_local_unit_tests,
     run_replay_local_unit_tests,
+    run_schema_synthesis_local_unit_tests,
     run_sheaf_local_unit_tests,
     run_six_role_local_unit_tests,
     run_split_local_unit_tests,
     run_stop_local_unit_tests,
     run_win_local_unit_tests,
+    schema_synthesis_fixture,
     sheaf_fixture,
     six_role_fixture,
     split_fixture,
@@ -179,6 +186,7 @@ from experiments.concurrent_code_engineering_swarm.runner import (
     regge_campaign,
     replay,
     replay_campaign,
+    schema_synthesis_campaign,
     sheaf_campaign,
     six_role_campaign,
     split_campaign,
@@ -193,6 +201,7 @@ from lggr.streaming import (
     StreamingCodebaseCoalitionalMonitor,
     StreamingCodebaseContextualSheafMonitor,
     StreamingCodebaseDisagreementCouncilMonitor,
+    StreamingCodebaseDynamicSchemaMonitor,
     StreamingCodebaseFiberSplittingMonitor,
     StreamingCodebaseInterfaceMergeMonitor,
     StreamingCodebaseJacobianSoundnessMonitor,
@@ -4228,6 +4237,243 @@ class ConcurrentCodeEngineeringSwarmTests(unittest.TestCase):
         if pk_events.exists() and pk_summary.exists():
             replayed = replay(pk_events)
             self.assertEqual(replayed["schema"], "lggr.path_kernel_dashboard_code_engineering_swarm.v1")
+            self.assertEqual(len(replayed["cases"]), 2)
+
+    # ------------------------------------------------------------------
+    # Dynamic Boundary Schema Synthesis Swarm Tests (Test 51, Theorem 116)
+    # ------------------------------------------------------------------
+
+    def test_schema_synthesis_local_unit_tests_and_merge_gate_repair(self) -> None:
+        """Verify dynamic-schema local unit tests pass while merge gate separates static v1, moving k2, and repaired v2."""
+        ws = DynamicSchemaCodeWorkspace(schema_synthesis_fixture(11300))
+        verdicts = ws.local_test_verdicts()
+        self.assertEqual(
+            verdicts,
+            {"pricing_schema": True, "tax_schema": True, "settlement_schema": True},
+        )
+
+        monitor = StreamingCodebaseDynamicSchemaMonitor(scope_id="test-schema-synthesis-gate")
+        res0 = monitor.evaluate_dynamic_schema_merge(
+            "wave-0",
+            module_sources=ws.state["sources"],
+            local_test_results=verdicts,
+        )
+        self.assertEqual(res0["local_green"], 1)
+        self.assertEqual(res0["global_green"], 0)
+        self.assertEqual(res0["defect"], -1)
+        self.assertEqual(res0["active_schema_keys"], [])
+        self.assertEqual(res0["collision_count"], 2)
+        self.assertEqual(res0["decoder_size"], 0)
+        self.assertEqual(res0["schema_collision_surcharge_cents"], 10)
+        self.assertEqual(res0["merchant_payout_cents"], 863)
+        self.assertEqual(res0["status"], "STATIC_SCHEMA_COLLISION_CODEBASE_LGGR")
+
+        # Partial repair: unlock tax_schema v2 and set active_schema_keys=['k2'] (moving witness collision at s10)
+        p1 = ws.tool("worker-1", "submit_module_patch", {"source_code": SCHEMA_TAX_UNLOCKED_V2_SRC})
+        self.assertTrue(p1["accepted"])
+        p2 = ws.tool("worker-2", "submit_module_patch", {"source_code": SCHEMA_SETTLEMENT_MOVING_K2_SRC})
+        self.assertTrue(p2["accepted"])
+        res1 = monitor.evaluate_dynamic_schema_merge(
+            "wave-1-moving-k2",
+            module_sources=ws.state["sources"],
+            local_test_results=ws.local_test_verdicts(),
+        )
+        self.assertEqual(res1["local_green"], 1)
+        self.assertEqual(res1["global_green"], 0)
+        self.assertEqual(res1["defect"], -1)
+        self.assertEqual(res1["active_schema_keys"], ["k2"])
+        self.assertEqual(res1["collision_count"], 1)
+        self.assertEqual(res1["decoder_size"], 0)
+        self.assertEqual(res1["schema_collision_surcharge_cents"], 5)
+        self.assertEqual(res1["merchant_payout_cents"], 868)
+        self.assertEqual(res1["status"], "MOVING_WITNESS_SCHEMA_COLLISION_CODEBASE_LGGR")
+
+        # Full repair: active_schema_keys=['k1', 'k2'] excluding distractor 'k_noise'
+        p3 = ws.tool("worker-2", "submit_module_patch", {"source_code": SCHEMA_SETTLEMENT_REPAIRED_V2_SRC})
+        self.assertTrue(p3["accepted"])
+        res2 = monitor.evaluate_dynamic_schema_merge(
+            "wave-1-repaired",
+            module_sources=ws.state["sources"],
+            local_test_results=ws.local_test_verdicts(),
+        )
+        self.assertEqual(res2["local_green"], 1)
+        self.assertEqual(res2["global_green"], 1)
+        self.assertEqual(res2["defect"], 0)
+        self.assertEqual(res2["active_schema_keys"], ["k1", "k2"])
+        self.assertEqual(res2["collision_count"], 0)
+        self.assertEqual(res2["decoder_size"], 4)
+        self.assertEqual(res2["schema_collision_surcharge_cents"], 0)
+        self.assertEqual(res2["merchant_payout_cents"], 873)
+        self.assertEqual(res2["status"], "CODEBASE_DYNAMIC_SCHEMA_CONVERGED_LGGG")
+
+    def test_schema_synthesis_sandbox_rejects_imports_and_failing_patches(self) -> None:
+        """Verify dynamic-schema sandbox rejects forbidden imports and hardware-locked patches."""
+        bad_import = run_schema_synthesis_local_unit_tests(
+            "tax_schema",
+            "import os\ndef compute_tax_schema(net_cents: int, rate_bps: int) -> dict:\n    return {}\n",
+        )
+        self.assertFalse(bad_import["passed"])
+        self.assertIn("forbidden_import", bad_import["error"])
+
+        ws = DynamicSchemaCodeWorkspace(schema_synthesis_fixture(11301))
+        locked_res = ws.tool("worker-1", "submit_module_patch", {"source_code": SCHEMA_TAX_UNLOCKED_V2_SRC})
+        self.assertFalse(locked_res["accepted"])
+        self.assertIn("locked", locked_res["error"])
+
+    def test_schema_synthesis_concurrent_campaign_and_tamper_evident_replay(self) -> None:
+        """Verify 3-arm schema_synthesis concurrent campaign, deterministic replay, and tamper detection."""
+        def stub_schema_synthesis_transport(payload: dict) -> dict:
+            messages = payload["messages"]
+            sys_prompt = messages[0]["content"]
+            worker = "worker-0"
+            for w in ("worker-0", "worker-1", "worker-2"):
+                if f"`{w}`" in sys_prompt:
+                    worker = w
+                    break
+            has_tool_resp = any(m.get("role") == "tool" for m in messages)
+            if not has_tool_resp:
+                tool_call = {
+                    "id": f"call_inspect_{worker}",
+                    "type": "function",
+                    "function": {"name": "inspect_workspace", "arguments": "{}"},
+                }
+            else:
+                tool_msg = next(m for m in reversed(messages) if m.get("role") == "tool")
+                inspected = json.loads(tool_msg["content"])
+                fb = inspected.get("merge_gate_feedback", {})
+                if inspected.get("infeasible_constraint") is not None:
+                    tool_call = {
+                        "id": f"call_esc_{worker}",
+                        "type": "function",
+                        "function": {
+                            "name": "escalate",
+                            "arguments": json.dumps(
+                                {"reason": "Tax and Settlement schema modules are hardware-locked to 0-feature v1 schema."}
+                            ),
+                        },
+                    }
+                elif fb.get("arm") == "A":
+                    tool_call = {
+                        "id": f"call_hold_{worker}",
+                        "type": "function",
+                        "function": {
+                            "name": "submit_module_patch",
+                            "arguments": json.dumps({"source_code": inspected["source_code"]}),
+                        },
+                    }
+                elif fb.get("arm") == "B":
+                    if worker == "worker-1":
+                        tool_call = {
+                            "id": f"call_patch_{worker}",
+                            "type": "function",
+                            "function": {
+                                "name": "submit_module_patch",
+                                "arguments": json.dumps({"source_code": SCHEMA_TAX_UNLOCKED_V2_SRC}),
+                            },
+                        }
+                    elif worker == "worker-2":
+                        tool_call = {
+                            "id": f"call_patch_{worker}",
+                            "type": "function",
+                            "function": {
+                                "name": "submit_module_patch",
+                                "arguments": json.dumps({"source_code": SCHEMA_SETTLEMENT_MOVING_K2_SRC}),
+                            },
+                        }
+                    else:
+                        tool_call = {
+                            "id": f"call_hold_{worker}",
+                            "type": "function",
+                            "function": {
+                                "name": "submit_module_patch",
+                                "arguments": json.dumps({"source_code": inspected["source_code"]}),
+                            },
+                        }
+                else:
+                    canonical_map = {
+                        "worker-0": SCHEMA_PRICING_ANCHOR_SRC,
+                        "worker-1": SCHEMA_TAX_UNLOCKED_V2_SRC,
+                        "worker-2": SCHEMA_SETTLEMENT_REPAIRED_V2_SRC,
+                    }
+                    tool_call = {
+                        "id": f"call_patch_{worker}",
+                        "type": "function",
+                        "function": {
+                            "name": "submit_module_patch",
+                            "arguments": json.dumps({"source_code": canonical_map[worker]}),
+                        },
+                    }
+            return {
+                "response": {
+                    "model": payload["model"],
+                    "usage": {
+                        "prompt_tokens": 100,
+                        "completion_tokens": 50,
+                        "total_tokens": 150,
+                        "cost": 0.0001,
+                    },
+                    "choices": [
+                        {
+                            "finish_reason": "tool_calls",
+                            "message": {
+                                "role": "assistant",
+                                "tool_calls": [tool_call],
+                            },
+                        }
+                    ],
+                },
+                "started_ns": 10,
+                "finished_ns": 20,
+            }
+
+        with tempfile.TemporaryDirectory() as td:
+            events_path = Path(td) / "events.jsonl"
+            events = Events(events_path)
+            config = {
+                "topology": "schema_synthesis",
+                "seeds": [11300, 11301],
+                "models": CODE_SWARM_MODELS,
+                "budget_usd": "0.50",
+            }
+            events.emit("start", {"config": config})
+            client = CodeBatchClient(events, "0.50", transport=stub_schema_synthesis_transport)
+            summary = schema_synthesis_campaign(client, events, config)
+            (Path(td) / "summary.json").write_text(
+                json.dumps(summary, indent=2) + "\n", encoding="utf-8"
+            )
+
+            replayed = replay(events_path)
+            self.assertEqual(replayed, summary)
+            self.assertEqual(replayed["schema"], "lggr.dynamic_schema_synthesis_code_engineering_swarm.v1")
+            self.assertEqual(replayed["max_inflight_requests"], 3)
+
+            records = deepcopy(events.records)
+            gate_rec = next(r["data"] for r in records if r["kind"] == "gate")
+            gate_rec["collision_count"] = int(gate_rec["collision_count"]) + 1
+            for i, r in enumerate(records):
+                r["previous"] = records[i - 1]["sha256"] if i else None
+                r["sha256"] = event_digest({k: v for k, v in r.items() if k != "sha256"})
+            events_path.write_text(
+                "\n".join(json.dumps(r, sort_keys=True) for r in records) + "\n",
+                encoding="utf-8",
+            )
+            with self.assertRaises(ValueError):
+                replay(events_path)
+
+    def test_live_schema_synthesis_pilot_evidence_replay_if_present(self) -> None:
+        """Replay live schema_synthesis pilot evidence offline if present."""
+        ss_events = (
+            Path(__file__).resolve().parents[1]
+            / "experiments"
+            / "concurrent_code_engineering_swarm"
+            / "evidence"
+            / "schema_synthesis_pilot_run"
+            / "events.jsonl"
+        )
+        ss_summary = ss_events.with_name("summary.json")
+        if ss_events.exists() and ss_summary.exists():
+            replayed = replay(ss_events)
+            self.assertEqual(replayed["schema"], "lggr.dynamic_schema_synthesis_code_engineering_swarm.v1")
             self.assertEqual(len(replayed["cases"]), 2)
 
 
