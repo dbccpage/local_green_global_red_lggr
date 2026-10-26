@@ -144,6 +144,7 @@ import LggrVIII
 #print axioms LggrVIII.non_abelian_braid_codebase_word_ordering_and_yang_baxter_audit
 #print axioms LggrVIII.subgradient_pivot_codebase_weight_sensitivity_and_bottleneck_audit
 #print axioms LggrVIII.policy_ratchet_codebase_cumulative_drift_and_sunset_revocation_audit
+#print axioms LggrVIII.skew_repair_codebase_norm_attainment_divergence_audit
 
 
 

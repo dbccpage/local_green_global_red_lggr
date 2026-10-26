@@ -53,6 +53,7 @@ from lggr.streaming import (
     StreamingCodebaseReplayOrderMonitor,
     StreamingCodebaseSharedChordDiamondMonitor,
     StreamingCodebaseSixRoleDeduplicationMonitor,
+    StreamingCodebaseSkewRepairMonitor,
     StreamingCodebaseSubgradientPivotMonitor,
     StreamingCodebaseThreePartyConstantMonitor,
     StreamingCodebaseWatcherDropoutMonitor,
@@ -91,6 +92,7 @@ from .domain import (
     SHARED_CHORD_DIAMOND_WORKER_MODULES,
     SHEAF_WORKER_MODULES,
     SIX_ROLE_WORKER_MODULES,
+    SKEW_REPAIR_WORKER_MODULES,
     SPLIT_WORKER_MODULES,
     STOP_WORKER_MODULES,
     SUBGRADIENT_PIVOT_WORKER_MODULES,
@@ -126,6 +128,7 @@ from .domain import (
     ReplayOrderCodeWorkspace,
     SharedChordDiamondCodeWorkspace,
     SixRoleDeduplicationCodeWorkspace,
+    SkewRepairCodeWorkspace,
     StatefulDFACodeWorkspace,
     SubgradientPivotCodeWorkspace,
     ThreePartyC3CodeWorkspace,
@@ -162,12 +165,14 @@ from .domain import (
     run_non_abelian_braid_local_unit_tests,
     run_policy_ratchet_local_unit_tests,
     run_shared_chord_diamond_local_unit_tests,
+    run_skew_repair_local_unit_tests,
     run_subgradient_pivot_local_unit_tests,
     run_three_party_c3_local_unit_tests,
     schema_synthesis_fixture,
     shared_chord_diamond_fixture,
     sheaf_fixture,
     six_role_fixture,
+    skew_repair_fixture,
     split_fixture,
     stop_fixture,
     subgradient_pivot_fixture,
@@ -8002,6 +8007,283 @@ def policy_ratchet_campaign(
     return summary
 
 
+def skew_repair_system_prompt(worker: str, arm: str) -> str:
+    mod_name = SKEW_REPAIR_WORKER_MODULES[worker]
+    base = (
+        f"You are `{worker}`, responsible exclusively for `{mod_name}.py` in a 3-module "
+        "skew non-diagonal norm-attainment divergence settlement codebase "
+        "(`pricing_skew.py` -> `tax_skew.py` -> `settlement_skew.py`) over `omega = [10, -10]` "
+        "with skew discrepancy `2a - b = 30`, coordinate l^infty budget `B_inf = 15`, and "
+        "global l^1 minimum repair budget `Phi_1 = 15` (`alpha_inf = 0`, `alpha_2 = 2`, `alpha_1 = 5`).\n"
+        "Always call `inspect_workspace` first.\n"
+        "IMPORTANT: Only call `escalate` if `infeasible_constraint` in the `inspect_workspace` result is a non-null string! "
+        "When `infeasible_constraint` is `null` and `locked` is `false`, NEVER call `escalate` — instead follow your Arm instructions below.\n"
+    )
+    if arm == "A":
+        return base + (
+            "Arm A (`linf_coordinate_minimizer_gate`): If `local_unit_test.passed` "
+            "is true and `action_required` is `HOLD_LINF_MINIMIZER_ALPHA_0`, do NOT call "
+            "`submit_module_patch`; reply concisely confirming local unit tests pass."
+        )
+    if arm == "B":
+        if worker == "worker-0":
+            return base + (
+                "Arm B (`l2_euclidean_minimizer_gate`): Call `submit_module_patch` with:\n"
+                "```python\n"
+                + StreamingCodebaseSkewRepairMonitor.PHASE_2_PRICING_SKEW_SOURCE
+                + "```\n"
+            )
+        if worker == "worker-1":
+            return base + (
+                "Arm B (`l2_euclidean_minimizer_gate`): Call `submit_module_patch` with:\n"
+                "```python\n"
+                + StreamingCodebaseSkewRepairMonitor.PHASE_2_TAX_SKEW_SOURCE
+                + "```\n"
+            )
+        return base + (
+            "Arm B (`l2_euclidean_minimizer_gate`): Call `submit_module_patch` with:\n"
+            "```python\n"
+            + StreamingCodebaseSkewRepairMonitor.PHASE_2_SETTLEMENT_SKEW_SOURCE
+            + "```\n"
+        )
+    if worker == "worker-0":
+        return base + (
+            "Arm C (`explicit_lggr_l1_skew_minimizer_directive`): Follow `compact_role_directive` "
+            "and call `submit_module_patch` with:\n"
+            "```python\n"
+            + StreamingCodebaseSkewRepairMonitor.PHASE_3_PRICING_SKEW_SOURCE
+            + "```\n"
+        )
+    if worker == "worker-1":
+        return base + (
+            "Arm C (`explicit_lggr_l1_skew_minimizer_directive`): Follow `compact_role_directive` "
+            "and call `submit_module_patch` with:\n"
+            "```python\n"
+            + StreamingCodebaseSkewRepairMonitor.PHASE_3_TAX_SKEW_SOURCE
+            + "```\n"
+        )
+    return base + (
+        "Arm C (`explicit_lggr_l1_skew_minimizer_directive`): Follow `compact_role_directive` "
+        "and call `submit_module_patch` with:\n"
+        "```python\n"
+        + StreamingCodebaseSkewRepairMonitor.PHASE_3_SETTLEMENT_SKEW_SOURCE
+        + "```\n"
+    )
+
+
+def skew_repair_merge_gate(
+    events: Events,
+    ws: SkewRepairCodeWorkspace,
+    monitor: StreamingCodebaseSkewRepairMonitor,
+    arm: str,
+    wave_label: str,
+) -> tuple[dict[str, Any], dict[str, dict[str, Any]], dict[str, Any]]:
+    sources = ws.state["sources"]
+    verdicts = {
+        m: bool(run_skew_repair_local_unit_tests(m, sources[m]).get("passed"))
+        for m in ("pricing_skew", "tax_skew", "settlement_skew")
+    }
+    eval_res = monitor.evaluate_skew_repair_modules(
+        f"{arm}-{wave_label}",
+        pricing_skew_source=sources["pricing_skew"],
+        tax_skew_source=sources["tax_skew"],
+        settlement_skew_source=sources["settlement_skew"],
+        infeasible_constraint=(
+            {"reason": ws.state["infeasible_constraint"]}
+            if ws.state["infeasible_constraint"] is not None
+            else None
+        ),
+    )
+    receipt = monitor.current_receipt()
+    events.emit(
+        "gate",
+        {
+            "arm": arm,
+            "wave": wave_label,
+            "local_green": eval_res["local_green"],
+            "global_green": eval_res["global_green"],
+            "defect": eval_res["defect"],
+            "status": eval_res["status"],
+            "pricing_alpha": eval_res["pricing_alpha"],
+            "tax_alpha": eval_res["tax_alpha"],
+            "residual_vector": eval_res["residual_vector"],
+            "candidate_l1_cost": eval_res["candidate_l1_cost"],
+            "excess_l1_cost": eval_res["excess_l1_cost"],
+            "skew_surcharge_cents": eval_res["skew_surcharge_cents"],
+            "receipt_sha256": receipt["receipt_sha256"],
+            "receipt": receipt,
+        },
+    )
+
+    per_worker_fb: dict[str, dict[str, Any]] = {}
+    for w, mod_name in SKEW_REPAIR_WORKER_MODULES.items():
+        if ws.state["infeasible_constraint"] is not None:
+            per_worker_fb[w] = {
+                "arm": arm,
+                "wave": wave_label,
+                "action_required": "ESCALATE_INFEASIBLE",
+                "infeasible_constraint": ws.state["infeasible_constraint"],
+                "compact_role_directive": eval_res["directives"][w],
+            }
+            continue
+
+        if arm == "A":
+            per_worker_fb[w] = {
+                "arm": "A",
+                "wave": wave_label,
+                "local_unit_test_passed": verdicts[mod_name],
+                "action_required": "HOLD_LINF_MINIMIZER_ALPHA_0",
+                "note": "Local unit test and coordinate l^infty bounds pass under alpha_inf = 0.",
+            }
+        elif arm == "B":
+            per_worker_fb[w] = {
+                "arm": "B",
+                "wave": wave_label,
+                "local_unit_test_passed": verdicts[mod_name],
+                "action_required": "SHIFT_TO_L2_MINIMIZER_ALPHA_2",
+                "residual_vector": eval_res["residual_vector"],
+                "candidate_l1_cost": eval_res["candidate_l1_cost"],
+                "skew_surcharge_cents": eval_res["skew_surcharge_cents"],
+                "note": "Selecting Euclidean l^2 minimizer alpha_2 = 2 yields r = [12, -6] with ||r||_1 = 18 > 15 (surcharge 6).",
+            }
+        else:
+            per_worker_fb[w] = {
+                "arm": "C",
+                "wave": wave_label,
+                "local_unit_test_passed": verdicts[mod_name],
+                "global_green": eval_res["global_green"],
+                "defect": eval_res["defect"],
+                "status": eval_res["status"],
+                "pricing_alpha": eval_res["pricing_alpha"],
+                "tax_alpha": eval_res["tax_alpha"],
+                "residual_vector": eval_res["residual_vector"],
+                "candidate_l1_cost": eval_res["candidate_l1_cost"],
+                "excess_l1_cost": eval_res["excess_l1_cost"],
+                "skew_surcharge_cents": eval_res["skew_surcharge_cents"],
+                "action_required": "ALIGN_TO_L1_MINIMIZER_ALPHA_5",
+                "compact_role_directive": eval_res["directives"][w],
+            }
+    return eval_res, per_worker_fb, receipt
+
+
+def skew_repair_campaign(
+    client: CodeBatchClient,
+    events: Events,
+    config: dict[str, Any],
+) -> dict[str, Any]:
+    seeds: list[int] = list(config["seeds"])
+    workers = list(SKEW_REPAIR_WORKER_MODULES.keys())
+    cases: list[dict[str, Any]] = []
+
+    for seed in seeds:
+        base_state = skew_repair_fixture(seed)
+        arm_results: list[dict[str, Any]] = []
+
+        for arm in ("A", "B", "C"):
+            ws = SkewRepairCodeWorkspace(base_state)
+            monitor = StreamingCodebaseSkewRepairMonitor(
+                scope_id=f"skew-repair-seed-{seed}-arm-{arm}"
+            )
+            arm_start_calls = client.calls
+            arm_start_spent = client.spent
+
+            eval_res, per_worker_fb, receipt = skew_repair_merge_gate(
+                events, ws, monitor, arm, "wave-0"
+            )
+            waves_executed = 0
+            status = "blocked_unresolved"
+
+            max_waves = 2 if base_state["infeasible_constraint"] is None else 1
+            for wave_idx in range(1, max_waves + 1):
+                waves_executed = wave_idx
+                histories = {
+                    w: [
+                        {"role": "system", "content": skew_repair_system_prompt(w, arm)},
+                        {
+                            "role": "user",
+                            "content": (
+                                f"Wave {wave_idx} for `{SKEW_REPAIR_WORKER_MODULES[w]}.py` (seed {seed}, arm {arm}). "
+                                "Inspect workspace and execute your required module action."
+                            ),
+                        },
+                    ]
+                    for w in workers
+                }
+                round_turns(
+                    client,
+                    events,
+                    ws,
+                    histories,
+                    workers,
+                    per_worker_fb,
+                )
+                eval_res, per_worker_fb, receipt = skew_repair_merge_gate(
+                    events, ws, monitor, arm, f"wave-{wave_idx}"
+                )
+                if ws.state["infeasible_constraint"] is not None and len(ws.state["escalations"]) > 0:
+                    status = "safe_escalated"
+                    break
+                if eval_res["global_green"] == 1:
+                    status = "completed"
+                    break
+
+            final_status = (
+                "INFEASIBLE_SKEW_REPAIR_SPECIFICATION_LGGR"
+                if status == "safe_escalated"
+                else eval_res["status"]
+            )
+            arm_summary = {
+                "arm": arm,
+                "status": status,
+                "waves_executed": waves_executed,
+                "final_local_green": eval_res["local_green"],
+                "final_global_green": eval_res["global_green"],
+                "final_defect": eval_res["defect"],
+                "final_pricing_alpha": eval_res["pricing_alpha"],
+                "final_tax_alpha": eval_res["tax_alpha"],
+                "final_residual_vector": eval_res["residual_vector"],
+                "final_candidate_l1_cost": eval_res["candidate_l1_cost"],
+                "final_excess_l1_cost": eval_res["excess_l1_cost"],
+                "final_skew_surcharge_cents": eval_res["skew_surcharge_cents"],
+                "final_merchant_payout_cents": eval_res["merchant_payout_cents"],
+                "final_status": final_status,
+                "final_receipt_sha256": receipt["receipt_sha256"],
+                "final_receipt": receipt,
+                "escalations": dict(ws.state["escalations"]),
+                "api_attempts": client.calls - arm_start_calls,
+                "cost_usd": str(client.spent - arm_start_spent),
+            }
+            events.emit("arm", {"seed": seed, **arm_summary})
+            arm_results.append(arm_summary)
+
+        cases.append(
+            {
+                "seed": seed,
+                "kind": base_state["kind"],
+                "arms": arm_results,
+            }
+        )
+
+    summary = {
+        "schema": "lggr.skew_repair_code_engineering_swarm.v1",
+        "topology": "skew_repair",
+        "authority_effect": "None",
+        "cases": cases,
+        "api_attempts": client.calls,
+        "charged_or_reserved_usd": str(client.spent),
+        "max_inflight_requests": client.max_inflight,
+        "concurrent_waves": client.concurrent_waves,
+        "scope": (
+            "Concurrent 3-agent skew non-diagonal norm-attainment divergence (l^1 / l^2 / l^infty) "
+            "Python code-engineering swarm (`pricing_skew` -> `tax_skew` -> `settlement_skew`) comparing "
+            "coordinatewise l^infty minimizer alpha_inf = 0 (A), Euclidean l^2 minimizer alpha_2 = 2 (B), "
+            "and global l^1 minimizer alpha_1 = 5 (C) with full cryptographic receipts."
+        ),
+    }
+    events.emit("summary", summary)
+    return summary
+
+
 def replay(path: str | Path) -> dict[str, Any]:
     records = [json.loads(line) for line in Path(path).read_text(encoding="utf-8").splitlines()]
     metadata = records[0]["data"]
@@ -8078,6 +8360,8 @@ def replay(path: str | Path) -> dict[str, Any]:
             summary = subgradient_pivot_campaign(client, events, config)
         elif config.get("topology") == "policy_ratchet":
             summary = policy_ratchet_campaign(client, events, config)
+        elif config.get("topology") == "skew_repair":
+            summary = skew_repair_campaign(client, events, config)
         else:
             summary = campaign(client, events, config)
     except RunStopped as error:
@@ -8136,6 +8420,7 @@ def main() -> None:
             "non_abelian_braid",
             "subgradient_pivot",
             "policy_ratchet",
+            "skew_repair",
         ],
         default="linear",
     )
@@ -8227,6 +8512,8 @@ def main() -> None:
         seeds = [12300, 12301, 12302]
     elif args.topology == "policy_ratchet":
         seeds = [12400, 12401, 12402]
+    elif args.topology == "skew_repair":
+        seeds = [12500, 12501, 12502]
     else:
         seeds = [6100, 6101, 6102]
     if args.topology == "diamond":
@@ -8593,6 +8880,17 @@ def main() -> None:
         events.emit("start", {"config": config})
         client = CodeBatchClient(events, args.budget)
         summary = policy_ratchet_campaign(client, events, config)
+    elif args.topology == "skew_repair":
+        config = {
+            "topology": "skew_repair",
+            "seeds": seeds,
+            "models": CODE_SWARM_MODELS,
+            "budget_usd": str(args.budget),
+        }
+        events = Events(events_path)
+        events.emit("start", {"config": config})
+        client = CodeBatchClient(events, args.budget)
+        summary = skew_repair_campaign(client, events, config)
     else:
         config = {
             "seeds": seeds,

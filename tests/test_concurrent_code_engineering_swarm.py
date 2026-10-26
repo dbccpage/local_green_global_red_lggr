@@ -72,6 +72,9 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     INITIAL_PRICING_RELAX_COHERENT_PY,
     INITIAL_PRICING_RELAX_P1_PY,
     INITIAL_PRICING_RELAX_P2_PY,
+    INITIAL_PRICING_SKEW_P1_PY,
+    INITIAL_PRICING_SKEW_P2_PY,
+    INITIAL_PRICING_SKEW_P3_PY,
     INITIAL_PRICING_SLA_PY,
     INITIAL_PRICING_WEDGE_COHERENT_PY,
     INITIAL_PRICING_WEDGE_P1_PY,
@@ -91,6 +94,9 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     INITIAL_SETTLEMENT_RATCHET_P2_PY,
     INITIAL_SETTLEMENT_RATCHET_P3_PY,
     INITIAL_SETTLEMENT_RELAX_PY,
+    INITIAL_SETTLEMENT_SKEW_P1_PY,
+    INITIAL_SETTLEMENT_SKEW_P2_PY,
+    INITIAL_SETTLEMENT_SKEW_P3_PY,
     INITIAL_SETTLEMENT_SLA_DEFERRED_PY,
     INITIAL_SETTLEMENT_WEDGE_PY,
     INITIAL_TAX_BRAID_P1_P2_PY,
@@ -112,6 +118,9 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     INITIAL_TAX_RELAX_COHERENT_PY,
     INITIAL_TAX_RELAX_P1_P3_PY,
     INITIAL_TAX_RELAX_P2_PY,
+    INITIAL_TAX_SKEW_P1_PY,
+    INITIAL_TAX_SKEW_P2_PY,
+    INITIAL_TAX_SKEW_P3_PY,
     INITIAL_TAX_SLA_DEFERRED_PY,
     INITIAL_TAX_WEDGE_COHERENT_PY,
     INITIAL_TAX_WEDGE_P1_P2_PY,
@@ -198,6 +207,7 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     ReplayOrderCodeWorkspace,
     SharedChordDiamondCodeWorkspace,
     SixRoleDeduplicationCodeWorkspace,
+    SkewRepairCodeWorkspace,
     StatefulDFACodeWorkspace,
     SubgradientPivotCodeWorkspace,
     ThreePartyC3CodeWorkspace,
@@ -256,6 +266,7 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     run_shared_chord_diamond_local_unit_tests,
     run_sheaf_local_unit_tests,
     run_six_role_local_unit_tests,
+    run_skew_repair_local_unit_tests,
     run_split_local_unit_tests,
     run_stop_local_unit_tests,
     run_subgradient_pivot_local_unit_tests,
@@ -265,6 +276,7 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     shared_chord_diamond_fixture,
     sheaf_fixture,
     six_role_fixture,
+    skew_repair_fixture,
     split_fixture,
     stop_fixture,
     subgradient_pivot_fixture,
@@ -303,6 +315,7 @@ from experiments.concurrent_code_engineering_swarm.runner import (
     shared_chord_diamond_campaign,
     sheaf_campaign,
     six_role_campaign,
+    skew_repair_campaign,
     split_campaign,
     stop_campaign,
     subgradient_pivot_campaign,
@@ -7208,6 +7221,217 @@ class GracefulSheddingCodeEngineeringSwarmTests(unittest.TestCase):
             self.assertEqual(seed_12400_arms["B"]["final_ratchet_surcharge_cents"], 5)
             self.assertEqual(seed_12400_arms["C"]["final_ratchet_surcharge_cents"], 0)
             self.assertEqual(seed_12400_arms["C"]["status"], "completed")
+
+    def test_skew_repair_local_unit_tests_and_workspace_tools(self) -> None:
+        """Verify isolated unit tests and workspace tools for skew_repair modules."""
+        self.assertTrue(
+            run_skew_repair_local_unit_tests("pricing_skew", INITIAL_PRICING_SKEW_P1_PY)["passed"]
+        )
+        self.assertTrue(
+            run_skew_repair_local_unit_tests("pricing_skew", INITIAL_PRICING_SKEW_P2_PY)["passed"]
+        )
+        self.assertTrue(
+            run_skew_repair_local_unit_tests("pricing_skew", INITIAL_PRICING_SKEW_P3_PY)["passed"]
+        )
+        self.assertTrue(
+            run_skew_repair_local_unit_tests("tax_skew", INITIAL_TAX_SKEW_P1_PY)["passed"]
+        )
+        self.assertTrue(
+            run_skew_repair_local_unit_tests("tax_skew", INITIAL_TAX_SKEW_P2_PY)["passed"]
+        )
+        self.assertTrue(
+            run_skew_repair_local_unit_tests("tax_skew", INITIAL_TAX_SKEW_P3_PY)["passed"]
+        )
+        self.assertTrue(
+            run_skew_repair_local_unit_tests("settlement_skew", INITIAL_SETTLEMENT_SKEW_P1_PY)["passed"]
+        )
+        self.assertTrue(
+            run_skew_repair_local_unit_tests("settlement_skew", INITIAL_SETTLEMENT_SKEW_P2_PY)["passed"]
+        )
+        self.assertTrue(
+            run_skew_repair_local_unit_tests("settlement_skew", INITIAL_SETTLEMENT_SKEW_P3_PY)["passed"]
+        )
+
+        ws = SkewRepairCodeWorkspace(skew_repair_fixture(12500))
+        inspected = ws.tool("worker-1", "inspect_workspace", {})
+        self.assertEqual(inspected["owned_module"], "tax_skew.py")
+        self.assertTrue(inspected["local_unit_test"]["passed"])
+        no_esc = ws.tool("worker-1", "escalate", {"reason": "Premature escalation"})
+        self.assertFalse(no_esc["accepted"])
+
+        ws_locked = SkewRepairCodeWorkspace(skew_repair_fixture(12501))
+        denied = ws_locked.tool(
+            "worker-0",
+            "submit_module_patch",
+            {"source_code": INITIAL_PRICING_SKEW_P3_PY},
+        )
+        self.assertFalse(denied["accepted"])
+        esc = ws_locked.tool("worker-0", "escalate", {"reason": "ROM lock on pricing_skew.py"})
+        self.assertTrue(esc["escalated"])
+
+    def test_concurrent_skew_repair_campaign_and_tamper_evident_replay(self) -> None:
+        """Verify 3-agent skew_repair campaign waves and offline replay."""
+
+        def stub_skew_repair_transport(payload: dict[str, Any]) -> dict[str, Any]:
+            messages = payload["messages"]
+            sys_prompt = messages[0]["content"]
+            worker = "worker-0"
+            for w in ("worker-0", "worker-1", "worker-2"):
+                if f"`{w}`" in sys_prompt:
+                    worker = w
+                    break
+            model = payload["model"]
+            tool_outputs = [m for m in messages if m.get("role") == "tool"]
+
+            if not tool_outputs:
+                tool_call = {
+                    "id": f"call-inspect-{worker}",
+                    "type": "function",
+                    "function": {"name": "inspect_workspace", "arguments": "{}"},
+                }
+            else:
+                inspected = json.loads(tool_outputs[0]["content"])
+                if inspected.get("infeasible_constraint"):
+                    tool_call = {
+                        "id": f"call-escalate-{worker}",
+                        "type": "function",
+                        "function": {
+                            "name": "escalate",
+                            "arguments": json.dumps(
+                                {
+                                    "reason": "Hardware-locked pricing_skew.py has pricing_alpha=0 and breaches Phi_1=15."
+                                }
+                            ),
+                        },
+                    }
+                elif "Arm A" in sys_prompt:
+                    return {
+                        "response": {
+                            "id": f"stub-done-{worker}",
+                            "model": model,
+                            "usage": {
+                                "prompt_tokens": 100,
+                                "completion_tokens": 20,
+                                "cost": "0.000100",
+                            },
+                            "choices": [
+                                {
+                                    "index": 0,
+                                    "finish_reason": "stop",
+                                    "message": {"role": "assistant", "content": "Done."},
+                                }
+                            ],
+                        },
+                        "started_ns": 10,
+                        "finished_ns": 20,
+                    }
+                elif "Arm B" in sys_prompt:
+                    patch_map_b = {
+                        "worker-0": INITIAL_PRICING_SKEW_P2_PY,
+                        "worker-1": INITIAL_TAX_SKEW_P2_PY,
+                        "worker-2": INITIAL_SETTLEMENT_SKEW_P2_PY,
+                    }
+                    tool_call = {
+                        "id": f"call-patch-b-{worker}",
+                        "type": "function",
+                        "function": {
+                            "name": "submit_module_patch",
+                            "arguments": json.dumps({"source_code": patch_map_b[worker]}),
+                        },
+                    }
+                else:
+                    patch_map = {
+                        "worker-0": INITIAL_PRICING_SKEW_P3_PY,
+                        "worker-1": INITIAL_TAX_SKEW_P3_PY,
+                        "worker-2": INITIAL_SETTLEMENT_SKEW_P3_PY,
+                    }
+                    tool_call = {
+                        "id": f"call-patch-c-{worker}",
+                        "type": "function",
+                        "function": {
+                            "name": "submit_module_patch",
+                            "arguments": json.dumps({"source_code": patch_map[worker]}),
+                        },
+                    }
+
+            return {
+                "response": {
+                    "id": f"stub-call-{worker}",
+                    "model": model,
+                    "usage": {
+                        "prompt_tokens": 100,
+                        "completion_tokens": 30,
+                        "cost": "0.000100",
+                    },
+                    "choices": [
+                        {
+                            "index": 0,
+                            "finish_reason": "tool_calls",
+                            "message": {
+                                "role": "assistant",
+                                "tool_calls": [tool_call],
+                            },
+                        }
+                    ],
+                },
+                "started_ns": 10,
+                "finished_ns": 20,
+            }
+
+        with tempfile.TemporaryDirectory() as td:
+            events_path = Path(td) / "events.jsonl"
+            events = Events(events_path)
+            config = {
+                "topology": "skew_repair",
+                "seeds": [12500, 12501],
+                "models": CODE_SWARM_MODELS,
+                "budget_usd": "0.50",
+            }
+            events.emit("start", {"config": config})
+            client = CodeBatchClient(events, "0.50", transport=stub_skew_repair_transport)
+            summary = skew_repair_campaign(client, events, config)
+            (Path(td) / "summary.json").write_text(
+                json.dumps(summary, indent=2) + "\n", encoding="utf-8"
+            )
+
+            replayed = replay(events_path)
+            self.assertEqual(replayed, summary)
+            self.assertEqual(replayed["schema"], "lggr.skew_repair_code_engineering_swarm.v1")
+            self.assertEqual(replayed["max_inflight_requests"], 3)
+
+            records = deepcopy(events.records)
+            gate_rec = next(r["data"] for r in records if r["kind"] == "gate")
+            gate_rec["skew_surcharge_cents"] = int(gate_rec["skew_surcharge_cents"]) + 1
+            for i, r in enumerate(records):
+                r["previous"] = records[i - 1]["sha256"] if i else None
+                r["sha256"] = event_digest({k: v for k, v in r.items() if k != "sha256"})
+            events_path.write_text(
+                "\n".join(json.dumps(r, sort_keys=True) for r in records) + "\n",
+                encoding="utf-8",
+            )
+            with self.assertRaises(ValueError):
+                replay(events_path)
+
+    def test_live_skew_repair_pilot_evidence_replay_if_present(self) -> None:
+        """Replay live skew_repair pilot evidence offline if present."""
+        skew_events = (
+            Path(__file__).resolve().parents[1]
+            / "experiments"
+            / "concurrent_code_engineering_swarm"
+            / "evidence"
+            / "skew_repair_pilot_run"
+            / "events.jsonl"
+        )
+        skew_summary = skew_events.with_name("summary.json")
+        if skew_events.exists() and skew_summary.exists():
+            replayed = replay(skew_events)
+            self.assertEqual(replayed["schema"], "lggr.skew_repair_code_engineering_swarm.v1")
+            self.assertEqual(len(replayed["cases"]), 3)
+            seed_12500_arms = {a["arm"]: a for a in replayed["cases"][0]["arms"]}
+            self.assertEqual(seed_12500_arms["A"]["final_skew_surcharge_cents"], 10)
+            self.assertEqual(seed_12500_arms["B"]["final_skew_surcharge_cents"], 6)
+            self.assertEqual(seed_12500_arms["C"]["final_skew_surcharge_cents"], 0)
+            self.assertEqual(seed_12500_arms["C"]["status"], "completed")
 
 
 if __name__ == "__main__":

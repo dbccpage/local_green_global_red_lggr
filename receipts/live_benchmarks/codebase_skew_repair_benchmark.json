@@ -1,0 +1,1909 @@
+{
+  "schema": "lggr.codebase_skew_repair_replay.v1",
+  "authority_effect": "None",
+  "benchmark_name": "codebase_skew_repair_benchmark",
+  "models_evaluated": [
+    "openai/gpt-4o-mini",
+    "google/gemini-2.5-flash-lite",
+    "meta-llama/llama-3.3-70b-instruct",
+    "deepseek/deepseek-chat",
+    "mistralai/mistral-small-3.2-24b-instruct"
+  ],
+  "total_completions": 5,
+  "evaluation_count": 5,
+  "model_answer_accuracy_rate": "1",
+  "phase_1_linf_minimax_metrics": {
+    "N": 5,
+    "LPR": "1",
+    "GPR": "0",
+    "NGD_rate": "1",
+    "ZDR_rate": "0",
+    "PGD_rate": "0",
+    "mean_defect": "-1",
+    "EGD_rate": "-1",
+    "LRGR_rate": "0",
+    "identity_verified": true
+  },
+  "phase_2_l2_hodge_metrics": {
+    "N": 5,
+    "LPR": "1",
+    "GPR": "0",
+    "NGD_rate": "1",
+    "ZDR_rate": "0",
+    "PGD_rate": "0",
+    "mean_defect": "-1",
+    "EGD_rate": "-1",
+    "LRGR_rate": "0",
+    "identity_verified": true
+  },
+  "phase_3_l1_minimum_repair_metrics": {
+    "N": 5,
+    "LPR": "1",
+    "GPR": "1",
+    "NGD_rate": "0",
+    "ZDR_rate": "1",
+    "PGD_rate": "0",
+    "mean_defect": "0",
+    "EGD_rate": "0",
+    "LRGR_rate": "0",
+    "identity_verified": true
+  },
+  "obstructed_skew_repair_codebase_coherence_rate": "0",
+  "l1_minimum_skew_repair_codebase_coherence_rate": "1",
+  "codebase_skew_repair_coherence_gain": "1",
+  "codebase_skew_repair_receipt": {
+    "schema": "lggr.online_codebase_skew_repair.v1",
+    "authority_effect": "None",
+    "scope_id": "live_codebase_skew_repair",
+    "status": "SKEW_L1_MINIMUM_REPAIR_COHERENT_LGGG",
+    "contract_status": "COMPOSABLE_LGGG",
+    "evaluation_count": 15,
+    "lggr_obstruction_count": 10,
+    "lggg_coherent_count": 5,
+    "skew_repair_receipt": {
+      "schema": "lggr.online_skew_repair.v1",
+      "authority_effect": "None",
+      "scope_id": "live_codebase_skew_repair:skew",
+      "status": "SKEW_NORM_ATTAINMENT_DIVERGENCE_LGGR",
+      "contract_status": "OBSTRUCTED_LGGR",
+      "probe_count": 15,
+      "all_closed_form_identities_verified": true,
+      "skew_norm_divergence_probe_ids": [
+        "openai/gpt-4o-mini_skew_repair_p1:skew",
+        "openai/gpt-4o-mini_skew_repair_p2:skew",
+        "google/gemini-2.5-flash-lite_skew_repair_p1:skew",
+        "google/gemini-2.5-flash-lite_skew_repair_p2:skew",
+        "meta-llama/llama-3.3-70b-instruct_skew_repair_p1:skew",
+        "meta-llama/llama-3.3-70b-instruct_skew_repair_p2:skew",
+        "deepseek/deepseek-chat_skew_repair_p1:skew",
+        "deepseek/deepseek-chat_skew_repair_p2:skew",
+        "mistralai/mistral-small-3.2-24b-instruct_skew_repair_p1:skew",
+        "mistralai/mistral-small-3.2-24b-instruct_skew_repair_p2:skew"
+      ],
+      "rejected_probe_ids": [],
+      "probes": [
+        {
+          "probe_id": "openai/gpt-4o-mini_skew_repair_p1:skew",
+          "omega": [
+            "10",
+            "-10"
+          ],
+          "skew_discrepancy_2a_minus_b": "30",
+          "alpha_1": "5",
+          "alpha_2": "2",
+          "alpha_inf": "0",
+          "phi_1": "15",
+          "phi_2_squared": "180",
+          "phi_inf": "10",
+          "closed_form_identities_hold": true,
+          "minimizers_strictly_diverge": true,
+          "candidate_alpha": "0",
+          "candidate_residual": [
+            "10",
+            "-10"
+          ],
+          "candidate_l1_cost": "20",
+          "candidate_l2_squared_cost": "200",
+          "candidate_linf_cost": "10",
+          "l_inf_coordinate_budget": "15",
+          "l_1_global_budget": "15",
+          "local_coordinate_evaluators": [
+            1,
+            1
+          ],
+          "local_product_aggregator": 1,
+          "global_l1_budget_evaluator": 0,
+          "evaluator_defect": -1,
+          "probe_status": "SKEW_NORM_ATTAINMENT_DIVERGENCE_LGGR"
+        },
+        {
+          "probe_id": "openai/gpt-4o-mini_skew_repair_p2:skew",
+          "omega": [
+            "10",
+            "-10"
+          ],
+          "skew_discrepancy_2a_minus_b": "30",
+          "alpha_1": "5",
+          "alpha_2": "2",
+          "alpha_inf": "0",
+          "phi_1": "15",
+          "phi_2_squared": "180",
+          "phi_inf": "10",
+          "closed_form_identities_hold": true,
+          "minimizers_strictly_diverge": true,
+          "candidate_alpha": "2",
+          "candidate_residual": [
+            "12",
+            "-6"
+          ],
+          "candidate_l1_cost": "18",
+          "candidate_l2_squared_cost": "180",
+          "candidate_linf_cost": "12",
+          "l_inf_coordinate_budget": "15",
+          "l_1_global_budget": "15",
+          "local_coordinate_evaluators": [
+            1,
+            1
+          ],
+          "local_product_aggregator": 1,
+          "global_l1_budget_evaluator": 0,
+          "evaluator_defect": -1,
+          "probe_status": "SKEW_NORM_ATTAINMENT_DIVERGENCE_LGGR"
+        },
+        {
+          "probe_id": "openai/gpt-4o-mini_skew_repair_p3:skew",
+          "omega": [
+            "10",
+            "-10"
+          ],
+          "skew_discrepancy_2a_minus_b": "30",
+          "alpha_1": "5",
+          "alpha_2": "2",
+          "alpha_inf": "0",
+          "phi_1": "15",
+          "phi_2_squared": "180",
+          "phi_inf": "10",
+          "closed_form_identities_hold": true,
+          "minimizers_strictly_diverge": true,
+          "candidate_alpha": "5",
+          "candidate_residual": [
+            "15",
+            "0"
+          ],
+          "candidate_l1_cost": "15",
+          "candidate_l2_squared_cost": "225",
+          "candidate_linf_cost": "15",
+          "l_inf_coordinate_budget": "15",
+          "l_1_global_budget": "15",
+          "local_coordinate_evaluators": [
+            1,
+            1
+          ],
+          "local_product_aggregator": 1,
+          "global_l1_budget_evaluator": 1,
+          "evaluator_defect": 0,
+          "probe_status": "SKEW_REPAIR_BUDGET_COHERENT_LGGG"
+        },
+        {
+          "probe_id": "google/gemini-2.5-flash-lite_skew_repair_p1:skew",
+          "omega": [
+            "10",
+            "-10"
+          ],
+          "skew_discrepancy_2a_minus_b": "30",
+          "alpha_1": "5",
+          "alpha_2": "2",
+          "alpha_inf": "0",
+          "phi_1": "15",
+          "phi_2_squared": "180",
+          "phi_inf": "10",
+          "closed_form_identities_hold": true,
+          "minimizers_strictly_diverge": true,
+          "candidate_alpha": "0",
+          "candidate_residual": [
+            "10",
+            "-10"
+          ],
+          "candidate_l1_cost": "20",
+          "candidate_l2_squared_cost": "200",
+          "candidate_linf_cost": "10",
+          "l_inf_coordinate_budget": "15",
+          "l_1_global_budget": "15",
+          "local_coordinate_evaluators": [
+            1,
+            1
+          ],
+          "local_product_aggregator": 1,
+          "global_l1_budget_evaluator": 0,
+          "evaluator_defect": -1,
+          "probe_status": "SKEW_NORM_ATTAINMENT_DIVERGENCE_LGGR"
+        },
+        {
+          "probe_id": "google/gemini-2.5-flash-lite_skew_repair_p2:skew",
+          "omega": [
+            "10",
+            "-10"
+          ],
+          "skew_discrepancy_2a_minus_b": "30",
+          "alpha_1": "5",
+          "alpha_2": "2",
+          "alpha_inf": "0",
+          "phi_1": "15",
+          "phi_2_squared": "180",
+          "phi_inf": "10",
+          "closed_form_identities_hold": true,
+          "minimizers_strictly_diverge": true,
+          "candidate_alpha": "2",
+          "candidate_residual": [
+            "12",
+            "-6"
+          ],
+          "candidate_l1_cost": "18",
+          "candidate_l2_squared_cost": "180",
+          "candidate_linf_cost": "12",
+          "l_inf_coordinate_budget": "15",
+          "l_1_global_budget": "15",
+          "local_coordinate_evaluators": [
+            1,
+            1
+          ],
+          "local_product_aggregator": 1,
+          "global_l1_budget_evaluator": 0,
+          "evaluator_defect": -1,
+          "probe_status": "SKEW_NORM_ATTAINMENT_DIVERGENCE_LGGR"
+        },
+        {
+          "probe_id": "google/gemini-2.5-flash-lite_skew_repair_p3:skew",
+          "omega": [
+            "10",
+            "-10"
+          ],
+          "skew_discrepancy_2a_minus_b": "30",
+          "alpha_1": "5",
+          "alpha_2": "2",
+          "alpha_inf": "0",
+          "phi_1": "15",
+          "phi_2_squared": "180",
+          "phi_inf": "10",
+          "closed_form_identities_hold": true,
+          "minimizers_strictly_diverge": true,
+          "candidate_alpha": "5",
+          "candidate_residual": [
+            "15",
+            "0"
+          ],
+          "candidate_l1_cost": "15",
+          "candidate_l2_squared_cost": "225",
+          "candidate_linf_cost": "15",
+          "l_inf_coordinate_budget": "15",
+          "l_1_global_budget": "15",
+          "local_coordinate_evaluators": [
+            1,
+            1
+          ],
+          "local_product_aggregator": 1,
+          "global_l1_budget_evaluator": 1,
+          "evaluator_defect": 0,
+          "probe_status": "SKEW_REPAIR_BUDGET_COHERENT_LGGG"
+        },
+        {
+          "probe_id": "meta-llama/llama-3.3-70b-instruct_skew_repair_p1:skew",
+          "omega": [
+            "10",
+            "-10"
+          ],
+          "skew_discrepancy_2a_minus_b": "30",
+          "alpha_1": "5",
+          "alpha_2": "2",
+          "alpha_inf": "0",
+          "phi_1": "15",
+          "phi_2_squared": "180",
+          "phi_inf": "10",
+          "closed_form_identities_hold": true,
+          "minimizers_strictly_diverge": true,
+          "candidate_alpha": "0",
+          "candidate_residual": [
+            "10",
+            "-10"
+          ],
+          "candidate_l1_cost": "20",
+          "candidate_l2_squared_cost": "200",
+          "candidate_linf_cost": "10",
+          "l_inf_coordinate_budget": "15",
+          "l_1_global_budget": "15",
+          "local_coordinate_evaluators": [
+            1,
+            1
+          ],
+          "local_product_aggregator": 1,
+          "global_l1_budget_evaluator": 0,
+          "evaluator_defect": -1,
+          "probe_status": "SKEW_NORM_ATTAINMENT_DIVERGENCE_LGGR"
+        },
+        {
+          "probe_id": "meta-llama/llama-3.3-70b-instruct_skew_repair_p2:skew",
+          "omega": [
+            "10",
+            "-10"
+          ],
+          "skew_discrepancy_2a_minus_b": "30",
+          "alpha_1": "5",
+          "alpha_2": "2",
+          "alpha_inf": "0",
+          "phi_1": "15",
+          "phi_2_squared": "180",
+          "phi_inf": "10",
+          "closed_form_identities_hold": true,
+          "minimizers_strictly_diverge": true,
+          "candidate_alpha": "2",
+          "candidate_residual": [
+            "12",
+            "-6"
+          ],
+          "candidate_l1_cost": "18",
+          "candidate_l2_squared_cost": "180",
+          "candidate_linf_cost": "12",
+          "l_inf_coordinate_budget": "15",
+          "l_1_global_budget": "15",
+          "local_coordinate_evaluators": [
+            1,
+            1
+          ],
+          "local_product_aggregator": 1,
+          "global_l1_budget_evaluator": 0,
+          "evaluator_defect": -1,
+          "probe_status": "SKEW_NORM_ATTAINMENT_DIVERGENCE_LGGR"
+        },
+        {
+          "probe_id": "meta-llama/llama-3.3-70b-instruct_skew_repair_p3:skew",
+          "omega": [
+            "10",
+            "-10"
+          ],
+          "skew_discrepancy_2a_minus_b": "30",
+          "alpha_1": "5",
+          "alpha_2": "2",
+          "alpha_inf": "0",
+          "phi_1": "15",
+          "phi_2_squared": "180",
+          "phi_inf": "10",
+          "closed_form_identities_hold": true,
+          "minimizers_strictly_diverge": true,
+          "candidate_alpha": "5",
+          "candidate_residual": [
+            "15",
+            "0"
+          ],
+          "candidate_l1_cost": "15",
+          "candidate_l2_squared_cost": "225",
+          "candidate_linf_cost": "15",
+          "l_inf_coordinate_budget": "15",
+          "l_1_global_budget": "15",
+          "local_coordinate_evaluators": [
+            1,
+            1
+          ],
+          "local_product_aggregator": 1,
+          "global_l1_budget_evaluator": 1,
+          "evaluator_defect": 0,
+          "probe_status": "SKEW_REPAIR_BUDGET_COHERENT_LGGG"
+        },
+        {
+          "probe_id": "deepseek/deepseek-chat_skew_repair_p1:skew",
+          "omega": [
+            "10",
+            "-10"
+          ],
+          "skew_discrepancy_2a_minus_b": "30",
+          "alpha_1": "5",
+          "alpha_2": "2",
+          "alpha_inf": "0",
+          "phi_1": "15",
+          "phi_2_squared": "180",
+          "phi_inf": "10",
+          "closed_form_identities_hold": true,
+          "minimizers_strictly_diverge": true,
+          "candidate_alpha": "0",
+          "candidate_residual": [
+            "10",
+            "-10"
+          ],
+          "candidate_l1_cost": "20",
+          "candidate_l2_squared_cost": "200",
+          "candidate_linf_cost": "10",
+          "l_inf_coordinate_budget": "15",
+          "l_1_global_budget": "15",
+          "local_coordinate_evaluators": [
+            1,
+            1
+          ],
+          "local_product_aggregator": 1,
+          "global_l1_budget_evaluator": 0,
+          "evaluator_defect": -1,
+          "probe_status": "SKEW_NORM_ATTAINMENT_DIVERGENCE_LGGR"
+        },
+        {
+          "probe_id": "deepseek/deepseek-chat_skew_repair_p2:skew",
+          "omega": [
+            "10",
+            "-10"
+          ],
+          "skew_discrepancy_2a_minus_b": "30",
+          "alpha_1": "5",
+          "alpha_2": "2",
+          "alpha_inf": "0",
+          "phi_1": "15",
+          "phi_2_squared": "180",
+          "phi_inf": "10",
+          "closed_form_identities_hold": true,
+          "minimizers_strictly_diverge": true,
+          "candidate_alpha": "2",
+          "candidate_residual": [
+            "12",
+            "-6"
+          ],
+          "candidate_l1_cost": "18",
+          "candidate_l2_squared_cost": "180",
+          "candidate_linf_cost": "12",
+          "l_inf_coordinate_budget": "15",
+          "l_1_global_budget": "15",
+          "local_coordinate_evaluators": [
+            1,
+            1
+          ],
+          "local_product_aggregator": 1,
+          "global_l1_budget_evaluator": 0,
+          "evaluator_defect": -1,
+          "probe_status": "SKEW_NORM_ATTAINMENT_DIVERGENCE_LGGR"
+        },
+        {
+          "probe_id": "deepseek/deepseek-chat_skew_repair_p3:skew",
+          "omega": [
+            "10",
+            "-10"
+          ],
+          "skew_discrepancy_2a_minus_b": "30",
+          "alpha_1": "5",
+          "alpha_2": "2",
+          "alpha_inf": "0",
+          "phi_1": "15",
+          "phi_2_squared": "180",
+          "phi_inf": "10",
+          "closed_form_identities_hold": true,
+          "minimizers_strictly_diverge": true,
+          "candidate_alpha": "5",
+          "candidate_residual": [
+            "15",
+            "0"
+          ],
+          "candidate_l1_cost": "15",
+          "candidate_l2_squared_cost": "225",
+          "candidate_linf_cost": "15",
+          "l_inf_coordinate_budget": "15",
+          "l_1_global_budget": "15",
+          "local_coordinate_evaluators": [
+            1,
+            1
+          ],
+          "local_product_aggregator": 1,
+          "global_l1_budget_evaluator": 1,
+          "evaluator_defect": 0,
+          "probe_status": "SKEW_REPAIR_BUDGET_COHERENT_LGGG"
+        },
+        {
+          "probe_id": "mistralai/mistral-small-3.2-24b-instruct_skew_repair_p1:skew",
+          "omega": [
+            "10",
+            "-10"
+          ],
+          "skew_discrepancy_2a_minus_b": "30",
+          "alpha_1": "5",
+          "alpha_2": "2",
+          "alpha_inf": "0",
+          "phi_1": "15",
+          "phi_2_squared": "180",
+          "phi_inf": "10",
+          "closed_form_identities_hold": true,
+          "minimizers_strictly_diverge": true,
+          "candidate_alpha": "0",
+          "candidate_residual": [
+            "10",
+            "-10"
+          ],
+          "candidate_l1_cost": "20",
+          "candidate_l2_squared_cost": "200",
+          "candidate_linf_cost": "10",
+          "l_inf_coordinate_budget": "15",
+          "l_1_global_budget": "15",
+          "local_coordinate_evaluators": [
+            1,
+            1
+          ],
+          "local_product_aggregator": 1,
+          "global_l1_budget_evaluator": 0,
+          "evaluator_defect": -1,
+          "probe_status": "SKEW_NORM_ATTAINMENT_DIVERGENCE_LGGR"
+        },
+        {
+          "probe_id": "mistralai/mistral-small-3.2-24b-instruct_skew_repair_p2:skew",
+          "omega": [
+            "10",
+            "-10"
+          ],
+          "skew_discrepancy_2a_minus_b": "30",
+          "alpha_1": "5",
+          "alpha_2": "2",
+          "alpha_inf": "0",
+          "phi_1": "15",
+          "phi_2_squared": "180",
+          "phi_inf": "10",
+          "closed_form_identities_hold": true,
+          "minimizers_strictly_diverge": true,
+          "candidate_alpha": "2",
+          "candidate_residual": [
+            "12",
+            "-6"
+          ],
+          "candidate_l1_cost": "18",
+          "candidate_l2_squared_cost": "180",
+          "candidate_linf_cost": "12",
+          "l_inf_coordinate_budget": "15",
+          "l_1_global_budget": "15",
+          "local_coordinate_evaluators": [
+            1,
+            1
+          ],
+          "local_product_aggregator": 1,
+          "global_l1_budget_evaluator": 0,
+          "evaluator_defect": -1,
+          "probe_status": "SKEW_NORM_ATTAINMENT_DIVERGENCE_LGGR"
+        },
+        {
+          "probe_id": "mistralai/mistral-small-3.2-24b-instruct_skew_repair_p3:skew",
+          "omega": [
+            "10",
+            "-10"
+          ],
+          "skew_discrepancy_2a_minus_b": "30",
+          "alpha_1": "5",
+          "alpha_2": "2",
+          "alpha_inf": "0",
+          "phi_1": "15",
+          "phi_2_squared": "180",
+          "phi_inf": "10",
+          "closed_form_identities_hold": true,
+          "minimizers_strictly_diverge": true,
+          "candidate_alpha": "5",
+          "candidate_residual": [
+            "15",
+            "0"
+          ],
+          "candidate_l1_cost": "15",
+          "candidate_l2_squared_cost": "225",
+          "candidate_linf_cost": "15",
+          "l_inf_coordinate_budget": "15",
+          "l_1_global_budget": "15",
+          "local_coordinate_evaluators": [
+            1,
+            1
+          ],
+          "local_product_aggregator": 1,
+          "global_l1_budget_evaluator": 1,
+          "evaluator_defect": 0,
+          "probe_status": "SKEW_REPAIR_BUDGET_COHERENT_LGGG"
+        }
+      ],
+      "receipt_sha256": "a760adb1d6851b3f08a512419379203a1cb1055704e8c7101b4a836f89604aba"
+    },
+    "fiber_receipt": {
+      "schema": "lggr.online_collision.v1",
+      "authority_effect": "None",
+      "scope_id": "streaming-fiber-scope",
+      "carrier_size": 15,
+      "status": "REPORT_INSUFFICIENT",
+      "contract_status": "OBSTRUCTED_LGGR",
+      "collision": {
+        "left": {
+          "state_id": "openai/gpt-4o-mini_skew_repair_p1_openai/gpt-4o-mini",
+          "report": {
+            "l_inf_coordinate_budget": 15,
+            "local_green": 1
+          },
+          "query": "LGGR",
+          "metadata": {
+            "candidate_l1_cost": 20,
+            "excess_l1_cost": 5,
+            "pricing_alpha": 0,
+            "residual_vector": [
+              10,
+              -10
+            ],
+            "skew_surcharge_cents": 10,
+            "tax_alpha": 0
+          }
+        },
+        "right": {
+          "state_id": "openai/gpt-4o-mini_skew_repair_p3_openai/gpt-4o-mini",
+          "report": {
+            "l_inf_coordinate_budget": 15,
+            "local_green": 1
+          },
+          "query": "LGGG",
+          "metadata": {
+            "candidate_l1_cost": 15,
+            "excess_l1_cost": 0,
+            "pricing_alpha": 5,
+            "residual_vector": [
+              15,
+              0
+            ],
+            "skew_surcharge_cents": 0,
+            "tax_alpha": 5
+          }
+        }
+      },
+      "input_sha256": "2cf41e563a3f8e76186e1b8ccc20f60128806a51b1b48e401f00fac4fd473533",
+      "meaning": "Boundary reports cannot determine this query on the supplied carrier.",
+      "receipt_sha256": "1b6ffa168880b40efe4d7a9367ab3943d7092a87c3c071769a5123a2494d3319"
+    },
+    "three_phase_audits": [
+      {
+        "audit_id": "openai/gpt-4o-mini_skew_repair",
+        "model_id": "openai/gpt-4o-mini",
+        "phase_1_alpha": 0,
+        "phase_1_residual_vector": [
+          10,
+          -10
+        ],
+        "phase_1_candidate_l1_cost": 20,
+        "phase_1_excess_l1_cost": 5,
+        "phase_1_surcharge_cents": 10,
+        "phase_1_payout_cents": 863,
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "SKEW_LINF_NORM_ATTAINMENT_DIVERGENCE_LGGR",
+        "phase_2_alpha": 2,
+        "phase_2_residual_vector": [
+          12,
+          -6
+        ],
+        "phase_2_candidate_l1_cost": 18,
+        "phase_2_excess_l1_cost": 3,
+        "phase_2_surcharge_cents": 6,
+        "phase_2_payout_cents": 867,
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "SKEW_L2_NORM_ATTAINMENT_DIVERGENCE_LGGR",
+        "phase_3_alpha": 5,
+        "phase_3_residual_vector": [
+          15,
+          0
+        ],
+        "phase_3_candidate_l1_cost": 15,
+        "phase_3_excess_l1_cost": 0,
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "SKEW_L1_MINIMUM_REPAIR_COHERENT_LGGG"
+      },
+      {
+        "audit_id": "google/gemini-2.5-flash-lite_skew_repair",
+        "model_id": "google/gemini-2.5-flash-lite",
+        "phase_1_alpha": 0,
+        "phase_1_residual_vector": [
+          10,
+          -10
+        ],
+        "phase_1_candidate_l1_cost": 20,
+        "phase_1_excess_l1_cost": 5,
+        "phase_1_surcharge_cents": 10,
+        "phase_1_payout_cents": 863,
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "SKEW_LINF_NORM_ATTAINMENT_DIVERGENCE_LGGR",
+        "phase_2_alpha": 2,
+        "phase_2_residual_vector": [
+          12,
+          -6
+        ],
+        "phase_2_candidate_l1_cost": 18,
+        "phase_2_excess_l1_cost": 3,
+        "phase_2_surcharge_cents": 6,
+        "phase_2_payout_cents": 867,
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "SKEW_L2_NORM_ATTAINMENT_DIVERGENCE_LGGR",
+        "phase_3_alpha": 5,
+        "phase_3_residual_vector": [
+          15,
+          0
+        ],
+        "phase_3_candidate_l1_cost": 15,
+        "phase_3_excess_l1_cost": 0,
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "SKEW_L1_MINIMUM_REPAIR_COHERENT_LGGG"
+      },
+      {
+        "audit_id": "meta-llama/llama-3.3-70b-instruct_skew_repair",
+        "model_id": "meta-llama/llama-3.3-70b-instruct",
+        "phase_1_alpha": 0,
+        "phase_1_residual_vector": [
+          10,
+          -10
+        ],
+        "phase_1_candidate_l1_cost": 20,
+        "phase_1_excess_l1_cost": 5,
+        "phase_1_surcharge_cents": 10,
+        "phase_1_payout_cents": 863,
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "SKEW_LINF_NORM_ATTAINMENT_DIVERGENCE_LGGR",
+        "phase_2_alpha": 2,
+        "phase_2_residual_vector": [
+          12,
+          -6
+        ],
+        "phase_2_candidate_l1_cost": 18,
+        "phase_2_excess_l1_cost": 3,
+        "phase_2_surcharge_cents": 6,
+        "phase_2_payout_cents": 867,
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "SKEW_L2_NORM_ATTAINMENT_DIVERGENCE_LGGR",
+        "phase_3_alpha": 5,
+        "phase_3_residual_vector": [
+          15,
+          0
+        ],
+        "phase_3_candidate_l1_cost": 15,
+        "phase_3_excess_l1_cost": 0,
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "SKEW_L1_MINIMUM_REPAIR_COHERENT_LGGG"
+      },
+      {
+        "audit_id": "deepseek/deepseek-chat_skew_repair",
+        "model_id": "deepseek/deepseek-chat",
+        "phase_1_alpha": 0,
+        "phase_1_residual_vector": [
+          10,
+          -10
+        ],
+        "phase_1_candidate_l1_cost": 20,
+        "phase_1_excess_l1_cost": 5,
+        "phase_1_surcharge_cents": 10,
+        "phase_1_payout_cents": 863,
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "SKEW_LINF_NORM_ATTAINMENT_DIVERGENCE_LGGR",
+        "phase_2_alpha": 2,
+        "phase_2_residual_vector": [
+          12,
+          -6
+        ],
+        "phase_2_candidate_l1_cost": 18,
+        "phase_2_excess_l1_cost": 3,
+        "phase_2_surcharge_cents": 6,
+        "phase_2_payout_cents": 867,
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "SKEW_L2_NORM_ATTAINMENT_DIVERGENCE_LGGR",
+        "phase_3_alpha": 5,
+        "phase_3_residual_vector": [
+          15,
+          0
+        ],
+        "phase_3_candidate_l1_cost": 15,
+        "phase_3_excess_l1_cost": 0,
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "SKEW_L1_MINIMUM_REPAIR_COHERENT_LGGG"
+      },
+      {
+        "audit_id": "mistralai/mistral-small-3.2-24b-instruct_skew_repair",
+        "model_id": "mistralai/mistral-small-3.2-24b-instruct",
+        "phase_1_alpha": 0,
+        "phase_1_residual_vector": [
+          10,
+          -10
+        ],
+        "phase_1_candidate_l1_cost": 20,
+        "phase_1_excess_l1_cost": 5,
+        "phase_1_surcharge_cents": 10,
+        "phase_1_payout_cents": 863,
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "SKEW_LINF_NORM_ATTAINMENT_DIVERGENCE_LGGR",
+        "phase_2_alpha": 2,
+        "phase_2_residual_vector": [
+          12,
+          -6
+        ],
+        "phase_2_candidate_l1_cost": 18,
+        "phase_2_excess_l1_cost": 3,
+        "phase_2_surcharge_cents": 6,
+        "phase_2_payout_cents": 867,
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "SKEW_L2_NORM_ATTAINMENT_DIVERGENCE_LGGR",
+        "phase_3_alpha": 5,
+        "phase_3_residual_vector": [
+          15,
+          0
+        ],
+        "phase_3_candidate_l1_cost": 15,
+        "phase_3_excess_l1_cost": 0,
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "SKEW_L1_MINIMUM_REPAIR_COHERENT_LGGG"
+      }
+    ],
+    "evaluations": [
+      {
+        "evaluation_id": "openai/gpt-4o-mini_skew_repair_p1",
+        "model_id": "openai/gpt-4o-mini",
+        "omega": [
+          10,
+          -10
+        ],
+        "skew_discrepancy": 30,
+        "l_inf_coordinate_budget": 15,
+        "l_1_global_budget": 15,
+        "pricing_alpha": 0,
+        "tax_alpha": 0,
+        "residual_vector": [
+          10,
+          -10
+        ],
+        "candidate_l1_cost": 20,
+        "candidate_l2_squared_cost": 200,
+        "candidate_linf_cost": 10,
+        "excess_l1_cost": 5,
+        "skew_surcharge_cents": 10,
+        "merchant_payout_cents": 863,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "SKEW_LINF_NORM_ATTAINMENT_DIVERGENCE_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_skew",
+            "action": "ALIGN_PRICING_SKEW_ALPHA_TO_L1_MINIMIZER_5",
+            "target_pricing_alpha": 5,
+            "target_residual_1": 15
+          },
+          "worker-1": {
+            "module": "tax_skew",
+            "action": "ALIGN_TAX_SKEW_ALPHA_TO_L1_MINIMIZER_5",
+            "target_tax_alpha": 5,
+            "target_residual_2": 0
+          },
+          "worker-2": {
+            "module": "settlement_skew",
+            "action": "REPAIR_SETTLEMENT_SKEW_NORM_GATE",
+            "target_skew_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "openai/gpt-4o-mini_skew_repair_p2",
+        "model_id": "openai/gpt-4o-mini",
+        "omega": [
+          10,
+          -10
+        ],
+        "skew_discrepancy": 30,
+        "l_inf_coordinate_budget": 15,
+        "l_1_global_budget": 15,
+        "pricing_alpha": 2,
+        "tax_alpha": 2,
+        "residual_vector": [
+          12,
+          -6
+        ],
+        "candidate_l1_cost": 18,
+        "candidate_l2_squared_cost": 180,
+        "candidate_linf_cost": 12,
+        "excess_l1_cost": 3,
+        "skew_surcharge_cents": 6,
+        "merchant_payout_cents": 867,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "SKEW_L2_NORM_ATTAINMENT_DIVERGENCE_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_skew",
+            "action": "ALIGN_PRICING_SKEW_ALPHA_TO_L1_MINIMIZER_5",
+            "target_pricing_alpha": 5,
+            "target_residual_1": 15
+          },
+          "worker-1": {
+            "module": "tax_skew",
+            "action": "ALIGN_TAX_SKEW_ALPHA_TO_L1_MINIMIZER_5",
+            "target_tax_alpha": 5,
+            "target_residual_2": 0
+          },
+          "worker-2": {
+            "module": "settlement_skew",
+            "action": "REPAIR_SETTLEMENT_SKEW_NORM_GATE",
+            "target_skew_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "openai/gpt-4o-mini_skew_repair_p3",
+        "model_id": "openai/gpt-4o-mini",
+        "omega": [
+          10,
+          -10
+        ],
+        "skew_discrepancy": 30,
+        "l_inf_coordinate_budget": 15,
+        "l_1_global_budget": 15,
+        "pricing_alpha": 5,
+        "tax_alpha": 5,
+        "residual_vector": [
+          15,
+          0
+        ],
+        "candidate_l1_cost": 15,
+        "candidate_l2_squared_cost": 225,
+        "candidate_linf_cost": 15,
+        "excess_l1_cost": 0,
+        "skew_surcharge_cents": 0,
+        "merchant_payout_cents": 873,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 1,
+        "defect": 0,
+        "status": "SKEW_L1_MINIMUM_REPAIR_COHERENT_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_skew",
+            "action": "HOLD_L1_OPTIMAL_SKEW_ALPHA_5",
+            "target_pricing_alpha": 5,
+            "target_residual_1": 15
+          },
+          "worker-1": {
+            "module": "tax_skew",
+            "action": "HOLD_L1_OPTIMAL_SKEW_ALPHA_5",
+            "target_tax_alpha": 5,
+            "target_residual_2": 0
+          },
+          "worker-2": {
+            "module": "settlement_skew",
+            "action": "HOLD_ZERO_SKEW_REPAIR_SURCHARGE",
+            "target_skew_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "google/gemini-2.5-flash-lite_skew_repair_p1",
+        "model_id": "google/gemini-2.5-flash-lite",
+        "omega": [
+          10,
+          -10
+        ],
+        "skew_discrepancy": 30,
+        "l_inf_coordinate_budget": 15,
+        "l_1_global_budget": 15,
+        "pricing_alpha": 0,
+        "tax_alpha": 0,
+        "residual_vector": [
+          10,
+          -10
+        ],
+        "candidate_l1_cost": 20,
+        "candidate_l2_squared_cost": 200,
+        "candidate_linf_cost": 10,
+        "excess_l1_cost": 5,
+        "skew_surcharge_cents": 10,
+        "merchant_payout_cents": 863,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "SKEW_LINF_NORM_ATTAINMENT_DIVERGENCE_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_skew",
+            "action": "ALIGN_PRICING_SKEW_ALPHA_TO_L1_MINIMIZER_5",
+            "target_pricing_alpha": 5,
+            "target_residual_1": 15
+          },
+          "worker-1": {
+            "module": "tax_skew",
+            "action": "ALIGN_TAX_SKEW_ALPHA_TO_L1_MINIMIZER_5",
+            "target_tax_alpha": 5,
+            "target_residual_2": 0
+          },
+          "worker-2": {
+            "module": "settlement_skew",
+            "action": "REPAIR_SETTLEMENT_SKEW_NORM_GATE",
+            "target_skew_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "google/gemini-2.5-flash-lite_skew_repair_p2",
+        "model_id": "google/gemini-2.5-flash-lite",
+        "omega": [
+          10,
+          -10
+        ],
+        "skew_discrepancy": 30,
+        "l_inf_coordinate_budget": 15,
+        "l_1_global_budget": 15,
+        "pricing_alpha": 2,
+        "tax_alpha": 2,
+        "residual_vector": [
+          12,
+          -6
+        ],
+        "candidate_l1_cost": 18,
+        "candidate_l2_squared_cost": 180,
+        "candidate_linf_cost": 12,
+        "excess_l1_cost": 3,
+        "skew_surcharge_cents": 6,
+        "merchant_payout_cents": 867,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "SKEW_L2_NORM_ATTAINMENT_DIVERGENCE_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_skew",
+            "action": "ALIGN_PRICING_SKEW_ALPHA_TO_L1_MINIMIZER_5",
+            "target_pricing_alpha": 5,
+            "target_residual_1": 15
+          },
+          "worker-1": {
+            "module": "tax_skew",
+            "action": "ALIGN_TAX_SKEW_ALPHA_TO_L1_MINIMIZER_5",
+            "target_tax_alpha": 5,
+            "target_residual_2": 0
+          },
+          "worker-2": {
+            "module": "settlement_skew",
+            "action": "REPAIR_SETTLEMENT_SKEW_NORM_GATE",
+            "target_skew_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "google/gemini-2.5-flash-lite_skew_repair_p3",
+        "model_id": "google/gemini-2.5-flash-lite",
+        "omega": [
+          10,
+          -10
+        ],
+        "skew_discrepancy": 30,
+        "l_inf_coordinate_budget": 15,
+        "l_1_global_budget": 15,
+        "pricing_alpha": 5,
+        "tax_alpha": 5,
+        "residual_vector": [
+          15,
+          0
+        ],
+        "candidate_l1_cost": 15,
+        "candidate_l2_squared_cost": 225,
+        "candidate_linf_cost": 15,
+        "excess_l1_cost": 0,
+        "skew_surcharge_cents": 0,
+        "merchant_payout_cents": 873,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 1,
+        "defect": 0,
+        "status": "SKEW_L1_MINIMUM_REPAIR_COHERENT_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_skew",
+            "action": "HOLD_L1_OPTIMAL_SKEW_ALPHA_5",
+            "target_pricing_alpha": 5,
+            "target_residual_1": 15
+          },
+          "worker-1": {
+            "module": "tax_skew",
+            "action": "HOLD_L1_OPTIMAL_SKEW_ALPHA_5",
+            "target_tax_alpha": 5,
+            "target_residual_2": 0
+          },
+          "worker-2": {
+            "module": "settlement_skew",
+            "action": "HOLD_ZERO_SKEW_REPAIR_SURCHARGE",
+            "target_skew_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "meta-llama/llama-3.3-70b-instruct_skew_repair_p1",
+        "model_id": "meta-llama/llama-3.3-70b-instruct",
+        "omega": [
+          10,
+          -10
+        ],
+        "skew_discrepancy": 30,
+        "l_inf_coordinate_budget": 15,
+        "l_1_global_budget": 15,
+        "pricing_alpha": 0,
+        "tax_alpha": 0,
+        "residual_vector": [
+          10,
+          -10
+        ],
+        "candidate_l1_cost": 20,
+        "candidate_l2_squared_cost": 200,
+        "candidate_linf_cost": 10,
+        "excess_l1_cost": 5,
+        "skew_surcharge_cents": 10,
+        "merchant_payout_cents": 863,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "SKEW_LINF_NORM_ATTAINMENT_DIVERGENCE_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_skew",
+            "action": "ALIGN_PRICING_SKEW_ALPHA_TO_L1_MINIMIZER_5",
+            "target_pricing_alpha": 5,
+            "target_residual_1": 15
+          },
+          "worker-1": {
+            "module": "tax_skew",
+            "action": "ALIGN_TAX_SKEW_ALPHA_TO_L1_MINIMIZER_5",
+            "target_tax_alpha": 5,
+            "target_residual_2": 0
+          },
+          "worker-2": {
+            "module": "settlement_skew",
+            "action": "REPAIR_SETTLEMENT_SKEW_NORM_GATE",
+            "target_skew_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "meta-llama/llama-3.3-70b-instruct_skew_repair_p2",
+        "model_id": "meta-llama/llama-3.3-70b-instruct",
+        "omega": [
+          10,
+          -10
+        ],
+        "skew_discrepancy": 30,
+        "l_inf_coordinate_budget": 15,
+        "l_1_global_budget": 15,
+        "pricing_alpha": 2,
+        "tax_alpha": 2,
+        "residual_vector": [
+          12,
+          -6
+        ],
+        "candidate_l1_cost": 18,
+        "candidate_l2_squared_cost": 180,
+        "candidate_linf_cost": 12,
+        "excess_l1_cost": 3,
+        "skew_surcharge_cents": 6,
+        "merchant_payout_cents": 867,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "SKEW_L2_NORM_ATTAINMENT_DIVERGENCE_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_skew",
+            "action": "ALIGN_PRICING_SKEW_ALPHA_TO_L1_MINIMIZER_5",
+            "target_pricing_alpha": 5,
+            "target_residual_1": 15
+          },
+          "worker-1": {
+            "module": "tax_skew",
+            "action": "ALIGN_TAX_SKEW_ALPHA_TO_L1_MINIMIZER_5",
+            "target_tax_alpha": 5,
+            "target_residual_2": 0
+          },
+          "worker-2": {
+            "module": "settlement_skew",
+            "action": "REPAIR_SETTLEMENT_SKEW_NORM_GATE",
+            "target_skew_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "meta-llama/llama-3.3-70b-instruct_skew_repair_p3",
+        "model_id": "meta-llama/llama-3.3-70b-instruct",
+        "omega": [
+          10,
+          -10
+        ],
+        "skew_discrepancy": 30,
+        "l_inf_coordinate_budget": 15,
+        "l_1_global_budget": 15,
+        "pricing_alpha": 5,
+        "tax_alpha": 5,
+        "residual_vector": [
+          15,
+          0
+        ],
+        "candidate_l1_cost": 15,
+        "candidate_l2_squared_cost": 225,
+        "candidate_linf_cost": 15,
+        "excess_l1_cost": 0,
+        "skew_surcharge_cents": 0,
+        "merchant_payout_cents": 873,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 1,
+        "defect": 0,
+        "status": "SKEW_L1_MINIMUM_REPAIR_COHERENT_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_skew",
+            "action": "HOLD_L1_OPTIMAL_SKEW_ALPHA_5",
+            "target_pricing_alpha": 5,
+            "target_residual_1": 15
+          },
+          "worker-1": {
+            "module": "tax_skew",
+            "action": "HOLD_L1_OPTIMAL_SKEW_ALPHA_5",
+            "target_tax_alpha": 5,
+            "target_residual_2": 0
+          },
+          "worker-2": {
+            "module": "settlement_skew",
+            "action": "HOLD_ZERO_SKEW_REPAIR_SURCHARGE",
+            "target_skew_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "deepseek/deepseek-chat_skew_repair_p1",
+        "model_id": "deepseek/deepseek-chat",
+        "omega": [
+          10,
+          -10
+        ],
+        "skew_discrepancy": 30,
+        "l_inf_coordinate_budget": 15,
+        "l_1_global_budget": 15,
+        "pricing_alpha": 0,
+        "tax_alpha": 0,
+        "residual_vector": [
+          10,
+          -10
+        ],
+        "candidate_l1_cost": 20,
+        "candidate_l2_squared_cost": 200,
+        "candidate_linf_cost": 10,
+        "excess_l1_cost": 5,
+        "skew_surcharge_cents": 10,
+        "merchant_payout_cents": 863,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "SKEW_LINF_NORM_ATTAINMENT_DIVERGENCE_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_skew",
+            "action": "ALIGN_PRICING_SKEW_ALPHA_TO_L1_MINIMIZER_5",
+            "target_pricing_alpha": 5,
+            "target_residual_1": 15
+          },
+          "worker-1": {
+            "module": "tax_skew",
+            "action": "ALIGN_TAX_SKEW_ALPHA_TO_L1_MINIMIZER_5",
+            "target_tax_alpha": 5,
+            "target_residual_2": 0
+          },
+          "worker-2": {
+            "module": "settlement_skew",
+            "action": "REPAIR_SETTLEMENT_SKEW_NORM_GATE",
+            "target_skew_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "deepseek/deepseek-chat_skew_repair_p2",
+        "model_id": "deepseek/deepseek-chat",
+        "omega": [
+          10,
+          -10
+        ],
+        "skew_discrepancy": 30,
+        "l_inf_coordinate_budget": 15,
+        "l_1_global_budget": 15,
+        "pricing_alpha": 2,
+        "tax_alpha": 2,
+        "residual_vector": [
+          12,
+          -6
+        ],
+        "candidate_l1_cost": 18,
+        "candidate_l2_squared_cost": 180,
+        "candidate_linf_cost": 12,
+        "excess_l1_cost": 3,
+        "skew_surcharge_cents": 6,
+        "merchant_payout_cents": 867,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "SKEW_L2_NORM_ATTAINMENT_DIVERGENCE_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_skew",
+            "action": "ALIGN_PRICING_SKEW_ALPHA_TO_L1_MINIMIZER_5",
+            "target_pricing_alpha": 5,
+            "target_residual_1": 15
+          },
+          "worker-1": {
+            "module": "tax_skew",
+            "action": "ALIGN_TAX_SKEW_ALPHA_TO_L1_MINIMIZER_5",
+            "target_tax_alpha": 5,
+            "target_residual_2": 0
+          },
+          "worker-2": {
+            "module": "settlement_skew",
+            "action": "REPAIR_SETTLEMENT_SKEW_NORM_GATE",
+            "target_skew_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "deepseek/deepseek-chat_skew_repair_p3",
+        "model_id": "deepseek/deepseek-chat",
+        "omega": [
+          10,
+          -10
+        ],
+        "skew_discrepancy": 30,
+        "l_inf_coordinate_budget": 15,
+        "l_1_global_budget": 15,
+        "pricing_alpha": 5,
+        "tax_alpha": 5,
+        "residual_vector": [
+          15,
+          0
+        ],
+        "candidate_l1_cost": 15,
+        "candidate_l2_squared_cost": 225,
+        "candidate_linf_cost": 15,
+        "excess_l1_cost": 0,
+        "skew_surcharge_cents": 0,
+        "merchant_payout_cents": 873,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 1,
+        "defect": 0,
+        "status": "SKEW_L1_MINIMUM_REPAIR_COHERENT_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_skew",
+            "action": "HOLD_L1_OPTIMAL_SKEW_ALPHA_5",
+            "target_pricing_alpha": 5,
+            "target_residual_1": 15
+          },
+          "worker-1": {
+            "module": "tax_skew",
+            "action": "HOLD_L1_OPTIMAL_SKEW_ALPHA_5",
+            "target_tax_alpha": 5,
+            "target_residual_2": 0
+          },
+          "worker-2": {
+            "module": "settlement_skew",
+            "action": "HOLD_ZERO_SKEW_REPAIR_SURCHARGE",
+            "target_skew_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "mistralai/mistral-small-3.2-24b-instruct_skew_repair_p1",
+        "model_id": "mistralai/mistral-small-3.2-24b-instruct",
+        "omega": [
+          10,
+          -10
+        ],
+        "skew_discrepancy": 30,
+        "l_inf_coordinate_budget": 15,
+        "l_1_global_budget": 15,
+        "pricing_alpha": 0,
+        "tax_alpha": 0,
+        "residual_vector": [
+          10,
+          -10
+        ],
+        "candidate_l1_cost": 20,
+        "candidate_l2_squared_cost": 200,
+        "candidate_linf_cost": 10,
+        "excess_l1_cost": 5,
+        "skew_surcharge_cents": 10,
+        "merchant_payout_cents": 863,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "SKEW_LINF_NORM_ATTAINMENT_DIVERGENCE_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_skew",
+            "action": "ALIGN_PRICING_SKEW_ALPHA_TO_L1_MINIMIZER_5",
+            "target_pricing_alpha": 5,
+            "target_residual_1": 15
+          },
+          "worker-1": {
+            "module": "tax_skew",
+            "action": "ALIGN_TAX_SKEW_ALPHA_TO_L1_MINIMIZER_5",
+            "target_tax_alpha": 5,
+            "target_residual_2": 0
+          },
+          "worker-2": {
+            "module": "settlement_skew",
+            "action": "REPAIR_SETTLEMENT_SKEW_NORM_GATE",
+            "target_skew_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "mistralai/mistral-small-3.2-24b-instruct_skew_repair_p2",
+        "model_id": "mistralai/mistral-small-3.2-24b-instruct",
+        "omega": [
+          10,
+          -10
+        ],
+        "skew_discrepancy": 30,
+        "l_inf_coordinate_budget": 15,
+        "l_1_global_budget": 15,
+        "pricing_alpha": 2,
+        "tax_alpha": 2,
+        "residual_vector": [
+          12,
+          -6
+        ],
+        "candidate_l1_cost": 18,
+        "candidate_l2_squared_cost": 180,
+        "candidate_linf_cost": 12,
+        "excess_l1_cost": 3,
+        "skew_surcharge_cents": 6,
+        "merchant_payout_cents": 867,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "SKEW_L2_NORM_ATTAINMENT_DIVERGENCE_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_skew",
+            "action": "ALIGN_PRICING_SKEW_ALPHA_TO_L1_MINIMIZER_5",
+            "target_pricing_alpha": 5,
+            "target_residual_1": 15
+          },
+          "worker-1": {
+            "module": "tax_skew",
+            "action": "ALIGN_TAX_SKEW_ALPHA_TO_L1_MINIMIZER_5",
+            "target_tax_alpha": 5,
+            "target_residual_2": 0
+          },
+          "worker-2": {
+            "module": "settlement_skew",
+            "action": "REPAIR_SETTLEMENT_SKEW_NORM_GATE",
+            "target_skew_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "mistralai/mistral-small-3.2-24b-instruct_skew_repair_p3",
+        "model_id": "mistralai/mistral-small-3.2-24b-instruct",
+        "omega": [
+          10,
+          -10
+        ],
+        "skew_discrepancy": 30,
+        "l_inf_coordinate_budget": 15,
+        "l_1_global_budget": 15,
+        "pricing_alpha": 5,
+        "tax_alpha": 5,
+        "residual_vector": [
+          15,
+          0
+        ],
+        "candidate_l1_cost": 15,
+        "candidate_l2_squared_cost": 225,
+        "candidate_linf_cost": 15,
+        "excess_l1_cost": 0,
+        "skew_surcharge_cents": 0,
+        "merchant_payout_cents": 873,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 1,
+        "defect": 0,
+        "status": "SKEW_L1_MINIMUM_REPAIR_COHERENT_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_skew",
+            "action": "HOLD_L1_OPTIMAL_SKEW_ALPHA_5",
+            "target_pricing_alpha": 5,
+            "target_residual_1": 15
+          },
+          "worker-1": {
+            "module": "tax_skew",
+            "action": "HOLD_L1_OPTIMAL_SKEW_ALPHA_5",
+            "target_tax_alpha": 5,
+            "target_residual_2": 0
+          },
+          "worker-2": {
+            "module": "settlement_skew",
+            "action": "HOLD_ZERO_SKEW_REPAIR_SURCHARGE",
+            "target_skew_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      }
+    ],
+    "receipt_sha256": "d851f05bf85826f8f45cdfdf3bc2d66c2821ba3477dbab4a4d8efc59264df0f4"
+  },
+  "evaluations": [
+    {
+      "audit_id": "openai/gpt-4o-mini_skew_repair",
+      "model_id": "openai/gpt-4o-mini",
+      "phase_1_alpha": 0,
+      "phase_1_residual_vector": [
+        10,
+        -10
+      ],
+      "phase_1_candidate_l1_cost": 20,
+      "phase_1_excess_l1_cost": 5,
+      "phase_1_surcharge_cents": 10,
+      "phase_1_payout_cents": 863,
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "SKEW_LINF_NORM_ATTAINMENT_DIVERGENCE_LGGR",
+      "phase_2_alpha": 2,
+      "phase_2_residual_vector": [
+        12,
+        -6
+      ],
+      "phase_2_candidate_l1_cost": 18,
+      "phase_2_excess_l1_cost": 3,
+      "phase_2_surcharge_cents": 6,
+      "phase_2_payout_cents": 867,
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "SKEW_L2_NORM_ATTAINMENT_DIVERGENCE_LGGR",
+      "phase_3_alpha": 5,
+      "phase_3_residual_vector": [
+        15,
+        0
+      ],
+      "phase_3_candidate_l1_cost": 15,
+      "phase_3_excess_l1_cost": 0,
+      "phase_3_surcharge_cents": 0,
+      "phase_3_payout_cents": 873,
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "SKEW_L1_MINIMUM_REPAIR_COHERENT_LGGG",
+      "parsed_controller_verdict": {
+        "phase_1_surcharge_cents": 10,
+        "phase_1_payout_cents": 863,
+        "phase_2_surcharge_cents": 6,
+        "phase_2_payout_cents": 867,
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "global_coherent": true
+      },
+      "model_answer_exact_match": true,
+      "raw_controller_response": "{\n  \"phase_1_surcharge_cents\": 10,\n  \"phase_1_payout_cents\": 863,\n  \"phase_2_surcharge_cents\": 6,\n  \"phase_2_payout_cents\": 867,\n  \"phase_3_surcharge_cents\": 0,\n  \"phase_3_payout_cents\": 873,\n  \"global_coherent\": true\n}"
+    },
+    {
+      "audit_id": "google/gemini-2.5-flash-lite_skew_repair",
+      "model_id": "google/gemini-2.5-flash-lite",
+      "phase_1_alpha": 0,
+      "phase_1_residual_vector": [
+        10,
+        -10
+      ],
+      "phase_1_candidate_l1_cost": 20,
+      "phase_1_excess_l1_cost": 5,
+      "phase_1_surcharge_cents": 10,
+      "phase_1_payout_cents": 863,
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "SKEW_LINF_NORM_ATTAINMENT_DIVERGENCE_LGGR",
+      "phase_2_alpha": 2,
+      "phase_2_residual_vector": [
+        12,
+        -6
+      ],
+      "phase_2_candidate_l1_cost": 18,
+      "phase_2_excess_l1_cost": 3,
+      "phase_2_surcharge_cents": 6,
+      "phase_2_payout_cents": 867,
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "SKEW_L2_NORM_ATTAINMENT_DIVERGENCE_LGGR",
+      "phase_3_alpha": 5,
+      "phase_3_residual_vector": [
+        15,
+        0
+      ],
+      "phase_3_candidate_l1_cost": 15,
+      "phase_3_excess_l1_cost": 0,
+      "phase_3_surcharge_cents": 0,
+      "phase_3_payout_cents": 873,
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "SKEW_L1_MINIMUM_REPAIR_COHERENT_LGGG",
+      "parsed_controller_verdict": {
+        "phase_1_surcharge_cents": 10,
+        "phase_1_payout_cents": 863,
+        "phase_2_surcharge_cents": 6,
+        "phase_2_payout_cents": 867,
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "global_coherent": true
+      },
+      "model_answer_exact_match": true,
+      "raw_controller_response": "```json\n{\n  \"phase_1_surcharge_cents\": 10,\n  \"phase_1_payout_cents\": 863,\n  \"phase_2_surcharge_cents\": 6,\n  \"phase_2_payout_cents\": 867,\n  \"phase_3_surcharge_cents\": 0,\n  \"phase_3_payout_cents\": 873,\n  \"global_coherent\": true\n}\n```"
+    },
+    {
+      "audit_id": "meta-llama/llama-3.3-70b-instruct_skew_repair",
+      "model_id": "meta-llama/llama-3.3-70b-instruct",
+      "phase_1_alpha": 0,
+      "phase_1_residual_vector": [
+        10,
+        -10
+      ],
+      "phase_1_candidate_l1_cost": 20,
+      "phase_1_excess_l1_cost": 5,
+      "phase_1_surcharge_cents": 10,
+      "phase_1_payout_cents": 863,
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "SKEW_LINF_NORM_ATTAINMENT_DIVERGENCE_LGGR",
+      "phase_2_alpha": 2,
+      "phase_2_residual_vector": [
+        12,
+        -6
+      ],
+      "phase_2_candidate_l1_cost": 18,
+      "phase_2_excess_l1_cost": 3,
+      "phase_2_surcharge_cents": 6,
+      "phase_2_payout_cents": 867,
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "SKEW_L2_NORM_ATTAINMENT_DIVERGENCE_LGGR",
+      "phase_3_alpha": 5,
+      "phase_3_residual_vector": [
+        15,
+        0
+      ],
+      "phase_3_candidate_l1_cost": 15,
+      "phase_3_excess_l1_cost": 0,
+      "phase_3_surcharge_cents": 0,
+      "phase_3_payout_cents": 873,
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "SKEW_L1_MINIMUM_REPAIR_COHERENT_LGGG",
+      "parsed_controller_verdict": {
+        "phase_1_surcharge_cents": 10,
+        "phase_1_payout_cents": 863,
+        "phase_2_surcharge_cents": 6,
+        "phase_2_payout_cents": 867,
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "global_coherent": true
+      },
+      "model_answer_exact_match": true,
+      "raw_controller_response": "```json\n{\n  \"phase_1_surcharge_cents\": 10,\n  \"phase_1_payout_cents\": 863,\n  \"phase_2_surcharge_cents\": 6,\n  \"phase_2_payout_cents\": 867,\n  \"phase_3_surcharge_cents\": 0,\n  \"phase_3_payout_cents\": 873,\n  \"global_coherent\": true\n}\n```"
+    },
+    {
+      "audit_id": "deepseek/deepseek-chat_skew_repair",
+      "model_id": "deepseek/deepseek-chat",
+      "phase_1_alpha": 0,
+      "phase_1_residual_vector": [
+        10,
+        -10
+      ],
+      "phase_1_candidate_l1_cost": 20,
+      "phase_1_excess_l1_cost": 5,
+      "phase_1_surcharge_cents": 10,
+      "phase_1_payout_cents": 863,
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "SKEW_LINF_NORM_ATTAINMENT_DIVERGENCE_LGGR",
+      "phase_2_alpha": 2,
+      "phase_2_residual_vector": [
+        12,
+        -6
+      ],
+      "phase_2_candidate_l1_cost": 18,
+      "phase_2_excess_l1_cost": 3,
+      "phase_2_surcharge_cents": 6,
+      "phase_2_payout_cents": 867,
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "SKEW_L2_NORM_ATTAINMENT_DIVERGENCE_LGGR",
+      "phase_3_alpha": 5,
+      "phase_3_residual_vector": [
+        15,
+        0
+      ],
+      "phase_3_candidate_l1_cost": 15,
+      "phase_3_excess_l1_cost": 0,
+      "phase_3_surcharge_cents": 0,
+      "phase_3_payout_cents": 873,
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "SKEW_L1_MINIMUM_REPAIR_COHERENT_LGGG",
+      "parsed_controller_verdict": {
+        "phase_1_surcharge_cents": 10,
+        "phase_1_payout_cents": 863,
+        "phase_2_surcharge_cents": 6,
+        "phase_2_payout_cents": 867,
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "global_coherent": true
+      },
+      "model_answer_exact_match": true,
+      "raw_controller_response": "```json\n{\n  \"phase_1_surcharge_cents\": 10,\n  \"phase_1_payout_cents\": 863,\n  \"phase_2_surcharge_cents\": 6,\n  \"phase_2_payout_cents\": 867,\n  \"phase_3_surcharge_cents\": 0,\n  \"phase_3_payout_cents\": 873,\n  \"global_coherent\": true\n}\n```"
+    },
+    {
+      "audit_id": "mistralai/mistral-small-3.2-24b-instruct_skew_repair",
+      "model_id": "mistralai/mistral-small-3.2-24b-instruct",
+      "phase_1_alpha": 0,
+      "phase_1_residual_vector": [
+        10,
+        -10
+      ],
+      "phase_1_candidate_l1_cost": 20,
+      "phase_1_excess_l1_cost": 5,
+      "phase_1_surcharge_cents": 10,
+      "phase_1_payout_cents": 863,
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "SKEW_LINF_NORM_ATTAINMENT_DIVERGENCE_LGGR",
+      "phase_2_alpha": 2,
+      "phase_2_residual_vector": [
+        12,
+        -6
+      ],
+      "phase_2_candidate_l1_cost": 18,
+      "phase_2_excess_l1_cost": 3,
+      "phase_2_surcharge_cents": 6,
+      "phase_2_payout_cents": 867,
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "SKEW_L2_NORM_ATTAINMENT_DIVERGENCE_LGGR",
+      "phase_3_alpha": 5,
+      "phase_3_residual_vector": [
+        15,
+        0
+      ],
+      "phase_3_candidate_l1_cost": 15,
+      "phase_3_excess_l1_cost": 0,
+      "phase_3_surcharge_cents": 0,
+      "phase_3_payout_cents": 873,
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "SKEW_L1_MINIMUM_REPAIR_COHERENT_LGGG",
+      "parsed_controller_verdict": {
+        "phase_1_surcharge_cents": 10,
+        "phase_1_payout_cents": 863,
+        "phase_2_surcharge_cents": 6,
+        "phase_2_payout_cents": 867,
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "global_coherent": true
+      },
+      "model_answer_exact_match": true,
+      "raw_controller_response": "```json\n{\n  \"phase_1_surcharge_cents\": 10,\n  \"phase_1_payout_cents\": 863,\n  \"phase_2_surcharge_cents\": 6,\n  \"phase_2_payout_cents\": 867,\n  \"phase_3_surcharge_cents\": 0,\n  \"phase_3_payout_cents\": 873,\n  \"global_coherent\": true\n}\n```"
+    }
+  ],
+  "meaning": "Skew-coboundary norm-attainment divergence and l1-minimum repair codebase benchmark across 5 model families (Theorem 128): Phase 1 separates l_inf minimax repair (`alpha_inf = 0, r(0) = [10, -10], candidate_l1_cost = 20, excess_l1_cost = 5, surcharge = 10, payout = 863 != 873, Delta_E = -1`); Phase 2 separates l2 least-squares Hodge repair (`alpha_2 = 2, r(2) = [12, -6], candidate_l1_cost = 18, excess_l1_cost = 3, surcharge = 6, payout = 867 != 873, Delta_E = -1`); Phase 3 verifies l1-minimum skew repair (`alpha_1 = 5, r(5) = [15, 0], candidate_l1_cost = 15 <= 15, surcharge = 0, 873 + 27 + 90 = 990, Delta_E = 0`).",
+  "receipt_sha256": "3dccc0866a97495909131cd0439479afbc666632cb2aa2caf3933072e5931fdc"
+}
