@@ -42,6 +42,7 @@ from lggr.streaming import (
     StreamingCodebaseCatalystEvolutionMonitor,
     StreamingCodebaseCoalitionalMonitor,
     StreamingCodebaseContextualSheafMonitor,
+    StreamingCodebaseFiberSplittingMonitor,
     StreamingCodebaseInterfaceMergeMonitor,
     StreamingCodebaseJacobianSoundnessMonitor,
     StreamingCodebaseKInductionMonitor,
@@ -5758,6 +5759,50 @@ class TestStreamingBaselineComparator(unittest.TestCase):
 
         receipt = mon.current_receipt()
         self.assertEqual(receipt["status"], "CODEBASE_POLICY_REVERSAL_DUAL_METRIC_COHERENT_LGGG")
+        self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(receipt["lggr_obstruction_count"], 2)
+        self.assertEqual(receipt["lggg_coherent_count"], 1)
+
+    def test_fiber_splitting_codebase_unassisted_reflection_and_tool_probe_audit(self) -> None:
+        """Verify Theorem 112: Recursive self-improvement fiber ceiling vs. tool-assisted 2-bit probe splitting."""
+        mon = StreamingCodebaseFiberSplittingMonitor(
+            scope_id="unit-codebase-fiber-splitting-scope",
+        )
+        obs = mon.evaluate_three_phase_fiber_splitting_audit(
+            "codebase-split-eval-01",
+        )
+        self.assertEqual(obs["phase_1_fiber_width"], 12)
+        self.assertEqual(obs["phase_1_minimax_floor"], 6)
+        self.assertEqual(obs["phase_1_worst_case_error"], 6)
+        self.assertEqual(obs["phase_1_surcharge_cents"], 6)
+        self.assertEqual(obs["phase_1_payout_cents"], 867)
+        self.assertEqual(obs["phase_1_local_green"], 1)
+        self.assertEqual(obs["phase_1_global_green"], 0)
+        self.assertEqual(obs["phase_1_defect"], -1)
+        self.assertEqual(obs["phase_1_status"], "UNASSISTED_FIBER_CEILING_LOCKED_LGGR")
+
+        self.assertEqual(obs["phase_2_fiber_width"], 4)
+        self.assertEqual(obs["phase_2_minimax_floor"], 2)
+        self.assertEqual(obs["phase_2_worst_case_error"], 2)
+        self.assertEqual(obs["phase_2_surcharge_cents"], 2)
+        self.assertEqual(obs["phase_2_payout_cents"], 871)
+        self.assertEqual(obs["phase_2_local_green"], 1)
+        self.assertEqual(obs["phase_2_global_green"], 0)
+        self.assertEqual(obs["phase_2_defect"], -1)
+        self.assertEqual(obs["phase_2_status"], "PARTIAL_TOOL_RESIDUAL_FIBER_AMBIGUITY_LGGR")
+
+        self.assertEqual(obs["phase_3_fiber_width"], 0)
+        self.assertEqual(obs["phase_3_minimax_floor"], 0)
+        self.assertEqual(obs["phase_3_worst_case_error"], 0)
+        self.assertEqual(obs["phase_3_surcharge_cents"], 0)
+        self.assertEqual(obs["phase_3_payout_cents"], 873)
+        self.assertEqual(obs["phase_3_local_green"], 1)
+        self.assertEqual(obs["phase_3_global_green"], 1)
+        self.assertEqual(obs["phase_3_defect"], 0)
+        self.assertEqual(obs["phase_3_status"], "CODEBASE_TOOL_ASSISTED_FIBER_SPLIT_RESOLVED_LGGG")
+
+        receipt = mon.current_receipt()
+        self.assertEqual(receipt["status"], "CODEBASE_TOOL_ASSISTED_FIBER_SPLIT_RESOLVED_LGGG")
         self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
         self.assertEqual(receipt["lggr_obstruction_count"], 2)
         self.assertEqual(receipt["lggg_coherent_count"], 1)

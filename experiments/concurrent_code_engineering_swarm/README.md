@@ -317,13 +317,28 @@ Executed across 3 concurrent LLM worker models (`max_inflight_requests = 3`, `42
 | `10800` | `repairable_policy_reversal_defect` | **C** | `explicit_lggr_dual_metric_policy_reversal_directive` | **`completed`** | **`p_star`** | **`75`** | **`0`** | **1** | **6** | **`$0.007074`** |
 | `10801` | `infeasible_policy_reversal_lock` | **A / B / C** | All policies | `safe_escalated` | `Q_5_8` | `96` | `16` | 1 | 24 | `$0.019018` |
 
+## 19. 3-Agent Tool-Assisted Fiber Splitting vs. Unassisted Self-Reflection Campaign (`--topology fiber_splitting`)
+
+In `--topology fiber_splitting`, 3 concurrent LLM workers edit `pricing_split.py`, `tax_split.py`, and `settlement_split.py` over 4 aliased state configurations $x \in \{x_{00}, x_{01}, x_{10}, x_{11}\}$ with target values $f = (0, 4, 8, 12)$ under coarse status telemetry $\pi_0(x) = \text{'status\_ok'}$:
+- On `seed 10900` (`repairable_fiber_splitting_defect`), `tax_split.py` and `settlement_split.py` initially emit uninformative probe bits `[0, 0, 0, 0]` (`W0 = 12`, minimax floor `6`, `state_predictions = [6, 6, 6, 6]`, `ambiguity_surcharge_cents = 6`, `payout = 867 != 873`, `local_green = 1`, `global_green = 0`, $\Delta_E = -1$).
+- On `seed 10901` (`infeasible_fiber_splitting_lock`), legacy constraints lock `tax_split.py` and `settlement_split.py` to `[0, 0, 0, 0]` while requiring $W_2 = 0$, requiring safe escalation.
+
+Executed across 3 concurrent LLM worker models (`max_inflight_requests = 3`, `43` live API attempts, `$0.040917` total cost):
+
+| Seed | Scenario Kind | Arm | Feedback Policy | Outcome | `fiber_width` | `minimax_floor` | `surcharge` | Waves Run | API Attempts | Cost (USD) |
+| :--- | :--- | :---: | :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
+| `10900` | `repairable_fiber_splitting_defect` | **A** | `unassisted_coarse_status_reflection` | `blocked_unresolved` | `12` | `6` | `6` | 1 | 7 | `$0.006509` |
+| `10900` | `repairable_fiber_splitting_defect` | **B** | `partial_1bit_tax_probe_split` | `blocked_unresolved` | `4` | `2` | `2` | 1 | 6 | `$0.006573` |
+| `10900` | `repairable_fiber_splitting_defect` | **C** | `explicit_lggr_2bit_tool_fiber_splitting_directive` | **`completed`** | **`0`** | **`0`** | **`0`** | **1** | **7** | **`$0.007524`** |
+| `10901` | `infeasible_fiber_splitting_lock` | **A / B / C** | All policies | `safe_escalated` | `12` | `6` | `6` | 1 | 23 | `$0.020311` |
+
 ## Offline Verification & Live Execution
 
 ```powershell
 # Run unit, tamper, and deterministic replay tests (no API calls)
 python -m unittest tests.test_concurrent_code_engineering_swarm -v
 
-# Replay archived live 3-agent linear, 4-agent diamond, 3-agent catalyst, 3-agent stateful DFA, 3-agent replay-order, 3-agent coalitional, 3-agent Mayer-Vietoris, 3-agent windowed-drift, 3-agent optional-stopping, 3-agent CPTP channel, 3-agent Regge holonomy, 3-agent k-induction, 3-agent Jacobian, 3-agent boundary-quorum, 3-agent lease-overlap, 3-agent contextual-sheaf, 3-agent watcher-dropout, and 3-agent policy-reversal evidence (no API calls)
+# Replay archived live 3-agent linear, 4-agent diamond, 3-agent catalyst, 3-agent stateful DFA, 3-agent replay-order, 3-agent coalitional, 3-agent Mayer-Vietoris, 3-agent windowed-drift, 3-agent optional-stopping, 3-agent CPTP channel, 3-agent Regge holonomy, 3-agent k-induction, 3-agent Jacobian, 3-agent boundary-quorum, 3-agent lease-overlap, 3-agent contextual-sheaf, 3-agent watcher-dropout, 3-agent policy-reversal, and 3-agent fiber-splitting evidence (no API calls)
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/diamond_pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/catalyst_pilot_run/events.jsonl
@@ -342,4 +357,5 @@ python -m experiments.concurrent_code_engineering_swarm.runner replay experiment
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/contextuality_pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/gram_dropout_pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/policy_reversal_pilot_run/events.jsonl
+python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/fiber_splitting_pilot_run/events.jsonl
 ```
