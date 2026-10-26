@@ -54,6 +54,7 @@ from lggr.streaming import (
     StreamingCodebaseKInductionMonitor,
     StreamingCodebaseLeaseOverlapMonitor,
     StreamingCodebaseMayerVietorisMonitor,
+    StreamingCodebaseMerminPeresMonitor,
     StreamingCodebaseMultiLoopHodgeMonitor,
     StreamingCodebaseNonAbelianBraidMonitor,
     StreamingCodebaseObligationMigrationMonitor,
@@ -6744,6 +6745,69 @@ class TestStreamingBaselineComparator(unittest.TestCase):
                 pricing_sim_source="def quote_sim_pricing(g):\n    return 123\n",
                 tax_sim_source=mon.PHASE_1_TAX_SIM_SOURCE,
                 settlement_sim_source=mon.PHASE_1_SETTLEMENT_SIM_SOURCE,
+            )
+
+    def test_mermin_peres_codebase_parity_obstruction_and_noncontextual_audit(self) -> None:
+        """Verify Theorem 131: 3x3 Mermin-Peres parity contextuality & non-contextual grid codebase audit."""
+        mon = StreamingCodebaseMerminPeresMonitor(
+            scope_id="unit-codebase-mermin-peres-scope",
+        )
+        obs = mon.record_three_phase_codebase_audit(
+            model_id="unit-mermin-peres-eval-01",
+        )
+        self.assertEqual(obs["phase_1_a_12"], -1)
+        self.assertEqual(obs["phase_1_a_22"], -1)
+        self.assertEqual(obs["phase_1_c_2"], -1)
+        self.assertEqual(obs["phase_1_grid_violated_contexts"], 3)
+        self.assertEqual(obs["phase_1_parity_obstruction"], 1)
+        self.assertEqual(obs["phase_1_max_satisfied_contexts_out_of_6"], 5)
+        self.assertEqual(obs["phase_1_surcharge_cents"], 10)
+        self.assertEqual(obs["phase_1_payout_cents"], 863)
+        self.assertEqual(obs["phase_1_local_green"], 1)
+        self.assertEqual(obs["phase_1_global_green"], 0)
+        self.assertEqual(obs["phase_1_defect"], -1)
+        self.assertEqual(obs["phase_1_status"], "MERMIN_PERES_PARITY_AND_GRID_MISMATCH_LGGR")
+
+        self.assertEqual(obs["phase_2_a_12"], 1)
+        self.assertEqual(obs["phase_2_a_22"], 1)
+        self.assertEqual(obs["phase_2_c_2"], -1)
+        self.assertEqual(obs["phase_2_grid_violated_contexts"], 1)
+        self.assertEqual(obs["phase_2_parity_obstruction"], 1)
+        self.assertEqual(obs["phase_2_max_satisfied_contexts_out_of_6"], 5)
+        self.assertEqual(obs["phase_2_surcharge_cents"], 6)
+        self.assertEqual(obs["phase_2_payout_cents"], 867)
+        self.assertEqual(obs["phase_2_local_green"], 1)
+        self.assertEqual(obs["phase_2_global_green"], 0)
+        self.assertEqual(obs["phase_2_defect"], -1)
+        self.assertEqual(obs["phase_2_status"], "MERMIN_PERES_PARITY_OBSTRUCTION_LGGR")
+
+        self.assertEqual(obs["phase_3_a_12"], 1)
+        self.assertEqual(obs["phase_3_a_22"], 1)
+        self.assertEqual(obs["phase_3_c_2"], 1)
+        self.assertEqual(obs["phase_3_grid_violated_contexts"], 0)
+        self.assertEqual(obs["phase_3_parity_obstruction"], 0)
+        self.assertEqual(obs["phase_3_max_satisfied_contexts_out_of_6"], 6)
+        self.assertEqual(obs["phase_3_global_noncontextual_witness_count"], 16)
+        self.assertEqual(obs["phase_3_surcharge_cents"], 0)
+        self.assertEqual(obs["phase_3_payout_cents"], 873)
+        self.assertEqual(obs["phase_3_local_green"], 1)
+        self.assertEqual(obs["phase_3_global_green"], 1)
+        self.assertEqual(obs["phase_3_defect"], 0)
+        self.assertEqual(obs["phase_3_status"], "NONCONTEXTUAL_PARITY_GRID_COHERENT_LGGG")
+
+        receipt = mon.current_receipt()
+        self.assertEqual(receipt["status"], "NONCONTEXTUAL_PARITY_GRID_COHERENT_LGGG")
+        self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(receipt["lggr_obstruction_count"], 2)
+        self.assertEqual(receipt["lggg_coherent_count"], 1)
+        self.assertIsNotNone(receipt["mermin_peres_parity_receipt"])
+
+        with self.assertRaises(ValidationError):
+            mon.evaluate_mermin_peres_modules(
+                "bad-return",
+                pricing_mp_source="def quote_mp_pricing(g):\n    return 123\n",
+                tax_mp_source=mon.PHASE_1_TAX_MP_SOURCE,
+                settlement_mp_source=mon.PHASE_1_SETTLEMENT_MP_SOURCE,
             )
 
 

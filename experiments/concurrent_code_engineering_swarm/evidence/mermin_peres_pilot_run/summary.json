@@ -1,0 +1,3096 @@
+{
+  "schema": "lggr.mermin_peres_code_engineering_swarm.v1",
+  "topology": "mermin_peres",
+  "authority_effect": "None",
+  "cases": [
+    {
+      "seed": 12800,
+      "kind": "repairable_mermin_peres_parity_obstruction_and_candidate_grid_defect",
+      "arms": [
+        {
+          "arm": "A",
+          "status": "blocked_unresolved",
+          "waves_executed": 2,
+          "final_local_green": 1,
+          "final_global_green": 0,
+          "final_defect": -1,
+          "final_a_12": -1,
+          "final_a_22": -1,
+          "final_c_2": -1,
+          "final_grid_violated_contexts": 3,
+          "final_parity_obstruction": 1,
+          "final_max_satisfied_contexts_out_of_6": 5,
+          "final_global_noncontextual_witness_count": 0,
+          "final_mp_surcharge_cents": 10,
+          "final_merchant_payout_cents": 863,
+          "final_status": "MERMIN_PERES_PARITY_AND_GRID_MISMATCH_LGGR",
+          "final_receipt_sha256": "dd8c373469004c2fa0eb6e960f57f410f1ce8bb4d6effb41983ad6317e239bad",
+          "final_receipt": {
+            "schema": "lggr.online_codebase_mermin_peres.v1",
+            "authority_effect": "None",
+            "scope_id": "mermin-peres-seed-12800-arm-A",
+            "status": "MERMIN_PERES_PARITY_AND_GRID_MISMATCH_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR",
+            "evaluation_count": 3,
+            "lggr_obstruction_count": 3,
+            "lggg_coherent_count": 0,
+            "mermin_peres_parity_receipt": {
+              "schema": "lggr.online_mermin_peres_parity.v1",
+              "authority_effect": "None",
+              "scope_id": "mermin-peres-seed-12800-arm-A:mermin_peres",
+              "status": "MERMIN_PERES_PARITY_OBSTRUCTION_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "grid_count": 3,
+              "parity_obstructed_grid_ids": [
+                "A-wave-0:deterministic:mp",
+                "A-wave-1:deterministic:mp",
+                "A-wave-2:deterministic:mp"
+              ],
+              "rejected_grid_ids": [],
+              "grids": [
+                {
+                  "grid_id": "A-wave-0:deterministic:mp",
+                  "row_targets": [
+                    1,
+                    1,
+                    1
+                  ],
+                  "col_targets": [
+                    1,
+                    1,
+                    -1
+                  ],
+                  "row_context_evaluators": [
+                    1,
+                    1,
+                    1
+                  ],
+                  "col_context_evaluators": [
+                    1,
+                    1,
+                    1
+                  ],
+                  "row_target_product": 1,
+                  "col_target_product": -1,
+                  "parity_mismatch_obstruction": true,
+                  "max_satisfied_contexts_out_of_6": 5,
+                  "min_violated_contexts": 1,
+                  "global_noncontextual_witness_count": 0,
+                  "global_noncontextual_assignment_exists": false,
+                  "local_product_aggregator": 1,
+                  "global_noncontextual_evaluator": 0,
+                  "evaluator_defect": -1,
+                  "grid_status": "MERMIN_PERES_PARITY_OBSTRUCTION_LGGR"
+                },
+                {
+                  "grid_id": "A-wave-1:deterministic:mp",
+                  "row_targets": [
+                    1,
+                    1,
+                    1
+                  ],
+                  "col_targets": [
+                    1,
+                    1,
+                    -1
+                  ],
+                  "row_context_evaluators": [
+                    1,
+                    1,
+                    1
+                  ],
+                  "col_context_evaluators": [
+                    1,
+                    1,
+                    1
+                  ],
+                  "row_target_product": 1,
+                  "col_target_product": -1,
+                  "parity_mismatch_obstruction": true,
+                  "max_satisfied_contexts_out_of_6": 5,
+                  "min_violated_contexts": 1,
+                  "global_noncontextual_witness_count": 0,
+                  "global_noncontextual_assignment_exists": false,
+                  "local_product_aggregator": 1,
+                  "global_noncontextual_evaluator": 0,
+                  "evaluator_defect": -1,
+                  "grid_status": "MERMIN_PERES_PARITY_OBSTRUCTION_LGGR"
+                },
+                {
+                  "grid_id": "A-wave-2:deterministic:mp",
+                  "row_targets": [
+                    1,
+                    1,
+                    1
+                  ],
+                  "col_targets": [
+                    1,
+                    1,
+                    -1
+                  ],
+                  "row_context_evaluators": [
+                    1,
+                    1,
+                    1
+                  ],
+                  "col_context_evaluators": [
+                    1,
+                    1,
+                    1
+                  ],
+                  "row_target_product": 1,
+                  "col_target_product": -1,
+                  "parity_mismatch_obstruction": true,
+                  "max_satisfied_contexts_out_of_6": 5,
+                  "min_violated_contexts": 1,
+                  "global_noncontextual_witness_count": 0,
+                  "global_noncontextual_assignment_exists": false,
+                  "local_product_aggregator": 1,
+                  "global_noncontextual_evaluator": 0,
+                  "evaluator_defect": -1,
+                  "grid_status": "MERMIN_PERES_PARITY_OBSTRUCTION_LGGR"
+                }
+              ],
+              "receipt_sha256": "615eed4ed6aad8214143ba3229e281da618cd50c1b67116b36a90a841b0e8011"
+            },
+            "fiber_receipt": {
+              "schema": "lggr.descent.v1",
+              "authority_effect": "None",
+              "scope_id": "streaming-fiber-scope",
+              "carrier_size": 3,
+              "status": "DECODER_VERIFIED",
+              "contract_status": "COMPOSABLE_LGGG",
+              "decoder": [
+                {
+                  "report": {
+                    "local_green": 1,
+                    "six_local_contexts_satisfiable": true
+                  },
+                  "query": "LGGR"
+                }
+              ],
+              "input_sha256": "5e036e6e5f14e21c764e6f962c64e2b39aef2b891c8ec756b57e699e22ae83be",
+              "meaning": "The supplied query is constant on every realized report fiber in this stream.",
+              "receipt_sha256": "d5be608b14bc71e65bb9467be999f0c2e45aa8c3283f1dcf7e2f6ece39c36ab4"
+            },
+            "three_phase_audits": [],
+            "evaluations": [
+              {
+                "evaluation_id": "A-wave-0",
+                "model_id": "deterministic",
+                "a_12": -1,
+                "a_22": -1,
+                "c_2": -1,
+                "candidate_grid": [
+                  [
+                    1,
+                    1,
+                    1
+                  ],
+                  [
+                    1,
+                    1,
+                    -1
+                  ],
+                  [
+                    1,
+                    1,
+                    -1
+                  ]
+                ],
+                "row_targets": [
+                  1,
+                  1,
+                  1
+                ],
+                "col_targets": [
+                  1,
+                  1,
+                  -1
+                ],
+                "row_target_product": 1,
+                "col_target_product": -1,
+                "parity_obstruction": 1,
+                "row_violated_contexts": 2,
+                "col_violated_contexts": 1,
+                "grid_violated_contexts": 3,
+                "grid_satisfied_contexts": 3,
+                "max_satisfied_contexts_out_of_6": 5,
+                "min_violated_contexts": 1,
+                "global_noncontextual_witness_count": 0,
+                "mp_surcharge_cents": 10,
+                "merchant_payout_cents": 863,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "MERMIN_PERES_PARITY_AND_GRID_MISMATCH_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_mp",
+                    "action": "REPAIR_CANDIDATE_GRID_CELLS_A12_A22_TO_PLUS_ONE",
+                    "target_a_12": 1,
+                    "target_a_22": 1
+                  },
+                  "worker-1": {
+                    "module": "tax_mp",
+                    "action": "RECONCILE_COLUMN_PARITY_TARGET_C2_TO_PLUS_ONE",
+                    "target_c_2": 1
+                  },
+                  "worker-2": {
+                    "module": "settlement_mp",
+                    "action": "ENFORCE_NONCONTEXTUAL_PARITY_GUARD",
+                    "target_mp_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "A-wave-1",
+                "model_id": "deterministic",
+                "a_12": -1,
+                "a_22": -1,
+                "c_2": -1,
+                "candidate_grid": [
+                  [
+                    1,
+                    1,
+                    1
+                  ],
+                  [
+                    1,
+                    1,
+                    -1
+                  ],
+                  [
+                    1,
+                    1,
+                    -1
+                  ]
+                ],
+                "row_targets": [
+                  1,
+                  1,
+                  1
+                ],
+                "col_targets": [
+                  1,
+                  1,
+                  -1
+                ],
+                "row_target_product": 1,
+                "col_target_product": -1,
+                "parity_obstruction": 1,
+                "row_violated_contexts": 2,
+                "col_violated_contexts": 1,
+                "grid_violated_contexts": 3,
+                "grid_satisfied_contexts": 3,
+                "max_satisfied_contexts_out_of_6": 5,
+                "min_violated_contexts": 1,
+                "global_noncontextual_witness_count": 0,
+                "mp_surcharge_cents": 10,
+                "merchant_payout_cents": 863,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "MERMIN_PERES_PARITY_AND_GRID_MISMATCH_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_mp",
+                    "action": "REPAIR_CANDIDATE_GRID_CELLS_A12_A22_TO_PLUS_ONE",
+                    "target_a_12": 1,
+                    "target_a_22": 1
+                  },
+                  "worker-1": {
+                    "module": "tax_mp",
+                    "action": "RECONCILE_COLUMN_PARITY_TARGET_C2_TO_PLUS_ONE",
+                    "target_c_2": 1
+                  },
+                  "worker-2": {
+                    "module": "settlement_mp",
+                    "action": "ENFORCE_NONCONTEXTUAL_PARITY_GUARD",
+                    "target_mp_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "A-wave-2",
+                "model_id": "deterministic",
+                "a_12": -1,
+                "a_22": -1,
+                "c_2": -1,
+                "candidate_grid": [
+                  [
+                    1,
+                    1,
+                    1
+                  ],
+                  [
+                    1,
+                    1,
+                    -1
+                  ],
+                  [
+                    1,
+                    1,
+                    -1
+                  ]
+                ],
+                "row_targets": [
+                  1,
+                  1,
+                  1
+                ],
+                "col_targets": [
+                  1,
+                  1,
+                  -1
+                ],
+                "row_target_product": 1,
+                "col_target_product": -1,
+                "parity_obstruction": 1,
+                "row_violated_contexts": 2,
+                "col_violated_contexts": 1,
+                "grid_violated_contexts": 3,
+                "grid_satisfied_contexts": 3,
+                "max_satisfied_contexts_out_of_6": 5,
+                "min_violated_contexts": 1,
+                "global_noncontextual_witness_count": 0,
+                "mp_surcharge_cents": 10,
+                "merchant_payout_cents": 863,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "MERMIN_PERES_PARITY_AND_GRID_MISMATCH_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_mp",
+                    "action": "REPAIR_CANDIDATE_GRID_CELLS_A12_A22_TO_PLUS_ONE",
+                    "target_a_12": 1,
+                    "target_a_22": 1
+                  },
+                  "worker-1": {
+                    "module": "tax_mp",
+                    "action": "RECONCILE_COLUMN_PARITY_TARGET_C2_TO_PLUS_ONE",
+                    "target_c_2": 1
+                  },
+                  "worker-2": {
+                    "module": "settlement_mp",
+                    "action": "ENFORCE_NONCONTEXTUAL_PARITY_GUARD",
+                    "target_mp_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              }
+            ],
+            "receipt_sha256": "dd8c373469004c2fa0eb6e960f57f410f1ce8bb4d6effb41983ad6317e239bad"
+          },
+          "escalations": {},
+          "api_attempts": 18,
+          "cost_usd": "0.0132557399"
+        },
+        {
+          "arm": "B",
+          "status": "blocked_unresolved",
+          "waves_executed": 2,
+          "final_local_green": 1,
+          "final_global_green": 0,
+          "final_defect": -1,
+          "final_a_12": 1,
+          "final_a_22": 1,
+          "final_c_2": -1,
+          "final_grid_violated_contexts": 1,
+          "final_parity_obstruction": 1,
+          "final_max_satisfied_contexts_out_of_6": 5,
+          "final_global_noncontextual_witness_count": 0,
+          "final_mp_surcharge_cents": 6,
+          "final_merchant_payout_cents": 867,
+          "final_status": "MERMIN_PERES_PARITY_OBSTRUCTION_LGGR",
+          "final_receipt_sha256": "7ca20b325ee9cc9c326d146cab255f8ab43279b77320b65bb3b38f1e26c9a5c8",
+          "final_receipt": {
+            "schema": "lggr.online_codebase_mermin_peres.v1",
+            "authority_effect": "None",
+            "scope_id": "mermin-peres-seed-12800-arm-B",
+            "status": "MERMIN_PERES_PARITY_OBSTRUCTION_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR",
+            "evaluation_count": 3,
+            "lggr_obstruction_count": 3,
+            "lggg_coherent_count": 0,
+            "mermin_peres_parity_receipt": {
+              "schema": "lggr.online_mermin_peres_parity.v1",
+              "authority_effect": "None",
+              "scope_id": "mermin-peres-seed-12800-arm-B:mermin_peres",
+              "status": "MERMIN_PERES_PARITY_OBSTRUCTION_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "grid_count": 3,
+              "parity_obstructed_grid_ids": [
+                "B-wave-0:deterministic:mp",
+                "B-wave-1:deterministic:mp",
+                "B-wave-2:deterministic:mp"
+              ],
+              "rejected_grid_ids": [],
+              "grids": [
+                {
+                  "grid_id": "B-wave-0:deterministic:mp",
+                  "row_targets": [
+                    1,
+                    1,
+                    1
+                  ],
+                  "col_targets": [
+                    1,
+                    1,
+                    -1
+                  ],
+                  "row_context_evaluators": [
+                    1,
+                    1,
+                    1
+                  ],
+                  "col_context_evaluators": [
+                    1,
+                    1,
+                    1
+                  ],
+                  "row_target_product": 1,
+                  "col_target_product": -1,
+                  "parity_mismatch_obstruction": true,
+                  "max_satisfied_contexts_out_of_6": 5,
+                  "min_violated_contexts": 1,
+                  "global_noncontextual_witness_count": 0,
+                  "global_noncontextual_assignment_exists": false,
+                  "local_product_aggregator": 1,
+                  "global_noncontextual_evaluator": 0,
+                  "evaluator_defect": -1,
+                  "grid_status": "MERMIN_PERES_PARITY_OBSTRUCTION_LGGR"
+                },
+                {
+                  "grid_id": "B-wave-1:deterministic:mp",
+                  "row_targets": [
+                    1,
+                    1,
+                    1
+                  ],
+                  "col_targets": [
+                    1,
+                    1,
+                    -1
+                  ],
+                  "row_context_evaluators": [
+                    1,
+                    1,
+                    1
+                  ],
+                  "col_context_evaluators": [
+                    1,
+                    1,
+                    1
+                  ],
+                  "row_target_product": 1,
+                  "col_target_product": -1,
+                  "parity_mismatch_obstruction": true,
+                  "max_satisfied_contexts_out_of_6": 5,
+                  "min_violated_contexts": 1,
+                  "global_noncontextual_witness_count": 0,
+                  "global_noncontextual_assignment_exists": false,
+                  "local_product_aggregator": 1,
+                  "global_noncontextual_evaluator": 0,
+                  "evaluator_defect": -1,
+                  "grid_status": "MERMIN_PERES_PARITY_OBSTRUCTION_LGGR"
+                },
+                {
+                  "grid_id": "B-wave-2:deterministic:mp",
+                  "row_targets": [
+                    1,
+                    1,
+                    1
+                  ],
+                  "col_targets": [
+                    1,
+                    1,
+                    -1
+                  ],
+                  "row_context_evaluators": [
+                    1,
+                    1,
+                    1
+                  ],
+                  "col_context_evaluators": [
+                    1,
+                    1,
+                    1
+                  ],
+                  "row_target_product": 1,
+                  "col_target_product": -1,
+                  "parity_mismatch_obstruction": true,
+                  "max_satisfied_contexts_out_of_6": 5,
+                  "min_violated_contexts": 1,
+                  "global_noncontextual_witness_count": 0,
+                  "global_noncontextual_assignment_exists": false,
+                  "local_product_aggregator": 1,
+                  "global_noncontextual_evaluator": 0,
+                  "evaluator_defect": -1,
+                  "grid_status": "MERMIN_PERES_PARITY_OBSTRUCTION_LGGR"
+                }
+              ],
+              "receipt_sha256": "923d21f5e762099efc694f1249b228ae9faba376794361dd85bea42420efdc90"
+            },
+            "fiber_receipt": {
+              "schema": "lggr.descent.v1",
+              "authority_effect": "None",
+              "scope_id": "streaming-fiber-scope",
+              "carrier_size": 3,
+              "status": "DECODER_VERIFIED",
+              "contract_status": "COMPOSABLE_LGGG",
+              "decoder": [
+                {
+                  "report": {
+                    "local_green": 1,
+                    "six_local_contexts_satisfiable": true
+                  },
+                  "query": "LGGR"
+                }
+              ],
+              "input_sha256": "4d9a07e8f5ae97cdbbb2ff83cb820997f395524c16bb3cbee37fa66f3c195ec8",
+              "meaning": "The supplied query is constant on every realized report fiber in this stream.",
+              "receipt_sha256": "63a11c3d0aeadb1c59b16a3f2a6794dd283b807ef1e2ba25857931974a9f681d"
+            },
+            "three_phase_audits": [],
+            "evaluations": [
+              {
+                "evaluation_id": "B-wave-0",
+                "model_id": "deterministic",
+                "a_12": -1,
+                "a_22": -1,
+                "c_2": -1,
+                "candidate_grid": [
+                  [
+                    1,
+                    1,
+                    1
+                  ],
+                  [
+                    1,
+                    1,
+                    -1
+                  ],
+                  [
+                    1,
+                    1,
+                    -1
+                  ]
+                ],
+                "row_targets": [
+                  1,
+                  1,
+                  1
+                ],
+                "col_targets": [
+                  1,
+                  1,
+                  -1
+                ],
+                "row_target_product": 1,
+                "col_target_product": -1,
+                "parity_obstruction": 1,
+                "row_violated_contexts": 2,
+                "col_violated_contexts": 1,
+                "grid_violated_contexts": 3,
+                "grid_satisfied_contexts": 3,
+                "max_satisfied_contexts_out_of_6": 5,
+                "min_violated_contexts": 1,
+                "global_noncontextual_witness_count": 0,
+                "mp_surcharge_cents": 10,
+                "merchant_payout_cents": 863,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "MERMIN_PERES_PARITY_AND_GRID_MISMATCH_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_mp",
+                    "action": "REPAIR_CANDIDATE_GRID_CELLS_A12_A22_TO_PLUS_ONE",
+                    "target_a_12": 1,
+                    "target_a_22": 1
+                  },
+                  "worker-1": {
+                    "module": "tax_mp",
+                    "action": "RECONCILE_COLUMN_PARITY_TARGET_C2_TO_PLUS_ONE",
+                    "target_c_2": 1
+                  },
+                  "worker-2": {
+                    "module": "settlement_mp",
+                    "action": "ENFORCE_NONCONTEXTUAL_PARITY_GUARD",
+                    "target_mp_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "B-wave-1",
+                "model_id": "deterministic",
+                "a_12": 1,
+                "a_22": 1,
+                "c_2": -1,
+                "candidate_grid": [
+                  [
+                    1,
+                    1,
+                    1
+                  ],
+                  [
+                    1,
+                    1,
+                    1
+                  ],
+                  [
+                    1,
+                    1,
+                    1
+                  ]
+                ],
+                "row_targets": [
+                  1,
+                  1,
+                  1
+                ],
+                "col_targets": [
+                  1,
+                  1,
+                  -1
+                ],
+                "row_target_product": 1,
+                "col_target_product": -1,
+                "parity_obstruction": 1,
+                "row_violated_contexts": 0,
+                "col_violated_contexts": 1,
+                "grid_violated_contexts": 1,
+                "grid_satisfied_contexts": 5,
+                "max_satisfied_contexts_out_of_6": 5,
+                "min_violated_contexts": 1,
+                "global_noncontextual_witness_count": 0,
+                "mp_surcharge_cents": 6,
+                "merchant_payout_cents": 867,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "MERMIN_PERES_PARITY_OBSTRUCTION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_mp",
+                    "action": "HOLD_NONCONTEXTUAL_CANDIDATE_GRID_CELLS_PLUS_ONE",
+                    "target_a_12": 1,
+                    "target_a_22": 1
+                  },
+                  "worker-1": {
+                    "module": "tax_mp",
+                    "action": "RECONCILE_COLUMN_PARITY_TARGET_C2_TO_PLUS_ONE",
+                    "target_c_2": 1
+                  },
+                  "worker-2": {
+                    "module": "settlement_mp",
+                    "action": "ENFORCE_NONCONTEXTUAL_PARITY_GUARD",
+                    "target_mp_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "B-wave-2",
+                "model_id": "deterministic",
+                "a_12": 1,
+                "a_22": 1,
+                "c_2": -1,
+                "candidate_grid": [
+                  [
+                    1,
+                    1,
+                    1
+                  ],
+                  [
+                    1,
+                    1,
+                    1
+                  ],
+                  [
+                    1,
+                    1,
+                    1
+                  ]
+                ],
+                "row_targets": [
+                  1,
+                  1,
+                  1
+                ],
+                "col_targets": [
+                  1,
+                  1,
+                  -1
+                ],
+                "row_target_product": 1,
+                "col_target_product": -1,
+                "parity_obstruction": 1,
+                "row_violated_contexts": 0,
+                "col_violated_contexts": 1,
+                "grid_violated_contexts": 1,
+                "grid_satisfied_contexts": 5,
+                "max_satisfied_contexts_out_of_6": 5,
+                "min_violated_contexts": 1,
+                "global_noncontextual_witness_count": 0,
+                "mp_surcharge_cents": 6,
+                "merchant_payout_cents": 867,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "MERMIN_PERES_PARITY_OBSTRUCTION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_mp",
+                    "action": "HOLD_NONCONTEXTUAL_CANDIDATE_GRID_CELLS_PLUS_ONE",
+                    "target_a_12": 1,
+                    "target_a_22": 1
+                  },
+                  "worker-1": {
+                    "module": "tax_mp",
+                    "action": "RECONCILE_COLUMN_PARITY_TARGET_C2_TO_PLUS_ONE",
+                    "target_c_2": 1
+                  },
+                  "worker-2": {
+                    "module": "settlement_mp",
+                    "action": "ENFORCE_NONCONTEXTUAL_PARITY_GUARD",
+                    "target_mp_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              }
+            ],
+            "receipt_sha256": "7ca20b325ee9cc9c326d146cab255f8ab43279b77320b65bb3b38f1e26c9a5c8"
+          },
+          "escalations": {},
+          "api_attempts": 16,
+          "cost_usd": "0.0146442005"
+        },
+        {
+          "arm": "C",
+          "status": "completed",
+          "waves_executed": 1,
+          "final_local_green": 1,
+          "final_global_green": 1,
+          "final_defect": 0,
+          "final_a_12": 1,
+          "final_a_22": 1,
+          "final_c_2": 1,
+          "final_grid_violated_contexts": 0,
+          "final_parity_obstruction": 0,
+          "final_max_satisfied_contexts_out_of_6": 6,
+          "final_global_noncontextual_witness_count": 16,
+          "final_mp_surcharge_cents": 0,
+          "final_merchant_payout_cents": 873,
+          "final_status": "NONCONTEXTUAL_PARITY_GRID_COHERENT_LGGG",
+          "final_receipt_sha256": "52d802619aa52b71c1fbb9fa88a22eb0c22edf61b4b2ed4dd6d093adba3ab240",
+          "final_receipt": {
+            "schema": "lggr.online_codebase_mermin_peres.v1",
+            "authority_effect": "None",
+            "scope_id": "mermin-peres-seed-12800-arm-C",
+            "status": "NONCONTEXTUAL_PARITY_GRID_COHERENT_LGGG",
+            "contract_status": "COMPOSABLE_LGGG",
+            "evaluation_count": 2,
+            "lggr_obstruction_count": 1,
+            "lggg_coherent_count": 1,
+            "mermin_peres_parity_receipt": {
+              "schema": "lggr.online_mermin_peres_parity.v1",
+              "authority_effect": "None",
+              "scope_id": "mermin-peres-seed-12800-arm-C:mermin_peres",
+              "status": "MERMIN_PERES_PARITY_OBSTRUCTION_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "grid_count": 2,
+              "parity_obstructed_grid_ids": [
+                "C-wave-0:deterministic:mp"
+              ],
+              "rejected_grid_ids": [],
+              "grids": [
+                {
+                  "grid_id": "C-wave-0:deterministic:mp",
+                  "row_targets": [
+                    1,
+                    1,
+                    1
+                  ],
+                  "col_targets": [
+                    1,
+                    1,
+                    -1
+                  ],
+                  "row_context_evaluators": [
+                    1,
+                    1,
+                    1
+                  ],
+                  "col_context_evaluators": [
+                    1,
+                    1,
+                    1
+                  ],
+                  "row_target_product": 1,
+                  "col_target_product": -1,
+                  "parity_mismatch_obstruction": true,
+                  "max_satisfied_contexts_out_of_6": 5,
+                  "min_violated_contexts": 1,
+                  "global_noncontextual_witness_count": 0,
+                  "global_noncontextual_assignment_exists": false,
+                  "local_product_aggregator": 1,
+                  "global_noncontextual_evaluator": 0,
+                  "evaluator_defect": -1,
+                  "grid_status": "MERMIN_PERES_PARITY_OBSTRUCTION_LGGR"
+                },
+                {
+                  "grid_id": "C-wave-1:deterministic:mp",
+                  "row_targets": [
+                    1,
+                    1,
+                    1
+                  ],
+                  "col_targets": [
+                    1,
+                    1,
+                    1
+                  ],
+                  "row_context_evaluators": [
+                    1,
+                    1,
+                    1
+                  ],
+                  "col_context_evaluators": [
+                    1,
+                    1,
+                    1
+                  ],
+                  "row_target_product": 1,
+                  "col_target_product": 1,
+                  "parity_mismatch_obstruction": false,
+                  "max_satisfied_contexts_out_of_6": 6,
+                  "min_violated_contexts": 0,
+                  "global_noncontextual_witness_count": 16,
+                  "global_noncontextual_assignment_exists": true,
+                  "local_product_aggregator": 1,
+                  "global_noncontextual_evaluator": 1,
+                  "evaluator_defect": 0,
+                  "grid_status": "NONCONTEXTUAL_PARITY_COHERENT_LGGG"
+                }
+              ],
+              "receipt_sha256": "6fe012fa277fdb3f9cdb167202bdf816732d798c3dc59d9bead73ef26bfc98af"
+            },
+            "fiber_receipt": {
+              "schema": "lggr.online_collision.v1",
+              "authority_effect": "None",
+              "scope_id": "streaming-fiber-scope",
+              "carrier_size": 2,
+              "status": "REPORT_INSUFFICIENT",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "collision": {
+                "left": {
+                  "state_id": "C-wave-0_deterministic",
+                  "report": {
+                    "local_green": 1,
+                    "six_local_contexts_satisfiable": true
+                  },
+                  "query": "LGGR",
+                  "metadata": {
+                    "a_12": -1,
+                    "a_22": -1,
+                    "c_2": -1,
+                    "grid_violated_contexts": 3,
+                    "mp_surcharge_cents": 10,
+                    "parity_obstruction": 1
+                  }
+                },
+                "right": {
+                  "state_id": "C-wave-1_deterministic",
+                  "report": {
+                    "local_green": 1,
+                    "six_local_contexts_satisfiable": true
+                  },
+                  "query": "LGGG",
+                  "metadata": {
+                    "a_12": 1,
+                    "a_22": 1,
+                    "c_2": 1,
+                    "grid_violated_contexts": 0,
+                    "mp_surcharge_cents": 0,
+                    "parity_obstruction": 0
+                  }
+                }
+              },
+              "input_sha256": "bc70a0d5392488ee2dd0ee1ed47d0320297fb8c5326774e546421b8f92cf1840",
+              "meaning": "Boundary reports cannot determine this query on the supplied carrier.",
+              "receipt_sha256": "d4e4b2e812981012ebedde45c89a2bfd81af5766ea043adcaaa02fcacc4b2eb2"
+            },
+            "three_phase_audits": [],
+            "evaluations": [
+              {
+                "evaluation_id": "C-wave-0",
+                "model_id": "deterministic",
+                "a_12": -1,
+                "a_22": -1,
+                "c_2": -1,
+                "candidate_grid": [
+                  [
+                    1,
+                    1,
+                    1
+                  ],
+                  [
+                    1,
+                    1,
+                    -1
+                  ],
+                  [
+                    1,
+                    1,
+                    -1
+                  ]
+                ],
+                "row_targets": [
+                  1,
+                  1,
+                  1
+                ],
+                "col_targets": [
+                  1,
+                  1,
+                  -1
+                ],
+                "row_target_product": 1,
+                "col_target_product": -1,
+                "parity_obstruction": 1,
+                "row_violated_contexts": 2,
+                "col_violated_contexts": 1,
+                "grid_violated_contexts": 3,
+                "grid_satisfied_contexts": 3,
+                "max_satisfied_contexts_out_of_6": 5,
+                "min_violated_contexts": 1,
+                "global_noncontextual_witness_count": 0,
+                "mp_surcharge_cents": 10,
+                "merchant_payout_cents": 863,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "MERMIN_PERES_PARITY_AND_GRID_MISMATCH_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_mp",
+                    "action": "REPAIR_CANDIDATE_GRID_CELLS_A12_A22_TO_PLUS_ONE",
+                    "target_a_12": 1,
+                    "target_a_22": 1
+                  },
+                  "worker-1": {
+                    "module": "tax_mp",
+                    "action": "RECONCILE_COLUMN_PARITY_TARGET_C2_TO_PLUS_ONE",
+                    "target_c_2": 1
+                  },
+                  "worker-2": {
+                    "module": "settlement_mp",
+                    "action": "ENFORCE_NONCONTEXTUAL_PARITY_GUARD",
+                    "target_mp_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "C-wave-1",
+                "model_id": "deterministic",
+                "a_12": 1,
+                "a_22": 1,
+                "c_2": 1,
+                "candidate_grid": [
+                  [
+                    1,
+                    1,
+                    1
+                  ],
+                  [
+                    1,
+                    1,
+                    1
+                  ],
+                  [
+                    1,
+                    1,
+                    1
+                  ]
+                ],
+                "row_targets": [
+                  1,
+                  1,
+                  1
+                ],
+                "col_targets": [
+                  1,
+                  1,
+                  1
+                ],
+                "row_target_product": 1,
+                "col_target_product": 1,
+                "parity_obstruction": 0,
+                "row_violated_contexts": 0,
+                "col_violated_contexts": 0,
+                "grid_violated_contexts": 0,
+                "grid_satisfied_contexts": 6,
+                "max_satisfied_contexts_out_of_6": 6,
+                "min_violated_contexts": 0,
+                "global_noncontextual_witness_count": 16,
+                "mp_surcharge_cents": 0,
+                "merchant_payout_cents": 873,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 1,
+                "defect": 0,
+                "status": "NONCONTEXTUAL_PARITY_GRID_COHERENT_LGGG",
+                "contract_status": "COMPOSABLE_LGGG",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_mp",
+                    "action": "HOLD_NONCONTEXTUAL_CANDIDATE_GRID_CELLS_PLUS_ONE",
+                    "target_a_12": 1,
+                    "target_a_22": 1
+                  },
+                  "worker-1": {
+                    "module": "tax_mp",
+                    "action": "HOLD_NONCONTEXTUAL_COLUMN_PARITY_TARGET_PLUS_ONE",
+                    "target_c_2": 1
+                  },
+                  "worker-2": {
+                    "module": "settlement_mp",
+                    "action": "HOLD_NONCONTEXTUAL_PARITY_GUARD",
+                    "target_mp_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              }
+            ],
+            "receipt_sha256": "52d802619aa52b71c1fbb9fa88a22eb0c22edf61b4b2ed4dd6d093adba3ab240"
+          },
+          "escalations": {},
+          "api_attempts": 6,
+          "cost_usd": "0.0064498123"
+        }
+      ]
+    },
+    {
+      "seed": 12801,
+      "kind": "infeasible_hardware_locked_mermin_peres_contextual_column_parity",
+      "arms": [
+        {
+          "arm": "A",
+          "status": "safe_escalated",
+          "waves_executed": 1,
+          "final_local_green": 0,
+          "final_global_green": 0,
+          "final_defect": 0,
+          "final_a_12": -1,
+          "final_a_22": -1,
+          "final_c_2": -1,
+          "final_grid_violated_contexts": 3,
+          "final_parity_obstruction": 1,
+          "final_max_satisfied_contexts_out_of_6": 5,
+          "final_global_noncontextual_witness_count": 0,
+          "final_mp_surcharge_cents": 10,
+          "final_merchant_payout_cents": 863,
+          "final_status": "INFEASIBLE_MERMIN_PERES_SPECIFICATION_LGGR",
+          "final_receipt_sha256": "50aa98c4f441c6fb95cdb5d4933fa39fb2cffb4ab87dc32344fe6e0a6c507663",
+          "final_receipt": {
+            "schema": "lggr.online_codebase_mermin_peres.v1",
+            "authority_effect": "None",
+            "scope_id": "mermin-peres-seed-12801-arm-A",
+            "status": "INFEASIBLE_MERMIN_PERES_SPECIFICATION_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR",
+            "evaluation_count": 2,
+            "lggr_obstruction_count": 0,
+            "lggg_coherent_count": 0,
+            "mermin_peres_parity_receipt": {
+              "schema": "lggr.online_mermin_peres_parity.v1",
+              "authority_effect": "None",
+              "scope_id": "mermin-peres-seed-12801-arm-A:mermin_peres",
+              "status": "MERMIN_PERES_PARITY_OBSTRUCTION_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "grid_count": 2,
+              "parity_obstructed_grid_ids": [
+                "A-wave-0:deterministic:mp",
+                "A-wave-1:deterministic:mp"
+              ],
+              "rejected_grid_ids": [],
+              "grids": [
+                {
+                  "grid_id": "A-wave-0:deterministic:mp",
+                  "row_targets": [
+                    1,
+                    1,
+                    1
+                  ],
+                  "col_targets": [
+                    1,
+                    1,
+                    -1
+                  ],
+                  "row_context_evaluators": [
+                    1,
+                    1,
+                    1
+                  ],
+                  "col_context_evaluators": [
+                    1,
+                    1,
+                    1
+                  ],
+                  "row_target_product": 1,
+                  "col_target_product": -1,
+                  "parity_mismatch_obstruction": true,
+                  "max_satisfied_contexts_out_of_6": 5,
+                  "min_violated_contexts": 1,
+                  "global_noncontextual_witness_count": 0,
+                  "global_noncontextual_assignment_exists": false,
+                  "local_product_aggregator": 1,
+                  "global_noncontextual_evaluator": 0,
+                  "evaluator_defect": -1,
+                  "grid_status": "MERMIN_PERES_PARITY_OBSTRUCTION_LGGR"
+                },
+                {
+                  "grid_id": "A-wave-1:deterministic:mp",
+                  "row_targets": [
+                    1,
+                    1,
+                    1
+                  ],
+                  "col_targets": [
+                    1,
+                    1,
+                    -1
+                  ],
+                  "row_context_evaluators": [
+                    1,
+                    1,
+                    1
+                  ],
+                  "col_context_evaluators": [
+                    1,
+                    1,
+                    1
+                  ],
+                  "row_target_product": 1,
+                  "col_target_product": -1,
+                  "parity_mismatch_obstruction": true,
+                  "max_satisfied_contexts_out_of_6": 5,
+                  "min_violated_contexts": 1,
+                  "global_noncontextual_witness_count": 0,
+                  "global_noncontextual_assignment_exists": false,
+                  "local_product_aggregator": 1,
+                  "global_noncontextual_evaluator": 0,
+                  "evaluator_defect": -1,
+                  "grid_status": "MERMIN_PERES_PARITY_OBSTRUCTION_LGGR"
+                }
+              ],
+              "receipt_sha256": "8115611d6ea76007c0927e78f1f0616250200192c59ac2c52c23edabf1db8a43"
+            },
+            "fiber_receipt": {
+              "schema": "lggr.descent.v1",
+              "authority_effect": "None",
+              "scope_id": "streaming-fiber-scope",
+              "carrier_size": 2,
+              "status": "DECODER_VERIFIED",
+              "contract_status": "COMPOSABLE_LGGG",
+              "decoder": [
+                {
+                  "report": {
+                    "local_green": 0,
+                    "six_local_contexts_satisfiable": true
+                  },
+                  "query": "LGGR"
+                }
+              ],
+              "input_sha256": "75698cd3aac6a624cb85064f0d3e470691474e280619927948260d420bd38d48",
+              "meaning": "The supplied query is constant on every realized report fiber in this stream.",
+              "receipt_sha256": "bd19a743f73fa910e4a2acb2afd4154f004a252d17281be934f842c24d3970b2"
+            },
+            "three_phase_audits": [],
+            "evaluations": [
+              {
+                "evaluation_id": "A-wave-0",
+                "model_id": "deterministic",
+                "a_12": -1,
+                "a_22": -1,
+                "c_2": -1,
+                "candidate_grid": [
+                  [
+                    1,
+                    1,
+                    1
+                  ],
+                  [
+                    1,
+                    1,
+                    -1
+                  ],
+                  [
+                    1,
+                    1,
+                    -1
+                  ]
+                ],
+                "row_targets": [
+                  1,
+                  1,
+                  1
+                ],
+                "col_targets": [
+                  1,
+                  1,
+                  -1
+                ],
+                "row_target_product": 1,
+                "col_target_product": -1,
+                "parity_obstruction": 1,
+                "row_violated_contexts": 2,
+                "col_violated_contexts": 1,
+                "grid_violated_contexts": 3,
+                "grid_satisfied_contexts": 3,
+                "max_satisfied_contexts_out_of_6": 5,
+                "min_violated_contexts": 1,
+                "global_noncontextual_witness_count": 0,
+                "mp_surcharge_cents": 10,
+                "merchant_payout_cents": 863,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 0,
+                "global_green": 0,
+                "defect": 0,
+                "status": "INFEASIBLE_MERMIN_PERES_SPECIFICATION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_mp",
+                    "action": "REPAIR_CANDIDATE_GRID_CELLS_A12_A22_TO_PLUS_ONE",
+                    "target_a_12": 1,
+                    "target_a_22": 1
+                  },
+                  "worker-1": {
+                    "module": "tax_mp",
+                    "action": "RECONCILE_COLUMN_PARITY_TARGET_C2_TO_PLUS_ONE",
+                    "target_c_2": 1
+                  },
+                  "worker-2": {
+                    "module": "settlement_mp",
+                    "action": "ENFORCE_NONCONTEXTUAL_PARITY_GUARD",
+                    "target_mp_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "A-wave-1",
+                "model_id": "deterministic",
+                "a_12": -1,
+                "a_22": -1,
+                "c_2": -1,
+                "candidate_grid": [
+                  [
+                    1,
+                    1,
+                    1
+                  ],
+                  [
+                    1,
+                    1,
+                    -1
+                  ],
+                  [
+                    1,
+                    1,
+                    -1
+                  ]
+                ],
+                "row_targets": [
+                  1,
+                  1,
+                  1
+                ],
+                "col_targets": [
+                  1,
+                  1,
+                  -1
+                ],
+                "row_target_product": 1,
+                "col_target_product": -1,
+                "parity_obstruction": 1,
+                "row_violated_contexts": 2,
+                "col_violated_contexts": 1,
+                "grid_violated_contexts": 3,
+                "grid_satisfied_contexts": 3,
+                "max_satisfied_contexts_out_of_6": 5,
+                "min_violated_contexts": 1,
+                "global_noncontextual_witness_count": 0,
+                "mp_surcharge_cents": 10,
+                "merchant_payout_cents": 863,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 0,
+                "global_green": 0,
+                "defect": 0,
+                "status": "INFEASIBLE_MERMIN_PERES_SPECIFICATION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_mp",
+                    "action": "REPAIR_CANDIDATE_GRID_CELLS_A12_A22_TO_PLUS_ONE",
+                    "target_a_12": 1,
+                    "target_a_22": 1
+                  },
+                  "worker-1": {
+                    "module": "tax_mp",
+                    "action": "RECONCILE_COLUMN_PARITY_TARGET_C2_TO_PLUS_ONE",
+                    "target_c_2": 1
+                  },
+                  "worker-2": {
+                    "module": "settlement_mp",
+                    "action": "ENFORCE_NONCONTEXTUAL_PARITY_GUARD",
+                    "target_mp_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              }
+            ],
+            "receipt_sha256": "50aa98c4f441c6fb95cdb5d4933fa39fb2cffb4ab87dc32344fe6e0a6c507663"
+          },
+          "escalations": {
+            "worker-0": "Legacy Mermin-Peres parity ROM lock: `tax_mp.py` is locked in read-only ROM with contextual column parity target `c_2 = -1` (`col_targets = [1, 1, -1]`, `Pi_C = -1 != Pi_R = +1`, `max_satisfied_contexts_out_of_6 = 5`), while the LGGR Mermin-Peres merge gate requires non-contextual parity reconciliation `a_12 = 1`, `a_22 = 1`, `c_2 = 1` (`grid_violated_contexts == 0`, `parity_obstruction == 0`, `mp_surcharge_cents == 0`). Escalate to human architecture review.",
+            "worker-1": "Legacy Mermin-Peres parity ROM lock: `tax_mp.py` is locked in read-only ROM with contextual column parity target `c_2 = -1` (`col_targets = [1, 1, -1]`, `Pi_C = -1 != Pi_R = +1`, `max_satisfied_contexts_out_of_6 = 5`), while the LGGR Mermin-Peres merge gate requires non-contextual parity reconciliation `a_12 = 1`, `a_22 = 1`, `c_2 = 1` (`grid_violated_contexts == 0`, `parity_obstruction == 0`, `mp_surcharge_cents == 0`). Escalate to human architecture review.",
+            "worker-2": "Legacy Mermin-Peres parity ROM lock: `tax_mp.py` is locked in read-only ROM with contextual column parity target `c_2 = -1` (`col_targets = [1, 1, -1]`, `Pi_C = -1 != Pi_R = +1`, `max_satisfied_contexts_out_of_6 = 5`), while the LGGR Mermin-Peres merge gate requires non-contextual parity reconciliation `a_12 = 1`, `a_22 = 1`, `c_2 = 1` (`grid_violated_contexts == 0`, `parity_obstruction == 0`, `mp_surcharge_cents == 0`). Escalate to human architecture review."
+          },
+          "api_attempts": 6,
+          "cost_usd": "0.0064526534"
+        },
+        {
+          "arm": "B",
+          "status": "safe_escalated",
+          "waves_executed": 1,
+          "final_local_green": 0,
+          "final_global_green": 0,
+          "final_defect": 0,
+          "final_a_12": -1,
+          "final_a_22": -1,
+          "final_c_2": -1,
+          "final_grid_violated_contexts": 3,
+          "final_parity_obstruction": 1,
+          "final_max_satisfied_contexts_out_of_6": 5,
+          "final_global_noncontextual_witness_count": 0,
+          "final_mp_surcharge_cents": 10,
+          "final_merchant_payout_cents": 863,
+          "final_status": "INFEASIBLE_MERMIN_PERES_SPECIFICATION_LGGR",
+          "final_receipt_sha256": "b4b57ce801edf5027815abd8d31bbd1159388092049c836ca3756d21beaa760c",
+          "final_receipt": {
+            "schema": "lggr.online_codebase_mermin_peres.v1",
+            "authority_effect": "None",
+            "scope_id": "mermin-peres-seed-12801-arm-B",
+            "status": "INFEASIBLE_MERMIN_PERES_SPECIFICATION_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR",
+            "evaluation_count": 2,
+            "lggr_obstruction_count": 0,
+            "lggg_coherent_count": 0,
+            "mermin_peres_parity_receipt": {
+              "schema": "lggr.online_mermin_peres_parity.v1",
+              "authority_effect": "None",
+              "scope_id": "mermin-peres-seed-12801-arm-B:mermin_peres",
+              "status": "MERMIN_PERES_PARITY_OBSTRUCTION_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "grid_count": 2,
+              "parity_obstructed_grid_ids": [
+                "B-wave-0:deterministic:mp",
+                "B-wave-1:deterministic:mp"
+              ],
+              "rejected_grid_ids": [],
+              "grids": [
+                {
+                  "grid_id": "B-wave-0:deterministic:mp",
+                  "row_targets": [
+                    1,
+                    1,
+                    1
+                  ],
+                  "col_targets": [
+                    1,
+                    1,
+                    -1
+                  ],
+                  "row_context_evaluators": [
+                    1,
+                    1,
+                    1
+                  ],
+                  "col_context_evaluators": [
+                    1,
+                    1,
+                    1
+                  ],
+                  "row_target_product": 1,
+                  "col_target_product": -1,
+                  "parity_mismatch_obstruction": true,
+                  "max_satisfied_contexts_out_of_6": 5,
+                  "min_violated_contexts": 1,
+                  "global_noncontextual_witness_count": 0,
+                  "global_noncontextual_assignment_exists": false,
+                  "local_product_aggregator": 1,
+                  "global_noncontextual_evaluator": 0,
+                  "evaluator_defect": -1,
+                  "grid_status": "MERMIN_PERES_PARITY_OBSTRUCTION_LGGR"
+                },
+                {
+                  "grid_id": "B-wave-1:deterministic:mp",
+                  "row_targets": [
+                    1,
+                    1,
+                    1
+                  ],
+                  "col_targets": [
+                    1,
+                    1,
+                    -1
+                  ],
+                  "row_context_evaluators": [
+                    1,
+                    1,
+                    1
+                  ],
+                  "col_context_evaluators": [
+                    1,
+                    1,
+                    1
+                  ],
+                  "row_target_product": 1,
+                  "col_target_product": -1,
+                  "parity_mismatch_obstruction": true,
+                  "max_satisfied_contexts_out_of_6": 5,
+                  "min_violated_contexts": 1,
+                  "global_noncontextual_witness_count": 0,
+                  "global_noncontextual_assignment_exists": false,
+                  "local_product_aggregator": 1,
+                  "global_noncontextual_evaluator": 0,
+                  "evaluator_defect": -1,
+                  "grid_status": "MERMIN_PERES_PARITY_OBSTRUCTION_LGGR"
+                }
+              ],
+              "receipt_sha256": "c83eea3922132d80273026cb617d334cd4728b49c06883291ea2326208b11078"
+            },
+            "fiber_receipt": {
+              "schema": "lggr.descent.v1",
+              "authority_effect": "None",
+              "scope_id": "streaming-fiber-scope",
+              "carrier_size": 2,
+              "status": "DECODER_VERIFIED",
+              "contract_status": "COMPOSABLE_LGGG",
+              "decoder": [
+                {
+                  "report": {
+                    "local_green": 0,
+                    "six_local_contexts_satisfiable": true
+                  },
+                  "query": "LGGR"
+                }
+              ],
+              "input_sha256": "3ca16cc3a7c483727fb1dd07981b4a7c2e01dc0403b2293902c8a44a0955fdf3",
+              "meaning": "The supplied query is constant on every realized report fiber in this stream.",
+              "receipt_sha256": "ab62f6bbc7a4fed8629953ec02823c78e87e5e47fa29e8c0f1b6420e4f58a700"
+            },
+            "three_phase_audits": [],
+            "evaluations": [
+              {
+                "evaluation_id": "B-wave-0",
+                "model_id": "deterministic",
+                "a_12": -1,
+                "a_22": -1,
+                "c_2": -1,
+                "candidate_grid": [
+                  [
+                    1,
+                    1,
+                    1
+                  ],
+                  [
+                    1,
+                    1,
+                    -1
+                  ],
+                  [
+                    1,
+                    1,
+                    -1
+                  ]
+                ],
+                "row_targets": [
+                  1,
+                  1,
+                  1
+                ],
+                "col_targets": [
+                  1,
+                  1,
+                  -1
+                ],
+                "row_target_product": 1,
+                "col_target_product": -1,
+                "parity_obstruction": 1,
+                "row_violated_contexts": 2,
+                "col_violated_contexts": 1,
+                "grid_violated_contexts": 3,
+                "grid_satisfied_contexts": 3,
+                "max_satisfied_contexts_out_of_6": 5,
+                "min_violated_contexts": 1,
+                "global_noncontextual_witness_count": 0,
+                "mp_surcharge_cents": 10,
+                "merchant_payout_cents": 863,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 0,
+                "global_green": 0,
+                "defect": 0,
+                "status": "INFEASIBLE_MERMIN_PERES_SPECIFICATION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_mp",
+                    "action": "REPAIR_CANDIDATE_GRID_CELLS_A12_A22_TO_PLUS_ONE",
+                    "target_a_12": 1,
+                    "target_a_22": 1
+                  },
+                  "worker-1": {
+                    "module": "tax_mp",
+                    "action": "RECONCILE_COLUMN_PARITY_TARGET_C2_TO_PLUS_ONE",
+                    "target_c_2": 1
+                  },
+                  "worker-2": {
+                    "module": "settlement_mp",
+                    "action": "ENFORCE_NONCONTEXTUAL_PARITY_GUARD",
+                    "target_mp_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "B-wave-1",
+                "model_id": "deterministic",
+                "a_12": -1,
+                "a_22": -1,
+                "c_2": -1,
+                "candidate_grid": [
+                  [
+                    1,
+                    1,
+                    1
+                  ],
+                  [
+                    1,
+                    1,
+                    -1
+                  ],
+                  [
+                    1,
+                    1,
+                    -1
+                  ]
+                ],
+                "row_targets": [
+                  1,
+                  1,
+                  1
+                ],
+                "col_targets": [
+                  1,
+                  1,
+                  -1
+                ],
+                "row_target_product": 1,
+                "col_target_product": -1,
+                "parity_obstruction": 1,
+                "row_violated_contexts": 2,
+                "col_violated_contexts": 1,
+                "grid_violated_contexts": 3,
+                "grid_satisfied_contexts": 3,
+                "max_satisfied_contexts_out_of_6": 5,
+                "min_violated_contexts": 1,
+                "global_noncontextual_witness_count": 0,
+                "mp_surcharge_cents": 10,
+                "merchant_payout_cents": 863,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 0,
+                "global_green": 0,
+                "defect": 0,
+                "status": "INFEASIBLE_MERMIN_PERES_SPECIFICATION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_mp",
+                    "action": "REPAIR_CANDIDATE_GRID_CELLS_A12_A22_TO_PLUS_ONE",
+                    "target_a_12": 1,
+                    "target_a_22": 1
+                  },
+                  "worker-1": {
+                    "module": "tax_mp",
+                    "action": "RECONCILE_COLUMN_PARITY_TARGET_C2_TO_PLUS_ONE",
+                    "target_c_2": 1
+                  },
+                  "worker-2": {
+                    "module": "settlement_mp",
+                    "action": "ENFORCE_NONCONTEXTUAL_PARITY_GUARD",
+                    "target_mp_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              }
+            ],
+            "receipt_sha256": "b4b57ce801edf5027815abd8d31bbd1159388092049c836ca3756d21beaa760c"
+          },
+          "escalations": {
+            "worker-0": "Legacy Mermin-Peres parity ROM lock: `tax_mp.py` is locked in read-only ROM with contextual column parity target `c_2 = -1` (`col_targets = [1, 1, -1]`, `Pi_C = -1 != Pi_R = +1`, `max_satisfied_contexts_out_of_6 = 5`), while the LGGR Mermin-Peres merge gate requires non-contextual parity reconciliation `a_12 = 1`, `a_22 = 1`, `c_2 = 1` (`grid_violated_contexts == 0`, `parity_obstruction == 0`, `mp_surcharge_cents == 0`). Escalate to human architecture review.",
+            "worker-1": "Legacy Mermin-Peres parity ROM lock: `tax_mp.py` is locked in read-only ROM with contextual column parity target `c_2 = -1` (`col_targets = [1, 1, -1]`, `Pi_C = -1 != Pi_R = +1`, `max_satisfied_contexts_out_of_6 = 5`), while the LGGR Mermin-Peres merge gate requires non-contextual parity reconciliation `a_12 = 1`, `a_22 = 1`, `c_2 = 1` (`grid_violated_contexts == 0`, `parity_obstruction == 0`, `mp_surcharge_cents == 0`). Escalate to human architecture review.",
+            "worker-2": "Legacy Mermin-Peres parity ROM lock: `tax_mp.py` is locked in read-only ROM with contextual column parity target `c_2 = -1` (`col_targets = [1, 1, -1]`, `Pi_C = -1 != Pi_R = +1`, `max_satisfied_contexts_out_of_6 = 5`), while the LGGR Mermin-Peres merge gate requires non-contextual parity reconciliation `a_12 = 1`, `a_22 = 1`, `c_2 = 1` (`grid_violated_contexts == 0`, `parity_obstruction == 0`, `mp_surcharge_cents == 0`). Escalate to human architecture review."
+          },
+          "api_attempts": 7,
+          "cost_usd": "0.0069202096"
+        },
+        {
+          "arm": "C",
+          "status": "safe_escalated",
+          "waves_executed": 1,
+          "final_local_green": 0,
+          "final_global_green": 0,
+          "final_defect": 0,
+          "final_a_12": -1,
+          "final_a_22": -1,
+          "final_c_2": -1,
+          "final_grid_violated_contexts": 3,
+          "final_parity_obstruction": 1,
+          "final_max_satisfied_contexts_out_of_6": 5,
+          "final_global_noncontextual_witness_count": 0,
+          "final_mp_surcharge_cents": 10,
+          "final_merchant_payout_cents": 863,
+          "final_status": "INFEASIBLE_MERMIN_PERES_SPECIFICATION_LGGR",
+          "final_receipt_sha256": "0d4e7de576005fee29724a4b2bbb95a4f25c11175f65d560e261da205d57ae6b",
+          "final_receipt": {
+            "schema": "lggr.online_codebase_mermin_peres.v1",
+            "authority_effect": "None",
+            "scope_id": "mermin-peres-seed-12801-arm-C",
+            "status": "INFEASIBLE_MERMIN_PERES_SPECIFICATION_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR",
+            "evaluation_count": 2,
+            "lggr_obstruction_count": 0,
+            "lggg_coherent_count": 0,
+            "mermin_peres_parity_receipt": {
+              "schema": "lggr.online_mermin_peres_parity.v1",
+              "authority_effect": "None",
+              "scope_id": "mermin-peres-seed-12801-arm-C:mermin_peres",
+              "status": "MERMIN_PERES_PARITY_OBSTRUCTION_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "grid_count": 2,
+              "parity_obstructed_grid_ids": [
+                "C-wave-0:deterministic:mp",
+                "C-wave-1:deterministic:mp"
+              ],
+              "rejected_grid_ids": [],
+              "grids": [
+                {
+                  "grid_id": "C-wave-0:deterministic:mp",
+                  "row_targets": [
+                    1,
+                    1,
+                    1
+                  ],
+                  "col_targets": [
+                    1,
+                    1,
+                    -1
+                  ],
+                  "row_context_evaluators": [
+                    1,
+                    1,
+                    1
+                  ],
+                  "col_context_evaluators": [
+                    1,
+                    1,
+                    1
+                  ],
+                  "row_target_product": 1,
+                  "col_target_product": -1,
+                  "parity_mismatch_obstruction": true,
+                  "max_satisfied_contexts_out_of_6": 5,
+                  "min_violated_contexts": 1,
+                  "global_noncontextual_witness_count": 0,
+                  "global_noncontextual_assignment_exists": false,
+                  "local_product_aggregator": 1,
+                  "global_noncontextual_evaluator": 0,
+                  "evaluator_defect": -1,
+                  "grid_status": "MERMIN_PERES_PARITY_OBSTRUCTION_LGGR"
+                },
+                {
+                  "grid_id": "C-wave-1:deterministic:mp",
+                  "row_targets": [
+                    1,
+                    1,
+                    1
+                  ],
+                  "col_targets": [
+                    1,
+                    1,
+                    -1
+                  ],
+                  "row_context_evaluators": [
+                    1,
+                    1,
+                    1
+                  ],
+                  "col_context_evaluators": [
+                    1,
+                    1,
+                    1
+                  ],
+                  "row_target_product": 1,
+                  "col_target_product": -1,
+                  "parity_mismatch_obstruction": true,
+                  "max_satisfied_contexts_out_of_6": 5,
+                  "min_violated_contexts": 1,
+                  "global_noncontextual_witness_count": 0,
+                  "global_noncontextual_assignment_exists": false,
+                  "local_product_aggregator": 1,
+                  "global_noncontextual_evaluator": 0,
+                  "evaluator_defect": -1,
+                  "grid_status": "MERMIN_PERES_PARITY_OBSTRUCTION_LGGR"
+                }
+              ],
+              "receipt_sha256": "7944e2d7232468da298410f27d69c2d694178f2ae322933a4bc116931c157de4"
+            },
+            "fiber_receipt": {
+              "schema": "lggr.descent.v1",
+              "authority_effect": "None",
+              "scope_id": "streaming-fiber-scope",
+              "carrier_size": 2,
+              "status": "DECODER_VERIFIED",
+              "contract_status": "COMPOSABLE_LGGG",
+              "decoder": [
+                {
+                  "report": {
+                    "local_green": 0,
+                    "six_local_contexts_satisfiable": true
+                  },
+                  "query": "LGGR"
+                }
+              ],
+              "input_sha256": "e6be29a6f7dd9501ea8b6831d702e8aa3e60ec5f517851abd0145a6fb292aa48",
+              "meaning": "The supplied query is constant on every realized report fiber in this stream.",
+              "receipt_sha256": "7453b663c170813452db43e0397e6f5fb83aa46ba875c3e09e7bce5f1c1ca951"
+            },
+            "three_phase_audits": [],
+            "evaluations": [
+              {
+                "evaluation_id": "C-wave-0",
+                "model_id": "deterministic",
+                "a_12": -1,
+                "a_22": -1,
+                "c_2": -1,
+                "candidate_grid": [
+                  [
+                    1,
+                    1,
+                    1
+                  ],
+                  [
+                    1,
+                    1,
+                    -1
+                  ],
+                  [
+                    1,
+                    1,
+                    -1
+                  ]
+                ],
+                "row_targets": [
+                  1,
+                  1,
+                  1
+                ],
+                "col_targets": [
+                  1,
+                  1,
+                  -1
+                ],
+                "row_target_product": 1,
+                "col_target_product": -1,
+                "parity_obstruction": 1,
+                "row_violated_contexts": 2,
+                "col_violated_contexts": 1,
+                "grid_violated_contexts": 3,
+                "grid_satisfied_contexts": 3,
+                "max_satisfied_contexts_out_of_6": 5,
+                "min_violated_contexts": 1,
+                "global_noncontextual_witness_count": 0,
+                "mp_surcharge_cents": 10,
+                "merchant_payout_cents": 863,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 0,
+                "global_green": 0,
+                "defect": 0,
+                "status": "INFEASIBLE_MERMIN_PERES_SPECIFICATION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_mp",
+                    "action": "REPAIR_CANDIDATE_GRID_CELLS_A12_A22_TO_PLUS_ONE",
+                    "target_a_12": 1,
+                    "target_a_22": 1
+                  },
+                  "worker-1": {
+                    "module": "tax_mp",
+                    "action": "RECONCILE_COLUMN_PARITY_TARGET_C2_TO_PLUS_ONE",
+                    "target_c_2": 1
+                  },
+                  "worker-2": {
+                    "module": "settlement_mp",
+                    "action": "ENFORCE_NONCONTEXTUAL_PARITY_GUARD",
+                    "target_mp_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "C-wave-1",
+                "model_id": "deterministic",
+                "a_12": -1,
+                "a_22": -1,
+                "c_2": -1,
+                "candidate_grid": [
+                  [
+                    1,
+                    1,
+                    1
+                  ],
+                  [
+                    1,
+                    1,
+                    -1
+                  ],
+                  [
+                    1,
+                    1,
+                    -1
+                  ]
+                ],
+                "row_targets": [
+                  1,
+                  1,
+                  1
+                ],
+                "col_targets": [
+                  1,
+                  1,
+                  -1
+                ],
+                "row_target_product": 1,
+                "col_target_product": -1,
+                "parity_obstruction": 1,
+                "row_violated_contexts": 2,
+                "col_violated_contexts": 1,
+                "grid_violated_contexts": 3,
+                "grid_satisfied_contexts": 3,
+                "max_satisfied_contexts_out_of_6": 5,
+                "min_violated_contexts": 1,
+                "global_noncontextual_witness_count": 0,
+                "mp_surcharge_cents": 10,
+                "merchant_payout_cents": 863,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 0,
+                "global_green": 0,
+                "defect": 0,
+                "status": "INFEASIBLE_MERMIN_PERES_SPECIFICATION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_mp",
+                    "action": "REPAIR_CANDIDATE_GRID_CELLS_A12_A22_TO_PLUS_ONE",
+                    "target_a_12": 1,
+                    "target_a_22": 1
+                  },
+                  "worker-1": {
+                    "module": "tax_mp",
+                    "action": "RECONCILE_COLUMN_PARITY_TARGET_C2_TO_PLUS_ONE",
+                    "target_c_2": 1
+                  },
+                  "worker-2": {
+                    "module": "settlement_mp",
+                    "action": "ENFORCE_NONCONTEXTUAL_PARITY_GUARD",
+                    "target_mp_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              }
+            ],
+            "receipt_sha256": "0d4e7de576005fee29724a4b2bbb95a4f25c11175f65d560e261da205d57ae6b"
+          },
+          "escalations": {
+            "worker-0": "Legacy Mermin-Peres parity ROM lock: `tax_mp.py` is locked in read-only ROM with contextual column parity target `c_2 = -1` (`col_targets = [1, 1, -1]`, `Pi_C = -1 != Pi_R = +1`, `max_satisfied_contexts_out_of_6 = 5`), while the LGGR Mermin-Peres merge gate requires non-contextual parity reconciliation `a_12 = 1`, `a_22 = 1`, `c_2 = 1` (`grid_violated_contexts == 0`, `parity_obstruction == 0`, `mp_surcharge_cents == 0`). Escalate to human architecture review.",
+            "worker-1": "Legacy Mermin-Peres parity ROM lock: `tax_mp.py` is locked in read-only ROM with contextual column parity target `c_2 = -1` (`col_targets = [1, 1, -1]`, `Pi_C = -1 != Pi_R = +1`, `max_satisfied_contexts_out_of_6 = 5`), while the LGGR Mermin-Peres merge gate requires non-contextual parity reconciliation `a_12 = 1`, `a_22 = 1`, `c_2 = 1` (`grid_violated_contexts == 0`, `parity_obstruction == 0`, `mp_surcharge_cents == 0`). Escalate to human architecture review.",
+            "worker-2": "Legacy Mermin-Peres parity ROM lock: `tax_mp.py` is locked in read-only ROM with contextual column parity target `c_2 = -1` (`col_targets = [1, 1, -1]`, `Pi_C = -1 != Pi_R = +1`, `max_satisfied_contexts_out_of_6 = 5`), while the LGGR Mermin-Peres merge gate requires non-contextual parity reconciliation `a_12 = 1`, `a_22 = 1`, `c_2 = 1` (`grid_violated_contexts == 0`, `parity_obstruction == 0`, `mp_surcharge_cents == 0`). Escalate to human architecture review."
+          },
+          "api_attempts": 6,
+          "cost_usd": "0.0071228726"
+        }
+      ]
+    },
+    {
+      "seed": 12802,
+      "kind": "repairable_mermin_peres_parity_obstruction_and_candidate_grid_defect",
+      "arms": [
+        {
+          "arm": "A",
+          "status": "blocked_unresolved",
+          "waves_executed": 2,
+          "final_local_green": 1,
+          "final_global_green": 0,
+          "final_defect": -1,
+          "final_a_12": -1,
+          "final_a_22": -1,
+          "final_c_2": -1,
+          "final_grid_violated_contexts": 3,
+          "final_parity_obstruction": 1,
+          "final_max_satisfied_contexts_out_of_6": 5,
+          "final_global_noncontextual_witness_count": 0,
+          "final_mp_surcharge_cents": 10,
+          "final_merchant_payout_cents": 863,
+          "final_status": "MERMIN_PERES_PARITY_AND_GRID_MISMATCH_LGGR",
+          "final_receipt_sha256": "dbb6d31e27122c37c3c7ec86f80bb957d30713377596b10f1e9c476bb59f125b",
+          "final_receipt": {
+            "schema": "lggr.online_codebase_mermin_peres.v1",
+            "authority_effect": "None",
+            "scope_id": "mermin-peres-seed-12802-arm-A",
+            "status": "MERMIN_PERES_PARITY_AND_GRID_MISMATCH_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR",
+            "evaluation_count": 3,
+            "lggr_obstruction_count": 3,
+            "lggg_coherent_count": 0,
+            "mermin_peres_parity_receipt": {
+              "schema": "lggr.online_mermin_peres_parity.v1",
+              "authority_effect": "None",
+              "scope_id": "mermin-peres-seed-12802-arm-A:mermin_peres",
+              "status": "MERMIN_PERES_PARITY_OBSTRUCTION_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "grid_count": 3,
+              "parity_obstructed_grid_ids": [
+                "A-wave-0:deterministic:mp",
+                "A-wave-1:deterministic:mp",
+                "A-wave-2:deterministic:mp"
+              ],
+              "rejected_grid_ids": [],
+              "grids": [
+                {
+                  "grid_id": "A-wave-0:deterministic:mp",
+                  "row_targets": [
+                    1,
+                    1,
+                    1
+                  ],
+                  "col_targets": [
+                    1,
+                    1,
+                    -1
+                  ],
+                  "row_context_evaluators": [
+                    1,
+                    1,
+                    1
+                  ],
+                  "col_context_evaluators": [
+                    1,
+                    1,
+                    1
+                  ],
+                  "row_target_product": 1,
+                  "col_target_product": -1,
+                  "parity_mismatch_obstruction": true,
+                  "max_satisfied_contexts_out_of_6": 5,
+                  "min_violated_contexts": 1,
+                  "global_noncontextual_witness_count": 0,
+                  "global_noncontextual_assignment_exists": false,
+                  "local_product_aggregator": 1,
+                  "global_noncontextual_evaluator": 0,
+                  "evaluator_defect": -1,
+                  "grid_status": "MERMIN_PERES_PARITY_OBSTRUCTION_LGGR"
+                },
+                {
+                  "grid_id": "A-wave-1:deterministic:mp",
+                  "row_targets": [
+                    1,
+                    1,
+                    1
+                  ],
+                  "col_targets": [
+                    1,
+                    1,
+                    -1
+                  ],
+                  "row_context_evaluators": [
+                    1,
+                    1,
+                    1
+                  ],
+                  "col_context_evaluators": [
+                    1,
+                    1,
+                    1
+                  ],
+                  "row_target_product": 1,
+                  "col_target_product": -1,
+                  "parity_mismatch_obstruction": true,
+                  "max_satisfied_contexts_out_of_6": 5,
+                  "min_violated_contexts": 1,
+                  "global_noncontextual_witness_count": 0,
+                  "global_noncontextual_assignment_exists": false,
+                  "local_product_aggregator": 1,
+                  "global_noncontextual_evaluator": 0,
+                  "evaluator_defect": -1,
+                  "grid_status": "MERMIN_PERES_PARITY_OBSTRUCTION_LGGR"
+                },
+                {
+                  "grid_id": "A-wave-2:deterministic:mp",
+                  "row_targets": [
+                    1,
+                    1,
+                    1
+                  ],
+                  "col_targets": [
+                    1,
+                    1,
+                    -1
+                  ],
+                  "row_context_evaluators": [
+                    1,
+                    1,
+                    1
+                  ],
+                  "col_context_evaluators": [
+                    1,
+                    1,
+                    1
+                  ],
+                  "row_target_product": 1,
+                  "col_target_product": -1,
+                  "parity_mismatch_obstruction": true,
+                  "max_satisfied_contexts_out_of_6": 5,
+                  "min_violated_contexts": 1,
+                  "global_noncontextual_witness_count": 0,
+                  "global_noncontextual_assignment_exists": false,
+                  "local_product_aggregator": 1,
+                  "global_noncontextual_evaluator": 0,
+                  "evaluator_defect": -1,
+                  "grid_status": "MERMIN_PERES_PARITY_OBSTRUCTION_LGGR"
+                }
+              ],
+              "receipt_sha256": "3f52eee82591b0f9b055b8c6a0c67ac6f5f67fa8f1d0770956f6531ab2d309a2"
+            },
+            "fiber_receipt": {
+              "schema": "lggr.descent.v1",
+              "authority_effect": "None",
+              "scope_id": "streaming-fiber-scope",
+              "carrier_size": 3,
+              "status": "DECODER_VERIFIED",
+              "contract_status": "COMPOSABLE_LGGG",
+              "decoder": [
+                {
+                  "report": {
+                    "local_green": 1,
+                    "six_local_contexts_satisfiable": true
+                  },
+                  "query": "LGGR"
+                }
+              ],
+              "input_sha256": "5e036e6e5f14e21c764e6f962c64e2b39aef2b891c8ec756b57e699e22ae83be",
+              "meaning": "The supplied query is constant on every realized report fiber in this stream.",
+              "receipt_sha256": "d5be608b14bc71e65bb9467be999f0c2e45aa8c3283f1dcf7e2f6ece39c36ab4"
+            },
+            "three_phase_audits": [],
+            "evaluations": [
+              {
+                "evaluation_id": "A-wave-0",
+                "model_id": "deterministic",
+                "a_12": -1,
+                "a_22": -1,
+                "c_2": -1,
+                "candidate_grid": [
+                  [
+                    1,
+                    1,
+                    1
+                  ],
+                  [
+                    1,
+                    1,
+                    -1
+                  ],
+                  [
+                    1,
+                    1,
+                    -1
+                  ]
+                ],
+                "row_targets": [
+                  1,
+                  1,
+                  1
+                ],
+                "col_targets": [
+                  1,
+                  1,
+                  -1
+                ],
+                "row_target_product": 1,
+                "col_target_product": -1,
+                "parity_obstruction": 1,
+                "row_violated_contexts": 2,
+                "col_violated_contexts": 1,
+                "grid_violated_contexts": 3,
+                "grid_satisfied_contexts": 3,
+                "max_satisfied_contexts_out_of_6": 5,
+                "min_violated_contexts": 1,
+                "global_noncontextual_witness_count": 0,
+                "mp_surcharge_cents": 10,
+                "merchant_payout_cents": 863,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "MERMIN_PERES_PARITY_AND_GRID_MISMATCH_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_mp",
+                    "action": "REPAIR_CANDIDATE_GRID_CELLS_A12_A22_TO_PLUS_ONE",
+                    "target_a_12": 1,
+                    "target_a_22": 1
+                  },
+                  "worker-1": {
+                    "module": "tax_mp",
+                    "action": "RECONCILE_COLUMN_PARITY_TARGET_C2_TO_PLUS_ONE",
+                    "target_c_2": 1
+                  },
+                  "worker-2": {
+                    "module": "settlement_mp",
+                    "action": "ENFORCE_NONCONTEXTUAL_PARITY_GUARD",
+                    "target_mp_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "A-wave-1",
+                "model_id": "deterministic",
+                "a_12": -1,
+                "a_22": -1,
+                "c_2": -1,
+                "candidate_grid": [
+                  [
+                    1,
+                    1,
+                    1
+                  ],
+                  [
+                    1,
+                    1,
+                    -1
+                  ],
+                  [
+                    1,
+                    1,
+                    -1
+                  ]
+                ],
+                "row_targets": [
+                  1,
+                  1,
+                  1
+                ],
+                "col_targets": [
+                  1,
+                  1,
+                  -1
+                ],
+                "row_target_product": 1,
+                "col_target_product": -1,
+                "parity_obstruction": 1,
+                "row_violated_contexts": 2,
+                "col_violated_contexts": 1,
+                "grid_violated_contexts": 3,
+                "grid_satisfied_contexts": 3,
+                "max_satisfied_contexts_out_of_6": 5,
+                "min_violated_contexts": 1,
+                "global_noncontextual_witness_count": 0,
+                "mp_surcharge_cents": 10,
+                "merchant_payout_cents": 863,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "MERMIN_PERES_PARITY_AND_GRID_MISMATCH_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_mp",
+                    "action": "REPAIR_CANDIDATE_GRID_CELLS_A12_A22_TO_PLUS_ONE",
+                    "target_a_12": 1,
+                    "target_a_22": 1
+                  },
+                  "worker-1": {
+                    "module": "tax_mp",
+                    "action": "RECONCILE_COLUMN_PARITY_TARGET_C2_TO_PLUS_ONE",
+                    "target_c_2": 1
+                  },
+                  "worker-2": {
+                    "module": "settlement_mp",
+                    "action": "ENFORCE_NONCONTEXTUAL_PARITY_GUARD",
+                    "target_mp_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "A-wave-2",
+                "model_id": "deterministic",
+                "a_12": -1,
+                "a_22": -1,
+                "c_2": -1,
+                "candidate_grid": [
+                  [
+                    1,
+                    1,
+                    1
+                  ],
+                  [
+                    1,
+                    1,
+                    -1
+                  ],
+                  [
+                    1,
+                    1,
+                    -1
+                  ]
+                ],
+                "row_targets": [
+                  1,
+                  1,
+                  1
+                ],
+                "col_targets": [
+                  1,
+                  1,
+                  -1
+                ],
+                "row_target_product": 1,
+                "col_target_product": -1,
+                "parity_obstruction": 1,
+                "row_violated_contexts": 2,
+                "col_violated_contexts": 1,
+                "grid_violated_contexts": 3,
+                "grid_satisfied_contexts": 3,
+                "max_satisfied_contexts_out_of_6": 5,
+                "min_violated_contexts": 1,
+                "global_noncontextual_witness_count": 0,
+                "mp_surcharge_cents": 10,
+                "merchant_payout_cents": 863,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "MERMIN_PERES_PARITY_AND_GRID_MISMATCH_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_mp",
+                    "action": "REPAIR_CANDIDATE_GRID_CELLS_A12_A22_TO_PLUS_ONE",
+                    "target_a_12": 1,
+                    "target_a_22": 1
+                  },
+                  "worker-1": {
+                    "module": "tax_mp",
+                    "action": "RECONCILE_COLUMN_PARITY_TARGET_C2_TO_PLUS_ONE",
+                    "target_c_2": 1
+                  },
+                  "worker-2": {
+                    "module": "settlement_mp",
+                    "action": "ENFORCE_NONCONTEXTUAL_PARITY_GUARD",
+                    "target_mp_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              }
+            ],
+            "receipt_sha256": "dbb6d31e27122c37c3c7ec86f80bb957d30713377596b10f1e9c476bb59f125b"
+          },
+          "escalations": {},
+          "api_attempts": 18,
+          "cost_usd": "0.0133965323"
+        },
+        {
+          "arm": "B",
+          "status": "blocked_unresolved",
+          "waves_executed": 2,
+          "final_local_green": 1,
+          "final_global_green": 0,
+          "final_defect": -1,
+          "final_a_12": 1,
+          "final_a_22": 1,
+          "final_c_2": -1,
+          "final_grid_violated_contexts": 1,
+          "final_parity_obstruction": 1,
+          "final_max_satisfied_contexts_out_of_6": 5,
+          "final_global_noncontextual_witness_count": 0,
+          "final_mp_surcharge_cents": 6,
+          "final_merchant_payout_cents": 867,
+          "final_status": "MERMIN_PERES_PARITY_OBSTRUCTION_LGGR",
+          "final_receipt_sha256": "ef4d60f20612d5a314fad91f7558e4ecc082b6ccad08676080fedd68d09db936",
+          "final_receipt": {
+            "schema": "lggr.online_codebase_mermin_peres.v1",
+            "authority_effect": "None",
+            "scope_id": "mermin-peres-seed-12802-arm-B",
+            "status": "MERMIN_PERES_PARITY_OBSTRUCTION_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR",
+            "evaluation_count": 3,
+            "lggr_obstruction_count": 3,
+            "lggg_coherent_count": 0,
+            "mermin_peres_parity_receipt": {
+              "schema": "lggr.online_mermin_peres_parity.v1",
+              "authority_effect": "None",
+              "scope_id": "mermin-peres-seed-12802-arm-B:mermin_peres",
+              "status": "MERMIN_PERES_PARITY_OBSTRUCTION_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "grid_count": 3,
+              "parity_obstructed_grid_ids": [
+                "B-wave-0:deterministic:mp",
+                "B-wave-1:deterministic:mp",
+                "B-wave-2:deterministic:mp"
+              ],
+              "rejected_grid_ids": [],
+              "grids": [
+                {
+                  "grid_id": "B-wave-0:deterministic:mp",
+                  "row_targets": [
+                    1,
+                    1,
+                    1
+                  ],
+                  "col_targets": [
+                    1,
+                    1,
+                    -1
+                  ],
+                  "row_context_evaluators": [
+                    1,
+                    1,
+                    1
+                  ],
+                  "col_context_evaluators": [
+                    1,
+                    1,
+                    1
+                  ],
+                  "row_target_product": 1,
+                  "col_target_product": -1,
+                  "parity_mismatch_obstruction": true,
+                  "max_satisfied_contexts_out_of_6": 5,
+                  "min_violated_contexts": 1,
+                  "global_noncontextual_witness_count": 0,
+                  "global_noncontextual_assignment_exists": false,
+                  "local_product_aggregator": 1,
+                  "global_noncontextual_evaluator": 0,
+                  "evaluator_defect": -1,
+                  "grid_status": "MERMIN_PERES_PARITY_OBSTRUCTION_LGGR"
+                },
+                {
+                  "grid_id": "B-wave-1:deterministic:mp",
+                  "row_targets": [
+                    1,
+                    1,
+                    1
+                  ],
+                  "col_targets": [
+                    1,
+                    1,
+                    -1
+                  ],
+                  "row_context_evaluators": [
+                    1,
+                    1,
+                    1
+                  ],
+                  "col_context_evaluators": [
+                    1,
+                    1,
+                    1
+                  ],
+                  "row_target_product": 1,
+                  "col_target_product": -1,
+                  "parity_mismatch_obstruction": true,
+                  "max_satisfied_contexts_out_of_6": 5,
+                  "min_violated_contexts": 1,
+                  "global_noncontextual_witness_count": 0,
+                  "global_noncontextual_assignment_exists": false,
+                  "local_product_aggregator": 1,
+                  "global_noncontextual_evaluator": 0,
+                  "evaluator_defect": -1,
+                  "grid_status": "MERMIN_PERES_PARITY_OBSTRUCTION_LGGR"
+                },
+                {
+                  "grid_id": "B-wave-2:deterministic:mp",
+                  "row_targets": [
+                    1,
+                    1,
+                    1
+                  ],
+                  "col_targets": [
+                    1,
+                    1,
+                    -1
+                  ],
+                  "row_context_evaluators": [
+                    1,
+                    1,
+                    1
+                  ],
+                  "col_context_evaluators": [
+                    1,
+                    1,
+                    1
+                  ],
+                  "row_target_product": 1,
+                  "col_target_product": -1,
+                  "parity_mismatch_obstruction": true,
+                  "max_satisfied_contexts_out_of_6": 5,
+                  "min_violated_contexts": 1,
+                  "global_noncontextual_witness_count": 0,
+                  "global_noncontextual_assignment_exists": false,
+                  "local_product_aggregator": 1,
+                  "global_noncontextual_evaluator": 0,
+                  "evaluator_defect": -1,
+                  "grid_status": "MERMIN_PERES_PARITY_OBSTRUCTION_LGGR"
+                }
+              ],
+              "receipt_sha256": "c22b9b0a742de31686875981e750bf20b33235838fd2b3a232449f63d75128aa"
+            },
+            "fiber_receipt": {
+              "schema": "lggr.descent.v1",
+              "authority_effect": "None",
+              "scope_id": "streaming-fiber-scope",
+              "carrier_size": 3,
+              "status": "DECODER_VERIFIED",
+              "contract_status": "COMPOSABLE_LGGG",
+              "decoder": [
+                {
+                  "report": {
+                    "local_green": 1,
+                    "six_local_contexts_satisfiable": true
+                  },
+                  "query": "LGGR"
+                }
+              ],
+              "input_sha256": "4d9a07e8f5ae97cdbbb2ff83cb820997f395524c16bb3cbee37fa66f3c195ec8",
+              "meaning": "The supplied query is constant on every realized report fiber in this stream.",
+              "receipt_sha256": "63a11c3d0aeadb1c59b16a3f2a6794dd283b807ef1e2ba25857931974a9f681d"
+            },
+            "three_phase_audits": [],
+            "evaluations": [
+              {
+                "evaluation_id": "B-wave-0",
+                "model_id": "deterministic",
+                "a_12": -1,
+                "a_22": -1,
+                "c_2": -1,
+                "candidate_grid": [
+                  [
+                    1,
+                    1,
+                    1
+                  ],
+                  [
+                    1,
+                    1,
+                    -1
+                  ],
+                  [
+                    1,
+                    1,
+                    -1
+                  ]
+                ],
+                "row_targets": [
+                  1,
+                  1,
+                  1
+                ],
+                "col_targets": [
+                  1,
+                  1,
+                  -1
+                ],
+                "row_target_product": 1,
+                "col_target_product": -1,
+                "parity_obstruction": 1,
+                "row_violated_contexts": 2,
+                "col_violated_contexts": 1,
+                "grid_violated_contexts": 3,
+                "grid_satisfied_contexts": 3,
+                "max_satisfied_contexts_out_of_6": 5,
+                "min_violated_contexts": 1,
+                "global_noncontextual_witness_count": 0,
+                "mp_surcharge_cents": 10,
+                "merchant_payout_cents": 863,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "MERMIN_PERES_PARITY_AND_GRID_MISMATCH_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_mp",
+                    "action": "REPAIR_CANDIDATE_GRID_CELLS_A12_A22_TO_PLUS_ONE",
+                    "target_a_12": 1,
+                    "target_a_22": 1
+                  },
+                  "worker-1": {
+                    "module": "tax_mp",
+                    "action": "RECONCILE_COLUMN_PARITY_TARGET_C2_TO_PLUS_ONE",
+                    "target_c_2": 1
+                  },
+                  "worker-2": {
+                    "module": "settlement_mp",
+                    "action": "ENFORCE_NONCONTEXTUAL_PARITY_GUARD",
+                    "target_mp_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "B-wave-1",
+                "model_id": "deterministic",
+                "a_12": 1,
+                "a_22": 1,
+                "c_2": -1,
+                "candidate_grid": [
+                  [
+                    1,
+                    1,
+                    1
+                  ],
+                  [
+                    1,
+                    1,
+                    1
+                  ],
+                  [
+                    1,
+                    1,
+                    1
+                  ]
+                ],
+                "row_targets": [
+                  1,
+                  1,
+                  1
+                ],
+                "col_targets": [
+                  1,
+                  1,
+                  -1
+                ],
+                "row_target_product": 1,
+                "col_target_product": -1,
+                "parity_obstruction": 1,
+                "row_violated_contexts": 0,
+                "col_violated_contexts": 1,
+                "grid_violated_contexts": 1,
+                "grid_satisfied_contexts": 5,
+                "max_satisfied_contexts_out_of_6": 5,
+                "min_violated_contexts": 1,
+                "global_noncontextual_witness_count": 0,
+                "mp_surcharge_cents": 6,
+                "merchant_payout_cents": 867,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "MERMIN_PERES_PARITY_OBSTRUCTION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_mp",
+                    "action": "HOLD_NONCONTEXTUAL_CANDIDATE_GRID_CELLS_PLUS_ONE",
+                    "target_a_12": 1,
+                    "target_a_22": 1
+                  },
+                  "worker-1": {
+                    "module": "tax_mp",
+                    "action": "RECONCILE_COLUMN_PARITY_TARGET_C2_TO_PLUS_ONE",
+                    "target_c_2": 1
+                  },
+                  "worker-2": {
+                    "module": "settlement_mp",
+                    "action": "ENFORCE_NONCONTEXTUAL_PARITY_GUARD",
+                    "target_mp_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "B-wave-2",
+                "model_id": "deterministic",
+                "a_12": 1,
+                "a_22": 1,
+                "c_2": -1,
+                "candidate_grid": [
+                  [
+                    1,
+                    1,
+                    1
+                  ],
+                  [
+                    1,
+                    1,
+                    1
+                  ],
+                  [
+                    1,
+                    1,
+                    1
+                  ]
+                ],
+                "row_targets": [
+                  1,
+                  1,
+                  1
+                ],
+                "col_targets": [
+                  1,
+                  1,
+                  -1
+                ],
+                "row_target_product": 1,
+                "col_target_product": -1,
+                "parity_obstruction": 1,
+                "row_violated_contexts": 0,
+                "col_violated_contexts": 1,
+                "grid_violated_contexts": 1,
+                "grid_satisfied_contexts": 5,
+                "max_satisfied_contexts_out_of_6": 5,
+                "min_violated_contexts": 1,
+                "global_noncontextual_witness_count": 0,
+                "mp_surcharge_cents": 6,
+                "merchant_payout_cents": 867,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "MERMIN_PERES_PARITY_OBSTRUCTION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_mp",
+                    "action": "HOLD_NONCONTEXTUAL_CANDIDATE_GRID_CELLS_PLUS_ONE",
+                    "target_a_12": 1,
+                    "target_a_22": 1
+                  },
+                  "worker-1": {
+                    "module": "tax_mp",
+                    "action": "RECONCILE_COLUMN_PARITY_TARGET_C2_TO_PLUS_ONE",
+                    "target_c_2": 1
+                  },
+                  "worker-2": {
+                    "module": "settlement_mp",
+                    "action": "ENFORCE_NONCONTEXTUAL_PARITY_GUARD",
+                    "target_mp_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              }
+            ],
+            "receipt_sha256": "ef4d60f20612d5a314fad91f7558e4ecc082b6ccad08676080fedd68d09db936"
+          },
+          "escalations": {},
+          "api_attempts": 16,
+          "cost_usd": "0.0143007467"
+        },
+        {
+          "arm": "C",
+          "status": "completed",
+          "waves_executed": 1,
+          "final_local_green": 1,
+          "final_global_green": 1,
+          "final_defect": 0,
+          "final_a_12": 1,
+          "final_a_22": 1,
+          "final_c_2": 1,
+          "final_grid_violated_contexts": 0,
+          "final_parity_obstruction": 0,
+          "final_max_satisfied_contexts_out_of_6": 6,
+          "final_global_noncontextual_witness_count": 16,
+          "final_mp_surcharge_cents": 0,
+          "final_merchant_payout_cents": 873,
+          "final_status": "NONCONTEXTUAL_PARITY_GRID_COHERENT_LGGG",
+          "final_receipt_sha256": "19f6ad98289d4686109cd724ccbdb5ee4bb1150218808ebf2fb4aadbb0538607",
+          "final_receipt": {
+            "schema": "lggr.online_codebase_mermin_peres.v1",
+            "authority_effect": "None",
+            "scope_id": "mermin-peres-seed-12802-arm-C",
+            "status": "NONCONTEXTUAL_PARITY_GRID_COHERENT_LGGG",
+            "contract_status": "COMPOSABLE_LGGG",
+            "evaluation_count": 2,
+            "lggr_obstruction_count": 1,
+            "lggg_coherent_count": 1,
+            "mermin_peres_parity_receipt": {
+              "schema": "lggr.online_mermin_peres_parity.v1",
+              "authority_effect": "None",
+              "scope_id": "mermin-peres-seed-12802-arm-C:mermin_peres",
+              "status": "MERMIN_PERES_PARITY_OBSTRUCTION_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "grid_count": 2,
+              "parity_obstructed_grid_ids": [
+                "C-wave-0:deterministic:mp"
+              ],
+              "rejected_grid_ids": [],
+              "grids": [
+                {
+                  "grid_id": "C-wave-0:deterministic:mp",
+                  "row_targets": [
+                    1,
+                    1,
+                    1
+                  ],
+                  "col_targets": [
+                    1,
+                    1,
+                    -1
+                  ],
+                  "row_context_evaluators": [
+                    1,
+                    1,
+                    1
+                  ],
+                  "col_context_evaluators": [
+                    1,
+                    1,
+                    1
+                  ],
+                  "row_target_product": 1,
+                  "col_target_product": -1,
+                  "parity_mismatch_obstruction": true,
+                  "max_satisfied_contexts_out_of_6": 5,
+                  "min_violated_contexts": 1,
+                  "global_noncontextual_witness_count": 0,
+                  "global_noncontextual_assignment_exists": false,
+                  "local_product_aggregator": 1,
+                  "global_noncontextual_evaluator": 0,
+                  "evaluator_defect": -1,
+                  "grid_status": "MERMIN_PERES_PARITY_OBSTRUCTION_LGGR"
+                },
+                {
+                  "grid_id": "C-wave-1:deterministic:mp",
+                  "row_targets": [
+                    1,
+                    1,
+                    1
+                  ],
+                  "col_targets": [
+                    1,
+                    1,
+                    1
+                  ],
+                  "row_context_evaluators": [
+                    1,
+                    1,
+                    1
+                  ],
+                  "col_context_evaluators": [
+                    1,
+                    1,
+                    1
+                  ],
+                  "row_target_product": 1,
+                  "col_target_product": 1,
+                  "parity_mismatch_obstruction": false,
+                  "max_satisfied_contexts_out_of_6": 6,
+                  "min_violated_contexts": 0,
+                  "global_noncontextual_witness_count": 16,
+                  "global_noncontextual_assignment_exists": true,
+                  "local_product_aggregator": 1,
+                  "global_noncontextual_evaluator": 1,
+                  "evaluator_defect": 0,
+                  "grid_status": "NONCONTEXTUAL_PARITY_COHERENT_LGGG"
+                }
+              ],
+              "receipt_sha256": "7949b859b824bb56049cb7dff3da10beed2735dded2c412a7471d081ef334123"
+            },
+            "fiber_receipt": {
+              "schema": "lggr.online_collision.v1",
+              "authority_effect": "None",
+              "scope_id": "streaming-fiber-scope",
+              "carrier_size": 2,
+              "status": "REPORT_INSUFFICIENT",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "collision": {
+                "left": {
+                  "state_id": "C-wave-0_deterministic",
+                  "report": {
+                    "local_green": 1,
+                    "six_local_contexts_satisfiable": true
+                  },
+                  "query": "LGGR",
+                  "metadata": {
+                    "a_12": -1,
+                    "a_22": -1,
+                    "c_2": -1,
+                    "grid_violated_contexts": 3,
+                    "mp_surcharge_cents": 10,
+                    "parity_obstruction": 1
+                  }
+                },
+                "right": {
+                  "state_id": "C-wave-1_deterministic",
+                  "report": {
+                    "local_green": 1,
+                    "six_local_contexts_satisfiable": true
+                  },
+                  "query": "LGGG",
+                  "metadata": {
+                    "a_12": 1,
+                    "a_22": 1,
+                    "c_2": 1,
+                    "grid_violated_contexts": 0,
+                    "mp_surcharge_cents": 0,
+                    "parity_obstruction": 0
+                  }
+                }
+              },
+              "input_sha256": "bc70a0d5392488ee2dd0ee1ed47d0320297fb8c5326774e546421b8f92cf1840",
+              "meaning": "Boundary reports cannot determine this query on the supplied carrier.",
+              "receipt_sha256": "d4e4b2e812981012ebedde45c89a2bfd81af5766ea043adcaaa02fcacc4b2eb2"
+            },
+            "three_phase_audits": [],
+            "evaluations": [
+              {
+                "evaluation_id": "C-wave-0",
+                "model_id": "deterministic",
+                "a_12": -1,
+                "a_22": -1,
+                "c_2": -1,
+                "candidate_grid": [
+                  [
+                    1,
+                    1,
+                    1
+                  ],
+                  [
+                    1,
+                    1,
+                    -1
+                  ],
+                  [
+                    1,
+                    1,
+                    -1
+                  ]
+                ],
+                "row_targets": [
+                  1,
+                  1,
+                  1
+                ],
+                "col_targets": [
+                  1,
+                  1,
+                  -1
+                ],
+                "row_target_product": 1,
+                "col_target_product": -1,
+                "parity_obstruction": 1,
+                "row_violated_contexts": 2,
+                "col_violated_contexts": 1,
+                "grid_violated_contexts": 3,
+                "grid_satisfied_contexts": 3,
+                "max_satisfied_contexts_out_of_6": 5,
+                "min_violated_contexts": 1,
+                "global_noncontextual_witness_count": 0,
+                "mp_surcharge_cents": 10,
+                "merchant_payout_cents": 863,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "MERMIN_PERES_PARITY_AND_GRID_MISMATCH_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_mp",
+                    "action": "REPAIR_CANDIDATE_GRID_CELLS_A12_A22_TO_PLUS_ONE",
+                    "target_a_12": 1,
+                    "target_a_22": 1
+                  },
+                  "worker-1": {
+                    "module": "tax_mp",
+                    "action": "RECONCILE_COLUMN_PARITY_TARGET_C2_TO_PLUS_ONE",
+                    "target_c_2": 1
+                  },
+                  "worker-2": {
+                    "module": "settlement_mp",
+                    "action": "ENFORCE_NONCONTEXTUAL_PARITY_GUARD",
+                    "target_mp_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "C-wave-1",
+                "model_id": "deterministic",
+                "a_12": 1,
+                "a_22": 1,
+                "c_2": 1,
+                "candidate_grid": [
+                  [
+                    1,
+                    1,
+                    1
+                  ],
+                  [
+                    1,
+                    1,
+                    1
+                  ],
+                  [
+                    1,
+                    1,
+                    1
+                  ]
+                ],
+                "row_targets": [
+                  1,
+                  1,
+                  1
+                ],
+                "col_targets": [
+                  1,
+                  1,
+                  1
+                ],
+                "row_target_product": 1,
+                "col_target_product": 1,
+                "parity_obstruction": 0,
+                "row_violated_contexts": 0,
+                "col_violated_contexts": 0,
+                "grid_violated_contexts": 0,
+                "grid_satisfied_contexts": 6,
+                "max_satisfied_contexts_out_of_6": 6,
+                "min_violated_contexts": 0,
+                "global_noncontextual_witness_count": 16,
+                "mp_surcharge_cents": 0,
+                "merchant_payout_cents": 873,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 1,
+                "defect": 0,
+                "status": "NONCONTEXTUAL_PARITY_GRID_COHERENT_LGGG",
+                "contract_status": "COMPOSABLE_LGGG",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_mp",
+                    "action": "HOLD_NONCONTEXTUAL_CANDIDATE_GRID_CELLS_PLUS_ONE",
+                    "target_a_12": 1,
+                    "target_a_22": 1
+                  },
+                  "worker-1": {
+                    "module": "tax_mp",
+                    "action": "HOLD_NONCONTEXTUAL_COLUMN_PARITY_TARGET_PLUS_ONE",
+                    "target_c_2": 1
+                  },
+                  "worker-2": {
+                    "module": "settlement_mp",
+                    "action": "HOLD_NONCONTEXTUAL_PARITY_GUARD",
+                    "target_mp_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              }
+            ],
+            "receipt_sha256": "19f6ad98289d4686109cd724ccbdb5ee4bb1150218808ebf2fb4aadbb0538607"
+          },
+          "escalations": {},
+          "api_attempts": 7,
+          "cost_usd": "0.0070953962"
+        }
+      ]
+    }
+  ],
+  "api_attempts": 100,
+  "charged_or_reserved_usd": "0.0896381635",
+  "max_inflight_requests": 3,
+  "concurrent_waves": 34,
+  "scope": "Concurrent 3-agent 3x3 Mermin-Peres parity contextuality & non-contextual grid Python code-engineering swarm (`pricing_mp` -> `tax_mp` -> `settlement_mp`) comparing context-local parity verification with drifted candidate grid cells and c_2 = -1 (A), partial candidate grid repair attaining 5/6 contexts under Mermin-Peres parity obstruction c_2 = -1 (B), and joint non-contextual parity reconciliation a_12 = 1, a_22 = 1, c_2 = 1 (C) with full cryptographic receipts."
+}

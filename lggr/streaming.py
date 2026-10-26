@@ -36385,3 +36385,530 @@ class StreamingCodebaseSimultaneousSplitMonitor:
         }
         return json_value({**body, "receipt_sha256": digest(body)})
 
+
+class StreamingCodebaseMerminPeresMonitor:
+    """Online 3-module codebase 3x3 Mermin-Peres parity contextuality & non-contextual grid settlement monitor (Theorem 131).
+
+    AuthorityEffect: None. Composes StreamingMerminPeresParityMonitor,
+    StreamingCodebaseInterfaceMergeMonitor, and StreamingFiberMonitor to audit a
+    3-module 3x3 Mermin-Peres parity settlement codebase (`pricing_mp.py`,
+    `tax_mp.py`, `settlement_mp.py`) over row parity targets R = [1, 1, 1]
+    (Pi_R = +1), column parity targets C = [1, 1, c_2] (Pi_C = c_2 in {-1, 1}),
+    and candidate non-contextual grid A(a_12, a_22) = [[1, 1, 1], [1, 1, a_12], [1, 1, a_22]]
+    with a_12, a_22 in {-1, 1}:
+      - Phase 1 (Candidate grid cells `a_12 = -1, a_22 = -1` and column parity target `c_2 = -1`):
+        `grid_violated_contexts = 3` (Row 1, Row 2, Col 2), `parity_obstruction = 1`
+        (Pi_R = +1 != Pi_C = -1, max_satisfied_contexts_out_of_6 = 5),
+        `mp_surcharge_cents = 2 * 3 + 4 * 1 = 10`, `payout = 863 != 873`
+        (`L_p1 = 1, Eg_p1 = 0, defect_p1 = -1`);
+      - Phase 2 (Partial repair — candidate grid cells restored `a_12 = 1, a_22 = 1` attaining 5/6 contexts,
+        while column parity target `c_2 = -1` remains Mermin-Peres obstructed):
+        `grid_violated_contexts = 1` (Col 2), `parity_obstruction = 1`
+        (Pi_R = +1 != Pi_C = -1, max_satisfied_contexts_out_of_6 = 5),
+        `mp_surcharge_cents = 2 * 1 + 4 * 1 = 6`, `payout = 867 != 873`
+        (`L_p2 = 1, Eg_p2 = 0, defect_p2 = -1`);
+      - Phase 3 (Non-contextual parity reconciliation `a_12 = 1, a_22 = 1, c_2 = 1`):
+        `grid_violated_contexts = 0`, `parity_obstruction = 0`
+        (Pi_R = Pi_C = +1, max_satisfied_contexts_out_of_6 = 6, 16 non-contextual witnesses),
+        `mp_surcharge_cents = 0`, `payout = 873`, `873 + 27 + 90 = 990`
+        (`L_p3 = 1, Eg_p3 = 1, defect_p3 = 0`).
+    """
+
+    PHASE_1_PRICING_MP_SOURCE = (
+        "def quote_mp_pricing(gross_cents: int = 990) -> dict:\n"
+        "    fee_cents = (gross_cents * 27) // 990\n"
+        "    a_12 = -1\n"
+        "    a_22 = -1\n"
+        "    return {\n"
+        "        'gross_cents': gross_cents,\n"
+        "        'platform_fee_cents': fee_cents,\n"
+        "        'net_after_fee_cents': gross_cents - fee_cents,\n"
+        "        'a_12': a_12,\n"
+        "        'a_22': a_22,\n"
+        "        'row_targets': [1, 1, 1],\n"
+        "    }\n"
+    )
+
+    PHASE_1_TAX_MP_SOURCE = (
+        "def compute_mp_tax(pricing_out: dict) -> dict:\n"
+        "    gross = int(pricing_out['gross_cents'])\n"
+        "    a_12 = int(pricing_out.get('a_12', -1))\n"
+        "    a_22 = int(pricing_out.get('a_22', -1))\n"
+        "    c_2 = -1\n"
+        "    return {\n"
+        "        'tax_reserve_cents': (gross * 90) // 990,\n"
+        "        'a_12': a_12,\n"
+        "        'a_22': a_22,\n"
+        "        'c_2': c_2,\n"
+        "        'col_targets': [1, 1, c_2],\n"
+        "    }\n"
+    )
+
+    PHASE_1_SETTLEMENT_MP_SOURCE = (
+        "def settle_mp_payout(pricing_out: dict, tax_out: dict) -> dict:\n"
+        "    net = int(pricing_out['net_after_fee_cents'])\n"
+        "    fee = int(pricing_out['platform_fee_cents'])\n"
+        "    tax = int(tax_out['tax_reserve_cents'])\n"
+        "    a_12 = int(pricing_out.get('a_12', -1))\n"
+        "    a_22 = int(pricing_out.get('a_22', -1))\n"
+        "    c_2 = int(tax_out.get('c_2', -1))\n"
+        "    viol = (1 if a_12 != 1 else 0) + (1 if a_22 != 1 else 0) + (1 if a_12 * a_22 != c_2 else 0)\n"
+        "    obst = 1 if c_2 != 1 else 0\n"
+        "    surcharge = 2 * viol + 4 * obst\n"
+        "    return {\n"
+        "        'merchant_payout_cents': net - tax - surcharge,\n"
+        "        'platform_fee_cents': fee,\n"
+        "        'tax_reserve_cents': tax,\n"
+        "        'mp_surcharge_cents': surcharge,\n"
+        "        'grid_violated_contexts': viol,\n"
+        "        'parity_obstruction': obst,\n"
+        "    }\n"
+    )
+
+    PHASE_2_PRICING_MP_SOURCE = (
+        "def quote_mp_pricing(gross_cents: int = 990) -> dict:\n"
+        "    fee_cents = (gross_cents * 27) // 990\n"
+        "    a_12 = 1\n"
+        "    a_22 = 1\n"
+        "    return {\n"
+        "        'gross_cents': gross_cents,\n"
+        "        'platform_fee_cents': fee_cents,\n"
+        "        'net_after_fee_cents': gross_cents - fee_cents,\n"
+        "        'a_12': a_12,\n"
+        "        'a_22': a_22,\n"
+        "        'row_targets': [1, 1, 1],\n"
+        "    }\n"
+    )
+
+    PHASE_2_TAX_MP_SOURCE = PHASE_1_TAX_MP_SOURCE
+
+    PHASE_2_SETTLEMENT_MP_SOURCE = PHASE_1_SETTLEMENT_MP_SOURCE
+
+    PHASE_3_PRICING_MP_SOURCE = PHASE_2_PRICING_MP_SOURCE
+
+    PHASE_3_TAX_MP_SOURCE = (
+        "def compute_mp_tax(pricing_out: dict) -> dict:\n"
+        "    gross = int(pricing_out['gross_cents'])\n"
+        "    a_12 = int(pricing_out.get('a_12', 1))\n"
+        "    a_22 = int(pricing_out.get('a_22', 1))\n"
+        "    c_2 = 1\n"
+        "    return {\n"
+        "        'tax_reserve_cents': (gross * 90) // 990,\n"
+        "        'a_12': a_12,\n"
+        "        'a_22': a_22,\n"
+        "        'c_2': c_2,\n"
+        "        'col_targets': [1, 1, c_2],\n"
+        "    }\n"
+    )
+
+    PHASE_3_SETTLEMENT_MP_SOURCE = (
+        "def settle_mp_payout(pricing_out: dict, tax_out: dict) -> dict:\n"
+        "    net = int(pricing_out['net_after_fee_cents'])\n"
+        "    fee = int(pricing_out['platform_fee_cents'])\n"
+        "    tax = int(tax_out['tax_reserve_cents'])\n"
+        "    a_12 = int(pricing_out.get('a_12', 1))\n"
+        "    a_22 = int(pricing_out.get('a_22', 1))\n"
+        "    c_2 = int(tax_out.get('c_2', 1))\n"
+        "    if a_12 != 1 or a_22 != 1 or c_2 != 1:\n"
+        "        raise ValueError('Mermin-Peres parity obstruction or candidate grid violation detected')\n"
+        "    return {\n"
+        "        'merchant_payout_cents': net - tax,\n"
+        "        'platform_fee_cents': fee,\n"
+        "        'tax_reserve_cents': tax,\n"
+        "        'mp_surcharge_cents': 0,\n"
+        "        'grid_violated_contexts': 0,\n"
+        "        'parity_obstruction': 0,\n"
+        "    }\n"
+    )
+
+    def __init__(self, *, scope_id: str = "streaming-codebase-mermin-peres-scope") -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.mp_monitor = StreamingMerminPeresParityMonitor(
+            scope_id=f"{self.scope_id}:mermin_peres"
+        )
+        self.fiber_monitor = StreamingFiberMonitor()
+        self.evaluations: list[dict[str, Any]] = []
+        self.three_phase_audits: list[dict[str, Any]] = []
+
+    @staticmethod
+    def _validate_sign(val: int, name: str) -> int:
+        v = exact_int(val, name)
+        if v not in (-1, 1):
+            raise ValidationError(f"{name} must be in {{-1, +1}}, got {v}")
+        return v
+
+    def evaluate_mermin_peres_modules(
+        self,
+        evaluation_id: str,
+        *,
+        pricing_mp_source: str,
+        tax_mp_source: str,
+        settlement_mp_source: str,
+        gross_cents: int = 990,
+        infeasible_constraint: Mapping[str, Any] | str | None = None,
+        model_id: str = "deterministic",
+    ) -> dict[str, Any]:
+        eval_id = text(evaluation_id, "evaluation_id")
+        mod_id = text(model_id, "model_id")
+        gross = exact_int(gross_cents, "gross_cents", minimum=100)
+
+        p_ns = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(
+            "pricing_mp", pricing_mp_source
+        )
+        t_ns = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(
+            "tax_mp", tax_mp_source
+        )
+        s_ns = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(
+            "settlement_mp", settlement_mp_source
+        )
+
+        if "quote_mp_pricing" not in p_ns or not callable(p_ns["quote_mp_pricing"]):
+            raise ValidationError("pricing_mp must define callable quote_mp_pricing")
+        if "compute_mp_tax" not in t_ns or not callable(t_ns["compute_mp_tax"]):
+            raise ValidationError("tax_mp must define callable compute_mp_tax")
+        if "settle_mp_payout" not in s_ns or not callable(s_ns["settle_mp_payout"]):
+            raise ValidationError("settlement_mp must define callable settle_mp_payout")
+
+        pricing_out = p_ns["quote_mp_pricing"](gross)
+        if not isinstance(pricing_out, dict):
+            raise ValidationError("quote_mp_pricing must return a dict")
+        tax_out = t_ns["compute_mp_tax"](pricing_out)
+        if not isinstance(tax_out, dict):
+            raise ValidationError("compute_mp_tax must return a dict")
+
+        settlement_raised = False
+        try:
+            settlement_out = s_ns["settle_mp_payout"](pricing_out, tax_out)
+            if not isinstance(settlement_out, dict):
+                raise ValidationError("settle_mp_payout must return a dict")
+        except ValueError:
+            settlement_raised = True
+            settlement_out = {}
+
+        a_12 = self._validate_sign(pricing_out.get("a_12", -1), "a_12")
+        a_22 = self._validate_sign(pricing_out.get("a_22", -1), "a_22")
+        c_2 = self._validate_sign(tax_out.get("c_2", -1), "c_2")
+
+        fee = exact_int(pricing_out.get("platform_fee_cents", 0), "platform_fee_cents")
+        net = exact_int(pricing_out.get("net_after_fee_cents", 0), "net_after_fee_cents")
+        tax = exact_int(tax_out.get("tax_reserve_cents", 0), "tax_reserve_cents")
+
+        candidate_grid = [
+            [1, 1, 1],
+            [1, 1, a_12],
+            [1, 1, a_22],
+        ]
+        row_targets = [1, 1, 1]
+        col_targets = [1, 1, c_2]
+
+        mp_rec = self.mp_monitor.record_grid(
+            f"{eval_id}:{mod_id}:mp",
+            row_targets=row_targets,
+            col_targets=col_targets,
+        )
+
+        row_violated = sum(
+            1
+            for i in range(3)
+            if (candidate_grid[i][0] * candidate_grid[i][1] * candidate_grid[i][2]) != row_targets[i]
+        )
+        col_violated = sum(
+            1
+            for j in range(3)
+            if (candidate_grid[0][j] * candidate_grid[1][j] * candidate_grid[2][j]) != col_targets[j]
+        )
+        grid_violated_contexts = row_violated + col_violated
+        grid_satisfied_contexts = 6 - grid_violated_contexts
+
+        row_target_product = row_targets[0] * row_targets[1] * row_targets[2]
+        col_target_product = col_targets[0] * col_targets[1] * col_targets[2]
+        parity_obstruction = 1 if row_target_product != col_target_product else 0
+        surcharge = 2 * grid_violated_contexts + 4 * parity_obstruction
+
+        local_p_ok = (
+            fee == 27
+            and net == 963
+            and a_12 in (-1, 1)
+            and a_22 in (-1, 1)
+            and pricing_out.get("row_targets") == [1, 1, 1]
+        )
+        local_t_ok = (
+            tax == 90
+            and c_2 in (-1, 1)
+            and tax_out.get("col_targets") == [1, 1, c_2]
+        )
+
+        if settlement_raised:
+            payout = net - tax - surcharge
+            local_s_ok = surcharge != 0
+        else:
+            payout = exact_int(settlement_out.get("merchant_payout_cents", 0), "merchant_payout_cents")
+            reported_surcharge = exact_int(
+                settlement_out.get("mp_surcharge_cents", surcharge),
+                "mp_surcharge_cents",
+            )
+            local_s_ok = (
+                reported_surcharge == surcharge
+                and payout == net - tax - surcharge
+            )
+
+        infeasible_spec_contradiction = bool(infeasible_constraint is not None)
+        local_green = (
+            1
+            if (
+                local_p_ok
+                and local_t_ok
+                and local_s_ok
+                and mp_rec["local_product_aggregator"] == 1
+                and not infeasible_spec_contradiction
+            )
+            else 0
+        )
+        conservation_ok = (
+            not settlement_raised
+            and surcharge == 0
+            and a_12 == 1
+            and a_22 == 1
+            and c_2 == 1
+            and grid_violated_contexts == 0
+            and parity_obstruction == 0
+            and payout == 873
+            and (payout + fee + tax == gross)
+        )
+        global_green = 1 if (local_green == 1 and conservation_ok) else 0
+        defect = global_green - local_green
+
+        self.fiber_monitor.observe(
+            state_id=f"{eval_id}_{mod_id}",
+            report={
+                "local_green": local_green,
+                "six_local_contexts_satisfiable": mp_rec["local_product_aggregator"] == 1,
+            },
+            query="LGGG" if global_green == 1 else "LGGR",
+            metadata={
+                "a_12": a_12,
+                "a_22": a_22,
+                "c_2": c_2,
+                "grid_violated_contexts": grid_violated_contexts,
+                "parity_obstruction": parity_obstruction,
+                "mp_surcharge_cents": surcharge,
+            },
+        )
+
+        if infeasible_spec_contradiction:
+            status = "INFEASIBLE_MERMIN_PERES_SPECIFICATION_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif local_green == 0:
+            status = "LOCAL_MERMIN_PERES_MODULE_CONTRACT_BROKEN"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif grid_violated_contexts > 1 and parity_obstruction == 1:
+            status = "MERMIN_PERES_PARITY_AND_GRID_MISMATCH_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif parity_obstruction == 1:
+            status = "MERMIN_PERES_PARITY_OBSTRUCTION_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif global_green == 0:
+            status = "CANDIDATE_GRID_PARITY_MISMATCH_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "NONCONTEXTUAL_PARITY_GRID_COHERENT_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+
+        if global_green == 1:
+            directives = {
+                "worker-0": {
+                    "module": "pricing_mp",
+                    "action": "HOLD_NONCONTEXTUAL_CANDIDATE_GRID_CELLS_PLUS_ONE",
+                    "target_a_12": 1,
+                    "target_a_22": 1,
+                },
+                "worker-1": {
+                    "module": "tax_mp",
+                    "action": "HOLD_NONCONTEXTUAL_COLUMN_PARITY_TARGET_PLUS_ONE",
+                    "target_c_2": 1,
+                },
+                "worker-2": {
+                    "module": "settlement_mp",
+                    "action": "HOLD_NONCONTEXTUAL_PARITY_GUARD",
+                    "target_mp_surcharge_cents": 0,
+                    "target_payout_cents": 873,
+                },
+            }
+        else:
+            directives = {
+                "worker-0": {
+                    "module": "pricing_mp",
+                    "action": (
+                        "REPAIR_CANDIDATE_GRID_CELLS_A12_A22_TO_PLUS_ONE"
+                        if (a_12 != 1 or a_22 != 1 or not local_p_ok)
+                        else "HOLD_NONCONTEXTUAL_CANDIDATE_GRID_CELLS_PLUS_ONE"
+                    ),
+                    "target_a_12": 1,
+                    "target_a_22": 1,
+                },
+                "worker-1": {
+                    "module": "tax_mp",
+                    "action": (
+                        "RECONCILE_COLUMN_PARITY_TARGET_C2_TO_PLUS_ONE"
+                        if (c_2 != 1 or not local_t_ok)
+                        else "HOLD_NONCONTEXTUAL_COLUMN_PARITY_TARGET_PLUS_ONE"
+                    ),
+                    "target_c_2": 1,
+                },
+                "worker-2": {
+                    "module": "settlement_mp",
+                    "action": (
+                        "ENFORCE_NONCONTEXTUAL_PARITY_GUARD"
+                        if not conservation_ok
+                        else "HOLD_NONCONTEXTUAL_PARITY_GUARD"
+                    ),
+                    "target_mp_surcharge_cents": 0,
+                    "target_payout_cents": 873,
+                },
+            }
+
+        rec = json_value(
+            {
+                "evaluation_id": eval_id,
+                "model_id": mod_id,
+                "a_12": a_12,
+                "a_22": a_22,
+                "c_2": c_2,
+                "candidate_grid": candidate_grid,
+                "row_targets": row_targets,
+                "col_targets": col_targets,
+                "row_target_product": row_target_product,
+                "col_target_product": col_target_product,
+                "parity_obstruction": parity_obstruction,
+                "row_violated_contexts": row_violated,
+                "col_violated_contexts": col_violated,
+                "grid_violated_contexts": grid_violated_contexts,
+                "grid_satisfied_contexts": grid_satisfied_contexts,
+                "max_satisfied_contexts_out_of_6": mp_rec["max_satisfied_contexts_out_of_6"],
+                "min_violated_contexts": mp_rec["min_violated_contexts"],
+                "global_noncontextual_witness_count": mp_rec["global_noncontextual_witness_count"],
+                "mp_surcharge_cents": surcharge,
+                "merchant_payout_cents": payout,
+                "platform_fee_cents": fee,
+                "tax_reserve_cents": tax,
+                "gross_cents": gross,
+                "local_green": local_green,
+                "global_green": global_green,
+                "defect": defect,
+                "status": status,
+                "contract_status": contract_status,
+                "directives": directives,
+            }
+        )
+        self.evaluations.append(rec)
+        return rec
+
+    def record_three_phase_codebase_audit(
+        self,
+        *,
+        audit_id: str = "codebase_mermin_peres_three_phase",
+        model_id: str = "deterministic",
+    ) -> dict[str, Any]:
+        mid = text(model_id, "model_id")
+        p1 = self.evaluate_mermin_peres_modules(
+            f"{audit_id}_p1",
+            pricing_mp_source=self.PHASE_1_PRICING_MP_SOURCE,
+            tax_mp_source=self.PHASE_1_TAX_MP_SOURCE,
+            settlement_mp_source=self.PHASE_1_SETTLEMENT_MP_SOURCE,
+            model_id=mid,
+        )
+        p2 = self.evaluate_mermin_peres_modules(
+            f"{audit_id}_p2",
+            pricing_mp_source=self.PHASE_2_PRICING_MP_SOURCE,
+            tax_mp_source=self.PHASE_2_TAX_MP_SOURCE,
+            settlement_mp_source=self.PHASE_2_SETTLEMENT_MP_SOURCE,
+            model_id=mid,
+        )
+        p3 = self.evaluate_mermin_peres_modules(
+            f"{audit_id}_p3",
+            pricing_mp_source=self.PHASE_3_PRICING_MP_SOURCE,
+            tax_mp_source=self.PHASE_3_TAX_MP_SOURCE,
+            settlement_mp_source=self.PHASE_3_SETTLEMENT_MP_SOURCE,
+            model_id=mid,
+        )
+
+        audit_rec = json_value(
+            {
+                "audit_id": text(audit_id, "audit_id"),
+                "model_id": mid,
+                "phase_1_a_12": p1["a_12"],
+                "phase_1_a_22": p1["a_22"],
+                "phase_1_c_2": p1["c_2"],
+                "phase_1_grid_violated_contexts": p1["grid_violated_contexts"],
+                "phase_1_parity_obstruction": p1["parity_obstruction"],
+                "phase_1_max_satisfied_contexts_out_of_6": p1["max_satisfied_contexts_out_of_6"],
+                "phase_1_surcharge_cents": p1["mp_surcharge_cents"],
+                "phase_1_payout_cents": p1["merchant_payout_cents"],
+                "phase_1_local_green": p1["local_green"],
+                "phase_1_global_green": p1["global_green"],
+                "phase_1_defect": p1["defect"],
+                "phase_1_status": p1["status"],
+                "phase_2_a_12": p2["a_12"],
+                "phase_2_a_22": p2["a_22"],
+                "phase_2_c_2": p2["c_2"],
+                "phase_2_grid_violated_contexts": p2["grid_violated_contexts"],
+                "phase_2_parity_obstruction": p2["parity_obstruction"],
+                "phase_2_max_satisfied_contexts_out_of_6": p2["max_satisfied_contexts_out_of_6"],
+                "phase_2_surcharge_cents": p2["mp_surcharge_cents"],
+                "phase_2_payout_cents": p2["merchant_payout_cents"],
+                "phase_2_local_green": p2["local_green"],
+                "phase_2_global_green": p2["global_green"],
+                "phase_2_defect": p2["defect"],
+                "phase_2_status": p2["status"],
+                "phase_3_a_12": p3["a_12"],
+                "phase_3_a_22": p3["a_22"],
+                "phase_3_c_2": p3["c_2"],
+                "phase_3_grid_violated_contexts": p3["grid_violated_contexts"],
+                "phase_3_parity_obstruction": p3["parity_obstruction"],
+                "phase_3_max_satisfied_contexts_out_of_6": p3["max_satisfied_contexts_out_of_6"],
+                "phase_3_global_noncontextual_witness_count": p3["global_noncontextual_witness_count"],
+                "phase_3_surcharge_cents": p3["mp_surcharge_cents"],
+                "phase_3_payout_cents": p3["merchant_payout_cents"],
+                "phase_3_local_green": p3["local_green"],
+                "phase_3_global_green": p3["global_green"],
+                "phase_3_defect": p3["defect"],
+                "phase_3_status": p3["status"],
+            }
+        )
+        self.three_phase_audits.append(audit_rec)
+        return audit_rec
+
+    def current_receipt(self) -> dict[str, Any]:
+        """Emit a deterministic SHA-256 signed receipt for the 3-module Mermin-Peres parity audit."""
+        if not self.evaluations:
+            raise ValidationError("at least one codebase Mermin-Peres evaluation must be recorded")
+
+        n = len(self.evaluations)
+        lggr_count = sum(1 for e in self.evaluations if e["defect"] == -1)
+        lggg_count = sum(1 for e in self.evaluations if e["global_green"] == 1)
+        last = self.evaluations[-1]
+
+        body: dict[str, Any] = {
+            "schema": "lggr.online_codebase_mermin_peres.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": last["status"],
+            "contract_status": last["contract_status"],
+            "evaluation_count": n,
+            "lggr_obstruction_count": lggr_count,
+            "lggg_coherent_count": lggg_count,
+            "mermin_peres_parity_receipt": (
+                self.mp_monitor.get_receipt()
+                if self.mp_monitor.grids
+                else None
+            ),
+            "fiber_receipt": self.fiber_monitor.get_receipt(),
+            "three_phase_audits": self.three_phase_audits,
+            "evaluations": self.evaluations,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+    get_receipt = current_receipt
+    emit_receipt = current_receipt
+
+
