@@ -52,6 +52,7 @@ from lggr.streaming import (
     StreamingCodebaseNonAbelianBraidMonitor,
     StreamingCodebaseObligationMigrationMonitor,
     StreamingCodebasePathKernelDashboardMonitor,
+    StreamingCodebasePolicyRatchetMonitor,
     StreamingCodebasePolicyReversalMonitor,
     StreamingCodebaseSharedChordDiamondMonitor,
     StreamingCodebaseSixRoleDeduplicationMonitor,
@@ -3003,6 +3004,45 @@ class TestOfflineTraceReplay(unittest.TestCase):
             self.assertEqual(ev["phase_3_payout_cents"], 873)
             replay_mon.record_three_phase_codebase_audit(
                 audit_id=f"{ev['model_id']}_subgradient_pivot",
+                model_id=ev["model_id"],
+            )
+        self.assertEqual(replay_mon.current_receipt(), mon_rec)
+
+    def test_codebase_policy_ratchet_benchmark_replay(self) -> None:
+        """Verify codebase_policy_ratchet_benchmark.json receipt integrity and offline replay."""
+        path = RECEIPTS_DIR / "codebase_policy_ratchet_benchmark.json"
+        self.assertTrue(path.exists(), f"Missing benchmark receipt {path}")
+        with open(path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+
+        body = {k: v for k, v in data.items() if k != "receipt_sha256"}
+        self.assertEqual(digest(body), data["receipt_sha256"])
+        self.assertEqual(data["schema"], "lggr.codebase_policy_ratchet_replay.v1")
+        self.assertEqual(data["authority_effect"], "None")
+        self.assertEqual(data["evaluation_count"], 5)
+        self.assertEqual(data["obstructed_policy_ratchet_codebase_coherence_rate"], "0")
+        self.assertEqual(data["sunset_revoked_policy_ratchet_codebase_coherence_rate"], "1")
+        self.assertEqual(data["codebase_policy_ratchet_coherence_gain"], "1")
+
+        mon_rec = data["codebase_policy_ratchet_receipt"]
+        mon_body = {k: v for k, v in mon_rec.items() if k != "receipt_sha256"}
+        self.assertEqual(digest(mon_body), mon_rec["receipt_sha256"])
+        self.assertEqual(mon_rec["status"], "SCOPED_SUNSET_LEASE_REVOCATION_COHERENT_LGGG")
+        self.assertEqual(mon_rec["contract_status"], "COMPOSABLE_LGGG")
+
+        replay_mon = StreamingCodebasePolicyRatchetMonitor(
+            scope_id="live_codebase_policy_ratchet"
+        )
+        for ev in data["evaluations"]:
+            parsed = ev["parsed_controller_verdict"]
+            self.assertIsInstance(parsed, dict)
+            self.assertEqual(ev["phase_1_surcharge_cents"], 11)
+            self.assertEqual(ev["phase_1_payout_cents"], 862)
+            self.assertEqual(ev["phase_2_surcharge_cents"], 5)
+            self.assertEqual(ev["phase_2_payout_cents"], 868)
+            self.assertEqual(ev["phase_3_payout_cents"], 873)
+            replay_mon.record_three_phase_codebase_audit(
+                audit_id=f"{ev['model_id']}_policy_ratchet",
                 model_id=ev["model_id"],
             )
         self.assertEqual(replay_mon.current_receipt(), mon_rec)

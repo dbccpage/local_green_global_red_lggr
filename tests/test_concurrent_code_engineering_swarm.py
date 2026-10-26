@@ -67,6 +67,8 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     INITIAL_PRICING_MIG_P1_P2_PY,
     INITIAL_PRICING_PIVOT_P1_PY,
     INITIAL_PRICING_PIVOT_P2_P3_PY,
+    INITIAL_PRICING_RATCHET_P1_PY,
+    INITIAL_PRICING_RATCHET_P2_P3_PY,
     INITIAL_PRICING_RELAX_COHERENT_PY,
     INITIAL_PRICING_RELAX_P1_PY,
     INITIAL_PRICING_RELAX_P2_PY,
@@ -85,6 +87,9 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     INITIAL_SETTLEMENT_MIG_P1_PY,
     INITIAL_SETTLEMENT_PIVOT_P1_P2_PY,
     INITIAL_SETTLEMENT_PIVOT_P3_PY,
+    INITIAL_SETTLEMENT_RATCHET_P1_PY,
+    INITIAL_SETTLEMENT_RATCHET_P2_PY,
+    INITIAL_SETTLEMENT_RATCHET_P3_PY,
     INITIAL_SETTLEMENT_RELAX_PY,
     INITIAL_SETTLEMENT_SLA_DEFERRED_PY,
     INITIAL_SETTLEMENT_WEDGE_PY,
@@ -101,6 +106,9 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     INITIAL_TAX_PIVOT_P1_PY,
     INITIAL_TAX_PIVOT_P2_PY,
     INITIAL_TAX_PIVOT_P3_PY,
+    INITIAL_TAX_RATCHET_P1_PY,
+    INITIAL_TAX_RATCHET_P2_PY,
+    INITIAL_TAX_RATCHET_P3_PY,
     INITIAL_TAX_RELAX_COHERENT_PY,
     INITIAL_TAX_RELAX_P1_P3_PY,
     INITIAL_TAX_RELAX_P2_PY,
@@ -184,6 +192,7 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     ObligationMigrationCodeWorkspace,
     OptionalStoppingCodeWorkspace,
     PathKernelDashboardCodeWorkspace,
+    PolicyRatchetCodeWorkspace,
     PolicyReversalCodeWorkspace,
     ReggeHolonomyCodeWorkspace,
     ReplayOrderCodeWorkspace,
@@ -215,6 +224,7 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     obligation_migration_fixture,
     path_kernel_fixture,
     policy_fixture,
+    policy_ratchet_fixture,
     quorum_fixture,
     regge_fixture,
     replay_fixture,
@@ -238,6 +248,7 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     run_obligation_migration_local_unit_tests,
     run_path_kernel_local_unit_tests,
     run_policy_local_unit_tests,
+    run_policy_ratchet_local_unit_tests,
     run_quorum_local_unit_tests,
     run_regge_local_unit_tests,
     run_replay_local_unit_tests,
@@ -283,6 +294,7 @@ from experiments.concurrent_code_engineering_swarm.runner import (
     obligation_migration_campaign,
     path_kernel_campaign,
     policy_campaign,
+    policy_ratchet_campaign,
     quorum_campaign,
     regge_campaign,
     replay,
@@ -6988,6 +7000,214 @@ class GracefulSheddingCodeEngineeringSwarmTests(unittest.TestCase):
             self.assertEqual(seed_12300_arms["B"]["final_pivot_surcharge_cents"], 8)
             self.assertEqual(seed_12300_arms["C"]["final_pivot_surcharge_cents"], 0)
             self.assertEqual(seed_12300_arms["C"]["status"], "completed")
+
+    def test_policy_ratchet_local_unit_tests_and_workspace_tools(self) -> None:
+        """Verify isolated unit tests and workspace tools for policy_ratchet modules."""
+        self.assertTrue(
+            run_policy_ratchet_local_unit_tests("pricing_ratchet", INITIAL_PRICING_RATCHET_P1_PY)["passed"]
+        )
+        self.assertTrue(
+            run_policy_ratchet_local_unit_tests("pricing_ratchet", INITIAL_PRICING_RATCHET_P2_P3_PY)["passed"]
+        )
+        self.assertTrue(
+            run_policy_ratchet_local_unit_tests("tax_ratchet", INITIAL_TAX_RATCHET_P1_PY)["passed"]
+        )
+        self.assertTrue(
+            run_policy_ratchet_local_unit_tests("tax_ratchet", INITIAL_TAX_RATCHET_P2_PY)["passed"]
+        )
+        self.assertTrue(
+            run_policy_ratchet_local_unit_tests("tax_ratchet", INITIAL_TAX_RATCHET_P3_PY)["passed"]
+        )
+        self.assertTrue(
+            run_policy_ratchet_local_unit_tests("settlement_ratchet", INITIAL_SETTLEMENT_RATCHET_P1_PY)["passed"]
+        )
+        self.assertTrue(
+            run_policy_ratchet_local_unit_tests("settlement_ratchet", INITIAL_SETTLEMENT_RATCHET_P2_PY)["passed"]
+        )
+        self.assertTrue(
+            run_policy_ratchet_local_unit_tests("settlement_ratchet", INITIAL_SETTLEMENT_RATCHET_P3_PY)["passed"]
+        )
+
+        ws = PolicyRatchetCodeWorkspace(policy_ratchet_fixture(12400))
+        inspected = ws.tool("worker-1", "inspect_workspace", {})
+        self.assertEqual(inspected["owned_module"], "tax_ratchet.py")
+        self.assertTrue(inspected["local_unit_test"]["passed"])
+        no_esc = ws.tool("worker-1", "escalate", {"reason": "Premature escalation"})
+        self.assertFalse(no_esc["accepted"])
+
+        ws_locked = PolicyRatchetCodeWorkspace(policy_ratchet_fixture(12401))
+        denied = ws_locked.tool(
+            "worker-0",
+            "submit_module_patch",
+            {"source_code": INITIAL_PRICING_RATCHET_P2_P3_PY},
+        )
+        self.assertFalse(denied["accepted"])
+        esc = ws_locked.tool("worker-0", "escalate", {"reason": "ROM lock on pricing_ratchet.py"})
+        self.assertTrue(esc["escalated"])
+
+    def test_concurrent_policy_ratchet_campaign_and_tamper_evident_replay(self) -> None:
+        """Verify 3-agent policy_ratchet campaign waves and offline replay."""
+
+        def stub_policy_ratchet_transport(payload: dict[str, Any]) -> dict[str, Any]:
+            messages = payload["messages"]
+            sys_prompt = messages[0]["content"]
+            worker = "worker-0"
+            for w in ("worker-0", "worker-1", "worker-2"):
+                if f"`{w}`" in sys_prompt:
+                    worker = w
+                    break
+            model = payload["model"]
+            tool_outputs = [m for m in messages if m.get("role") == "tool"]
+
+            if not tool_outputs:
+                tool_call = {
+                    "id": f"call-inspect-{worker}",
+                    "type": "function",
+                    "function": {"name": "inspect_workspace", "arguments": "{}"},
+                }
+            else:
+                inspected = json.loads(tool_outputs[0]["content"])
+                if inspected.get("infeasible_constraint"):
+                    tool_call = {
+                        "id": f"call-escalate-{worker}",
+                        "type": "function",
+                        "function": {
+                            "name": "escalate",
+                            "arguments": json.dumps(
+                                {
+                                    "reason": "Hardware-locked pricing_ratchet.py has incident_2_prior_revoked=False and breaches tau_horizon=4."
+                                }
+                            ),
+                        },
+                    }
+                elif "Arm A" in sys_prompt:
+                    return {
+                        "response": {
+                            "id": f"stub-done-{worker}",
+                            "model": model,
+                            "usage": {
+                                "prompt_tokens": 100,
+                                "completion_tokens": 20,
+                                "cost": "0.000100",
+                            },
+                            "choices": [
+                                {
+                                    "index": 0,
+                                    "finish_reason": "stop",
+                                    "message": {"role": "assistant", "content": "Done."},
+                                }
+                            ],
+                        },
+                        "started_ns": 10,
+                        "finished_ns": 20,
+                    }
+                elif "Arm B" in sys_prompt:
+                    patch_map_b = {
+                        "worker-0": INITIAL_PRICING_RATCHET_P2_P3_PY,
+                        "worker-1": INITIAL_TAX_RATCHET_P2_PY,
+                        "worker-2": INITIAL_SETTLEMENT_RATCHET_P2_PY,
+                    }
+                    tool_call = {
+                        "id": f"call-patch-b-{worker}",
+                        "type": "function",
+                        "function": {
+                            "name": "submit_module_patch",
+                            "arguments": json.dumps({"source_code": patch_map_b[worker]}),
+                        },
+                    }
+                else:
+                    patch_map = {
+                        "worker-0": INITIAL_PRICING_RATCHET_P2_P3_PY,
+                        "worker-1": INITIAL_TAX_RATCHET_P3_PY,
+                        "worker-2": INITIAL_SETTLEMENT_RATCHET_P3_PY,
+                    }
+                    tool_call = {
+                        "id": f"call-patch-c-{worker}",
+                        "type": "function",
+                        "function": {
+                            "name": "submit_module_patch",
+                            "arguments": json.dumps({"source_code": patch_map[worker]}),
+                        },
+                    }
+
+            return {
+                "response": {
+                    "id": f"stub-call-{worker}",
+                    "model": model,
+                    "usage": {
+                        "prompt_tokens": 100,
+                        "completion_tokens": 30,
+                        "cost": "0.000100",
+                    },
+                    "choices": [
+                        {
+                            "index": 0,
+                            "finish_reason": "tool_calls",
+                            "message": {
+                                "role": "assistant",
+                                "tool_calls": [tool_call],
+                            },
+                        }
+                    ],
+                },
+                "started_ns": 10,
+                "finished_ns": 20,
+            }
+
+        with tempfile.TemporaryDirectory() as td:
+            events_path = Path(td) / "events.jsonl"
+            events = Events(events_path)
+            config = {
+                "topology": "policy_ratchet",
+                "seeds": [12400, 12401],
+                "models": CODE_SWARM_MODELS,
+                "budget_usd": "0.50",
+            }
+            events.emit("start", {"config": config})
+            client = CodeBatchClient(events, "0.50", transport=stub_policy_ratchet_transport)
+            summary = policy_ratchet_campaign(client, events, config)
+            (Path(td) / "summary.json").write_text(
+                json.dumps(summary, indent=2) + "\n", encoding="utf-8"
+            )
+
+            replayed = replay(events_path)
+            self.assertEqual(replayed, summary)
+            self.assertEqual(replayed["schema"], "lggr.policy_ratchet_code_engineering_swarm.v1")
+            self.assertEqual(replayed["max_inflight_requests"], 3)
+
+            records = deepcopy(events.records)
+            gate_rec = next(r["data"] for r in records if r["kind"] == "gate")
+            gate_rec["ratchet_surcharge_cents"] = int(gate_rec["ratchet_surcharge_cents"]) + 1
+            for i, r in enumerate(records):
+                r["previous"] = records[i - 1]["sha256"] if i else None
+                r["sha256"] = event_digest({k: v for k, v in r.items() if k != "sha256"})
+            events_path.write_text(
+                "\n".join(json.dumps(r, sort_keys=True) for r in records) + "\n",
+                encoding="utf-8",
+            )
+            with self.assertRaises(ValueError):
+                replay(events_path)
+
+    def test_live_policy_ratchet_pilot_evidence_replay_if_present(self) -> None:
+        """Replay live policy_ratchet pilot evidence offline if present."""
+        ratchet_events = (
+            Path(__file__).resolve().parents[1]
+            / "experiments"
+            / "concurrent_code_engineering_swarm"
+            / "evidence"
+            / "policy_ratchet_pilot_run"
+            / "events.jsonl"
+        )
+        ratchet_summary = ratchet_events.with_name("summary.json")
+        if ratchet_events.exists() and ratchet_summary.exists():
+            replayed = replay(ratchet_events)
+            self.assertEqual(replayed["schema"], "lggr.policy_ratchet_code_engineering_swarm.v1")
+            self.assertEqual(len(replayed["cases"]), 3)
+            seed_12400_arms = {a["arm"]: a for a in replayed["cases"][0]["arms"]}
+            self.assertEqual(seed_12400_arms["A"]["final_ratchet_surcharge_cents"], 11)
+            self.assertEqual(seed_12400_arms["B"]["final_ratchet_surcharge_cents"], 5)
+            self.assertEqual(seed_12400_arms["C"]["final_ratchet_surcharge_cents"], 0)
+            self.assertEqual(seed_12400_arms["C"]["status"], "completed")
 
 
 if __name__ == "__main__":

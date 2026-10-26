@@ -11,11 +11,13 @@ from lggr.streaming import (
     StreamingCodebaseGovernedRelaxationMonitor,
     StreamingCodebaseInterfaceMergeMonitor,
     StreamingCodebaseNonAbelianBraidMonitor,
+    StreamingCodebasePolicyRatchetMonitor,
     StreamingCodebaseReplayOrderMonitor,
     StreamingCodebaseSharedChordDiamondMonitor,
     StreamingCodebaseSubgradientPivotMonitor,
     StreamingDiamondCodebasePullbackMonitor,
     StreamingNonAbelianBraidHolonomyMonitor,
+    StreamingPolicyRatchetDriftMonitor,
     StreamingStatefulCodebaseDFAMonitor,
     StreamingSubgradientSensitivityMonitor,
 )
@@ -8799,6 +8801,221 @@ class SubgradientPivotCodeWorkspace:
             }
 
         return {"accepted": False, "error": f"unsupported tool {name} or malformed arguments"}
+
+
+POLICY_RATCHET_WORKER_MODULES: dict[str, str] = {
+    "worker-0": "pricing_ratchet",
+    "worker-1": "tax_ratchet",
+    "worker-2": "settlement_ratchet",
+}
+
+INITIAL_PRICING_RATCHET_P1_PY = StreamingCodebasePolicyRatchetMonitor.PHASE_1_PRICING_RATCHET_SOURCE
+INITIAL_PRICING_RATCHET_P2_P3_PY = StreamingCodebasePolicyRatchetMonitor.PHASE_2_PRICING_RATCHET_SOURCE
+
+INITIAL_TAX_RATCHET_P1_PY = StreamingCodebasePolicyRatchetMonitor.PHASE_1_TAX_RATCHET_SOURCE
+INITIAL_TAX_RATCHET_P2_PY = StreamingCodebasePolicyRatchetMonitor.PHASE_2_TAX_RATCHET_SOURCE
+INITIAL_TAX_RATCHET_P3_PY = StreamingCodebasePolicyRatchetMonitor.PHASE_3_TAX_RATCHET_SOURCE
+
+INITIAL_SETTLEMENT_RATCHET_P1_PY = StreamingCodebasePolicyRatchetMonitor.PHASE_1_SETTLEMENT_RATCHET_SOURCE
+INITIAL_SETTLEMENT_RATCHET_P2_PY = StreamingCodebasePolicyRatchetMonitor.PHASE_2_SETTLEMENT_RATCHET_SOURCE
+INITIAL_SETTLEMENT_RATCHET_P3_PY = StreamingCodebasePolicyRatchetMonitor.PHASE_3_SETTLEMENT_RATCHET_SOURCE
+
+
+def run_policy_ratchet_local_unit_tests(module_name: str, source_code: str) -> dict[str, Any]:
+    """Execute isolated per-module unit tests for `pricing_ratchet`, `tax_ratchet`, or `settlement_ratchet`."""
+    try:
+        ns = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(module_name, source_code)
+    except Exception as exc:
+        return {"passed": False, "module": module_name, "error": str(exc)}
+
+    try:
+        if module_name == "pricing_ratchet":
+            fn = ns.get("quote_ratchet_pricing")
+            if not callable(fn):
+                return {"passed": False, "module": module_name, "error": "missing quote_ratchet_pricing"}
+            res = fn(990)
+            ok = (
+                isinstance(res, dict)
+                and res.get("gross_cents") == 990
+                and res.get("platform_fee_cents") == 27
+                and res.get("net_after_fee_cents") == 963
+                and res.get("baseline_policy_vector") == [2, 3, 0]
+                and res.get("risk_weight_vector") == [2, 3, 4]
+                and res.get("step_slack_budget") == 4
+                and res.get("horizon_drift_ceiling") == 4
+                and res.get("incident_1_post_vector") == [4, 3, 0]
+                and (bool(res.get("incident_2_prior_revoked")), res.get("incident_2_post_vector"))
+                in ((False, [4, 4, 0]), (True, [2, 4, 0]))
+            )
+            return {"passed": bool(ok), "module": module_name, "sample_output": res}
+
+        if module_name == "tax_ratchet":
+            fn = ns.get("quote_ratchet_tax")
+            if not callable(fn):
+                return {"passed": False, "module": module_name, "error": "missing quote_ratchet_tax"}
+            res = fn(990)
+            ok = (
+                isinstance(res, dict)
+                and res.get("tax_reserve_cents") == 90
+                and (bool(res.get("incident_3_prior_revoked")), res.get("incident_3_post_vector"))
+                in ((False, [4, 4, 1]), (False, [2, 4, 1]), (True, [2, 3, 1]))
+            )
+            return {"passed": bool(ok), "module": module_name, "sample_output": res}
+
+        if module_name == "settlement_ratchet":
+            fn = ns.get("settle_ratchet_invoice")
+            if not callable(fn):
+                return {"passed": False, "module": module_name, "error": "missing settle_ratchet_invoice"}
+            res = fn(
+                {
+                    "gross_cents": 990,
+                    "net_after_fee_cents": 963,
+                    "platform_fee_cents": 27,
+                    "baseline_policy_vector": [2, 3, 0],
+                    "risk_weight_vector": [2, 3, 4],
+                    "step_slack_budget": 4,
+                    "horizon_drift_ceiling": 4,
+                    "incident_1_post_vector": [4, 3, 0],
+                    "incident_2_prior_revoked": True,
+                    "incident_2_post_vector": [2, 4, 0],
+                },
+                {
+                    "tax_reserve_cents": 90,
+                    "incident_3_prior_revoked": True,
+                    "incident_3_post_vector": [2, 3, 1],
+                },
+            )
+            ok = (
+                isinstance(res, dict)
+                and res.get("merchant_payout_cents") == 873
+                and res.get("ratchet_surcharge_cents") == 0
+            )
+            return {"passed": bool(ok), "module": module_name, "sample_output": res}
+    except Exception as exc:
+        return {"passed": False, "module": module_name, "error": str(exc)}
+
+    return {"passed": False, "module": module_name, "error": f"unknown module {module_name}"}
+
+
+def policy_ratchet_fixture(seed: int) -> dict[str, Any]:
+    if seed in (12400, 12402):
+        return {
+            "seed": seed,
+            "kind": "repairable_policy_ratchet_cumulative_drift_and_sunset_revocation_defect",
+            "locked_workers": [],
+            "infeasible_constraint": None,
+            "sources": {
+                "pricing_ratchet": INITIAL_PRICING_RATCHET_P1_PY,
+                "tax_ratchet": INITIAL_TAX_RATCHET_P1_PY,
+                "settlement_ratchet": INITIAL_SETTLEMENT_RATCHET_P1_PY,
+            },
+            "escalations": {},
+        }
+    if seed == 12401:
+        return {
+            "seed": seed,
+            "kind": "infeasible_hardware_locked_unrevoked_monotone_policy_ratchet",
+            "locked_workers": ["worker-0"],
+            "infeasible_constraint": (
+                "Legacy incident-lease ROM lock: `pricing_ratchet.py` is locked in read-only ROM "
+                "with `incident_2_prior_revoked = False` and `incident_2_post_vector = [4, 4, 0]` "
+                "(cumulative horizon drift `||P_2 - P_0||_{1,w} = 7 > tau_horizon = 4`), while "
+                "the LGGR policy-ratchet merge gate requires scoped sunset lease revocation "
+                "(`incident_2_prior_revoked = True`, `incident_2_post_vector = [2, 4, 0]`, "
+                "`incident_3_prior_revoked = True`, `incident_3_post_vector = [2, 3, 1]`, "
+                "`max_horizon_drift <= 4`, `ratchet_surcharge_cents == 0`). "
+                "Escalate to human architecture review."
+            ),
+            "sources": {
+                "pricing_ratchet": INITIAL_PRICING_RATCHET_P1_PY,
+                "tax_ratchet": INITIAL_TAX_RATCHET_P1_PY,
+                "settlement_ratchet": INITIAL_SETTLEMENT_RATCHET_P1_PY,
+            },
+            "escalations": {},
+        }
+    raise ValueError(f"unsupported policy_ratchet seed {seed}")
+
+
+class PolicyRatchetCodeWorkspace:
+    """Workspace for the 3-agent policy-ratchet drift and sunset lease revocation swarm."""
+
+    def __init__(self, state: dict[str, Any]) -> None:
+        self.state = deepcopy(state)
+
+    def tool(
+        self,
+        worker: str,
+        name: str,
+        arguments: dict[str, Any],
+        feedback: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
+        """Dispatch a worker tool call (`inspect_workspace`, `run_local_tests`, `submit_module_patch`, `escalate`)."""
+        if worker not in POLICY_RATCHET_WORKER_MODULES:
+            return {"accepted": False, "error": f"unknown worker {worker}"}
+        module_name = POLICY_RATCHET_WORKER_MODULES[worker]
+        if name == "inspect_workspace" and arguments == {}:
+            own_src = self.state["sources"][module_name]
+            local_res = run_policy_ratchet_local_unit_tests(module_name, own_src)
+            payload: dict[str, Any] = {
+                "worker": worker,
+                "owned_module": f"{module_name}.py",
+                "locked": worker in self.state["locked_workers"],
+                "source_code": own_src,
+                "local_unit_test": local_res,
+                "peer_signatures": {
+                    "pricing_ratchet.py": "def quote_ratchet_pricing(gross_cents: int) -> dict",
+                    "tax_ratchet.py": "def quote_ratchet_tax(gross_cents: int) -> dict",
+                    "settlement_ratchet.py": "def settle_ratchet_invoice(pricing: dict, tax: dict) -> dict",
+                },
+                "infeasible_constraint": self.state["infeasible_constraint"],
+            }
+            if feedback is not None:
+                payload["merge_gate_feedback"] = feedback
+            return payload
+
+        if name in ("run_local_tests", "run_local_unit_tests") and arguments == {}:
+            own_src = self.state["sources"][module_name]
+            return run_policy_ratchet_local_unit_tests(module_name, own_src)
+
+        if name == "escalate":
+            if self.state["infeasible_constraint"] is None:
+                return {
+                    "accepted": False,
+                    "error": "infeasible_constraint is null; do not escalate on a repairable seed—call submit_module_patch with your target module source code",
+                }
+            reason = arguments.get("reason")
+            if set(arguments) != {"reason"} or not isinstance(reason, str) or not reason.strip():
+                return {"accepted": False, "error": "escalate requires a non-empty string 'reason'"}
+            self.state["escalations"][worker] = reason.strip()[:1000]
+            return {
+                "escalated": True,
+                "worker": worker,
+                "reason": self.state["escalations"][worker],
+            }
+
+        if name == "submit_module_patch":
+            if worker in self.state["locked_workers"]:
+                return {"accepted": False, "error": "owned module is locked; escalate if contract is infeasible"}
+            new_src = arguments.get("source_code")
+            if set(arguments) != {"source_code"} or not isinstance(new_src, str) or not new_src.strip():
+                return {"accepted": False, "error": "submit_module_patch requires non-empty 'source_code'"}
+            local_res = run_policy_ratchet_local_unit_tests(module_name, new_src)
+            if not local_res.get("passed"):
+                return {
+                    "accepted": False,
+                    "error": "patch failed local unit tests",
+                    "local_unit_test_result": local_res,
+                }
+            self.state["sources"][module_name] = new_src
+            return {
+                "accepted": True,
+                "module": module_name,
+                "local_unit_test_result": local_res,
+                "scope": "isolated module unit tests passed; multi-incident policy-ratchet horizon drift and sunset lease revocation are checked at merge gate",
+            }
+
+        return {"accepted": False, "error": f"unsupported tool {name} or malformed arguments"}
+
 
 
 

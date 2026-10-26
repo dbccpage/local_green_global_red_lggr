@@ -513,13 +513,27 @@ In `--topology subgradient_pivot`, the 3 concurrent agents maintain a 3-module w
 | `12302` | `repairable_subgradient_weight_sensitivity_and_bottleneck_pivot_defect` | **B** | `intermediate_non_bottleneck_pivot_gate` | `blocked_unresolved` | `[0, 4, 0]` | `16` | `8` | `8` | `0` | `8` | 2 | 14 | `$0.014597` |
 | `12302` | `repairable_subgradient_weight_sensitivity_and_bottleneck_pivot_defect` | **C** | `explicit_lggr_bottleneck_dual_witness_pivot_directive` | **`completed`** | **`[0, 0, 4]`** | **`8`** | **`8`** | **`0`** | **`0`** | **`0`** | **1** | **6** | **`$0.007632`** |
 
+## 34. Multi-Incident Cumulative Policy-Ratchet Drift & Sunset Lease Revocation Audit (`--topology policy_ratchet`, Theorem 127)
+
+In `--topology policy_ratchet`, the 3 concurrent agents maintain a 3-module multi-incident policy-ratchet drift settlement codebase (`pricing_ratchet.py`, `tax_ratchet.py`, `settlement_ratchet.py`) over baseline policy $P_0 = [2, 3, 0]$, risk weights $w = [2, 3, 4]$, step budget $\tau_{\mathrm{step}} = 4$, and cumulative horizon ceiling $\tau_{\mathrm{horizon}} = 4$ (`StreamingCodebasePolicyRatchetMonitor`, Theorem 127):
+
+| Seed | Case | Arm | Gate Policy | Status | `horizon_drifts` | `max_hor` | `excess_hor` | `unrev_cnt` | Surcharge | Payout | Waves | API Calls | Cost (USD) |
+| :--- | :--- | :---: | :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| `12400` | `repairable_policy_ratchet_cumulative_drift_and_sunset_revocation_defect` | **A** | `unrevoked_monotone_policy_ratchet_gate` | `blocked_unresolved` | `[4, 7, 11]` | `11` | `7` | `2` | `11` | `862` | 2 | 18 | `$0.016700` |
+| `12400` | `repairable_policy_ratchet_cumulative_drift_and_sunset_revocation_defect` | **B** | `partial_sunset_lease_revocation_gate` | `blocked_unresolved` | `[4, 3, 7]` | `7` | `3` | `1` | `5` | `868` | 2 | 13 | `$0.015211` |
+| `12400` | `repairable_policy_ratchet_cumulative_drift_and_sunset_revocation_defect` | **C** | `explicit_lggr_sunset_lease_revocation_directive` | **`completed`** | **`[4, 3, 4]`** | **`4`** | **`0`** | **`0`** | **`0`** | **`873`** | **1** | **6** | **`$0.007034`** |
+| `12401` | `infeasible_hardware_locked_unrevoked_monotone_policy_ratchet` | **A / B / C** | All policies | `safe_escalated` | `[4, 7, 11]` | `11` | `7` | `2` | `11` | `862` | 1 | 18 | `$0.024118` |
+| `12402` | `repairable_policy_ratchet_cumulative_drift_and_sunset_revocation_defect` | **A** | `unrevoked_monotone_policy_ratchet_gate` | `blocked_unresolved` | `[4, 7, 11]` | `11` | `7` | `2` | `11` | `862` | 2 | 18 | `$0.016937` |
+| `12402` | `repairable_policy_ratchet_cumulative_drift_and_sunset_revocation_defect` | **B** | `partial_sunset_lease_revocation_gate` | `blocked_unresolved` | `[4, 3, 7]` | `7` | `3` | `1` | `5` | `868` | 2 | 12 | `$0.014089` |
+| `12402` | `repairable_policy_ratchet_cumulative_drift_and_sunset_revocation_defect` | **C** | `explicit_lggr_sunset_lease_revocation_directive` | **`completed`** | **`[4, 3, 4]`** | **`4`** | **`0`** | **`0`** | **`0`** | **`873`** | **1** | **6** | **`$0.007159`** |
+
 ## Offline Verification & Live Execution
 
 ```powershell
 # Run unit, tamper, and deterministic replay tests (no API calls)
 python -m unittest tests.test_concurrent_code_engineering_swarm -v
 
-# Replay archived live 3-agent linear, 4-agent diamond, 3-agent catalyst, 3-agent stateful DFA, 3-agent replay-order, 3-agent coalitional, 3-agent Mayer-Vietoris, 3-agent windowed-drift, 3-agent optional-stopping, 3-agent CPTP channel, 3-agent Regge holonomy, 3-agent k-induction, 3-agent Jacobian, 3-agent boundary-quorum, 3-agent lease-overlap, 3-agent contextual-sheaf, 3-agent watcher-dropout, 3-agent policy-reversal, 3-agent fiber-splitting, 3-agent disagreement-council, 3-agent six-role deduplication, 3-agent path-kernel dashboard, 3-agent dynamic-schema synthesis, 3-agent adversarial-schema side-channel, 3-agent graceful-shedding, 3-agent obligation-migration, 3-agent three-party-c3, 3-agent multi-loop-hodge, 3-agent figure-eight-wedge, 3-agent shared-chord-diamond, 3-agent governed-relaxation, 3-agent non-abelian-braid, and 3-agent subgradient-pivot evidence (no API calls)
+# Replay archived live 3-agent linear, 4-agent diamond, 3-agent catalyst, 3-agent stateful DFA, 3-agent replay-order, 3-agent coalitional, 3-agent Mayer-Vietoris, 3-agent windowed-drift, 3-agent optional-stopping, 3-agent CPTP channel, 3-agent Regge holonomy, 3-agent k-induction, 3-agent Jacobian, 3-agent boundary-quorum, 3-agent lease-overlap, 3-agent contextual-sheaf, 3-agent watcher-dropout, 3-agent policy-reversal, 3-agent fiber-splitting, 3-agent disagreement-council, 3-agent six-role deduplication, 3-agent path-kernel dashboard, 3-agent dynamic-schema synthesis, 3-agent adversarial-schema side-channel, 3-agent graceful-shedding, 3-agent obligation-migration, 3-agent three-party-c3, 3-agent multi-loop-hodge, 3-agent figure-eight-wedge, 3-agent shared-chord-diamond, 3-agent governed-relaxation, 3-agent non-abelian-braid, 3-agent subgradient-pivot, and 3-agent policy-ratchet evidence (no API calls)
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/diamond_pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/catalyst_pilot_run/events.jsonl
@@ -553,4 +567,5 @@ python -m experiments.concurrent_code_engineering_swarm.runner replay experiment
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/governed_relaxation_pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/non_abelian_braid_pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/subgradient_pivot_pilot_run/events.jsonl
+python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/policy_ratchet_pilot_run/events.jsonl
 ```
