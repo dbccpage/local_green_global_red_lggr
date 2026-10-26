@@ -31,6 +31,7 @@ from lggr.streaming import (
     StreamingCodebaseInterfaceMergeMonitor,
     StreamingCodebaseMayerVietorisMonitor,
     StreamingCodebaseOptionalStoppingMonitor,
+    StreamingCodebaseReggeHolonomyMonitor,
     StreamingCodebaseReplayOrderMonitor,
     StreamingCodebaseWindowedDriftMonitor,
     StreamingDiamondCodebasePullbackMonitor,
@@ -45,6 +46,7 @@ from .domain import (
     DIAMOND_WORKER_MODULES,
     DIAMOND_WORKTREE_BRANCHES,
     MV_WORKER_MODULES,
+    REGGE_WORKER_MODULES,
     REPLAY_WORKER_MODULES,
     STOP_WORKER_MODULES,
     WIN_WORKER_MODULES,
@@ -56,6 +58,7 @@ from .domain import (
     DiamondCodeWorkspace,
     MayerVietorisCodeWorkspace,
     OptionalStoppingCodeWorkspace,
+    ReggeHolonomyCodeWorkspace,
     ReplayOrderCodeWorkspace,
     StatefulDFACodeWorkspace,
     WindowedDriftCodeWorkspace,
@@ -66,6 +69,7 @@ from .domain import (
     diamond_fixture,
     fixture,
     mv_fixture,
+    regge_fixture,
     replay_fixture,
     stop_fixture,
     win_fixture,
@@ -2230,6 +2234,234 @@ def cptp_campaign(
     return summary
 
 
+def regge_system_prompt(worker: str, arm: str) -> str:
+    module_name = REGGE_WORKER_MODULES[worker]
+    policy = {
+        "A": (
+            "Arm A (local_triangle_closure_gate): rely on isolated Euclidean triangle closure "
+            "(`apex_units + left_units + right_units == 18`). If your isolated unit tests pass, "
+            "keep your current module implementation unchanged."
+        ),
+        "B": (
+            "Arm B (partial_sector1_hinge_flattening): when a Regge hinge deficit is reported, "
+            "`worker-0` (`pricing_mesh`) and `worker-2` (`settlement_mesh`) keep their modules "
+            "unchanged, while `worker-1` (`tax_mesh`) flattens its triangle sector to "
+            "`'t1_apex_units': 12, 't1_left_units': 3, 't1_right_units': 3` (leaving `settlement_mesh` "
+            "at `(6, 6, 6)`)."
+        ),
+        "C": (
+            "Arm C (explicit_lggr_regge_holonomy_flattening_directive): follow the host LGGR "
+            "`StreamingCodebaseReggeHolonomyMonitor` directive (`HOLD_FLAT_PRICING_SECTOR`, "
+            "`FLATTEN_TAX_SECTOR_HINGE`, or `FLATTEN_SETTLEMENT_SECTOR_HINGE`) so `pricing_mesh.py` "
+            "holds `(12, 3, 3)`, `tax_mesh.py` sets `'t1_apex_units': 12, 't1_left_units': 3, "
+            "'t1_right_units': 3`, and `settlement_mesh.py` sets `'t2_apex_units': 12, 't2_left_units': 3, "
+            "'t2_right_units': 3` with `merchant_payout_cents = gross - fee - tax = 873` (`eps_apex_units == 0`)."
+        ),
+    }[arm]
+    return (
+        f"You are concurrent coding agent {worker}, owner of `{module_name}.py` in a 3-module "
+        "triangulated settlement routing pipeline (`pricing_mesh.py` -> `tax_mesh.py` -> "
+        "`settlement_mesh.py`) forming a 3-triangle star around interior vertex `v_apex`.\n"
+        f"{policy}\n"
+        "Always call `inspect_workspace` first. Then either call `submit_module_patch` with "
+        "valid Python source code for your owned module, or call `escalate` if `infeasible_constraint` "
+        "is non-null and locks a non-zero Regge hinge deficit."
+    )
+
+
+def regge_merge_gate(
+    events: Events,
+    workspace: ReggeHolonomyCodeWorkspace,
+    arm: str,
+    step_tag: str,
+) -> tuple[dict[str, Any], dict[str, dict[str, Any]]]:
+    monitor = StreamingCodebaseReggeHolonomyMonitor(
+        scope_id=f"swarm-regge-{workspace.state['seed']}-{arm}-{step_tag}"
+    )
+    local_results = workspace.local_verdicts()
+    eval_rec = monitor.evaluate_codebase_regge_holonomy(
+        f"eval-{arm}-{step_tag}",
+        sources=workspace.state["sources"],
+        local_test_results=local_results,
+        infeasible_constraint=workspace.state["infeasible_constraint"],
+    )
+    events.emit(
+        "gate",
+        {
+            "seed": workspace.state["seed"],
+            "arm": arm,
+            "step_tag": step_tag,
+            "local_green": eval_rec["local_green"],
+            "global_green": eval_rec["global_green"],
+            "defect": eval_rec["defect"],
+            "t0_angles_units": eval_rec["t0_angles_units"],
+            "t1_angles_units": eval_rec["t1_angles_units"],
+            "t2_angles_units": eval_rec["t2_angles_units"],
+            "apex_deficit_units": eval_rec["apex_deficit_units"],
+            "boundary_turn_sum_units": eval_rec["boundary_turn_sum_units"],
+            "status": eval_rec["status"],
+            "receipt_sha256": eval_rec["receipt_sha256"],
+        },
+    )
+    return eval_rec, eval_rec["compact_role_directives"]
+
+
+def regge_campaign(
+    client: CodeBatchClient,
+    events: Events,
+    config: dict[str, Any],
+) -> dict[str, Any]:
+    cases: list[dict[str, Any]] = []
+    workers = list(REGGE_WORKER_MODULES.keys())
+    for seed in config["seeds"]:
+        base_state = regge_fixture(seed)
+        arms_out: list[dict[str, Any]] = []
+        for arm in ("A", "B", "C"):
+            ws = ReggeHolonomyCodeWorkspace(base_state)
+            start_calls = client.calls
+            start_cost = client.spent
+            eval_rec, directives = regge_merge_gate(events, ws, arm, "wave-0")
+            initial_lggr = eval_rec["local_green"] == 1 and eval_rec["global_green"] == 0
+
+            histories: dict[str, list[dict[str, Any]]] = {
+                w: [{"role": "system", "content": regge_system_prompt(w, arm)}]
+                for w in workers
+            }
+
+            waves_run = 0
+            for wave_idx in (1, 2):
+                if eval_rec["global_green"] == 1 or len(ws.state["escalations"]) > 0:
+                    break
+                waves_run = wave_idx
+                per_worker_fb: dict[str, str] = {}
+                for w in workers:
+                    mname = REGGE_WORKER_MODULES[w]
+                    if ws.state["infeasible_constraint"] is not None:
+                        per_worker_fb[w] = json.dumps(
+                            {
+                                "wave": wave_idx,
+                                "infeasible_constraint": ws.state["infeasible_constraint"],
+                                "instruction": "Call `inspect_workspace` then `escalate` with a clear explanation.",
+                            },
+                            sort_keys=True,
+                        )
+                    elif arm == "A":
+                        per_worker_fb[w] = json.dumps(
+                            {
+                                "wave": wave_idx,
+                                "arm": "A",
+                                "owned_module": mname,
+                                "local_unit_test_passed": True,
+                                "sector_angle_sum_units": 18,
+                                "instruction": (
+                                    "Your isolated unit tests and local Euclidean triangle closure "
+                                    "(`apex_units + left_units + right_units == 18`) passed. Call "
+                                    "`inspect_workspace` and submit your current source code unchanged."
+                                ),
+                            },
+                            sort_keys=True,
+                        )
+                    elif arm == "B":
+                        if w in ("worker-0", "worker-2"):
+                            per_worker_fb[w] = json.dumps(
+                                {
+                                    "wave": wave_idx,
+                                    "arm": "B",
+                                    "owned_module": mname,
+                                    "instruction": (
+                                        f"Call `inspect_workspace` and keep `{mname}.py` unchanged by "
+                                        "submitting its existing source code."
+                                    ),
+                                },
+                                sort_keys=True,
+                            )
+                        else:
+                            per_worker_fb[w] = json.dumps(
+                                {
+                                    "wave": wave_idx,
+                                    "arm": "B",
+                                    "owned_module": mname,
+                                    "instruction": (
+                                        "Update `tax_mesh.py` via `submit_module_patch` so "
+                                        "`'t1_apex_units': 12, 't1_left_units': 3, 't1_right_units': 3` "
+                                        "(while keeping `tax_cents = 180` and `gross_cents = 1080`)."
+                                    ),
+                                },
+                                sort_keys=True,
+                            )
+                    else:
+                        per_worker_fb[w] = json.dumps(
+                            {
+                                "wave": wave_idx,
+                                "arm": "C",
+                                "owned_module": mname,
+                                "lggr_regge_role_directive": directives[w],
+                                "instruction": (
+                                    "Follow `lggr_regge_role_directive` for your module and call "
+                                    "`submit_module_patch` with the updated Python implementation."
+                                ),
+                            },
+                            sort_keys=True,
+                        )
+
+                round_turns(client, events, ws, histories, workers, per_worker_fb)
+                eval_rec, directives = regge_merge_gate(events, ws, arm, f"wave-{wave_idx}")
+                if arm in ("A", "B"):
+                    break
+
+            escalations = len(ws.state["escalations"])
+            if ws.state["infeasible_constraint"] is not None and escalations > 0:
+                outcome = "safe_escalated"
+            elif eval_rec["global_green"] == 1:
+                outcome = "completed"
+            else:
+                outcome = "blocked_unresolved"
+
+            arm_res = {
+                "arm": arm,
+                "outcome": outcome,
+                "initial_local_green_global_red": initial_lggr,
+                "final_local_green": eval_rec["local_green"],
+                "final_global_green": eval_rec["global_green"],
+                "final_defect": eval_rec["defect"],
+                "final_t0_angles_units": eval_rec["t0_angles_units"],
+                "final_t1_angles_units": eval_rec["t1_angles_units"],
+                "final_t2_angles_units": eval_rec["t2_angles_units"],
+                "final_apex_deficit_units": eval_rec["apex_deficit_units"],
+                "final_boundary_turn_sum_units": eval_rec["boundary_turn_sum_units"],
+                "final_status": eval_rec["status"],
+                "waves_run": waves_run,
+                "escalations": escalations,
+                "api_attempts": client.calls - start_calls,
+                "cost_usd": str(client.spent - start_cost),
+            }
+            events.emit("arm_result", arm_res)
+            arms_out.append(arm_res)
+
+        case_res = {"seed": seed, "kind": base_state["kind"], "arms": arms_out}
+        events.emit("case_result", case_res)
+        cases.append(case_res)
+
+    summary = {
+        "schema": "lggr.regge_holonomy_code_engineering_swarm.v1",
+        "topology": "regge",
+        "authority_effect": "None",
+        "cases": cases,
+        "api_attempts": client.calls,
+        "charged_or_reserved_usd": str(client.spent),
+        "max_inflight_requests": client.max_inflight,
+        "concurrent_waves": client.concurrent_waves,
+        "scope": (
+            "Concurrent 3-agent Regge holonomy Python code-engineering swarm (`pricing_mesh` -> "
+            "`tax_mesh` -> `settlement_mesh`) comparing isolated Euclidean triangle-closure gating (A), "
+            "partial sector-1 hinge flattening (B), and explicit LGGR Gauss-Bonnet holonomy flattening "
+            "directives (C) with full cryptographic receipts retained in the host audit log."
+        ),
+    }
+    events.emit("summary", summary)
+    return summary
+
+
 def replay(path: str | Path) -> dict[str, Any]:
     records = [json.loads(line) for line in Path(path).read_text(encoding="utf-8").splitlines()]
     metadata = records[0]["data"]
@@ -2258,6 +2490,8 @@ def replay(path: str | Path) -> dict[str, Any]:
             summary = stop_campaign(client, events, config)
         elif config.get("topology") == "cptp":
             summary = cptp_campaign(client, events, config)
+        elif config.get("topology") == "regge":
+            summary = regge_campaign(client, events, config)
         else:
             summary = campaign(client, events, config)
     except RunStopped as error:
@@ -2292,6 +2526,7 @@ def main() -> None:
             "windowed_drift",
             "optional_stopping",
             "cptp",
+            "regge",
         ],
         default="linear",
     )
@@ -2335,6 +2570,8 @@ def main() -> None:
         seeds = [9900, 9901, 9902]
     elif args.topology == "cptp":
         seeds = [10000, 10001, 10002]
+    elif args.topology == "regge":
+        seeds = [10100, 10101, 10102]
     else:
         seeds = [6100, 6101, 6102]
     if args.topology == "diamond":
@@ -2437,6 +2674,17 @@ def main() -> None:
         events.emit("start", {"config": config})
         client = CodeBatchClient(events, args.budget)
         summary = cptp_campaign(client, events, config)
+    elif args.topology == "regge":
+        config = {
+            "topology": "regge",
+            "seeds": seeds,
+            "models": CODE_SWARM_MODELS,
+            "budget_usd": str(args.budget),
+        }
+        events = Events(events_path)
+        events.emit("start", {"config": config})
+        client = CodeBatchClient(events, args.budget)
+        summary = regge_campaign(client, events, config)
     else:
         config = {
             "seeds": seeds,

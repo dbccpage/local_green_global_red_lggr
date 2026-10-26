@@ -22633,6 +22633,488 @@ class StreamingCodebaseCPTPChannelMonitor:
         return json_value({**body, "receipt_sha256": digest(body)})
 
 
+class StreamingCodebaseReggeHolonomyMonitor:
+    """Online simplicial mesh Regge hinge-deficit curvature & boundary Gauss-Bonnet holonomy monitor for a 3-module codebase (Theorem 104).
+
+    Composes `StreamingReggeDeficitCurvatureMonitor`, `StreamingReggeGaussBonnetHolonomyMonitor`,
+    `StreamingCodebaseInterfaceMergeMonitor`, and `StreamingFiberMonitor` across a 3-module
+    triangulated routing codebase (`pricing_mesh.py`, `tax_mesh.py`, `settlement_mesh.py`)
+    forming a 3-triangle star `K` around interior vertex `v_apex` with boundary vertices
+    `{b0, b1, b2}` (where angles are expressed in `1/36`-turn units: `18` units = `1/2` turn per
+    Euclidean triangle, `36` units = `1` full turn around `v_apex`):
+      - `pricing_mesh.py` (`worker-0`, `compute_mesh_quote`): defines triangle `t0 = (v_apex, b0, b1)`
+        with `(apex_units, base_left_units, base_right_units) = (12, 3, 3)` (`12 + 3 + 3 = 18`).
+      - `tax_mesh.py` (`worker-1`, `apply_mesh_tax`): defines triangle `t1 = (v_apex, b1, b2)`.
+      - `settlement_mesh.py` (`worker-2`, `route_mesh_settlement`): defines triangle `t2 = (v_apex, b2, b0)`
+        and settlement payout conservation `873 + 27 + 180 = 1080`.
+      - Separates:
+          1. Phase 1 (Conical sectors `(12,3,3), (6,6,6), (6,6,6)`):
+             Every module's triangle closes locally (`12+3+3 == 18`, `6+6+6 == 18`, `local_green = 1`),
+             yet the interior hinge deficit at `v_apex` is `eps_apex_units = 36 - (12 + 6 + 6) = 12`
+             (`1/3` turn `!= 0`) and boundary geodesic turn sum is `24` units (`2/3 < 1 = chi(K)`)
+             (`REGGE_HINGE_DEFICIT_CURVATURE_NGD_LGGR`, `global_green = 0`, `defect = -1`).
+          2. Phase 2 (Partial sector flattening `(12,3,3), (12,3,3), (6,6,6)` in `tax_mesh`):
+             Every triangle closes locally (`local_green = 1`) and `eps_apex_units` drops from `12` to `6`,
+             yet residual deficit `eps_apex_units = 6 > 0` (`1/6` turn) and boundary turn sum `30 < 36`
+             remain (`RESIDUAL_HINGE_DEFICIT_CURVATURE_LGGR`, `global_green = 0`, `defect = -1`).
+          3. Phase 3 (Full Gauss-Bonnet holonomy flattening `(12,3,3), (12,3,3), (12,3,3)`):
+             All 3 sectors close locally, interior hinge deficit is `eps_apex_units = 0`, boundary
+             turn sum is `36` units (`1 == chi(K)`), and exact settlement conservation
+             `873 + 27 + 180 = 1080` holds (`CODEBASE_REGGE_HOLONOMY_FLAT_LGGG`, `local_green = 1`,
+             `global_green = 1`, `defect = 0`).
+    """
+
+    MODULES: tuple[str, ...] = ("pricing_mesh", "tax_mesh", "settlement_mesh")
+    MODULE_FUNCTIONS: dict[str, str] = {
+        "pricing_mesh": "compute_mesh_quote",
+        "tax_mesh": "apply_mesh_tax",
+        "settlement_mesh": "route_mesh_settlement",
+    }
+
+    def __init__(
+        self,
+        *,
+        scope_id: str = "streaming-codebase-regge-holonomy-scope",
+    ) -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.holonomy_monitor = StreamingReggeGaussBonnetHolonomyMonitor(
+            scope_id=f"{self.scope_id}-holonomy",
+        )
+        self.fiber_monitor = StreamingFiberMonitor()
+        self.evaluations: list[dict[str, Any]] = []
+        self.three_phase_audits: list[dict[str, Any]] = []
+
+    def evaluate_codebase_regge_holonomy(
+        self,
+        evaluation_id: str,
+        *,
+        sources: Mapping[str, str],
+        local_test_results: Mapping[str, bool],
+        infeasible_constraint: Mapping[str, Any] | None = None,
+        model_id: str = "deterministic",
+    ) -> dict[str, Any]:
+        eval_id = text(evaluation_id, "evaluation_id")
+        mid = text(model_id, "model_id")
+        for m in self.MODULES:
+            if m not in sources:
+                raise ValidationError(f"missing source for module {m}")
+            if m not in local_test_results:
+                raise ValidationError(f"missing local_test_results for module {m}")
+
+        all_local_pass = all(bool(local_test_results[m]) for m in self.MODULES)
+
+        ast_summaries: dict[str, dict[str, Any]] = {}
+        fn_map: dict[str, Any] = {}
+        for m in self.MODULES:
+            fname = self.MODULE_FUNCTIONS[m]
+            ast_summaries[m] = StreamingCodebaseInterfaceMergeMonitor.inspect_module_ast(
+                m, sources[m]
+            )
+            try:
+                ns = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(m, sources[m])
+                fn_map[m] = ns.get(fname)
+            except ValidationError:
+                fn_map[m] = None
+
+        items = [
+            {"sku": "tier_a", "unit_cents": 600, "qty": 1},
+            {"sku": "tier_b", "unit_cents": 400, "qty": 1},
+        ]
+        runtime_error: str | None = None
+        quote_out: dict[str, Any] = {}
+        tax_out: dict[str, Any] = {}
+        settle_out: dict[str, Any] = {}
+
+        if all(fn_map[m] is not None for m in self.MODULES):
+            try:
+                q_res = fn_map["pricing_mesh"](items, 1000)
+                if not isinstance(q_res, Mapping):
+                    raise ValidationError("pricing_mesh did not return a dict")
+                quote_out = dict(q_res)
+                t_res = fn_map["tax_mesh"](quote_out, 2000)
+                if not isinstance(t_res, Mapping):
+                    raise ValidationError("tax_mesh did not return a dict")
+                tax_out = dict(t_res)
+                s_res = fn_map["settlement_mesh"](tax_out, 300)
+                if not isinstance(s_res, Mapping):
+                    raise ValidationError("settlement_mesh did not return a dict")
+                settle_out = dict(s_res)
+            except Exception as exc:
+                runtime_error = f"{type(exc).__name__}: {exc}"
+        else:
+            runtime_error = "One or more modules failed AST compilation"
+
+        t0_ang = (
+            int(quote_out.get("t0_apex_units", 12)),
+            int(quote_out.get("t0_left_units", 3)),
+            int(quote_out.get("t0_right_units", 3)),
+        ) if runtime_error is None else (12, 3, 3)
+
+        t1_ang = (
+            int(tax_out.get("t1_apex_units", 6)),
+            int(tax_out.get("t1_left_units", 6)),
+            int(tax_out.get("t1_right_units", 6)),
+        ) if runtime_error is None else (6, 6, 6)
+
+        t2_ang = (
+            int(settle_out.get("t2_apex_units", 6)),
+            int(settle_out.get("t2_left_units", 6)),
+            int(settle_out.get("t2_right_units", 6)),
+        ) if runtime_error is None else (6, 6, 6)
+
+        regge_mon = StreamingReggeDeficitCurvatureMonitor(
+            interior_vertices=["v_apex"],
+            boundary_vertices=["b0", "b1", "b2"],
+            scope_id=f"{self.scope_id}-{eval_id}",
+        )
+        regge_mon.record_triangle(
+            "t0_pricing_sector",
+            ["v_apex", "b0", "b1"],
+            [Fraction(u, 36) for u in t0_ang],
+        )
+        regge_mon.record_triangle(
+            "t1_tax_sector",
+            ["v_apex", "b1", "b2"],
+            [Fraction(u, 36) for u in t1_ang],
+        )
+        regge_mon.record_triangle(
+            "t2_settlement_sector",
+            ["v_apex", "b2", "b0"],
+            [Fraction(u, 36) for u in t2_ang],
+        )
+        regge_receipt = regge_mon.get_receipt()
+
+        local_triangles_ok = int(regge_receipt["local_product_aggregator"]) == 1
+        apex_deficit_frac = rational(regge_receipt["interior_deficits"]["v_apex"])
+        bnd_turn_frac = rational(regge_receipt["sum_boundary_turn"])
+        apex_deficit_units = int(apex_deficit_frac * 36)
+        bnd_turn_units = int(bnd_turn_frac * 36)
+        gb_equals_euler = bool(regge_receipt["gauss_bonnet_euler_identity_verified"])
+
+        net_val = int(quote_out.get("net_cents", 0)) if runtime_error is None else 0
+        gross_val = int(settle_out.get("gross_cents", 0)) if runtime_error is None else 0
+        fee_val = int(settle_out.get("platform_fee_cents", 0)) if runtime_error is None else 0
+        tax_val = int(settle_out.get("tax_reserve_cents", 0)) if runtime_error is None else 0
+        payout_val = int(settle_out.get("merchant_payout_cents", 0)) if runtime_error is None else 0
+
+        conservation_ok = (
+            runtime_error is None
+            and net_val == 900
+            and gross_val == 1080
+            and fee_val == 27
+            and tax_val == 180
+            and payout_val == 873
+            and payout_val + fee_val + tax_val == gross_val
+            and local_triangles_ok
+            and apex_deficit_units == 0
+            and bnd_turn_units == 36
+            and gb_equals_euler
+            and t0_ang == (12, 3, 3)
+            and t1_ang == (12, 3, 3)
+            and t2_ang == (12, 3, 3)
+        )
+
+        hol_eval = self.holonomy_monitor.record_holonomy_evaluation(
+            f"{eval_id}_hol",
+            model_id=mid,
+        )
+
+        l_green = 1 if (all_local_pass and local_triangles_ok and infeasible_constraint is None) else 0
+        eg_green = 1 if (l_green == 1 and conservation_ok) else 0
+        defect = eg_green - l_green
+
+        self.fiber_monitor.observe(
+            state_id=f"{eval_id}_{mid}",
+            report={
+                "local_unit_tests_all_pass": all_local_pass,
+                "local_euclidean_triangle_closure": local_triangles_ok,
+            },
+            query="LGGG" if eg_green == 1 else "LGGR",
+            metadata={
+                "t0_angles_units": list(t0_ang),
+                "t1_angles_units": list(t1_ang),
+                "t2_angles_units": list(t2_ang),
+                "apex_deficit_units": apex_deficit_units,
+                "boundary_turn_sum_units": bnd_turn_units,
+            },
+        )
+
+        if infeasible_constraint is not None:
+            status = "INFEASIBLE_REGGE_HOLONOMY_LOCK_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif eg_green == 1:
+            status = "CODEBASE_REGGE_HOLONOMY_FLAT_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        elif l_green == 1 and apex_deficit_units >= 12:
+            status = "REGGE_HINGE_DEFICIT_CURVATURE_NGD_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif l_green == 1 and apex_deficit_units != 0:
+            status = "RESIDUAL_HINGE_DEFICIT_CURVATURE_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "LOCAL_UNIT_OR_TRIANGLE_CLOSURE_FAILURE_LRGR"
+            contract_status = "OBSTRUCTED_LGGR"
+
+        directives: dict[str, dict[str, Any]] = {}
+        if infeasible_constraint is not None:
+            for w_idx, m in enumerate(self.MODULES):
+                directives[f"worker-{w_idx}"] = {
+                    "module": m,
+                    "action": "HALT_AND_ESCALATE",
+                    "reason": str(
+                        infeasible_constraint.get(
+                            "reason", "Infeasible Regge hinge-deficit curvature lock."
+                        )
+                    ),
+                }
+        elif eg_green == 1:
+            for w_idx, m in enumerate(self.MODULES):
+                directives[f"worker-{w_idx}"] = {
+                    "module": m,
+                    "action": "NO_OP_REGGE_FLAT",
+                    "reason": (
+                        "Interior Regge hinge deficit is `eps_apex_units == 0` with boundary "
+                        "Gauss-Bonnet turn sum `36 == chi(K)` and exact settlement conservation 873 + 27 + 180 = 1080."
+                    ),
+                }
+        else:
+            directives["worker-0"] = {
+                "module": "pricing_mesh",
+                "action": "HOLD_FLAT_PRICING_SECTOR",
+                "target_angles_units": {"t0_apex_units": 12, "t0_left_units": 3, "t0_right_units": 3},
+                "reason": (
+                    "Hold `pricing_mesh.py` triangle sector at `'t0_apex_units': 12, 't0_left_units': 3, "
+                    "'t0_right_units': 3` (`net_cents = 900`, `12 + 3 + 3 = 18`)."
+                ),
+            }
+            directives["worker-1"] = {
+                "module": "tax_mesh",
+                "action": "FLATTEN_TAX_SECTOR_HINGE" if t1_ang != (12, 3, 3) else "HOLD_FLAT_TAX_SECTOR",
+                "current_angles_units": list(t1_ang),
+                "target_angles_units": {"t1_apex_units": 12, "t1_left_units": 3, "t1_right_units": 3},
+                "reason": (
+                    f"Gauss-Bonnet holonomy audit detected `eps_apex_units = {apex_deficit_units} != 0` "
+                    f"(`t1_angles = {list(t1_ang)}`). Update `tax_mesh.py` so `'t1_apex_units': 12, "
+                    "`'t1_left_units': 3, 't1_right_units': 3` (`tax_cents = 180`, `gross_cents = 1080`)."
+                ),
+            }
+            directives["worker-2"] = {
+                "module": "settlement_mesh",
+                "action": "FLATTEN_SETTLEMENT_SECTOR_HINGE",
+                "current_angles_units": list(t2_ang),
+                "target_angles_units": {"t2_apex_units": 12, "t2_left_units": 3, "t2_right_units": 3},
+                "apex_deficit_units": apex_deficit_units,
+                "reason": (
+                    f"Gauss-Bonnet holonomy audit detected `eps_apex_units = {apex_deficit_units} != 0` "
+                    f"and `boundary_turn_sum_units = {bnd_turn_units} != 36` (`t2_angles = {list(t2_ang)}`). "
+                    "Update `settlement_mesh.py` so `'t2_apex_units': 12, 't2_left_units': 3, 't2_right_units': 3` "
+                    "and `merchant_payout_cents = gross - fee - tax = 873`."
+                ),
+            }
+
+        rec_body: dict[str, Any] = {
+            "evaluation_id": eval_id,
+            "model_id": mid,
+            "status": status,
+            "contract_status": contract_status,
+            "local_green": l_green,
+            "global_green": eg_green,
+            "defect": defect,
+            "t0_angles_units": list(t0_ang),
+            "t1_angles_units": list(t1_ang),
+            "t2_angles_units": list(t2_ang),
+            "apex_deficit_units": apex_deficit_units,
+            "boundary_turn_sum_units": bnd_turn_units,
+            "gauss_bonnet_equals_euler": gb_equals_euler,
+            "conservation_ok": conservation_ok,
+            "runtime_error": runtime_error,
+            "ast_summaries": ast_summaries,
+            "compact_role_directives": directives,
+            "regge_star_receipt": regge_receipt,
+            "holonomy_evaluation": hol_eval,
+        }
+        signed_rec = json_value({**rec_body, "receipt_sha256": digest(rec_body)})
+        self.evaluations.append(signed_rec)
+        return signed_rec
+
+    def record_three_phase_codebase_regge_audit(
+        self,
+        evaluation_id: str,
+        *,
+        model_id: str = "deterministic",
+    ) -> dict[str, Any]:
+        """Record the 3-phase Regge hinge-deficit & Gauss-Bonnet holonomy codebase audit (Theorem 104)."""
+        eval_id = text(evaluation_id, "evaluation_id")
+        mid = text(model_id, "model_id")
+
+        src_p = (
+            "def compute_mesh_quote(items: list[dict], discount_bps: int) -> dict:\n"
+            "    subtotal = sum(int(item['unit_cents']) * int(item['qty']) for item in items)\n"
+            "    discount = (subtotal * int(discount_bps)) // 10000\n"
+            "    net = subtotal - discount\n"
+            "    return {\n"
+            "        'subtotal_cents': subtotal,\n"
+            "        'discount_cents': discount,\n"
+            "        'net_cents': net,\n"
+            "        't0_apex_units': 12,\n"
+            "        't0_left_units': 3,\n"
+            "        't0_right_units': 3,\n"
+            "    }\n"
+        )
+        src_t_cone = (
+            "def apply_mesh_tax(quote: dict, tax_rate_bps: int) -> dict:\n"
+            "    net = int(quote['net_cents'])\n"
+            "    tax = (net * int(tax_rate_bps)) // 10000\n"
+            "    gross = net + tax\n"
+            "    return {\n"
+            "        'net_cents': net,\n"
+            "        'tax_cents': tax,\n"
+            "        'gross_cents': gross,\n"
+            "        't1_apex_units': 6,\n"
+            "        't1_left_units': 6,\n"
+            "        't1_right_units': 6,\n"
+            "    }\n"
+        )
+        src_t_flat = (
+            "def apply_mesh_tax(quote: dict, tax_rate_bps: int) -> dict:\n"
+            "    net = int(quote['net_cents'])\n"
+            "    tax = (net * int(tax_rate_bps)) // 10000\n"
+            "    gross = net + tax\n"
+            "    return {\n"
+            "        'net_cents': net,\n"
+            "        'tax_cents': tax,\n"
+            "        'gross_cents': gross,\n"
+            "        't1_apex_units': 12,\n"
+            "        't1_left_units': 3,\n"
+            "        't1_right_units': 3,\n"
+            "    }\n"
+        )
+        src_s_cone = (
+            "def route_mesh_settlement(taxed_quote: dict, fee_bps: int) -> dict:\n"
+            "    net = int(taxed_quote['net_cents'])\n"
+            "    tax = int(taxed_quote['tax_cents'])\n"
+            "    gross = int(taxed_quote['gross_cents'])\n"
+            "    fee = (net * int(fee_bps)) // 10000\n"
+            "    payout = gross - fee - tax\n"
+            "    return {\n"
+            "        'gross_cents': gross,\n"
+            "        'platform_fee_cents': fee,\n"
+            "        'tax_reserve_cents': tax,\n"
+            "        'merchant_payout_cents': payout,\n"
+            "        't2_apex_units': 6,\n"
+            "        't2_left_units': 6,\n"
+            "        't2_right_units': 6,\n"
+            "    }\n"
+        )
+        src_s_flat = (
+            "def route_mesh_settlement(taxed_quote: dict, fee_bps: int) -> dict:\n"
+            "    net = int(taxed_quote['net_cents'])\n"
+            "    tax = int(taxed_quote['tax_cents'])\n"
+            "    gross = int(taxed_quote['gross_cents'])\n"
+            "    fee = (net * int(fee_bps)) // 10000\n"
+            "    payout = gross - fee - tax\n"
+            "    return {\n"
+            "        'gross_cents': gross,\n"
+            "        'platform_fee_cents': fee,\n"
+            "        'tax_reserve_cents': tax,\n"
+            "        'merchant_payout_cents': payout,\n"
+            "        't2_apex_units': 12,\n"
+            "        't2_left_units': 3,\n"
+            "        't2_right_units': 3,\n"
+            "    }\n"
+        )
+
+        all_local_green = {
+            "pricing_mesh": True,
+            "tax_mesh": True,
+            "settlement_mesh": True,
+        }
+
+        p1 = self.evaluate_codebase_regge_holonomy(
+            f"{eval_id}_phase1_conical_hinge_deficit",
+            sources={
+                "pricing_mesh": src_p,
+                "tax_mesh": src_t_cone,
+                "settlement_mesh": src_s_cone,
+            },
+            local_test_results=all_local_green,
+            model_id=mid,
+        )
+        p2 = self.evaluate_codebase_regge_holonomy(
+            f"{eval_id}_phase2_partial_sector_flattening",
+            sources={
+                "pricing_mesh": src_p,
+                "tax_mesh": src_t_flat,
+                "settlement_mesh": src_s_cone,
+            },
+            local_test_results=all_local_green,
+            model_id=mid,
+        )
+        p3 = self.evaluate_codebase_regge_holonomy(
+            f"{eval_id}_phase3_full_gauss_bonnet_flattening",
+            sources={
+                "pricing_mesh": src_p,
+                "tax_mesh": src_t_flat,
+                "settlement_mesh": src_s_flat,
+            },
+            local_test_results=all_local_green,
+            model_id=mid,
+        )
+
+        audit_rec = json_value(
+            {
+                "evaluation_id": eval_id,
+                "model_id": mid,
+                "phase_1_apex_deficit_units": p1["apex_deficit_units"],
+                "phase_1_boundary_turn_sum_units": p1["boundary_turn_sum_units"],
+                "phase_1_local_green": p1["local_green"],
+                "phase_1_global_green": p1["global_green"],
+                "phase_1_defect": p1["defect"],
+                "phase_1_status": p1["status"],
+                "phase_1_directives": p1["compact_role_directives"],
+                "phase_2_apex_deficit_units": p2["apex_deficit_units"],
+                "phase_2_boundary_turn_sum_units": p2["boundary_turn_sum_units"],
+                "phase_2_local_green": p2["local_green"],
+                "phase_2_global_green": p2["global_green"],
+                "phase_2_defect": p2["defect"],
+                "phase_2_status": p2["status"],
+                "phase_3_apex_deficit_units": p3["apex_deficit_units"],
+                "phase_3_boundary_turn_sum_units": p3["boundary_turn_sum_units"],
+                "phase_3_local_green": p3["local_green"],
+                "phase_3_global_green": p3["global_green"],
+                "phase_3_defect": p3["defect"],
+                "phase_3_status": p3["status"],
+            }
+        )
+        self.three_phase_audits.append(audit_rec)
+        return audit_rec
+
+    def current_receipt(self) -> dict[str, Any]:
+        if not self.evaluations:
+            raise ValidationError("at least one codebase Regge holonomy evaluation must be recorded")
+        n = len(self.evaluations)
+        lggr_count = sum(1 for e in self.evaluations if e["defect"] == -1)
+        lggg_count = sum(1 for e in self.evaluations if e["global_green"] == 1)
+        last = self.evaluations[-1]
+
+        body: dict[str, Any] = {
+            "schema": "lggr.online_codebase_regge_holonomy.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": last["status"],
+            "contract_status": last["contract_status"],
+            "evaluation_count": n,
+            "lggr_obstruction_count": lggr_count,
+            "lggg_coherent_count": lggg_count,
+            "holonomy_receipt": self.holonomy_monitor.current_receipt(),
+            "fiber_receipt": self.fiber_monitor.get_receipt(),
+            "three_phase_audits": self.three_phase_audits,
+            "evaluations": self.evaluations,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+
 
 
 

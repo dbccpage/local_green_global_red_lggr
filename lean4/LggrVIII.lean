@@ -4148,4 +4148,60 @@ theorem cptp_codebase_state_blindspot_and_operator_completion_audit :
   intro d1 d2 h
   omega
 
+/-- 104. Simplicial mesh Regge hinge-deficit curvature & boundary Gauss-Bonnet holonomy in a 3-module codebase
+    (`pricing_mesh`, `tax_mesh`, `settlement_mesh`):
+    1. Symbolic 3-triangle star Gauss-Bonnet holonomy vs. interior hinge-deficit law (in `1/36`-turn units):
+       - For any 3 locally Euclidean triangle sectors `(a_i, b_i, c_i)` with `a_i + b_i + c_i = 18`
+         (`i ∈ {0, 1, 2}`), the interior apex deficit `ε_apex = 36 - (a_0 + a_1 + a_2)` and the
+         sum of boundary geodesic turns `Κ_bnd = (18 - (c_2 + b_0)) + (18 - (c_0 + b_1)) + (18 - (c_1 + b_2))`
+         identically satisfy the discrete Gauss-Bonnet identity `ε_apex + Κ_bnd = 36` (`1 = χ(K)`);
+       - Whenever `a_0 + a_1 + a_2 < 36`, local Euclidean triangle closure holds for all 3 sectors
+         yet `ε_apex > 0` and `Κ_bnd < 36`;
+       - Flattening all 3 sectors so `a_0 = a_1 = a_2 = 12` yields `ε_apex = 0` and `Κ_bnd = 36`;
+    2. Concrete 3-phase 3-module Regge mesh codebase audit (`1/36`-turn units):
+       - Phase 1 (Conical sectors `(12,3,3), (6,6,6), (6,6,6)` across `pricing_mesh`, `tax_mesh`,
+         `settlement_mesh`):
+         all 3 sectors sum to `18` (`L_cone = 1`), yet `ε_apex = 12 > 0` and `Κ_bnd = 24 < 36`
+         (`Eg_cone = 0`, `Δ_{E,cone} = -1`);
+       - Phase 2 (Partial sector flattening `(12,3,3), (12,3,3), (6,6,6)` in `tax_mesh`):
+         all 3 sectors sum to `18` and `ε_apex` drops to `6 < 12` (`L_part = 1`), yet residual
+         deficit `ε_apex = 6 > 0` and `Κ_bnd = 30 < 36` remain (`Eg_part = 0`, `Δ_{E,part} = -1`);
+       - Phase 3 (Full Gauss-Bonnet holonomy flattening `(12,3,3), (12,3,3), (12,3,3)` across all 3 modules):
+         `ε_apex = 0`, `Κ_bnd = 36`, and exact settlement conservation `873 + 27 + 180 = 1080`
+         holds (`L_flat = 1`, `Eg_flat = 1`, `Δ_{E,flat} = 0`). -/
+theorem regge_codebase_hinge_deficit_and_gauss_bonnet_holonomy_audit :
+    (∀ a0 b0 c0 a1 b1 c1 a2 b2 c2 : Int,
+      (a0 + b0 + c0 = 18 ∧ a1 + b1 + c1 = 18 ∧ a2 + b2 + c2 = 18 ∧ a0 + a1 + a2 < 36) →
+      (let eps_apex := 36 - (a0 + a1 + a2);
+       let kap_bnd := (18 - (c2 + b0)) + (18 - (c0 + b1)) + (18 - (c1 + b2));
+       (eps_apex + kap_bnd = 36) ∧
+       (eps_apex > 0) ∧
+       (kap_bnd < 36) ∧
+       (36 - (12 + 12 + 12) = 0))) ∧
+    (let eps_p1 : Int := 12;
+     let kap_p1 : Int := 24;
+     let eps_p2 : Int := 6;
+     let kap_p2 : Int := 30;
+     let eps_p3 : Int := 0;
+     let kap_p3 : Int := 36;
+     let payout_p3 : Int := 873;
+     let fee_p3 : Int := 27;
+     let tax_p3 : Int := 180;
+     let gross_p3 : Int := 1080;
+     let l_cone := if (eps_p1 + kap_p1 = 36) ∧ (eps_p1 > 0) then (1 : Int) else 0;
+     let eg_cone := if (l_cone = 1) ∧ (eps_p1 = 0) then (1 : Int) else 0;
+     let defect_cone := eg_cone - l_cone;
+     let l_part := if (eps_p2 + kap_p2 = 36) ∧ (eps_p2 < eps_p1) ∧ (eps_p2 > 0) then (1 : Int) else 0;
+     let eg_part := if (l_part = 1) ∧ (eps_p2 = 0) then (1 : Int) else 0;
+     let defect_part := eg_part - l_part;
+     let l_flat := if (eps_p3 + kap_p3 = 36) ∧ (eps_p3 = 0) ∧ (kap_p3 = 36) ∧ (payout_p3 + fee_p3 + tax_p3 = gross_p3) then (1 : Int) else 0;
+     let eg_flat := if (l_flat = 1) ∧ (eps_p3 < eps_p2) then (1 : Int) else 0;
+     let defect_flat := eg_flat - l_flat;
+     (l_cone = 1 ∧ eg_cone = 0 ∧ defect_cone = -1) ∧
+     (l_part = 1 ∧ eg_part = 0 ∧ defect_part = -1) ∧
+     (l_flat = 1 ∧ eg_flat = 1 ∧ defect_flat = 0)) := by
+  refine ⟨?_, ⟨⟨by decide, by decide, by decide⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨by decide, by decide, by decide⟩⟩⟩⟩
+  intro a0 b0 c0 a1 b1 c1 a2 b2 c2 h
+  omega
+
 end LggrVIII
