@@ -564,7 +564,7 @@ In `--topology simultaneous_split`, 3 LLM workers concurrently maintain a 3-modu
 
 ### Live 3-Agent Simultaneous-Split Campaign Results (`evidence/simultaneous_split_pilot_run/summary.json`)
 
-- **Total live API calls:** `93` across 3 seeds × 3 arms (`max_inflight_requests = 3`, `concurrent_waves = 15`)
+- **Total live API calls:** `93` across 3 seeds × 3 arms (`max_inflight_requests = 3`, `concurrent_waves = 30`)
 - **Total OpenRouter cost:** `$0.085640`
 
 | Seed | Scenario | Arm | Gate / Directive Policy | Terminal Status | `(d1, t2, d3, t3)` | `weighted_slacks` | `pareto_deficits` | `starved` | `peak_drift` | `surcharge` | `payout` | Waves | API Calls | Cost (USD) |
