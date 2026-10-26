@@ -55,8 +55,11 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     GRAM_SETTLEMENT_RESTORED_SOURCE,
     GRAM_TAX_DROPOUT_SOURCE,
     GRAM_TAX_RESTORED_SOURCE,
+    INITIAL_PRICING_MIG_P1_P2_PY,
     INITIAL_PRICING_SLA_PY,
+    INITIAL_SETTLEMENT_MIG_P1_PY,
     INITIAL_SETTLEMENT_SLA_DEFERRED_PY,
+    INITIAL_TAX_MIG_MIGRATION_PY,
     INITIAL_TAX_SLA_DEFERRED_PY,
     JACOBIAN_PRICING_SOURCE,
     JACOBIAN_SETTLEMENT_BLIND_SOURCE,
@@ -88,7 +91,11 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     QUORUM_TAX_ALIGNED_SOURCE,
     QUORUM_TAX_DRIFT_SOURCE,
     REGGE_WORKER_MODULES,
+    REPAIRED_PRICING_MIG_COHERENT_PY,
+    REPAIRED_SETTLEMENT_MIG_COHERENT_PY,
     REPAIRED_SETTLEMENT_SLA_GOVERNED_PY,
+    REPAIRED_TAX_MIG_COHERENT_PY,
+    REPAIRED_TAX_MIG_OBLIGATION_EXCURSION_PY,
     REPAIRED_TAX_SLA_GOVERNED_PY,
     REPAIRED_TAX_SLA_INVERTED_PY,
     ROLE_PRICING_ANCHOR_SRC,
@@ -124,6 +131,7 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     KInductionCodeWorkspace,
     LeaseOverlapCodeWorkspace,
      MayerVietorisCodeWorkspace,
+    ObligationMigrationCodeWorkspace,
     OptionalStoppingCodeWorkspace,
     PathKernelDashboardCodeWorkspace,
     PolicyReversalCodeWorkspace,
@@ -147,6 +155,7 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     kinduction_fixture,
     lease_fixture,
     mv_fixture,
+    obligation_migration_fixture,
     path_kernel_fixture,
     policy_fixture,
     quorum_fixture,
@@ -165,6 +174,7 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     run_lease_local_unit_tests,
     run_local_unit_tests,
     run_mv_local_unit_tests,
+    run_obligation_migration_local_unit_tests,
     run_path_kernel_local_unit_tests,
     run_policy_local_unit_tests,
     run_quorum_local_unit_tests,
@@ -199,6 +209,7 @@ from experiments.concurrent_code_engineering_swarm.runner import (
     kinduction_campaign,
     lease_campaign,
     mv_campaign,
+    obligation_migration_campaign,
     path_kernel_campaign,
     policy_campaign,
     quorum_campaign,
@@ -229,6 +240,7 @@ from lggr.streaming import (
     StreamingCodebaseKInductionMonitor,
     StreamingCodebaseLeaseOverlapMonitor,
     StreamingCodebaseMayerVietorisMonitor,
+    StreamingCodebaseObligationMigrationMonitor,
     StreamingCodebaseOptionalStoppingMonitor,
     StreamingCodebasePathKernelDashboardMonitor,
     StreamingCodebasePolicyReversalMonitor,
@@ -4952,6 +4964,254 @@ class GracefulSheddingCodeEngineeringSwarmTests(unittest.TestCase):
             replayed = replay(shed_events)
             self.assertEqual(replayed["schema"], "lggr.graceful_shedding_code_engineering_swarm.v1")
             self.assertEqual(len(replayed["cases"]), 2)
+
+    def test_obligation_migration_workspace_and_monitor_detects_migration_and_deferred_obligation(self) -> None:
+        """Verify ObligationMigrationCodeWorkspace and StreamingCodebaseObligationMigrationMonitor (Theorem 119)."""
+        base = obligation_migration_fixture(11600)
+        ws = ObligationMigrationCodeWorkspace(base)
+        for w, mod_name in (
+            ("worker-0", "pricing_mig"),
+            ("worker-1", "tax_mig"),
+            ("worker-2", "settlement_mig"),
+        ):
+            res = ws.tool(w, "run_local_tests", {})
+            self.assertTrue(res["passed"], f"{mod_name} failed local tests")
+
+        mon = StreamingCodebaseObligationMigrationMonitor(scope_id="test-obligation-migration-ws")
+        p1 = mon.evaluate_obligation_migration_modules(
+            "eval-p1",
+            module_sources=ws.state["sources"],
+            local_test_results={"pricing_mig": True, "tax_mig": True, "settlement_mig": True},
+        )
+        self.assertEqual(p1["local_green"], 1)
+        self.assertEqual(p1["global_green"], 0)
+        self.assertEqual(p1["defect"], -1)
+        self.assertEqual(p1["representation_migration_count"], 1)
+        self.assertEqual(p1["migration_surcharge_cents"], 5)
+        self.assertEqual(p1["merchant_payout_cents"], 868)
+        self.assertEqual(p1["status"], "UNCERTIFIED_REPRESENTATION_MIGRATION_CODEBASE_LGGR")
+
+        # Phase 2: retained deferred obligation and prefix excursion 4 > 3
+        self.assertTrue(
+            ws.tool("worker-1", "submit_module_patch", {"source_code": REPAIRED_TAX_MIG_OBLIGATION_EXCURSION_PY})["accepted"]
+        )
+        self.assertTrue(
+            ws.tool("worker-2", "submit_module_patch", {"source_code": REPAIRED_SETTLEMENT_MIG_COHERENT_PY})["accepted"]
+        )
+        p2 = mon.evaluate_obligation_migration_modules(
+            "eval-p2",
+            module_sources=ws.state["sources"],
+            local_test_results={"pricing_mig": True, "tax_mig": True, "settlement_mig": True},
+        )
+        self.assertEqual(p2["local_green"], 1)
+        self.assertEqual(p2["global_green"], 0)
+        self.assertEqual(p2["defect"], -1)
+        self.assertEqual(p2["retained_obligation_count"], 1)
+        self.assertEqual(p2["prefix_excursion_units"], 1)
+        self.assertEqual(p2["migration_surcharge_cents"], 10)
+        self.assertEqual(p2["merchant_payout_cents"], 863)
+        self.assertEqual(p2["status"], "DEFERRED_OBLIGATION_PREFIX_EXCURSION_CODEBASE_LGGR")
+
+        # Phase 3: representation-stable, obligation-cleared, prefix-bounded trajectory 0 -> 1 -> 2 -> 2
+        self.assertTrue(
+            ws.tool("worker-0", "submit_module_patch", {"source_code": REPAIRED_PRICING_MIG_COHERENT_PY})["accepted"]
+        )
+        self.assertTrue(
+            ws.tool("worker-1", "submit_module_patch", {"source_code": REPAIRED_TAX_MIG_COHERENT_PY})["accepted"]
+        )
+        p3 = mon.evaluate_obligation_migration_modules(
+            "eval-p3",
+            module_sources=ws.state["sources"],
+            local_test_results={"pricing_mig": True, "tax_mig": True, "settlement_mig": True},
+        )
+        self.assertEqual(p3["local_green"], 1)
+        self.assertEqual(p3["global_green"], 1)
+        self.assertEqual(p3["defect"], 0)
+        self.assertEqual(p3["representation_migration_count"], 0)
+        self.assertEqual(p3["retained_obligation_count"], 0)
+        self.assertEqual(p3["prefix_excursion_units"], 0)
+        self.assertEqual(p3["migration_surcharge_cents"], 0)
+        self.assertEqual(p3["merchant_payout_cents"], 873)
+        self.assertEqual(p3["status"], "CODEBASE_OBLIGATION_MIGRATION_COHERENT_LGGG")
+
+    def test_obligation_migration_campaign_and_deterministic_replay(self) -> None:
+        """Verify obligation_migration_campaign execution, deterministic replay, and tamper detection."""
+
+        def stub_obligation_migration_transport(payload: dict[str, Any]) -> dict[str, Any]:
+            messages = payload["messages"]
+            sys_text = messages[0]["content"]
+            worker = "worker-0"
+            for w in ("worker-0", "worker-1", "worker-2"):
+                if f"You are `{w}`" in sys_text:
+                    worker = w
+                    break
+            arm = "A"
+            for a in ("A", "B", "C"):
+                if f"(Arm `{a}`)" in sys_text:
+                    arm = a
+                    break
+
+            has_tool_msg = any(m.get("role") == "tool" for m in messages)
+            if not has_tool_msg:
+                tool_call = {
+                    "id": f"call_inspect_{worker}",
+                    "type": "function",
+                    "function": {"name": "inspect_workspace", "arguments": "{}"},
+                }
+            elif any(
+                m.get("role") == "tool" and '"accepted": true' in m.get("content", "")
+                for m in messages
+            ) or any(
+                m.get("role") == "tool" and '"escalated": true' in m.get("content", "")
+                for m in messages
+            ):
+                return {
+                    "response": {
+                        "id": "stub-obligation-migration-done",
+                        "model": payload["model"],
+                        "usage": {"prompt_tokens": 100, "completion_tokens": 20, "cost": "0.0001"},
+                        "choices": [
+                            {
+                                "index": 0,
+                                "finish_reason": "stop",
+                                "message": {"role": "assistant", "content": "Completed module action."},
+                            }
+                        ],
+                    },
+                    "started_ns": 10,
+                    "finished_ns": 20,
+                }
+            else:
+                tool_Outputs = [m.get("content", "") for m in messages if m.get("role") == "tool"]
+                last_tool = json.loads(tool_Outputs[-1]) if tool_Outputs else {}
+                if last_tool.get("infeasible_constraint"):
+                    tool_call = {
+                        "id": f"call_escalate_{worker}",
+                        "type": "function",
+                        "function": {
+                            "name": "escalate",
+                            "arguments": json.dumps(
+                                {"reason": "Hardware lock prevents migrating rep-v2 to rep-v1."}
+                            ),
+                        },
+                    }
+                elif arm == "A":
+                    src = {
+                        "worker-0": INITIAL_PRICING_MIG_P1_P2_PY,
+                        "worker-1": INITIAL_TAX_MIG_MIGRATION_PY,
+                        "worker-2": INITIAL_SETTLEMENT_MIG_P1_PY,
+                    }[worker]
+                    tool_call = {
+                        "id": f"call_patch_a_{worker}",
+                        "type": "function",
+                        "function": {
+                            "name": "submit_module_patch",
+                            "arguments": json.dumps({"source_code": src}),
+                        },
+                    }
+                elif arm == "B":
+                    src = {
+                        "worker-0": INITIAL_PRICING_MIG_P1_P2_PY,
+                        "worker-1": REPAIRED_TAX_MIG_OBLIGATION_EXCURSION_PY,
+                        "worker-2": REPAIRED_SETTLEMENT_MIG_COHERENT_PY,
+                    }[worker]
+                    tool_call = {
+                        "id": f"call_patch_b_{worker}",
+                        "type": "function",
+                        "function": {
+                            "name": "submit_module_patch",
+                            "arguments": json.dumps({"source_code": src}),
+                        },
+                    }
+                else:
+                    src = {
+                        "worker-0": REPAIRED_PRICING_MIG_COHERENT_PY,
+                        "worker-1": REPAIRED_TAX_MIG_COHERENT_PY,
+                        "worker-2": REPAIRED_SETTLEMENT_MIG_COHERENT_PY,
+                    }[worker]
+                    tool_call = {
+                        "id": f"call_patch_c_{worker}",
+                        "type": "function",
+                        "function": {
+                            "name": "submit_module_patch",
+                            "arguments": json.dumps({"source_code": src}),
+                        },
+                    }
+
+            return {
+                "response": {
+                    "id": "stub-obligation-migration",
+                    "model": payload["model"],
+                    "usage": {"prompt_tokens": 100, "completion_tokens": 30, "cost": "0.0001"},
+                    "choices": [
+                        {
+                            "index": 0,
+                            "finish_reason": "tool_calls",
+                            "message": {
+                                "role": "assistant",
+                                "tool_calls": [tool_call],
+                            },
+                        }
+                    ],
+                },
+                "started_ns": 10,
+                "finished_ns": 20,
+            }
+
+        with tempfile.TemporaryDirectory() as td:
+            events_path = Path(td) / "events.jsonl"
+            events = Events(events_path)
+            config = {
+                "topology": "obligation_migration",
+                "seeds": [11600, 11601],
+                "models": CODE_SWARM_MODELS,
+                "budget_usd": "0.50",
+            }
+            events.emit("start", {"config": config})
+            client = CodeBatchClient(events, "0.50", transport=stub_obligation_migration_transport)
+            summary = obligation_migration_campaign(client, events, config)
+            (Path(td) / "summary.json").write_text(
+                json.dumps(summary, indent=2) + "\n", encoding="utf-8"
+            )
+
+            replayed = replay(events_path)
+            self.assertEqual(replayed, summary)
+            self.assertEqual(replayed["schema"], "lggr.obligation_migration_code_engineering_swarm.v1")
+            self.assertEqual(replayed["max_inflight_requests"], 3)
+
+            records = deepcopy(events.records)
+            gate_rec = next(r["data"] for r in records if r["kind"] == "gate")
+            gate_rec["representation_migration_count"] = int(gate_rec["representation_migration_count"]) + 1
+            for i, r in enumerate(records):
+                r["previous"] = records[i - 1]["sha256"] if i else None
+                r["sha256"] = event_digest({k: v for k, v in r.items() if k != "sha256"})
+            events_path.write_text(
+                "\n".join(json.dumps(r, sort_keys=True) for r in records) + "\n",
+                encoding="utf-8",
+            )
+            with self.assertRaises(ValueError):
+                replay(events_path)
+
+    def test_live_obligation_migration_pilot_evidence_replay_if_present(self) -> None:
+        """Replay live obligation_migration pilot evidence offline if present."""
+        mig_events = (
+            Path(__file__).resolve().parents[1]
+            / "experiments"
+            / "concurrent_code_engineering_swarm"
+            / "evidence"
+            / "obligation_migration_pilot_run"
+            / "events.jsonl"
+        )
+        mig_summary = mig_events.with_name("summary.json")
+        if mig_events.exists() and mig_summary.exists():
+            replayed = replay(mig_events)
+            self.assertEqual(replayed["schema"], "lggr.obligation_migration_code_engineering_swarm.v1")
+            self.assertEqual(len(replayed["cases"]), 2)
+            seed_11600_arms = {a["arm"]: a for a in replayed["cases"][0]["arms"]}
+            self.assertEqual(seed_11600_arms["A"]["final_trajectory_states"], [0, 2, 3, 1])
+            self.assertEqual(seed_11600_arms["B"]["final_trajectory_states"], [0, 2, 4, 2])
+            self.assertEqual(seed_11600_arms["C"]["final_trajectory_states"], [0, 1, 2, 2])
+            self.assertEqual(seed_11600_arms["C"]["status"], "completed")
 
 
 if __name__ == "__main__":

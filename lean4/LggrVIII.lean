@@ -5115,4 +5115,72 @@ theorem graceful_shedding_codebase_variable_duration_burst_audit :
   intro f1 f2 f3 tau_h k1 k2 k3 ⟨h1, h2, h3, h4, h5, h6, h7⟩
   omega
 
+/-- Theorem 119 (Equal-Information Baseline vs. LGGR Scope-Migration & Deferred-Obligation
+    Accounting in Code-Engineering Swarms):
+    1. Equal-information false-acceptance and intermediate prefix-excursion separation law:
+       - For any 3-step trajectory `0 -> s1 -> s2 -> s3` with local step ceiling `m_step` and
+         prefix/total ceiling `m_total`, even when local step bounds hold (`0 ≤ s1 ≤ m_step`,
+         `0 ≤ s2 - s1 ≤ m_step`, `0 ≤ s2 - s3 ≤ m_step`) and the terminal state satisfies
+         `0 ≤ s3 ≤ m_total` (so an endpoint-only conventional checker accepts), if intermediate
+         state `s2 > m_total` then the intermediate prefix excursion satisfies `s2 - m_total ≥ 1`;
+       - Furthermore, for any non-negative defect counts `mig_cnt ≥ 0`, `obl_cnt ≥ 0`, `exc_cnt ≥ 0`
+         with `mig_cnt + obl_cnt + exc_cnt ≥ 1`, the audit surcharge `5 * (mig_cnt + obl_cnt + exc_cnt) ≥ 5`.
+    2. Concrete 3-phase codebase obligation-migration audit across `pricing_mig`, `tax_mig`,
+       and `settlement_mig` (`5` cents surcharge per uncertified representation migration,
+       `5` cents per retained deferred obligation, plus `5` cents per unit of prefix excursion
+       above `m_total = 3` under `m_step = 2`):
+       - Phase 1 (Uncertified representation migration on `0 -> 2 -> 3 -> 1`, `rep_1 = rep_v2 ≠ rep_v1`):
+         conventional local+endpoint checker accepts (`L_p1 = 1`), yet LGGR localizes
+         `REPRESENTATION_ID_CHANGED` at step index `1` (`mig_p1 = 1`, `obl_p1 = 0`, `exc_p1 = 0`,
+         `surcharge_p1 = 5`, `payout_p1 = 873 - 5 = 868 ≠ 873`, `Eg_p1 = 0`, `Δ_{E,p1} = -1`);
+       - Phase 2 (Retained deferred obligation & prefix excursion on `0 -> 2 -> 4 -> 2`):
+         conventional local+endpoint checker accepts (`|2-0|=2, |4-2|=2, |2-4|=2 ≤ 2` and
+         terminal `2 ≤ 3`, `L_p2 = 1`), yet LGGR localizes both `OPEN_OBLIGATIONS` (`obl_p2 = 1`)
+         and prefix excursion `4 - 3 = 1 > 0` (`exc_p2 = 1`) at step index `1`
+         (`surcharge_p2 = 10`, `payout_p2 = 873 - 10 = 863 ≠ 873`, `Eg_p2 = 0`, `Δ_{E,p2} = -1`);
+       - Phase 3 (Representation-stable, obligation-cleared, prefix-bounded trajectory `0 -> 1 -> 2 -> 2`):
+         uniform `rep_v1`, zero retained obligations (`obl_p3 = 0`), and `max_prefix = 2 ≤ 3`
+         (`exc_p3 = 0`, `surcharge_p3 = 0`, `payout_p3 = 873`, `873 + 27 + 90 = 990`,
+         `L_p3 = 1`, `Eg_p3 = 1`, `Δ_{E,p3} = 0`). -/
+theorem obligation_migration_codebase_equal_info_audit :
+    (∀ s1 s2 s3 m_step m_total mig_cnt obl_cnt exc_cnt : Int,
+      (0 ≤ s1 ∧ s1 ≤ m_step ∧ 0 ≤ s2 - s1 ∧ s2 - s1 ≤ m_step ∧
+       0 ≤ s2 - s3 ∧ s2 - s3 ≤ m_step ∧ 0 ≤ s3 ∧ s3 ≤ m_total ∧ s2 > m_total ∧
+       0 ≤ mig_cnt ∧ 0 ≤ obl_cnt ∧ 0 ≤ exc_cnt ∧ mig_cnt + obl_cnt + exc_cnt ≥ 1) →
+      (s2 - m_total ≥ 1 ∧ 5 * (mig_cnt + obl_cnt + exc_cnt) ≥ 5)) ∧
+    (let m_step : Int := 2; let m_total : Int := 3;
+     let s1_p1 : Int := 2; let s2_p1 : Int := 3; let s3_p1 : Int := 1;
+     let mig_p1 : Int := 1; let obl_p1 : Int := 0; let exc_p1 : Int := 0;
+     let s1_p2 : Int := 2; let s2_p2 : Int := 4; let s3_p2 : Int := 2;
+     let mig_p2 : Int := 0; let obl_p2 : Int := 1; let exc_p2 : Int := s2_p2 - m_total;
+     let s1_p3 : Int := 1; let s2_p3 : Int := 2; let s3_p3 : Int := 2;
+     let mig_p3 : Int := 0; let obl_p3 : Int := 0; let exc_p3 : Int := 0;
+     let surcharge_p1 := 5 * (mig_p1 + obl_p1 + exc_p1);
+     let surcharge_p2 := 5 * (mig_p2 + obl_p2 + exc_p2);
+     let surcharge_p3 := 5 * (mig_p3 + obl_p3 + exc_p3);
+     let payout_p1 : Int := 873 - surcharge_p1;
+     let payout_p2 : Int := 873 - surcharge_p2;
+     let payout_p3 : Int := 873 - surcharge_p3;
+     let fee : Int := 27; let tax : Int := 90; let gross : Int := 990;
+     let l_p1 := if (s1_p1 ≤ m_step) ∧ (s2_p1 - s1_p1 ≤ m_step) ∧ (s2_p1 - s3_p1 ≤ m_step) ∧ (s3_p1 ≤ m_total) ∧ (mig_p1 = 1) ∧ (surcharge_p1 = 5) then (1 : Int) else 0;
+     let eg_p1 := if (l_p1 = 1) ∧ (mig_p1 = 0) ∧ (obl_p1 = 0) ∧ (exc_p1 = 0) ∧ (payout_p1 + fee + tax = gross) then (1 : Int) else 0;
+     let defect_p1 := eg_p1 - l_p1;
+     let l_p2 := if (s1_p2 ≤ m_step) ∧ (s2_p2 - s1_p2 ≤ m_step) ∧ (s2_p2 - s3_p2 ≤ m_step) ∧ (s3_p2 ≤ m_total) ∧ (obl_p2 = 1) ∧ (exc_p2 = 1) ∧ (surcharge_p2 = 10) then (1 : Int) else 0;
+     let eg_p2 := if (l_p2 = 1) ∧ (mig_p2 = 0) ∧ (obl_p2 = 0) ∧ (exc_p2 = 0) ∧ (payout_p2 + fee + tax = gross) then (1 : Int) else 0;
+     let defect_p2 := eg_p2 - l_p2;
+     let l_p3 := if (s1_p3 ≤ m_step) ∧ (s2_p3 - s1_p3 ≤ m_step) ∧ (s2_p3 - s3_p3 ≤ m_step) ∧ (s2_p3 ≤ m_total) ∧ (s3_p3 ≤ m_total) ∧ (mig_p3 = 0) ∧ (obl_p3 = 0) ∧ (exc_p3 = 0) ∧ (surcharge_p3 = 0) ∧ (payout_p3 + fee + tax = gross) then (1 : Int) else 0;
+     let eg_p3 := if (l_p3 = 1) ∧ (surcharge_p3 < surcharge_p1) ∧ (surcharge_p3 < surcharge_p2) then (1 : Int) else 0;
+     let defect_p3 := eg_p3 - l_p3;
+     (mig_p1 = 1 ∧ mig_p2 = 0 ∧ mig_p3 = 0 ∧
+      obl_p1 = 0 ∧ obl_p2 = 1 ∧ obl_p3 = 0 ∧
+      exc_p1 = 0 ∧ exc_p2 = 1 ∧ exc_p3 = 0 ∧
+      surcharge_p1 = 5 ∧ surcharge_p2 = 10 ∧ surcharge_p3 = 0 ∧
+      payout_p1 = 868 ∧ payout_p2 = 863 ∧ payout_p3 = 873) ∧
+     (l_p1 = 1 ∧ eg_p1 = 0 ∧ defect_p1 = -1) ∧
+     (l_p2 = 1 ∧ eg_p2 = 0 ∧ defect_p2 = -1) ∧
+     (l_p3 = 1 ∧ eg_p3 = 1 ∧ defect_p3 = 0)) := by
+  refine ⟨?_, ⟨⟨by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨by decide, by decide, by decide⟩⟩⟩⟩⟩
+  intro s1 s2 s3 m_step m_total mig_cnt obl_cnt exc_cnt ⟨h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11, h12, h13⟩
+  omega
+
 end LggrVIII

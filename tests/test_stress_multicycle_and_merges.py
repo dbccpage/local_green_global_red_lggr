@@ -52,6 +52,7 @@ from lggr.streaming import (
     StreamingCodebaseKInductionMonitor,
     StreamingCodebaseLeaseOverlapMonitor,
     StreamingCodebaseMayerVietorisMonitor,
+    StreamingCodebaseObligationMigrationMonitor,
     StreamingCodebaseOptionalStoppingMonitor,
     StreamingCodebasePathKernelDashboardMonitor,
     StreamingCodebasePolicyReversalMonitor,
@@ -6061,6 +6062,50 @@ class TestStreamingBaselineComparator(unittest.TestCase):
 
         receipt = mon.current_receipt()
         self.assertEqual(receipt["status"], "CODEBASE_GRACEFUL_SHEDDING_COHERENT_LGGG")
+        self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(receipt["lggr_obstruction_count"], 2)
+        self.assertEqual(receipt["lggg_coherent_count"], 1)
+
+    def test_obligation_migration_codebase_equal_info_audit(self) -> None:
+        """Verify Theorem 119: Equal-information representation migration & deferred-obligation codebase audit."""
+        mon = StreamingCodebaseObligationMigrationMonitor(
+            scope_id="unit-codebase-obligation-migration-scope",
+        )
+        obs = mon.evaluate_three_phase_obligation_migration_audit(
+            "codebase-obligation-migration-eval-01",
+        )
+        self.assertEqual(obs["phase_1_migration_count"], 1)
+        self.assertEqual(obs["phase_1_obligation_count"], 0)
+        self.assertEqual(obs["phase_1_excursion_units"], 0)
+        self.assertEqual(obs["phase_1_surcharge_cents"], 5)
+        self.assertEqual(obs["phase_1_payout_cents"], 868)
+        self.assertEqual(obs["phase_1_local_green"], 1)
+        self.assertEqual(obs["phase_1_global_green"], 0)
+        self.assertEqual(obs["phase_1_defect"], -1)
+        self.assertEqual(obs["phase_1_status"], "UNCERTIFIED_REPRESENTATION_MIGRATION_CODEBASE_LGGR")
+
+        self.assertEqual(obs["phase_2_migration_count"], 0)
+        self.assertEqual(obs["phase_2_obligation_count"], 1)
+        self.assertEqual(obs["phase_2_excursion_units"], 1)
+        self.assertEqual(obs["phase_2_surcharge_cents"], 10)
+        self.assertEqual(obs["phase_2_payout_cents"], 863)
+        self.assertEqual(obs["phase_2_local_green"], 1)
+        self.assertEqual(obs["phase_2_global_green"], 0)
+        self.assertEqual(obs["phase_2_defect"], -1)
+        self.assertEqual(obs["phase_2_status"], "DEFERRED_OBLIGATION_PREFIX_EXCURSION_CODEBASE_LGGR")
+
+        self.assertEqual(obs["phase_3_migration_count"], 0)
+        self.assertEqual(obs["phase_3_obligation_count"], 0)
+        self.assertEqual(obs["phase_3_excursion_units"], 0)
+        self.assertEqual(obs["phase_3_surcharge_cents"], 0)
+        self.assertEqual(obs["phase_3_payout_cents"], 873)
+        self.assertEqual(obs["phase_3_local_green"], 1)
+        self.assertEqual(obs["phase_3_global_green"], 1)
+        self.assertEqual(obs["phase_3_defect"], 0)
+        self.assertEqual(obs["phase_3_status"], "CODEBASE_OBLIGATION_MIGRATION_COHERENT_LGGG")
+
+        receipt = mon.current_receipt()
+        self.assertEqual(receipt["status"], "CODEBASE_OBLIGATION_MIGRATION_COHERENT_LGGG")
         self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
         self.assertEqual(receipt["lggr_obstruction_count"], 2)
         self.assertEqual(receipt["lggg_coherent_count"], 1)
