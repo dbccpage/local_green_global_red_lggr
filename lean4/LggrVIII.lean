@@ -4655,5 +4655,61 @@ theorem policy_reversal_codebase_cf_vs_neg_mass_ranking_audit :
   intro cf_a cf_b n_a n_b tau_n ⟨h1, h2, h3⟩
   omega
 
+/-- 112. Tool-assisted fiber splitting vs. unassisted self-reflection in concurrent code-engineering swarms:
+    1. General 3-module 4-state diagnostic fiber-splitting and ambiguity surcharge law:
+       - When `pricing_split` emits 4-state carrier `X = {x00, x01, x10, x11}` with targets
+         `f = (0, 4, 8, 12)` under coarse 1-fiber status report `p0` (`W0 = 12`, minimax floor `6`),
+         any unassisted self-reflection prediction `c ∈ ℤ` incurs worst-case ambiguity surcharge
+         `max(|0 - c|, |12 - c|) ≥ 6`;
+       - When `tax_split` activates 1-bit probe `b1 ∈ {0, 1}` splitting `{x00, x01}` (`(0, 4)`, `W1 = 4`)
+         from `{x10, x11}` (`(8, 12)`, `W1 = 4`) while `settlement_split` keeps `b2 = 0`, any pair of
+         predictions `(c0, c1)` incurs residual ambiguity surcharge `≥ 2 > 0`;
+       - When `settlement_split` activates orthogonal 1-bit probe `b2 ∈ {0, 1}`, all 4 states split
+         into singleton fibers (`W2 = 0`), reducing worst-case ambiguity surcharge to `0`;
+    2. Concrete 3-phase 3-module fiber-splitting codebase audit on targets `(0, 4, 8, 12)`:
+       - Phase 1 (Unassisted self-reflection `b1 = (0,0,0,0), b2 = (0,0,0,0)`, midpoint `c = 6`):
+         each module passes its isolated unit test (`L_p1 = 1`), yet `W0 = 12`, `surcharge_p1 = 6 > 0`,
+         and `payout_p1 = 873 - 6 = 867 ≠ 873` (`Eg_p1 = 0`, `Δ_{E,p1} = -1`);
+       - Phase 2 (Partial 1-bit tax probe `b1 = (0,0,1,1), b2 = (0,0,0,0)`, midpoints `c0 = 2, c1 = 10`):
+         `W1 = 4 < 12 = W0` and `surcharge_p2 = 2 < 6`, yet `surcharge_p2 = 2 > 0` and
+         `payout_p2 = 873 - 2 = 871 ≠ 873` (`L_p2 = 1`, `Eg_p2 = 0`, `Δ_{E,p2} = -1`);
+       - Phase 3 (Full 2-bit tool-assisted fiber splitting `b1 = (0,0,1,1), b2 = (0,1,0,1)`):
+         `W2 = 0`, `surcharge_p3 = 0`, `payout_p3 = 873`, and `873 + 27 + 180 = 1080`
+         (`L_p3 = 1`, `Eg_p3 = 1`, `Δ_{E,p3} = 0`). -/
+theorem fiber_splitting_codebase_unassisted_reflection_and_tool_probe_audit :
+    ((∀ c : Int, (c).natAbs ≥ 6 ∨ (12 - c).natAbs ≥ 6) ∧
+     (∀ c0 c1 : Int, (c0).natAbs ≥ 2 ∨ (4 - c0).natAbs ≥ 2 ∨ (8 - c1).natAbs ≥ 2)) ∧
+    (let f00 : Int := 0; let f01 : Int := 4; let f10 : Int := 8; let f11 : Int := 12;
+     let w0 := f11 - f00;
+     let floor0 := w0 / 2;
+     let w1 := max (f01 - f00) (f11 - f10);
+     let floor1 := w1 / 2;
+     let w2 : Int := 0;
+     let surcharge_p1 : Int := 6;
+     let surcharge_p2 : Int := 2;
+     let surcharge_p3 : Int := 0;
+     let payout_p1 : Int := 873 - surcharge_p1;
+     let payout_p2 : Int := 873 - surcharge_p2;
+     let payout_p3 : Int := 873 - surcharge_p3;
+     let fee : Int := 27; let tax : Int := 180; let gross : Int := 1080;
+     let l_p1 := if surcharge_p1 = floor0 then (1 : Int) else 0;
+     let eg_p1 := if (l_p1 = 1) ∧ (surcharge_p1 = 0) ∧ (payout_p1 + fee + tax = gross) then (1 : Int) else 0;
+     let defect_p1 := eg_p1 - l_p1;
+     let l_p2 := if (surcharge_p2 = floor1) ∧ (floor1 < floor0) then (1 : Int) else 0;
+     let eg_p2 := if (l_p2 = 1) ∧ (surcharge_p2 = 0) ∧ (payout_p2 + fee + tax = gross) then (1 : Int) else 0;
+     let defect_p2 := eg_p2 - l_p2;
+     let l_p3 := if (w2 = 0) ∧ (surcharge_p3 = 0) ∧ (payout_p3 + fee + tax = gross) then (1 : Int) else 0;
+     let eg_p3 := if (l_p3 = 1) ∧ (w2 < w1) ∧ (w1 < w0) then (1 : Int) else 0;
+     let defect_p3 := eg_p3 - l_p3;
+     (w0 = 12 ∧ floor0 = 6 ∧ w1 = 4 ∧ floor1 = 2 ∧ payout_p1 = 867 ∧ payout_p2 = 871 ∧ payout_p3 = 873) ∧
+     (l_p1 = 1 ∧ eg_p1 = 0 ∧ defect_p1 = -1) ∧
+     (l_p2 = 1 ∧ eg_p2 = 0 ∧ defect_p2 = -1) ∧
+     (l_p3 = 1 ∧ eg_p3 = 1 ∧ defect_p3 = 0)) := by
+  refine ⟨⟨?_, ?_⟩, ⟨⟨by decide, by decide, by decide, by decide, by decide, by decide, by decide⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨by decide, by decide, by decide⟩⟩⟩⟩⟩
+  · intro c
+    omega
+  · intro c0 c1
+    omega
+
 
 end LggrVIII

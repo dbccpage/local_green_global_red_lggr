@@ -1,0 +1,126 @@
+{
+  "schema": "lggr.fiber_splitting_code_engineering_swarm.v1",
+  "topology": "fiber_splitting",
+  "authority_effect": "None",
+  "cases": [
+    {
+      "seed": 10900,
+      "kind": "repairable_fiber_splitting_defect",
+      "arms": [
+        {
+          "arm": "A",
+          "outcome": "blocked_unresolved",
+          "initial_local_green_global_red": true,
+          "final_local_green": 1,
+          "final_global_green": 0,
+          "final_defect": -1,
+          "final_active_fiber_width": 12,
+          "final_active_minimax_floor": 6,
+          "final_worst_case_error": 6,
+          "final_ambiguity_surcharge_cents": 6,
+          "final_status": "UNASSISTED_FIBER_CEILING_LOCKED_LGGR",
+          "waves_run": 1,
+          "escalations": 0,
+          "api_attempts": 7,
+          "cost_usd": "0.0065088279"
+        },
+        {
+          "arm": "B",
+          "outcome": "blocked_unresolved",
+          "initial_local_green_global_red": true,
+          "final_local_green": 1,
+          "final_global_green": 0,
+          "final_defect": -1,
+          "final_active_fiber_width": 4,
+          "final_active_minimax_floor": 2,
+          "final_worst_case_error": 2,
+          "final_ambiguity_surcharge_cents": 2,
+          "final_status": "PARTIAL_TOOL_RESIDUAL_FIBER_AMBIGUITY_LGGR",
+          "waves_run": 1,
+          "escalations": 0,
+          "api_attempts": 6,
+          "cost_usd": "0.0065730614"
+        },
+        {
+          "arm": "C",
+          "outcome": "completed",
+          "initial_local_green_global_red": true,
+          "final_local_green": 1,
+          "final_global_green": 1,
+          "final_defect": 0,
+          "final_active_fiber_width": 0,
+          "final_active_minimax_floor": 0,
+          "final_worst_case_error": 0,
+          "final_ambiguity_surcharge_cents": 0,
+          "final_status": "CODEBASE_TOOL_ASSISTED_FIBER_SPLIT_RESOLVED_LGGG",
+          "waves_run": 1,
+          "escalations": 0,
+          "api_attempts": 7,
+          "cost_usd": "0.0075241218"
+        }
+      ]
+    },
+    {
+      "seed": 10901,
+      "kind": "infeasible_fiber_splitting_lock",
+      "arms": [
+        {
+          "arm": "A",
+          "outcome": "safe_escalated",
+          "initial_local_green_global_red": true,
+          "final_local_green": 1,
+          "final_global_green": 0,
+          "final_defect": -1,
+          "final_active_fiber_width": 12,
+          "final_active_minimax_floor": 6,
+          "final_worst_case_error": 6,
+          "final_ambiguity_surcharge_cents": 6,
+          "final_status": "INFEASIBLE_FIBER_SPLITTING_SPECIFICATION_LGGR",
+          "waves_run": 1,
+          "escalations": 3,
+          "api_attempts": 8,
+          "cost_usd": "0.0072925948"
+        },
+        {
+          "arm": "B",
+          "outcome": "safe_escalated",
+          "initial_local_green_global_red": true,
+          "final_local_green": 1,
+          "final_global_green": 0,
+          "final_defect": -1,
+          "final_active_fiber_width": 12,
+          "final_active_minimax_floor": 6,
+          "final_worst_case_error": 6,
+          "final_ambiguity_surcharge_cents": 6,
+          "final_status": "INFEASIBLE_FIBER_SPLITTING_SPECIFICATION_LGGR",
+          "waves_run": 1,
+          "escalations": 3,
+          "api_attempts": 7,
+          "cost_usd": "0.0065126600"
+        },
+        {
+          "arm": "C",
+          "outcome": "safe_escalated",
+          "initial_local_green_global_red": true,
+          "final_local_green": 1,
+          "final_global_green": 0,
+          "final_defect": -1,
+          "final_active_fiber_width": 12,
+          "final_active_minimax_floor": 6,
+          "final_worst_case_error": 6,
+          "final_ambiguity_surcharge_cents": 6,
+          "final_status": "INFEASIBLE_FIBER_SPLITTING_SPECIFICATION_LGGR",
+          "waves_run": 1,
+          "escalations": 2,
+          "api_attempts": 8,
+          "cost_usd": "0.0065059853"
+        }
+      ]
+    }
+  ],
+  "api_attempts": 43,
+  "charged_or_reserved_usd": "0.0409172512",
+  "max_inflight_requests": 3,
+  "concurrent_waves": 14,
+  "scope": "Concurrent 3-agent fiber-splitting Python code-engineering swarm (`pricing_split` -> `tax_split` -> `settlement_split`) comparing unassisted coarse reflection (A), partial 1-bit tax tool splitting (B), and explicit LGGR 2-bit tool-assisted fiber-splitting directives (C) with full cryptographic receipts retained in the host audit log."
+}

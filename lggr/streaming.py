@@ -26515,3 +26515,533 @@ class StreamingCodebasePolicyReversalMonitor:
         return json_value({**body, "receipt_sha256": digest(body)})
 
 
+class StreamingCodebaseFiberSplittingMonitor:
+    """Online 3-module codebase tool-assisted fiber splitting vs. unassisted self-reflection monitor (Theorem 112).
+
+    Composes ``StreamingRSIFiberCeilingMonitor``, ``StreamingToolAssistedFiberSplittingMonitor``,
+    ``StreamingCodebaseInterfaceMergeMonitor``, and ``StreamingFiberMonitor`` to audit a 3-module
+    diagnostic-probe settlement codebase (``pricing_split.py``, ``tax_split.py``, ``settlement_split.py``)
+    over the 4-state carrier ``X = {'x00': 0, 'x01': 4, 'x10': 8, 'x11': 12}``:
+      - ``pricing_split`` (worker-0) emits the 4-state carrier ``state_targets = {'x00': 0, 'x01': 4, 'x10': 8, 'x11': 12}``
+        and coarse 1-fiber report ``coarse_reports = {'x00': 'status_ok', 'x01': 'status_ok', 'x10': 'status_ok', 'x11': 'status_ok'}``
+        (coarse fiber width ``W0 = 12``, minimax half-spread floor ``floor0 = 6``);
+      - ``tax_split`` (worker-1) emits the first diagnostic probe ``tax_probe_bits``:
+        unassisted ``[0, 0, 0, 0]`` leaves all 4 states in a single fiber (``W = 12``), whereas
+        activating the 1-bit probe ``[0, 0, 1, 1]`` splits ``{x00, x01}`` (``(0, 4)``, ``W1 = 4``)
+        from ``{x10, x11}`` (``(8, 12)``, ``W1 = 4``), reducing the minimax floor from ``6 -> 2``;
+      - ``settlement_split`` (worker-2) emits the second orthogonal probe ``settle_probe_bits`` and
+        per-state predictions ``state_predictions``: activating ``[0, 1, 0, 1]`` splits all 4 states
+        into singleton fibers (``W2 = 0``), allowing ``state_predictions = [0, 4, 8, 12]`` with
+        ``ambiguity_surcharge_cents = 0`` and ``merchant_payout_cents = 873`` (``873 + 27 + 180 = 1080``).
+    """
+
+    STATE_KEYS: tuple[str, ...] = ("x00", "x01", "x10", "x11")
+    CANONICAL_TARGETS: dict[str, int] = {"x00": 0, "x01": 4, "x10": 8, "x11": 12}
+
+    DEFAULT_PRICING_SOURCE = (
+        "def pricing_split(gross_cents: int, discount_bps: int, rebate_cents: int) -> dict:\n"
+        "    discount_cents = (gross_cents * discount_bps) // 10000\n"
+        "    net_cents = gross_cents - discount_cents - rebate_cents\n"
+        "    return {\n"
+        "        'gross_cents': gross_cents,\n"
+        "        'discount_cents': discount_cents,\n"
+        "        'rebate_cents': rebate_cents,\n"
+        "        'net_cents': net_cents,\n"
+        "        'state_targets': [0, 4, 8, 12],\n"
+        "        'coarse_status_tag': 'status_ok',\n"
+        "    }\n"
+    )
+
+    DEFAULT_TAX_UNASSISTED_SOURCE = (
+        "def tax_split(pricing_quote: dict, tax_rate_bps: int) -> dict:\n"
+        "    net = int(pricing_quote['net_cents'])\n"
+        "    tax_cents = (net * tax_rate_bps) // 10000\n"
+        "    return {\n"
+        "        'tax_cents': tax_cents,\n"
+        "        'gross_after_tax_cents': net + tax_cents,\n"
+        "        'tax_probe_bits': [0, 0, 0, 0],\n"
+        "    }\n"
+    )
+
+    DEFAULT_TAX_SPLIT_SOURCE = (
+        "def tax_split(pricing_quote: dict, tax_rate_bps: int) -> dict:\n"
+        "    net = int(pricing_quote['net_cents'])\n"
+        "    tax_cents = (net * tax_rate_bps) // 10000\n"
+        "    return {\n"
+        "        'tax_cents': tax_cents,\n"
+        "        'gross_after_tax_cents': net + tax_cents,\n"
+        "        'tax_probe_bits': [0, 0, 1, 1],\n"
+        "    }\n"
+    )
+
+    DEFAULT_SETTLEMENT_UNASSISTED_SOURCE = (
+        "def settlement_split(pricing_quote: dict, tax_quote: dict, fee_bps: int) -> dict:\n"
+        "    net = int(pricing_quote['net_cents'])\n"
+        "    tax = int(tax_quote['tax_cents'])\n"
+        "    fee_cents = (net * fee_bps) // 10000\n"
+        "    settle_probe_bits = [0, 0, 0, 0]\n"
+        "    state_predictions = [6, 6, 6, 6]\n"
+        "    surcharge = 6\n"
+        "    payout = net - fee_cents - surcharge\n"
+        "    return {\n"
+        "        'fee_cents': fee_cents,\n"
+        "        'merchant_payout_cents': payout,\n"
+        "        'ambiguity_surcharge_cents': surcharge,\n"
+        "        'gross_collected_cents': net + tax,\n"
+        "        'total_accounted_cents': payout + fee_cents + tax,\n"
+        "        'settle_probe_bits': settle_probe_bits,\n"
+        "        'state_predictions': state_predictions,\n"
+        "    }\n"
+    )
+
+    DEFAULT_SETTLEMENT_PARTIAL_SOURCE = (
+        "def settlement_split(pricing_quote: dict, tax_quote: dict, fee_bps: int) -> dict:\n"
+        "    net = int(pricing_quote['net_cents'])\n"
+        "    tax = int(tax_quote['tax_cents'])\n"
+        "    fee_cents = (net * fee_bps) // 10000\n"
+        "    settle_probe_bits = [0, 0, 0, 0]\n"
+        "    state_predictions = [2, 2, 10, 10]\n"
+        "    surcharge = 2\n"
+        "    payout = net - fee_cents - surcharge\n"
+        "    return {\n"
+        "        'fee_cents': fee_cents,\n"
+        "        'merchant_payout_cents': payout,\n"
+        "        'ambiguity_surcharge_cents': surcharge,\n"
+        "        'gross_collected_cents': net + tax,\n"
+        "        'total_accounted_cents': payout + fee_cents + tax,\n"
+        "        'settle_probe_bits': settle_probe_bits,\n"
+        "        'state_predictions': state_predictions,\n"
+        "    }\n"
+    )
+
+    DEFAULT_SETTLEMENT_FULL_SPLIT_SOURCE = (
+        "def settlement_split(pricing_quote: dict, tax_quote: dict, fee_bps: int) -> dict:\n"
+        "    net = int(pricing_quote['net_cents'])\n"
+        "    tax = int(tax_quote['tax_cents'])\n"
+        "    fee_cents = (net * fee_bps) // 10000\n"
+        "    settle_probe_bits = [0, 1, 0, 1]\n"
+        "    state_predictions = [0, 4, 8, 12]\n"
+        "    surcharge = 0\n"
+        "    payout = net - fee_cents - surcharge\n"
+        "    return {\n"
+        "        'fee_cents': fee_cents,\n"
+        "        'merchant_payout_cents': payout,\n"
+        "        'ambiguity_surcharge_cents': surcharge,\n"
+        "        'gross_collected_cents': net + tax,\n"
+        "        'total_accounted_cents': payout + fee_cents + tax,\n"
+        "        'settle_probe_bits': settle_probe_bits,\n"
+        "        'state_predictions': state_predictions,\n"
+        "    }\n"
+    )
+
+    def __init__(self, *, scope_id: str = "streaming-codebase-fiber-splitting-scope") -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.tool_splitting_monitor = StreamingToolAssistedFiberSplittingMonitor(
+            scope_id=f"{self.scope_id}::tool_splitting",
+        )
+        self.fiber_monitor = StreamingFiberMonitor()
+        self.evaluations: list[dict[str, Any]] = []
+        self.three_phase_audits: list[dict[str, Any]] = []
+
+    @staticmethod
+    def _exec_split_modules(module_sources: Mapping[str, str]) -> dict[str, Any]:
+        req = ("pricing_split", "tax_split", "settlement_split")
+        ns: dict[str, Any] = {}
+        for m in req:
+            if m not in module_sources:
+                raise ValidationError(f"Missing required fiber-splitting module: {m}")
+            src = text(module_sources[m], f"module_sources[{m}]")
+            mod_ns = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(m, src)
+            if m not in mod_ns or not callable(mod_ns[m]):
+                raise ValidationError(f"Module {m} did not define callable '{m}'")
+            ns[m] = mod_ns[m]
+        return ns
+
+    def evaluate_split_merge(
+        self,
+        evaluation_id: str,
+        *,
+        module_sources: Mapping[str, str],
+        local_test_results: Mapping[str, bool],
+        gross_cents: int = 1000,
+        discount_bps: int = 500,
+        rebate_cents: int = 50,
+        tax_rate_bps: int = 2000,
+        fee_bps: int = 300,
+        model_id: str = "deterministic-fixture",
+        infeasible_constraint: str | None = None,
+    ) -> dict[str, Any]:
+        eval_id = text(evaluation_id, "evaluation_id")
+        mid = text(model_id, "model_id")
+        ns = self._exec_split_modules(module_sources)
+
+        p_out = ns["pricing_split"](gross_cents, discount_bps, rebate_cents)
+        t_out = ns["tax_split"](p_out, tax_rate_bps)
+        s_out = ns["settlement_split"](p_out, t_out, fee_bps)
+
+        if (
+            not isinstance(p_out, dict)
+            or not all(k in p_out for k in ("state_targets", "coarse_status_tag"))
+            or not isinstance(t_out, dict)
+            or "tax_probe_bits" not in t_out
+            or not isinstance(s_out, dict)
+            or not all(k in s_out for k in ("settle_probe_bits", "state_predictions", "ambiguity_surcharge_cents"))
+        ):
+            raise ValidationError(
+                "Module outputs must contain state_targets, tax_probe_bits, settle_probe_bits, state_predictions, and ambiguity_surcharge_cents"
+            )
+
+        targets = [int(v) for v in p_out["state_targets"]]
+        tax_bits = [int(v) for v in t_out["tax_probe_bits"]]
+        settle_bits = [int(v) for v in s_out["settle_probe_bits"]]
+        preds = [int(v) for v in s_out["state_predictions"]]
+        if len(targets) != 4 or len(tax_bits) != 4 or len(settle_bits) != 4 or len(preds) != 4:
+            raise ValidationError("state_targets, tax_probe_bits, settle_probe_bits, and state_predictions must have length 4")
+
+        coarse_tag = str(p_out["coarse_status_tag"])
+        rsi_mon = StreamingRSIFiberCeilingMonitor(scope_id=f"{self.scope_id}::{eval_id}::rsi")
+        pred_map: dict[str, int] = {}
+        for idx, sk in enumerate(self.STATE_KEYS):
+            ref_rep = f"{coarse_tag}:b1={tax_bits[idx]}:b2={settle_bits[idx]}"
+            rsi_mon.observe_state(
+                sk,
+                coarse_tag,
+                targets[idx],
+                refined_report=ref_rep,
+            )
+            pred_map[ref_rep] = preds[idx]
+
+        gen_eval = rsi_mon.evaluate_generation(
+            f"{eval_id}::gen",
+            pred_map,
+            use_refined_report=True,
+        )
+        active_half_spread = int(rational(gen_eval["refined_half_spread_ceiling"]))
+        active_fiber_width = 2 * active_half_spread
+        worst_case_error = max(abs(targets[i] - preds[i]) for i in range(4))
+
+        surcharge_cents = int(s_out["ambiguity_surcharge_cents"])
+        net_cents = int(p_out["net_cents"])
+        tax_cents = int(t_out["tax_cents"])
+        fee_cents = int(s_out["fee_cents"])
+        payout_cents = int(s_out["merchant_payout_cents"])
+        gross_collected = int(s_out["gross_collected_cents"])
+        total_accounted = int(s_out["total_accounted_cents"])
+
+        expected_discount = (gross_cents * discount_bps) // 10000
+        expected_net = gross_cents - expected_discount - rebate_cents
+        expected_tax = (expected_net * tax_rate_bps) // 10000
+        expected_fee = (expected_net * fee_bps) // 10000
+        expected_payout = expected_net - expected_fee
+        expected_gross_collected = expected_net + expected_tax
+
+        all_local_pass = all(
+            bool(local_test_results.get(m, False))
+            for m in ("pricing_split", "tax_split", "settlement_split")
+        )
+        local_green = 1 if (all_local_pass and surcharge_cents == worst_case_error) else 0
+
+        settlement_conserved = (
+            net_cents == expected_net
+            and tax_cents == expected_tax
+            and fee_cents == expected_fee
+            and payout_cents == expected_payout
+            and surcharge_cents == 0
+            and gross_collected == expected_gross_collected
+            and total_accounted == expected_gross_collected
+            and payout_cents + fee_cents + tax_cents == expected_gross_collected
+        )
+
+        global_green = 1 if (
+            local_green == 1
+            and active_fiber_width == 0
+            and worst_case_error == 0
+            and surcharge_cents == 0
+            and settlement_conserved
+            and infeasible_constraint is None
+        ) else 0
+        defect = global_green - local_green
+
+        self.fiber_monitor.observe(
+            eval_id,
+            {
+                "local_green": local_green,
+                "coarse_status_tag": coarse_tag,
+            },
+            {
+                "global_green": global_green,
+                "active_fiber_width": active_fiber_width,
+                "worst_case_error": worst_case_error,
+                "settlement_conserved": settlement_conserved,
+            },
+        )
+
+        mismatches: list[dict[str, Any]] = []
+        if tax_bits != [0, 0, 1, 1]:
+            mismatches.append(
+                {
+                    "worker": "worker-1",
+                    "module": "tax_split",
+                    "issue": (
+                        f"tax_split emitted tax_probe_bits={tax_bits}, leaving {self.STATE_KEYS} unsplit across "
+                        "high/low regimes; set tax_probe_bits=[0, 0, 1, 1] to split {x00, x01} from {x10, x11}"
+                    ),
+                }
+            )
+        if settle_bits != [0, 1, 0, 1] or preds != targets or surcharge_cents != 0 or not settlement_conserved:
+            mismatches.append(
+                {
+                    "worker": "worker-2",
+                    "module": "settlement_split",
+                    "issue": (
+                        f"settlement_split emitted settle_probe_bits={settle_bits}, state_predictions={preds}, "
+                        f"surcharge={surcharge_cents}, active_fiber_width={active_fiber_width}; "
+                        "set settle_probe_bits=[0, 1, 0, 1], state_predictions=[0, 4, 8, 12], and surcharge=0"
+                    ),
+                }
+            )
+        if infeasible_constraint is not None:
+            mismatches.append(
+                {
+                    "worker": "all",
+                    "module": "global_contract",
+                    "issue": infeasible_constraint,
+                }
+            )
+
+        directives = self._build_role_directives(
+            tax_bits=tax_bits,
+            settle_bits=settle_bits,
+            preds=preds,
+            active_fiber_width=active_fiber_width,
+            worst_case_error=worst_case_error,
+            surcharge_cents=surcharge_cents,
+            settlement_conserved=settlement_conserved,
+            infeasible_constraint=infeasible_constraint,
+        )
+
+        if global_green == 1:
+            status = "CODEBASE_TOOL_ASSISTED_FIBER_SPLIT_RESOLVED_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        elif infeasible_constraint is not None:
+            status = "INFEASIBLE_FIBER_SPLITTING_SPECIFICATION_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif tax_bits == [0, 0, 1, 1] and active_fiber_width == 4:
+            status = "PARTIAL_TOOL_RESIDUAL_FIBER_AMBIGUITY_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "UNASSISTED_FIBER_CEILING_LOCKED_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+
+        rec = json_value(
+            {
+                "evaluation_id": eval_id,
+                "model_id": mid,
+                "state_targets": targets,
+                "tax_probe_bits": tax_bits,
+                "settle_probe_bits": settle_bits,
+                "state_predictions": preds,
+                "active_fiber_width": active_fiber_width,
+                "active_minimax_floor": active_half_spread,
+                "worst_case_error": worst_case_error,
+                "ambiguity_surcharge_cents": surcharge_cents,
+                "net_cents": net_cents,
+                "tax_cents": tax_cents,
+                "fee_cents": fee_cents,
+                "merchant_payout_cents": payout_cents,
+                "gross_collected_cents": gross_collected,
+                "total_accounted_cents": total_accounted,
+                "settlement_conserved": settlement_conserved,
+                "local_green": local_green,
+                "global_green": global_green,
+                "defect": defect,
+                "status": status,
+                "contract_status": contract_status,
+                "mismatches": mismatches,
+                "compact_role_directives": directives,
+            }
+        )
+        self.evaluations.append(rec)
+        return rec
+
+    @staticmethod
+    def _build_role_directives(
+        *,
+        tax_bits: list[int],
+        settle_bits: list[int],
+        preds: list[int],
+        active_fiber_width: int,
+        worst_case_error: int,
+        surcharge_cents: int,
+        settlement_conserved: bool,
+        infeasible_constraint: str | None,
+    ) -> dict[str, str]:
+        if infeasible_constraint is not None:
+            msg = (
+                f"INFEASIBLE CONTRACT: {infeasible_constraint}. "
+                "Call escalate(reason=...) immediately; no module patch can satisfy this contradiction."
+            )
+            return {"worker-0": msg, "worker-1": msg, "worker-2": msg}
+
+        if active_fiber_width == 0 and worst_case_error == 0 and surcharge_cents == 0 and settlement_conserved:
+            ok = (
+                "COHERENT LGGG: 2-bit tool-assisted fiber splitting (tax_probe_bits=[0, 0, 1, 1], "
+                "settle_probe_bits=[0, 1, 0, 1]) resolves all 4 states into singleton fibers (W2=0, error=0, "
+                "873 + 27 + 180 = 1080)."
+            )
+            return {"worker-0": ok, "worker-1": ok, "worker-2": ok}
+
+        d0 = (
+            "HOLD ANCHOR: pricing_split.py is fixed at state_targets=[0, 4, 8, 12] and coarse_status_tag='status_ok'. "
+            "Submit your current pricing_split.py source_code unchanged via submit_module_patch."
+        )
+        if tax_bits != [0, 0, 1, 1]:
+            d1 = (
+                f"REPAIR TAX_SPLIT: tax_split.py emitted tax_probe_bits={tax_bits} (fiber width W={active_fiber_width}). "
+                "Set 'tax_probe_bits': [0, 0, 1, 1] to split {x00, x01} from {x10, x11}."
+            )
+        else:
+            d1 = "HOLD TAX_SPLIT: tax_split.py emits 1-bit probe tax_probe_bits=[0, 0, 1, 1]."
+
+        if settle_bits != [0, 1, 0, 1] or preds != [0, 4, 8, 12] or surcharge_cents != 0 or not settlement_conserved:
+            d2 = (
+                f"REPAIR SETTLEMENT_SPLIT: settlement_split.py emitted settle_probe_bits={settle_bits}, "
+                f"state_predictions={preds}, surcharge={surcharge_cents} (worst_case_error={worst_case_error}). "
+                "Set settle_probe_bits=[0, 1, 0, 1], state_predictions=[0, 4, 8, 12], and surcharge=0 "
+                "so merchant_payout_cents = 873."
+            )
+        else:
+            d2 = "HOLD SETTLEMENT_SPLIT: settlement_split.py emits settle_probe_bits=[0, 1, 0, 1], state_predictions=[0, 4, 8, 12], and surcharge=0."
+
+        return {"worker-0": d0, "worker-1": d1, "worker-2": d2}
+
+    def evaluate_three_phase_fiber_splitting_audit(
+        self,
+        audit_id: str = "codebase-fiber-splitting-3phase",
+        *,
+        model_id: str = "deterministic-fixture",
+    ) -> dict[str, Any]:
+        aid = text(audit_id, "audit_id")
+        mid = text(model_id, "model_id")
+        local_ok = {"pricing_split": True, "tax_split": True, "settlement_split": True}
+
+        p1 = self.evaluate_split_merge(
+            f"{aid}::phase1_unassisted_reflection",
+            module_sources={
+                "pricing_split": self.DEFAULT_PRICING_SOURCE,
+                "tax_split": self.DEFAULT_TAX_UNASSISTED_SOURCE,
+                "settlement_split": self.DEFAULT_SETTLEMENT_UNASSISTED_SOURCE,
+            },
+            local_test_results=local_ok,
+            model_id=mid,
+        )
+        p2 = self.evaluate_split_merge(
+            f"{aid}::phase2_partial_1bit_tax_probe",
+            module_sources={
+                "pricing_split": self.DEFAULT_PRICING_SOURCE,
+                "tax_split": self.DEFAULT_TAX_SPLIT_SOURCE,
+                "settlement_split": self.DEFAULT_SETTLEMENT_PARTIAL_SOURCE,
+            },
+            local_test_results=local_ok,
+            model_id=mid,
+        )
+        p3 = self.evaluate_split_merge(
+            f"{aid}::phase3_full_2bit_tool_split",
+            module_sources={
+                "pricing_split": self.DEFAULT_PRICING_SOURCE,
+                "tax_split": self.DEFAULT_TAX_SPLIT_SOURCE,
+                "settlement_split": self.DEFAULT_SETTLEMENT_FULL_SPLIT_SOURCE,
+            },
+            local_test_results=local_ok,
+            model_id=mid,
+        )
+
+        states = [
+            {
+                "state_id": sk,
+                "target_value": self.CANONICAL_TARGETS[sk],
+                "coarse_report": "status_ok",
+                "partial_tool_report": f"status_ok:b1={[0, 0, 1, 1][i]}",
+                "full_tool_report": f"status_ok:b1={[0, 0, 1, 1][i]}:b2={[0, 1, 0, 1][i]}",
+            }
+            for i, sk in enumerate(self.STATE_KEYS)
+        ]
+        traj_rec = self.tool_splitting_monitor.evaluate_trajectory(
+            f"{aid}::traj",
+            states,
+            unassisted_predictions={"status_ok": 6},
+            partial_tool_predictions={"status_ok:b1=0": 2, "status_ok:b1=1": 10},
+            full_tool_predictions={
+                "status_ok:b1=0:b2=0": 0,
+                "status_ok:b1=0:b2=1": 4,
+                "status_ok:b1=1:b2=0": 8,
+                "status_ok:b1=1:b2=1": 12,
+            },
+        )
+
+        audit_rec = json_value(
+            {
+                "audit_id": aid,
+                "model_id": mid,
+                "phase_1_fiber_width": p1["active_fiber_width"],
+                "phase_1_minimax_floor": p1["active_minimax_floor"],
+                "phase_1_worst_case_error": p1["worst_case_error"],
+                "phase_1_surcharge_cents": p1["ambiguity_surcharge_cents"],
+                "phase_1_payout_cents": p1["merchant_payout_cents"],
+                "phase_1_local_green": p1["local_green"],
+                "phase_1_global_green": p1["global_green"],
+                "phase_1_defect": p1["defect"],
+                "phase_1_status": p1["status"],
+                "phase_2_fiber_width": p2["active_fiber_width"],
+                "phase_2_minimax_floor": p2["active_minimax_floor"],
+                "phase_2_worst_case_error": p2["worst_case_error"],
+                "phase_2_surcharge_cents": p2["ambiguity_surcharge_cents"],
+                "phase_2_payout_cents": p2["merchant_payout_cents"],
+                "phase_2_local_green": p2["local_green"],
+                "phase_2_global_green": p2["global_green"],
+                "phase_2_defect": p2["defect"],
+                "phase_2_status": p2["status"],
+                "phase_3_fiber_width": p3["active_fiber_width"],
+                "phase_3_minimax_floor": p3["active_minimax_floor"],
+                "phase_3_worst_case_error": p3["worst_case_error"],
+                "phase_3_surcharge_cents": p3["ambiguity_surcharge_cents"],
+                "phase_3_payout_cents": p3["merchant_payout_cents"],
+                "phase_3_local_green": p3["local_green"],
+                "phase_3_global_green": p3["global_green"],
+                "phase_3_defect": p3["defect"],
+                "phase_3_status": p3["status"],
+                "trajectory_audit": traj_rec,
+            }
+        )
+        self.three_phase_audits.append(audit_rec)
+        return audit_rec
+
+    def current_receipt(self) -> dict[str, Any]:
+        if not self.evaluations:
+            raise ValidationError("at least one codebase fiber-splitting evaluation must be recorded")
+        n = len(self.evaluations)
+        lggr_count = sum(1 for e in self.evaluations if e["defect"] == -1)
+        lggg_count = sum(1 for e in self.evaluations if e["global_green"] == 1)
+        last = self.evaluations[-1]
+
+        body: dict[str, Any] = {
+            "schema": "lggr.online_codebase_fiber_splitting.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": last["status"],
+            "contract_status": last["contract_status"],
+            "evaluation_count": n,
+            "lggr_obstruction_count": lggr_count,
+            "lggg_coherent_count": lggg_count,
+            "tool_splitting_receipt": (
+                self.tool_splitting_monitor.current_receipt()
+                if self.tool_splitting_monitor.evaluations
+                else None
+            ),
+            "fiber_receipt": self.fiber_monitor.get_receipt(),
+            "three_phase_audits": self.three_phase_audits,
+            "evaluations": self.evaluations,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+

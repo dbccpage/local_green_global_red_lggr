@@ -30,6 +30,7 @@ from lggr.streaming import (
     StreamingCodebaseCatalystEvolutionMonitor,
     StreamingCodebaseCoalitionalMonitor,
     StreamingCodebaseContextualSheafMonitor,
+    StreamingCodebaseFiberSplittingMonitor,
     StreamingCodebaseInterfaceMergeMonitor,
     StreamingCodebaseJacobianSoundnessMonitor,
     StreamingCodebaseKInductionMonitor,
@@ -62,6 +63,7 @@ from .domain import (
     REGGE_WORKER_MODULES,
     REPLAY_WORKER_MODULES,
     SHEAF_WORKER_MODULES,
+    SPLIT_WORKER_MODULES,
     STOP_WORKER_MODULES,
     WIN_WORKER_MODULES,
     WORKER_MODULES,
@@ -72,6 +74,7 @@ from .domain import (
     CodeWorkspace,
     ContextualSheafCodeWorkspace,
     DiamondCodeWorkspace,
+    FiberSplittingCodeWorkspace,
     JacobianCodeWorkspace,
     KInductionCodeWorkspace,
     LeaseOverlapCodeWorkspace,
@@ -99,6 +102,7 @@ from .domain import (
     regge_fixture,
     replay_fixture,
     sheaf_fixture,
+    split_fixture,
     stop_fixture,
     win_fixture,
 )
@@ -3997,6 +4001,235 @@ def policy_campaign(
     return summary
 
 
+def split_system_prompt(worker: str, arm: str) -> str:
+    mod_name = SPLIT_WORKER_MODULES[worker]
+    return (
+        f"You are concurrent code-engineering agent `{worker}`, sole owner of `{mod_name}.py` "
+        f"in a 3-module diagnostic-probe settlement codebase (`pricing_split.py` -> `tax_split.py` -> `settlement_split.py`) (Arm `{arm}`). "
+        "First call `inspect_workspace`. "
+        "If `infeasible_constraint` is non-null, immediately call `escalate` with a concise reason. "
+        "Otherwise, follow `merge_gate_feedback` for your role: if your action is `HOLD`, "
+        "submit your existing `source_code` unchanged via `submit_module_patch`. "
+        "If your action is `PATCH_TAX_1BIT_PROBE` or `PATCH_MODULE` on `tax_split.py`, update `tax_split.py` "
+        "so `'tax_probe_bits': [0, 0, 1, 1]`. "
+        "If your action is `PATCH_SETTLEMENT_PARTIAL_MIDPOINT` on `settlement_split.py`, update `settlement_split.py` "
+        "so `settle_probe_bits = [0, 0, 0, 0]`, `state_predictions = [2, 2, 10, 10]`, and `surcharge = 2`. "
+        "If your action is `PATCH_MODULE` on `settlement_split.py`, update `settlement_split.py` so "
+        "`settle_probe_bits = [0, 1, 0, 1]`, `state_predictions = [0, 4, 8, 12]`, and `surcharge = 0` "
+        "(`payout = net - fee_cents - surcharge = 873`). "
+        "Do NOT call `escalate` when `infeasible_constraint` is null. Output ONLY tool calls with zero prose."
+    )
+
+
+def split_merge_gate(
+    events: Events,
+    ws: FiberSplittingCodeWorkspace,
+    arm: str,
+    wave_label: str,
+) -> tuple[dict[str, Any], dict[str, dict[str, Any]]]:
+    monitor = StreamingCodebaseFiberSplittingMonitor(
+        scope_id=f"split-swarm-seed-{ws.state['seed']}-arm-{arm}-{wave_label}",
+    )
+    verdicts = ws.local_test_verdicts()
+    eval_res = monitor.evaluate_split_merge(
+        f"seed-{ws.state['seed']}-arm-{arm}-{wave_label}",
+        module_sources=ws.state["sources"],
+        local_test_results=verdicts,
+        infeasible_constraint=ws.state["infeasible_constraint"],
+    )
+    receipt = monitor.current_receipt()
+    events.emit(
+        "gate",
+        {
+            "arm": arm,
+            "wave": wave_label,
+            "local_green": eval_res["local_green"],
+            "global_green": eval_res["global_green"],
+            "defect": eval_res["defect"],
+            "active_fiber_width": eval_res["active_fiber_width"],
+            "active_minimax_floor": eval_res["active_minimax_floor"],
+            "worst_case_error": eval_res["worst_case_error"],
+            "ambiguity_surcharge_cents": eval_res["ambiguity_surcharge_cents"],
+            "status": eval_res["status"],
+            "receipt_sha256": receipt["receipt_sha256"],
+        },
+    )
+
+    per_worker_fb: dict[str, dict[str, Any]] = {}
+    for w, mod_name in SPLIT_WORKER_MODULES.items():
+        if ws.state["infeasible_constraint"] is not None:
+            per_worker_fb[w] = {
+                "arm": arm,
+                "wave": wave_label,
+                "action_required": "ESCALATE_INFEASIBLE",
+                "infeasible_constraint": ws.state["infeasible_constraint"],
+                "compact_role_directive": eval_res["compact_role_directives"][w],
+            }
+            continue
+
+        if arm == "A":
+            per_worker_fb[w] = {
+                "arm": arm,
+                "wave": wave_label,
+                "action_required": "HOLD",
+                "local_unit_test_passed": verdicts.get(mod_name, False),
+                "note": "Unassisted coarse reflection gate passed (surcharge == minimax floor 6); submit current source_code unchanged.",
+            }
+        elif arm == "B":
+            if w == "worker-1" and eval_res["tax_probe_bits"] != [0, 0, 1, 1]:
+                per_worker_fb[w] = {
+                    "arm": arm,
+                    "wave": wave_label,
+                    "action_required": "PATCH_TAX_1BIT_PROBE",
+                    "compact_role_directive": (
+                        "Update tax_split.py so 'tax_probe_bits' is [0, 0, 1, 1] "
+                        "(splitting {x00, x01} from {x10, x11})."
+                    ),
+                }
+            elif w == "worker-2" and eval_res["state_predictions"] != [2, 2, 10, 10]:
+                per_worker_fb[w] = {
+                    "arm": arm,
+                    "wave": wave_label,
+                    "action_required": "PATCH_SETTLEMENT_PARTIAL_MIDPOINT",
+                    "compact_role_directive": (
+                        "Update settlement_split.py so settle_probe_bits = [0, 0, 0, 0], "
+                        "state_predictions = [2, 2, 10, 10], and surcharge = 2."
+                    ),
+                }
+            else:
+                per_worker_fb[w] = {
+                    "arm": arm,
+                    "wave": wave_label,
+                    "action_required": "HOLD",
+                    "note": "Submit current source_code unchanged in Arm B.",
+                }
+        else:
+            needs_patch = (
+                (w == "worker-1" and eval_res["tax_probe_bits"] != [0, 0, 1, 1])
+                or (
+                    w == "worker-2"
+                    and (
+                        eval_res["settle_probe_bits"] != [0, 1, 0, 1]
+                        or eval_res["state_predictions"] != [0, 4, 8, 12]
+                        or eval_res["ambiguity_surcharge_cents"] != 0
+                        or not eval_res["settlement_conserved"]
+                    )
+                )
+            )
+            per_worker_fb[w] = {
+                "arm": arm,
+                "wave": wave_label,
+                "action_required": "PATCH_MODULE" if needs_patch else "HOLD",
+                "active_fiber_width": eval_res["active_fiber_width"],
+                "worst_case_error": eval_res["worst_case_error"],
+                "ambiguity_surcharge_cents": eval_res["ambiguity_surcharge_cents"],
+                "compact_role_directive": eval_res["compact_role_directives"][w],
+            }
+
+    return eval_res, per_worker_fb
+
+
+def split_campaign(
+    client: CodeBatchClient,
+    events: Events,
+    config: dict[str, Any],
+) -> dict[str, Any]:
+    cases: list[dict[str, Any]] = []
+    workers = list(SPLIT_WORKER_MODULES.keys())
+    for seed in config["seeds"]:
+        base_state = split_fixture(seed)
+        arm_results: list[dict[str, Any]] = []
+        for arm in ("A", "B", "C"):
+            ws = FiberSplittingCodeWorkspace(base_state)
+            arm_start_calls = client.calls
+            arm_start_spent = client.spent
+
+            eval_0, per_worker_fb = split_merge_gate(events, ws, arm, "wave-0")
+            initial_lggr = (eval_0["local_green"] == 1) and (eval_0["global_green"] == 0)
+
+            histories: dict[str, list[dict[str, Any]]] = {}
+            for w in workers:
+                mod_name = SPLIT_WORKER_MODULES[w]
+                histories[w] = [
+                    {"role": "system", "content": split_system_prompt(w, arm)},
+                    {
+                        "role": "user",
+                        "content": json.dumps(
+                            {
+                                "seed": seed,
+                                "arm": arm,
+                                "wave": 1,
+                                "owned_module": f"{mod_name}.py",
+                                "merge_gate_feedback": per_worker_fb[w],
+                                "instruction": (
+                                    "First call `inspect_workspace`. Then follow `merge_gate_feedback`: "
+                                    "if `infeasible_constraint` is non-null, call `escalate`; otherwise "
+                                    "call `submit_module_patch` with the required `source_code`."
+                                ),
+                            },
+                            sort_keys=True,
+                        ),
+                    },
+                ]
+
+            round_turns(client, events, ws, histories, workers, per_worker_fb)
+            eval_1, _ = split_merge_gate(events, ws, arm, "wave-1")
+
+            if ws.state["infeasible_constraint"] is not None:
+                outcome = "safe_escalated" if len(ws.state["escalations"]) >= 1 else "blocked_unresolved"
+            elif eval_1["global_green"] == 1 and eval_1["defect"] == 0:
+                outcome = "completed"
+            else:
+                outcome = "blocked_unresolved"
+
+            arm_summary = {
+                "arm": arm,
+                "outcome": outcome,
+                "initial_local_green_global_red": initial_lggr,
+                "final_local_green": eval_1["local_green"],
+                "final_global_green": eval_1["global_green"],
+                "final_defect": eval_1["defect"],
+                "final_active_fiber_width": eval_1["active_fiber_width"],
+                "final_active_minimax_floor": eval_1["active_minimax_floor"],
+                "final_worst_case_error": eval_1["worst_case_error"],
+                "final_ambiguity_surcharge_cents": eval_1["ambiguity_surcharge_cents"],
+                "final_status": eval_1["status"],
+                "waves_run": 1,
+                "escalations": len(ws.state["escalations"]),
+                "api_attempts": client.calls - arm_start_calls,
+                "cost_usd": str(client.spent - arm_start_spent),
+            }
+            events.emit("arm", {"seed": seed, **arm_summary})
+            arm_results.append(arm_summary)
+
+        cases.append(
+            {
+                "seed": seed,
+                "kind": base_state["kind"],
+                "arms": arm_results,
+            }
+        )
+
+    summary = {
+        "schema": "lggr.fiber_splitting_code_engineering_swarm.v1",
+        "topology": "fiber_splitting",
+        "authority_effect": "None",
+        "cases": cases,
+        "api_attempts": client.calls,
+        "charged_or_reserved_usd": str(client.spent),
+        "max_inflight_requests": client.max_inflight,
+        "concurrent_waves": client.concurrent_waves,
+        "scope": (
+            "Concurrent 3-agent fiber-splitting Python code-engineering swarm (`pricing_split` -> "
+            "`tax_split` -> `settlement_split`) comparing unassisted coarse reflection (A), "
+            "partial 1-bit tax tool splitting (B), and explicit LGGR 2-bit tool-assisted "
+            "fiber-splitting directives (C) with full cryptographic receipts retained in the host audit log."
+        ),
+    }
+    events.emit("summary", summary)
+    return summary
+
+
 def replay(path: str | Path) -> dict[str, Any]:
     records = [json.loads(line) for line in Path(path).read_text(encoding="utf-8").splitlines()]
     metadata = records[0]["data"]
@@ -4041,6 +4274,8 @@ def replay(path: str | Path) -> dict[str, Any]:
             summary = gram_campaign(client, events, config)
         elif config.get("topology") == "policy_reversal":
             summary = policy_campaign(client, events, config)
+        elif config.get("topology") == "fiber_splitting":
+            summary = split_campaign(client, events, config)
         else:
             summary = campaign(client, events, config)
     except RunStopped as error:
@@ -4083,6 +4318,7 @@ def main() -> None:
             "contextuality",
             "gram_dropout",
             "policy_reversal",
+            "fiber_splitting",
         ],
         default="linear",
     )
@@ -4142,6 +4378,8 @@ def main() -> None:
         seeds = [10700, 10701, 10702]
     elif args.topology == "policy_reversal":
         seeds = [10800, 10801, 10802]
+    elif args.topology == "fiber_splitting":
+        seeds = [10900, 10901, 10902]
     else:
         seeds = [6100, 6101, 6102]
     if args.topology == "diamond":
@@ -4332,6 +4570,17 @@ def main() -> None:
         events.emit("start", {"config": config})
         client = CodeBatchClient(events, args.budget)
         summary = policy_campaign(client, events, config)
+    elif args.topology == "fiber_splitting":
+        config = {
+            "topology": "fiber_splitting",
+            "seeds": seeds,
+            "models": CODE_SWARM_MODELS,
+            "budget_usd": str(args.budget),
+        }
+        events = Events(events_path)
+        events.emit("start", {"config": config})
+        client = CodeBatchClient(events, args.budget)
+        summary = split_campaign(client, events, config)
     else:
         config = {
             "seeds": seeds,

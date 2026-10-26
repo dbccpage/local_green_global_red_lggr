@@ -77,6 +77,11 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     SHEAF_SETTLEMENT_RECONCILED_SOURCE,
     SHEAF_TAX_CONTEXTUAL_SOURCE,
     SHEAF_TAX_RECONCILED_SOURCE,
+    SPLIT_PRICING_ANCHOR_SRC,
+    SPLIT_SETTLEMENT_FULL_SRC,
+    SPLIT_SETTLEMENT_UNASSISTED_SRC,
+    SPLIT_TAX_1BIT_SRC,
+    SPLIT_TAX_UNASSISTED_SRC,
     BoundaryQuorumCodeWorkspace,
     CPTPChannelCodeWorkspace,
     CatalystCodeWorkspace,
@@ -84,6 +89,7 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     CodeWorkspace,
     ContextualSheafCodeWorkspace,
     DiamondCodeWorkspace,
+    FiberSplittingCodeWorkspace,
     JacobianCodeWorkspace,
     KInductionCodeWorkspace,
     LeaseOverlapCodeWorkspace,
@@ -125,9 +131,11 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     run_regge_local_unit_tests,
     run_replay_local_unit_tests,
     run_sheaf_local_unit_tests,
+    run_split_local_unit_tests,
     run_stop_local_unit_tests,
     run_win_local_unit_tests,
     sheaf_fixture,
+    split_fixture,
     stop_fixture,
     win_fixture,
 )
@@ -150,6 +158,7 @@ from experiments.concurrent_code_engineering_swarm.runner import (
     replay,
     replay_campaign,
     sheaf_campaign,
+    split_campaign,
     stop_campaign,
     win_campaign,
 )
@@ -160,6 +169,7 @@ from lggr.streaming import (
     StreamingCodebaseCatalystEvolutionMonitor,
     StreamingCodebaseCoalitionalMonitor,
     StreamingCodebaseContextualSheafMonitor,
+    StreamingCodebaseFiberSplittingMonitor,
     StreamingCodebaseInterfaceMergeMonitor,
     StreamingCodebaseJacobianSoundnessMonitor,
     StreamingCodebaseKInductionMonitor,
@@ -3301,6 +3311,219 @@ class ConcurrentCodeEngineeringSwarmTests(unittest.TestCase):
         if policy_events.exists() and policy_summary.exists():
             replayed = replay(policy_events)
             self.assertEqual(replayed["schema"], "lggr.policy_reversal_code_engineering_swarm.v1")
+            self.assertEqual(len(replayed["cases"]), 2)
+
+    def test_fiber_splitting_initial_fixture_is_local_green_global_red(self) -> None:
+        state = split_fixture(10900)
+        ws = FiberSplittingCodeWorkspace(state)
+        verdicts = ws.local_test_verdicts()
+        self.assertEqual(
+            verdicts,
+            {"pricing_split": True, "tax_split": True, "settlement_split": True},
+        )
+
+        mon = StreamingCodebaseFiberSplittingMonitor(scope_id="test-split-swarm")
+        res0 = mon.evaluate_split_merge(
+            "wave-0",
+            module_sources=ws.state["sources"],
+            local_test_results=verdicts,
+        )
+        self.assertEqual(res0["local_green"], 1)
+        self.assertEqual(res0["global_green"], 0)
+        self.assertEqual(res0["defect"], -1)
+        self.assertEqual(res0["active_fiber_width"], 12)
+        self.assertEqual(res0["active_minimax_floor"], 6)
+        self.assertEqual(res0["worst_case_error"], 6)
+        self.assertEqual(res0["ambiguity_surcharge_cents"], 6)
+        self.assertEqual(res0["merchant_payout_cents"], 867)
+
+        # Partial repair: tax_split adds 1-bit probe b_1(x), settlement_split still unassisted
+        p1 = ws.tool("worker-1", "submit_module_patch", {"source_code": SPLIT_TAX_1BIT_SRC})
+        self.assertTrue(p1["accepted"])
+        res1 = mon.evaluate_split_merge(
+            "wave-1-partial",
+            module_sources=ws.state["sources"],
+            local_test_results=ws.local_test_verdicts(),
+        )
+        self.assertEqual(res1["local_green"], 1)
+        self.assertEqual(res1["global_green"], 0)
+        self.assertEqual(res1["defect"], -1)
+        self.assertEqual(res1["active_fiber_width"], 4)
+        self.assertEqual(res1["active_minimax_floor"], 2)
+
+        # Full repair: settlement_split adds 2nd-bit probe b_2(x) and resolves all 4 states into singletons
+        p2 = ws.tool("worker-2", "submit_module_patch", {"source_code": SPLIT_SETTLEMENT_FULL_SRC})
+        self.assertTrue(p2["accepted"])
+        res2 = mon.evaluate_split_merge(
+            "wave-1-repaired",
+            module_sources=ws.state["sources"],
+            local_test_results=ws.local_test_verdicts(),
+        )
+        self.assertEqual(res2["local_green"], 1)
+        self.assertEqual(res2["global_green"], 1)
+        self.assertEqual(res2["defect"], 0)
+        self.assertEqual(res2["active_fiber_width"], 0)
+        self.assertEqual(res2["active_minimax_floor"], 0)
+        self.assertEqual(res2["worst_case_error"], 0)
+        self.assertEqual(res2["ambiguity_surcharge_cents"], 0)
+        self.assertEqual(res2["merchant_payout_cents"], 873)
+
+    def test_fiber_splitting_sandbox_rejects_imports_and_failing_patches(self) -> None:
+        bad_import = run_split_local_unit_tests(
+            "tax_split",
+            "import os\ndef tax_split(pricing_quote: dict, tax_rate_bps: int) -> dict:\n    return {}\n",
+        )
+        self.assertFalse(bad_import["passed"])
+        self.assertIn("forbidden_import", bad_import["error"])
+
+        ws = FiberSplittingCodeWorkspace(split_fixture(10901))
+        locked_res = ws.tool("worker-1", "submit_module_patch", {"source_code": SPLIT_TAX_1BIT_SRC})
+        self.assertFalse(locked_res["accepted"])
+        self.assertIn("locked", locked_res["error"])
+
+    def test_fiber_splitting_concurrent_campaign_and_tamper_evident_replay(self) -> None:
+        def stub_split_transport(payload: dict) -> dict:
+            messages = payload["messages"]
+            sys_prompt = messages[0]["content"]
+            worker = "worker-0"
+            for w in ("worker-0", "worker-1", "worker-2"):
+                if f"`{w}`" in sys_prompt:
+                    worker = w
+                    break
+            has_tool_resp = any(m.get("role") == "tool" for m in messages)
+            if not has_tool_resp:
+                tool_call = {
+                    "id": f"call_inspect_{worker}",
+                    "type": "function",
+                    "function": {"name": "inspect_workspace", "arguments": "{}"},
+                }
+            else:
+                tool_msg = next(m for m in reversed(messages) if m.get("role") == "tool")
+                inspected = json.loads(tool_msg["content"])
+                fb = inspected.get("merge_gate_feedback", {})
+                if inspected.get("infeasible_constraint") is not None:
+                    tool_call = {
+                        "id": f"call_esc_{worker}",
+                        "type": "function",
+                        "function": {
+                            "name": "escalate",
+                            "arguments": json.dumps(
+                                {"reason": "Tax and Settlement modules are hardware-locked to unassisted reflection without external probe bits."}
+                            ),
+                        },
+                    }
+                elif fb.get("arm") == "A":
+                    tool_call = {
+                        "id": f"call_hold_{worker}",
+                        "type": "function",
+                        "function": {
+                            "name": "submit_module_patch",
+                            "arguments": json.dumps({"source_code": inspected["source_code"]}),
+                        },
+                    }
+                elif fb.get("arm") == "B":
+                    if worker == "worker-1":
+                        tool_call = {
+                            "id": f"call_patch_{worker}",
+                            "type": "function",
+                            "function": {
+                                "name": "submit_module_patch",
+                                "arguments": json.dumps({"source_code": SPLIT_TAX_1BIT_SRC}),
+                            },
+                        }
+                    else:
+                        tool_call = {
+                            "id": f"call_hold_{worker}",
+                            "type": "function",
+                            "function": {
+                                "name": "submit_module_patch",
+                                "arguments": json.dumps({"source_code": inspected["source_code"]}),
+                            },
+                        }
+                else:
+                    canonical_map = {
+                        "worker-0": SPLIT_PRICING_ANCHOR_SRC,
+                        "worker-1": SPLIT_TAX_1BIT_SRC,
+                        "worker-2": SPLIT_SETTLEMENT_FULL_SRC,
+                    }
+                    tool_call = {
+                        "id": f"call_patch_{worker}",
+                        "type": "function",
+                        "function": {
+                            "name": "submit_module_patch",
+                            "arguments": json.dumps({"source_code": canonical_map[worker]}),
+                        },
+                    }
+            return {
+                "response": {
+                    "model": payload["model"],
+                    "usage": {
+                        "prompt_tokens": 100,
+                        "completion_tokens": 50,
+                        "total_tokens": 150,
+                        "cost": 0.0001,
+                    },
+                    "choices": [
+                        {
+                            "finish_reason": "tool_calls",
+                            "message": {
+                                "role": "assistant",
+                                "tool_calls": [tool_call],
+                            },
+                        }
+                    ],
+                },
+                "started_ns": 10,
+                "finished_ns": 20,
+            }
+
+        with tempfile.TemporaryDirectory() as td:
+            events_path = Path(td) / "events.jsonl"
+            events = Events(events_path)
+            config = {
+                "topology": "fiber_splitting",
+                "seeds": [10900, 10901],
+                "models": CODE_SWARM_MODELS,
+                "budget_usd": "0.50",
+            }
+            events.emit("start", {"config": config})
+            client = CodeBatchClient(events, "0.50", transport=stub_split_transport)
+            summary = split_campaign(client, events, config)
+            (Path(td) / "summary.json").write_text(
+                json.dumps(summary, indent=2) + "\n", encoding="utf-8"
+            )
+
+            replayed = replay(events_path)
+            self.assertEqual(replayed, summary)
+            self.assertEqual(replayed["schema"], "lggr.fiber_splitting_code_engineering_swarm.v1")
+            self.assertEqual(replayed["max_inflight_requests"], 3)
+
+            records = deepcopy(events.records)
+            gate_rec = next(r["data"] for r in records if r["kind"] == "gate")
+            gate_rec["active_fiber_width"] = int(gate_rec["active_fiber_width"]) + 1
+            for i, r in enumerate(records):
+                r["previous"] = records[i - 1]["sha256"] if i else None
+                r["sha256"] = event_digest({k: v for k, v in r.items() if k != "sha256"})
+            events_path.write_text(
+                "\n".join(json.dumps(r, sort_keys=True) for r in records) + "\n",
+                encoding="utf-8",
+            )
+            with self.assertRaises(ValueError):
+                replay(events_path)
+
+    def test_live_fiber_splitting_pilot_evidence_replay_if_present(self) -> None:
+        split_events = (
+            Path(__file__).resolve().parents[1]
+            / "experiments"
+            / "concurrent_code_engineering_swarm"
+            / "evidence"
+            / "fiber_splitting_pilot_run"
+            / "events.jsonl"
+        )
+        split_summary = split_events.with_name("summary.json")
+        if split_events.exists() and split_summary.exists():
+            replayed = replay(split_events)
+            self.assertEqual(replayed["schema"], "lggr.fiber_splitting_code_engineering_swarm.v1")
             self.assertEqual(len(replayed["cases"]), 2)
 
 
