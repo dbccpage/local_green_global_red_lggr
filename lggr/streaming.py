@@ -10,7 +10,7 @@ import ast
 from collections import deque
 from fractions import Fraction
 import json
-from typing import Any, Iterable, Mapping, Sequence
+from typing import Any, Callable, Iterable, Mapping, Sequence
 
 from .common import (
     ValidationError,
