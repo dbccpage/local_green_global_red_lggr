@@ -25,6 +25,7 @@ from experiments.live_five_agent_swarm.client import (
     response_message,
 )
 from lggr.streaming import (
+    StreamingCodebaseBoundaryQuorumMonitor,
     StreamingCodebaseCPTPChannelMonitor,
     StreamingCodebaseCatalystEvolutionMonitor,
     StreamingCodebaseCoalitionalMonitor,
@@ -50,11 +51,13 @@ from .domain import (
     JACOBIAN_WORKER_MODULES,
     KINDUCTION_WORKER_MODULES,
     MV_WORKER_MODULES,
+    QUORUM_WORKER_MODULES,
     REGGE_WORKER_MODULES,
     REPLAY_WORKER_MODULES,
     STOP_WORKER_MODULES,
     WIN_WORKER_MODULES,
     WORKER_MODULES,
+    BoundaryQuorumCodeWorkspace,
     CPTPChannelCodeWorkspace,
     CatalystCodeWorkspace,
     CoalitionalCodeWorkspace,
@@ -77,6 +80,7 @@ from .domain import (
     jacobian_fixture,
     kinduction_fixture,
     mv_fixture,
+    quorum_fixture,
     regge_fixture,
     replay_fixture,
     stop_fixture,
@@ -2913,6 +2917,216 @@ def jacobian_campaign(
     return summary
 
 
+def quorum_system_prompt(worker: str, arm: str) -> str:
+    module_name = QUORUM_WORKER_MODULES[worker]
+    return (
+        f"You are concurrent software engineering agent {worker}, owner of `{module_name}.py` "
+        f"(Arm {arm}) in a 3-module boundary-quorum settlement pipeline (`pricing_quorum.py` -> "
+        "`tax_quorum.py` -> `settlement_quorum.py`) audited under `StreamingBoundaryQuorumInterfaceMonitor` "
+        "and `StreamingThresholdGovernanceMonitor` for full boundary payload alignment and strict product governance.\n"
+        "Always start by calling `inspect_workspace` with `{}`. Then call `submit_module_patch` with "
+        "valid Python source code for your owned module, or call `escalate` if `infeasible_constraint` "
+        "is non-null and locks incompatible quorum governance shims."
+    )
+
+
+def quorum_merge_gate(
+    events: Events,
+    workspace: BoundaryQuorumCodeWorkspace,
+    arm: str,
+    step_tag: str,
+) -> tuple[dict[str, Any], dict[str, dict[str, Any]]]:
+    monitor = StreamingCodebaseBoundaryQuorumMonitor(
+        scope_id=f"swarm-quorum-{workspace.state['seed']}-{arm}-{step_tag}"
+    )
+    local_results = workspace.local_verdicts()
+    eval_rec = monitor.evaluate_codebase_quorum(
+        f"eval-{arm}-{step_tag}",
+        sources=workspace.state["sources"],
+        local_test_results=local_results,
+        infeasible_constraint=workspace.state["infeasible_constraint"],
+    )
+    events.emit(
+        "gate",
+        {
+            "seed": workspace.state["seed"],
+            "arm": arm,
+            "step_tag": step_tag,
+            "local_green": eval_rec["local_green"],
+            "global_green": eval_rec["global_green"],
+            "defect": eval_rec["defect"],
+            "pricing_basis_tag": eval_rec["pricing_basis_tag"],
+            "tax_basis_tag": eval_rec["tax_basis_tag"],
+            "governance_mode": eval_rec["governance_mode"],
+            "validator_votes": eval_rec["validator_votes"],
+            "local_product": eval_rec["local_product"],
+            "quorum_verdict": eval_rec["quorum_verdict"],
+            "quorum_inflation": eval_rec["quorum_inflation"],
+            "quorum_reserve_cents": eval_rec["quorum_reserve_cents"],
+            "status": eval_rec["status"],
+            "receipt_sha256": eval_rec["receipt_sha256"],
+        },
+    )
+    return eval_rec, eval_rec["compact_role_directives"]
+
+
+def quorum_campaign(
+    client: CodeBatchClient,
+    events: Events,
+    config: dict[str, Any],
+) -> dict[str, Any]:
+    cases: list[dict[str, Any]] = []
+    workers = list(QUORUM_WORKER_MODULES.keys())
+    for seed in config["seeds"]:
+        base_state = quorum_fixture(seed)
+        arms_out: list[dict[str, Any]] = []
+        for arm in ("A", "B", "C"):
+            ws = BoundaryQuorumCodeWorkspace(base_state)
+            start_calls = client.calls
+            start_cost = client.spent
+            eval_rec, directives = quorum_merge_gate(events, ws, arm, "wave-0")
+            initial_lggr = eval_rec["local_green"] == 1 and eval_rec["global_green"] == 0
+
+            histories: dict[str, list[dict[str, Any]]] = {
+                w: [{"role": "system", "content": quorum_system_prompt(w, arm)}]
+                for w in workers
+            }
+
+            waves_run = 0
+            for wave_idx in (1, 2):
+                if eval_rec["global_green"] == 1 or len(ws.state["escalations"]) > 0:
+                    break
+                waves_run = wave_idx
+                per_worker_fb: dict[str, str] = {}
+                for w in workers:
+                    mname = QUORUM_WORKER_MODULES[w]
+                    if ws.state["infeasible_constraint"] is not None:
+                        per_worker_fb[w] = json.dumps(
+                            {
+                                "wave": wave_idx,
+                                "infeasible_constraint": ws.state["infeasible_constraint"],
+                                "instruction": "Call `inspect_workspace` then `escalate` with a clear explanation.",
+                            },
+                            sort_keys=True,
+                        )
+                    elif arm == "A":
+                        per_worker_fb[w] = json.dumps(
+                            {
+                                "wave": wave_idx,
+                                "arm": "A",
+                                "owned_module": mname,
+                                "local_unit_test_passed": True,
+                                "quorum_2_of_3_passed": True,
+                                "instruction": (
+                                    "Your isolated unit tests, pass_flag = 1 check, and 2-of-3 majority "
+                                    "quorum check `M_{2,3} = 1` passed. Call `inspect_workspace` and submit "
+                                    "your current source code unchanged."
+                                ),
+                            },
+                            sort_keys=True,
+                        )
+                    elif arm == "B":
+                        if w in ("worker-0", "worker-2"):
+                            per_worker_fb[w] = json.dumps(
+                                {
+                                    "wave": wave_idx,
+                                    "arm": "B",
+                                    "owned_module": mname,
+                                    "instruction": (
+                                        f"Call `inspect_workspace` and keep `{mname}.py` unchanged by "
+                                        "submitting its existing source code."
+                                    ),
+                                },
+                                sort_keys=True,
+                            )
+                        else:
+                            per_worker_fb[w] = json.dumps(
+                                {
+                                    "wave": wave_idx,
+                                    "arm": "B",
+                                    "owned_module": mname,
+                                    "instruction": (
+                                        "Update `tax_quorum.py` via `submit_module_patch` so "
+                                        "`basis_tag = 'net_cents'` (`tax_cents = 180`, `gross_cents = 1080`, "
+                                        "`tax_validator_vote = 1`)."
+                                    ),
+                                },
+                                sort_keys=True,
+                            )
+                    else:
+                        per_worker_fb[w] = json.dumps(
+                            {
+                                "wave": wave_idx,
+                                "arm": "C",
+                                "owned_module": mname,
+                                "lggr_quorum_role_directive": directives[w],
+                                "instruction": (
+                                    "Follow `lggr_quorum_role_directive` for your module and call "
+                                    "`submit_module_patch` with the updated Python implementation."
+                                ),
+                            },
+                            sort_keys=True,
+                        )
+
+                round_turns(client, events, ws, histories, workers, per_worker_fb)
+                eval_rec, directives = quorum_merge_gate(events, ws, arm, f"wave-{wave_idx}")
+                if arm in ("A", "B"):
+                    break
+
+            escalations = len(ws.state["escalations"])
+            if ws.state["infeasible_constraint"] is not None and escalations > 0:
+                outcome = "safe_escalated"
+            elif eval_rec["global_green"] == 1:
+                outcome = "completed"
+            else:
+                outcome = "blocked_unresolved"
+
+            arm_res = {
+                "arm": arm,
+                "outcome": outcome,
+                "initial_local_green_global_red": initial_lggr,
+                "final_local_green": eval_rec["local_green"],
+                "final_global_green": eval_rec["global_green"],
+                "final_defect": eval_rec["defect"],
+                "final_tax_basis_tag": eval_rec["tax_basis_tag"],
+                "final_governance_mode": eval_rec["governance_mode"],
+                "final_local_product": eval_rec["local_product"],
+                "final_quorum_verdict": eval_rec["quorum_verdict"],
+                "final_quorum_inflation": eval_rec["quorum_inflation"],
+                "final_quorum_reserve_cents": eval_rec["quorum_reserve_cents"],
+                "final_status": eval_rec["status"],
+                "waves_run": waves_run,
+                "escalations": escalations,
+                "api_attempts": client.calls - start_calls,
+                "cost_usd": str(client.spent - start_cost),
+            }
+            events.emit("arm_result", arm_res)
+            arms_out.append(arm_res)
+
+        case_res = {"seed": seed, "kind": base_state["kind"], "arms": arms_out}
+        events.emit("case_result", case_res)
+        cases.append(case_res)
+
+    summary = {
+        "schema": "lggr.boundary_quorum_code_engineering_swarm.v1",
+        "topology": "quorum",
+        "authority_effect": "None",
+        "cases": cases,
+        "api_attempts": client.calls,
+        "charged_or_reserved_usd": str(client.spent),
+        "max_inflight_requests": client.max_inflight,
+        "concurrent_waves": client.concurrent_waves,
+        "scope": (
+            "Concurrent 3-agent boundary-quorum Python code-engineering swarm (`pricing_quorum` -> "
+            "`tax_quorum` -> `settlement_quorum`) comparing pass-flag and 2-of-3 majority quorum gating (A), "
+            "partial tax basis alignment under unverified quorum governance (B), and explicit LGGR "
+            "full boundary payload + strict product governance directives (C) with full cryptographic receipts retained in the host audit log."
+        ),
+    }
+    events.emit("summary", summary)
+    return summary
+
+
 def replay(path: str | Path) -> dict[str, Any]:
     records = [json.loads(line) for line in Path(path).read_text(encoding="utf-8").splitlines()]
     metadata = records[0]["data"]
@@ -2947,6 +3161,8 @@ def replay(path: str | Path) -> dict[str, Any]:
             summary = kinduction_campaign(client, events, config)
         elif config.get("topology") == "jacobian":
             summary = jacobian_campaign(client, events, config)
+        elif config.get("topology") == "quorum":
+            summary = quorum_campaign(client, events, config)
         else:
             summary = campaign(client, events, config)
     except RunStopped as error:
@@ -2984,6 +3200,7 @@ def main() -> None:
             "regge",
             "kinduction",
             "jacobian",
+            "quorum",
         ],
         default="linear",
     )
@@ -3033,6 +3250,8 @@ def main() -> None:
         seeds = [10200, 10201, 10202]
     elif args.topology == "jacobian":
         seeds = [10300, 10301, 10302]
+    elif args.topology == "quorum":
+        seeds = [10400, 10401, 10402]
     else:
         seeds = [6100, 6101, 6102]
     if args.topology == "diamond":
@@ -3168,6 +3387,17 @@ def main() -> None:
         events.emit("start", {"config": config})
         client = CodeBatchClient(events, args.budget)
         summary = jacobian_campaign(client, events, config)
+    elif args.topology == "quorum":
+        config = {
+            "topology": "quorum",
+            "seeds": seeds,
+            "models": CODE_SWARM_MODELS,
+            "budget_usd": str(args.budget),
+        }
+        events = Events(events_path)
+        events.emit("start", {"config": config})
+        client = CodeBatchClient(events, args.budget)
+        summary = quorum_campaign(client, events, config)
     else:
         config = {
             "seeds": seeds,
