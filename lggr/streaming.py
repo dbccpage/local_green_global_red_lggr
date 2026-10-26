@@ -38162,5 +38162,520 @@ class StreamingCodebaseDeadlineBinPackingMonitor:
     emit_receipt = current_receipt
 
 
+class StreamingCodebaseProjectiveTowerMonitor:
+    """Audit 3-module projective tower and Hensel integral lift settlement codebases (Theorem 134).
+
+    AuthorityEffect: None. Composes StreamingProjectiveTowerMonitor,
+    StreamingCodebaseInterfaceMergeMonitor, and StreamingFiberMonitor over a 3-module
+    settlement codebase (`pricing_tower.py`, `tax_tower.py`, `settlement_tower.py`)
+    auditing 3-stage modular congruence threads `(x_1, x_2, x_3)` over moduli `(2, 4, 8)`
+    for `3 * x + const_b == 0 (mod m_n)` against the Hensel-compatible integer lift
+    `x_* = 2` (`stage_roots = [0, 2, 2]`):
+      - Phase 1 (`stage_roots = [1, 1, 5]`, `const_b = 1`):
+        every finite stage `m_n in {2, 4, 8}` satisfies `(3 * x_n + 1) % m_n == 0` and
+        `(x_{n+1} - x_n) % m_n == 0` (`local_product_aggregator == 1`), yet all 3 stages
+        differ from `[0, 2, 2]` (`stage_mismatch_count = 3`) and `const_b = 1` yields
+        `x_inf = -1/3 not in Z` (`r1_lift_obstruction = 1`), incurring surcharge
+        `2 * 3 + 4 * 1 = 10` cents and payout `863 != 873` (`L = 1, E_g = 0, defect = -1`);
+      - Phase 2 (`stage_roots = [0, 2, 2]`, `const_b = 2`):
+        since `2 == -6 (mod 8)`, `(3 * x_n + 2) % m_n == 0` holds across all 3 finite
+        stages `m_n in {2, 4, 8}` with `stage_mismatch_count = 0`, yet `const_b = 2` is not
+        divisible by `3` so `x_inf = -2/3 not in Z` leaves `r1_lift_obstruction = 1`
+        (`r1_lim_coset_residual_mod_z = "1/3"`), incurring surcharge `2 * 0 + 4 * 1 = 4`
+        cents and payout `869 != 873` (`L = 1, E_g = 0, defect = -1`);
+      - Phase 3 (`stage_roots = [0, 2, 2]`, `const_b = -6`):
+        Hensel-compatible global integer lift `x_* = 2 in Z` satisfies all finite stages
+        and eliminates the R^1 lim^1 coset obstruction (`stage_mismatch_count = 0`,
+        `r1_lift_obstruction = 0`, `surcharge = 0`, `873 + 27 + 90 = 990`,
+        `L = 1, E_g = 1, defect = 0`).
+    """
+
+    MODULI: tuple[int, int, int] = (2, 4, 8)
+    TARGET_STAGE_ROOTS: tuple[int, int, int] = (0, 2, 2)
+
+    PHASE_1_PRICING_TOWER_SOURCE = (
+        "def quote_tower_pricing(gross_cents: int = 990) -> dict:\n"
+        "    fee_cents = (gross_cents * 27) // 990\n"
+        "    stage_roots = [1, 1, 5]\n"
+        "    return {\n"
+        "        'gross_cents': gross_cents,\n"
+        "        'platform_fee_cents': fee_cents,\n"
+        "        'net_after_fee_cents': gross_cents - fee_cents,\n"
+        "        'stage_roots': stage_roots,\n"
+        "    }\n"
+    )
+
+    PHASE_1_TAX_TOWER_SOURCE = (
+        "def compute_tower_tax(pricing_out: dict) -> dict:\n"
+        "    gross = int(pricing_out['gross_cents'])\n"
+        "    roots = list(pricing_out.get('stage_roots', [1, 1, 5]))\n"
+        "    return {\n"
+        "        'tax_reserve_cents': (gross * 90) // 990,\n"
+        "        'stage_roots': roots,\n"
+        "        'coeff_a': 3,\n"
+        "        'const_b': 1,\n"
+        "    }\n"
+    )
+
+    PHASE_1_SETTLEMENT_TOWER_SOURCE = (
+        "def settle_tower_payout(pricing_out: dict, tax_out: dict) -> dict:\n"
+        "    net = int(pricing_out['net_after_fee_cents'])\n"
+        "    fee = int(pricing_out['platform_fee_cents'])\n"
+        "    tax = int(tax_out['tax_reserve_cents'])\n"
+        "    roots = list(tax_out.get('stage_roots', [1, 1, 5]))\n"
+        "    const_b = int(tax_out.get('const_b', 1))\n"
+        "    mismatches = sum(1 for r, t in zip(roots, (0, 2, 2)) if r != t)\n"
+        "    r1_obst = 1 if (-const_b) % 3 != 0 else 0\n"
+        "    surcharge = 2 * mismatches + 4 * r1_obst\n"
+        "    return {\n"
+        "        'merchant_payout_cents': net - tax - surcharge,\n"
+        "        'platform_fee_cents': fee,\n"
+        "        'tax_reserve_cents': tax,\n"
+        "        'tower_surcharge_cents': surcharge,\n"
+        "        'stage_mismatch_count': mismatches,\n"
+        "        'r1_lift_obstruction': r1_obst,\n"
+        "    }\n"
+    )
+
+    PHASE_2_PRICING_TOWER_SOURCE = (
+        "def quote_tower_pricing(gross_cents: int = 990) -> dict:\n"
+        "    fee_cents = (gross_cents * 27) // 990\n"
+        "    stage_roots = [0, 2, 2]\n"
+        "    return {\n"
+        "        'gross_cents': gross_cents,\n"
+        "        'platform_fee_cents': fee_cents,\n"
+        "        'net_after_fee_cents': gross_cents - fee_cents,\n"
+        "        'stage_roots': stage_roots,\n"
+        "    }\n"
+    )
+
+    PHASE_2_TAX_TOWER_SOURCE = (
+        "def compute_tower_tax(pricing_out: dict) -> dict:\n"
+        "    gross = int(pricing_out['gross_cents'])\n"
+        "    roots = list(pricing_out.get('stage_roots', [0, 2, 2]))\n"
+        "    return {\n"
+        "        'tax_reserve_cents': (gross * 90) // 990,\n"
+        "        'stage_roots': roots,\n"
+        "        'coeff_a': 3,\n"
+        "        'const_b': 2,\n"
+        "    }\n"
+    )
+
+    PHASE_2_SETTLEMENT_TOWER_SOURCE = PHASE_1_SETTLEMENT_TOWER_SOURCE
+
+    PHASE_3_PRICING_TOWER_SOURCE = PHASE_2_PRICING_TOWER_SOURCE
+
+    PHASE_3_TAX_TOWER_SOURCE = (
+        "def compute_tower_tax(pricing_out: dict) -> dict:\n"
+        "    gross = int(pricing_out['gross_cents'])\n"
+        "    roots = list(pricing_out.get('stage_roots', [0, 2, 2]))\n"
+        "    return {\n"
+        "        'tax_reserve_cents': (gross * 90) // 990,\n"
+        "        'stage_roots': roots,\n"
+        "        'coeff_a': 3,\n"
+        "        'const_b': -6,\n"
+        "    }\n"
+    )
+
+    PHASE_3_SETTLEMENT_TOWER_SOURCE = (
+        "def settle_tower_payout(pricing_out: dict, tax_out: dict) -> dict:\n"
+        "    net = int(pricing_out['net_after_fee_cents'])\n"
+        "    fee = int(pricing_out['platform_fee_cents'])\n"
+        "    tax = int(tax_out['tax_reserve_cents'])\n"
+        "    roots = list(tax_out.get('stage_roots', [0, 2, 2]))\n"
+        "    const_b = int(tax_out.get('const_b', -6))\n"
+        "    if roots != [0, 2, 2] or const_b != -6:\n"
+        "        raise ValueError('Projective tower R^1 lim^1 or stage root mismatch detected')\n"
+        "    return {\n"
+        "        'merchant_payout_cents': net - tax,\n"
+        "        'platform_fee_cents': fee,\n"
+        "        'tax_reserve_cents': tax,\n"
+        "        'tower_surcharge_cents': 0,\n"
+        "        'stage_mismatch_count': 0,\n"
+        "        'r1_lift_obstruction': 0,\n"
+        "    }\n"
+    )
+
+    def __init__(self, *, scope_id: str = "streaming-codebase-projective-tower-scope") -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.fiber_monitor = StreamingFiberMonitor()
+        self.evaluations: list[dict[str, Any]] = []
+        self.three_phase_audits: list[dict[str, Any]] = []
+        self.last_tower_receipt: dict[str, Any] | None = None
+
+    @staticmethod
+    def _validate_stage_roots(raw: Any, label: str) -> list[int]:
+        if not isinstance(raw, (list, tuple)) or len(raw) != 3:
+            raise ValidationError(f"{label} must be a 3-element list of modular stage roots")
+        roots = [exact_int(v, f"{label}[{idx}]", minimum=0) for idx, v in enumerate(raw)]
+        if roots not in ([1, 1, 5], [0, 2, 2]):
+            raise ValidationError(
+                f"{label} must be either [1, 1, 5] or [0, 2, 2], got {roots}"
+            )
+        return roots
+
+    @staticmethod
+    def _validate_const_b(raw: Any, label: str) -> int:
+        val = exact_int(raw, label)
+        if val not in (1, 2, -6):
+            raise ValidationError(f"{label} must be in {{1, 2, -6}}, got {val}")
+        return val
+
+    def evaluate_projective_tower_modules(
+        self,
+        evaluation_id: str,
+        pricing_tower_source: str = PHASE_1_PRICING_TOWER_SOURCE,
+        tax_tower_source: str = PHASE_1_TAX_TOWER_SOURCE,
+        settlement_tower_source: str = PHASE_1_SETTLEMENT_TOWER_SOURCE,
+        *,
+        gross_cents: int = 990,
+        infeasible_constraint: Mapping[str, Any] | str | None = None,
+        model_id: str = "deterministic",
+    ) -> dict[str, Any]:
+        eval_id = text(evaluation_id, "evaluation_id")
+        mod_id = text(model_id, "model_id")
+        gross = exact_int(gross_cents, "gross_cents", minimum=100)
+
+        p_ns = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(
+            "pricing_tower", pricing_tower_source
+        )
+        t_ns = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(
+            "tax_tower", tax_tower_source
+        )
+        s_ns = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(
+            "settlement_tower", settlement_tower_source
+        )
+
+        if "quote_tower_pricing" not in p_ns or not callable(p_ns["quote_tower_pricing"]):
+            raise ValidationError("pricing_tower must define callable quote_tower_pricing")
+        if "compute_tower_tax" not in t_ns or not callable(t_ns["compute_tower_tax"]):
+            raise ValidationError("tax_tower must define callable compute_tower_tax")
+        if "settle_tower_payout" not in s_ns or not callable(s_ns["settle_tower_payout"]):
+            raise ValidationError("settlement_tower must define callable settle_tower_payout")
+
+        pricing_out = p_ns["quote_tower_pricing"](gross)
+        if not isinstance(pricing_out, dict):
+            raise ValidationError("quote_tower_pricing must return a dict")
+        tax_out = t_ns["compute_tower_tax"](pricing_out)
+        if not isinstance(tax_out, dict):
+            raise ValidationError("compute_tower_tax must return a dict")
+
+        settlement_raised = False
+        try:
+            settlement_out = s_ns["settle_tower_payout"](pricing_out, tax_out)
+            if not isinstance(settlement_out, dict):
+                raise ValidationError("settle_tower_payout must return a dict")
+        except ValueError:
+            settlement_raised = True
+            settlement_out = {}
+
+        stage_roots = self._validate_stage_roots(
+            pricing_out.get("stage_roots", [1, 1, 5]), "stage_roots"
+        )
+        const_b = self._validate_const_b(tax_out.get("const_b", 1), "const_b")
+        coeff_a = exact_int(tax_out.get("coeff_a", 3), "coeff_a")
+        if coeff_a != 3:
+            raise ValidationError(f"coeff_a must be 3, got {coeff_a}")
+
+        fee = exact_int(pricing_out.get("platform_fee_cents", 0), "platform_fee_cents")
+        net = exact_int(pricing_out.get("net_after_fee_cents", 0), "net_after_fee_cents")
+        tax = exact_int(tax_out.get("tax_reserve_cents", 0), "tax_reserve_cents")
+
+        tower_mon = StreamingProjectiveTowerMonitor(
+            coeff_a,
+            const_b,
+            scope_id=f"{self.scope_id}:{eval_id}",
+        )
+        for mod_n, x_n in zip(self.MODULI, stage_roots):
+            tower_mon.record_stage(f"stage_mod_{mod_n}", mod_n, x_n)
+        tower_rec = tower_mon.get_receipt()
+        self.last_tower_receipt = tower_rec
+
+        stage_mismatch_count = sum(
+            1 for r, t in zip(stage_roots, self.TARGET_STAGE_ROOTS) if r != t
+        )
+        r1_lift_obstruction = 1 if (-const_b) % coeff_a != 0 else 0
+        expected_surcharge = 2 * stage_mismatch_count + 4 * r1_lift_obstruction
+
+        if settlement_raised:
+            surcharge = expected_surcharge
+            payout = net - tax - surcharge
+        else:
+            surcharge = exact_int(
+                settlement_out.get("tower_surcharge_cents", expected_surcharge),
+                "tower_surcharge_cents",
+            )
+            payout = exact_int(
+                settlement_out.get("merchant_payout_cents", 0), "merchant_payout_cents"
+            )
+
+        local_p_ok = (
+            pricing_out.get("gross_cents") == gross
+            and fee == (gross * 27) // 990
+            and net == gross - fee
+            and stage_roots in ([1, 1, 5], [0, 2, 2])
+        )
+        local_t_ok = (
+            tax == (gross * 90) // 990
+            and const_b in (1, 2, -6)
+            and tax_out.get("stage_roots") == stage_roots
+        )
+        local_s_ok = settlement_raised or (
+            surcharge == expected_surcharge
+            and payout == net - tax - surcharge
+        )
+
+        infeasible_spec_contradiction = bool(infeasible_constraint)
+        local_green = (
+            1
+            if (
+                local_p_ok
+                and local_t_ok
+                and local_s_ok
+                and tower_rec["local_product_aggregator"] == 1
+                and not infeasible_spec_contradiction
+            )
+            else 0
+        )
+        conservation_ok = (
+            not settlement_raised
+            and surcharge == 0
+            and stage_roots == [0, 2, 2]
+            and const_b == -6
+            and stage_mismatch_count == 0
+            and r1_lift_obstruction == 0
+            and tower_rec["global_integral_lift_evaluator"] == 1
+            and tower_rec["integral_global_root"] == 2
+            and payout == 873
+            and (payout + fee + tax == gross)
+        )
+        global_green = 1 if (local_green == 1 and conservation_ok) else 0
+        defect = global_green - local_green
+
+        self.fiber_monitor.observe(
+            state_id=f"{eval_id}_{mod_id}",
+            report={
+                "local_green": local_green,
+                "finite_stages_compatible": tower_rec["local_product_aggregator"] == 1,
+            },
+            query="LGGG" if global_green == 1 else "LGGR",
+            metadata={
+                "stage_roots": stage_roots,
+                "const_b": const_b,
+                "stage_mismatch_count": stage_mismatch_count,
+                "r1_lift_obstruction": r1_lift_obstruction,
+                "tower_surcharge_cents": surcharge,
+            },
+        )
+
+        if infeasible_spec_contradiction:
+            status = "INFEASIBLE_PROJECTIVE_TOWER_SPECIFICATION_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif local_green == 0:
+            status = "LOCAL_PROJECTIVE_TOWER_MODULE_CONTRACT_BROKEN"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif stage_mismatch_count > 0:
+            status = "PROJECTIVE_TOWER_STAGE_ROOT_AND_R1_OBSTRUCTION_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif r1_lift_obstruction > 0:
+            status = "DERIVED_LIMIT_R1_LIFTING_OBSTRUCTION_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif global_green == 0:
+            status = "PROJECTIVE_TOWER_SURCHARGE_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "PROJECTIVE_TOWER_INTEGRAL_LIFT_COHERENT_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+
+        if global_green == 1:
+            directives = {
+                "worker-0": {
+                    "module": "pricing_tower",
+                    "action": "HOLD_HENSEL_COMPATIBLE_STAGE_ROOTS",
+                    "target_stage_roots": [0, 2, 2],
+                },
+                "worker-1": {
+                    "module": "tax_tower",
+                    "action": "HOLD_INTEGRAL_LIFT_CONST_B_MINUS_SIX",
+                    "target_const_b": -6,
+                },
+                "worker-2": {
+                    "module": "settlement_tower",
+                    "action": "HOLD_PROJECTIVE_TOWER_GUARD",
+                    "target_tower_surcharge_cents": 0,
+                    "target_payout_cents": 873,
+                },
+            }
+        else:
+            directives = {
+                "worker-0": {
+                    "module": "pricing_tower",
+                    "action": (
+                        "ALIGN_STAGE_ROOTS_TO_HENSEL_THREAD_0_2_2"
+                        if (stage_roots != [0, 2, 2] or not local_p_ok)
+                        else "HOLD_HENSEL_COMPATIBLE_STAGE_ROOTS"
+                    ),
+                    "target_stage_roots": [0, 2, 2],
+                },
+                "worker-1": {
+                    "module": "tax_tower",
+                    "action": (
+                        "SET_INTEGRAL_LIFT_CONST_B_TO_MINUS_SIX"
+                        if (const_b != -6 or not local_t_ok)
+                        else "HOLD_INTEGRAL_LIFT_CONST_B_MINUS_SIX"
+                    ),
+                    "target_const_b": -6,
+                },
+                "worker-2": {
+                    "module": "settlement_tower",
+                    "action": (
+                        "ENFORCE_PROJECTIVE_TOWER_INTEGRAL_LIFT_GUARD"
+                        if not conservation_ok
+                        else "HOLD_PROJECTIVE_TOWER_GUARD"
+                    ),
+                    "target_tower_surcharge_cents": 0,
+                    "target_payout_cents": 873,
+                },
+            }
+
+        rec = json_value(
+            {
+                "evaluation_id": eval_id,
+                "model_id": mod_id,
+                "stage_roots": stage_roots,
+                "moduli": list(self.MODULI),
+                "coeff_a": coeff_a,
+                "const_b": const_b,
+                "rational_completion_root": tower_rec["rational_completion_root"],
+                "integral_global_root": tower_rec["integral_global_root"],
+                "r1_lim_coset_residual_mod_z": tower_rec["r1_lim_coset_residual_mod_z"],
+                "stage_mismatch_count": stage_mismatch_count,
+                "r1_lift_obstruction": r1_lift_obstruction,
+                "tower_surcharge_cents": surcharge,
+                "merchant_payout_cents": payout,
+                "platform_fee_cents": fee,
+                "tax_reserve_cents": tax,
+                "gross_cents": gross,
+                "local_green": local_green,
+                "global_green": global_green,
+                "defect": defect,
+                "status": status,
+                "contract_status": contract_status,
+                "directives": directives,
+            }
+        )
+        self.evaluations.append(rec)
+        return rec
+
+    def record_three_phase_codebase_audit(
+        self,
+        *,
+        audit_id: str = "codebase_projective_tower_three_phase",
+        model_id: str = "deterministic",
+    ) -> dict[str, Any]:
+        mid = text(model_id, "model_id")
+        p1 = self.evaluate_projective_tower_modules(
+            f"{audit_id}_p1",
+            pricing_tower_source=self.PHASE_1_PRICING_TOWER_SOURCE,
+            tax_tower_source=self.PHASE_1_TAX_TOWER_SOURCE,
+            settlement_tower_source=self.PHASE_1_SETTLEMENT_TOWER_SOURCE,
+            model_id=mid,
+        )
+        p2 = self.evaluate_projective_tower_modules(
+            f"{audit_id}_p2",
+            pricing_tower_source=self.PHASE_2_PRICING_TOWER_SOURCE,
+            tax_tower_source=self.PHASE_2_TAX_TOWER_SOURCE,
+            settlement_tower_source=self.PHASE_2_SETTLEMENT_TOWER_SOURCE,
+            model_id=mid,
+        )
+        p3 = self.evaluate_projective_tower_modules(
+            f"{audit_id}_p3",
+            pricing_tower_source=self.PHASE_3_PRICING_TOWER_SOURCE,
+            tax_tower_source=self.PHASE_3_TAX_TOWER_SOURCE,
+            settlement_tower_source=self.PHASE_3_SETTLEMENT_TOWER_SOURCE,
+            model_id=mid,
+        )
+
+        audit_rec = json_value(
+            {
+                "audit_id": text(audit_id, "audit_id"),
+                "model_id": mid,
+                "phase_1_stage_roots": p1["stage_roots"],
+                "phase_1_const_b": p1["const_b"],
+                "phase_1_rational_completion_root": p1["rational_completion_root"],
+                "phase_1_integral_global_root": p1["integral_global_root"],
+                "phase_1_r1_lim_coset_residual_mod_z": p1["r1_lim_coset_residual_mod_z"],
+                "phase_1_stage_mismatch_count": p1["stage_mismatch_count"],
+                "phase_1_r1_lift_obstruction": p1["r1_lift_obstruction"],
+                "phase_1_surcharge_cents": p1["tower_surcharge_cents"],
+                "phase_1_payout_cents": p1["merchant_payout_cents"],
+                "phase_1_local_green": p1["local_green"],
+                "phase_1_global_green": p1["global_green"],
+                "phase_1_defect": p1["defect"],
+                "phase_1_status": p1["status"],
+                "phase_2_stage_roots": p2["stage_roots"],
+                "phase_2_const_b": p2["const_b"],
+                "phase_2_rational_completion_root": p2["rational_completion_root"],
+                "phase_2_integral_global_root": p2["integral_global_root"],
+                "phase_2_r1_lim_coset_residual_mod_z": p2["r1_lim_coset_residual_mod_z"],
+                "phase_2_stage_mismatch_count": p2["stage_mismatch_count"],
+                "phase_2_r1_lift_obstruction": p2["r1_lift_obstruction"],
+                "phase_2_surcharge_cents": p2["tower_surcharge_cents"],
+                "phase_2_payout_cents": p2["merchant_payout_cents"],
+                "phase_2_local_green": p2["local_green"],
+                "phase_2_global_green": p2["global_green"],
+                "phase_2_defect": p2["defect"],
+                "phase_2_status": p2["status"],
+                "phase_3_stage_roots": p3["stage_roots"],
+                "phase_3_const_b": p3["const_b"],
+                "phase_3_rational_completion_root": p3["rational_completion_root"],
+                "phase_3_integral_global_root": p3["integral_global_root"],
+                "phase_3_r1_lim_coset_residual_mod_z": p3["r1_lim_coset_residual_mod_z"],
+                "phase_3_stage_mismatch_count": p3["stage_mismatch_count"],
+                "phase_3_r1_lift_obstruction": p3["r1_lift_obstruction"],
+                "phase_3_surcharge_cents": p3["tower_surcharge_cents"],
+                "phase_3_payout_cents": p3["merchant_payout_cents"],
+                "phase_3_local_green": p3["local_green"],
+                "phase_3_global_green": p3["global_green"],
+                "phase_3_defect": p3["defect"],
+                "phase_3_status": p3["status"],
+            }
+        )
+        self.three_phase_audits.append(audit_rec)
+        return audit_rec
+
+    def current_receipt(self) -> dict[str, Any]:
+        """Emit a deterministic SHA-256 signed receipt for the 3-module projective tower audit."""
+        if not self.evaluations:
+            raise ValidationError(
+                "at least one codebase projective tower evaluation must be recorded"
+            )
+
+        n = len(self.evaluations)
+        lggr_count = sum(1 for e in self.evaluations if e["defect"] == -1)
+        lggg_count = sum(1 for e in self.evaluations if e["global_green"] == 1)
+        last = self.evaluations[-1]
+
+        body: dict[str, Any] = {
+            "schema": "lggr.online_codebase_projective_tower.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": last["status"],
+            "contract_status": last["contract_status"],
+            "evaluation_count": n,
+            "lggr_obstruction_count": lggr_count,
+            "lggg_coherent_count": lggg_count,
+            "projective_tower_receipt": self.last_tower_receipt,
+            "fiber_receipt": self.fiber_monitor.get_receipt(),
+            "three_phase_audits": self.three_phase_audits,
+            "evaluations": self.evaluations,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+    get_receipt = current_receipt
+    emit_receipt = current_receipt
+
+
+
 
 
