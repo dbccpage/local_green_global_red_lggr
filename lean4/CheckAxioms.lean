@@ -137,6 +137,7 @@ import LggrVIII
 #print axioms LggrVIII.graceful_shedding_codebase_variable_duration_burst_audit
 #print axioms LggrVIII.obligation_migration_codebase_equal_info_audit
 #print axioms LggrVIII.three_party_c3_codebase_constant_bound_audit
+#print axioms LggrVIII.multi_loop_hodge_codebase_cup_and_harmonic_kernel_audit
 
 
 

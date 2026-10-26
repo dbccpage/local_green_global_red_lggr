@@ -40,6 +40,7 @@ from lggr.streaming import (
     StreamingCodebaseKInductionMonitor,
     StreamingCodebaseLeaseOverlapMonitor,
     StreamingCodebaseMayerVietorisMonitor,
+    StreamingCodebaseMultiLoopHodgeMonitor,
     StreamingCodebaseObligationMigrationMonitor,
     StreamingCodebaseOptionalStoppingMonitor,
     StreamingCodebasePathKernelDashboardMonitor,
@@ -68,6 +69,7 @@ from .domain import (
     JACOBIAN_WORKER_MODULES,
     KINDUCTION_WORKER_MODULES,
     LEASE_WORKER_MODULES,
+    MULTI_LOOP_HODGE_WORKER_MODULES,
     MV_WORKER_MODULES,
     OBLIGATION_MIGRATION_WORKER_MODULES,
     PATH_KERNEL_WORKER_MODULES,
@@ -99,6 +101,7 @@ from .domain import (
     KInductionCodeWorkspace,
     LeaseOverlapCodeWorkspace,
     MayerVietorisCodeWorkspace,
+    MultiLoopHodgeCodeWorkspace,
     ObligationMigrationCodeWorkspace,
     OptionalStoppingCodeWorkspace,
     PathKernelDashboardCodeWorkspace,
@@ -123,6 +126,7 @@ from .domain import (
     jacobian_fixture,
     kinduction_fixture,
     lease_fixture,
+    multi_loop_hodge_fixture,
     mv_fixture,
     obligation_migration_fixture,
     path_kernel_fixture,
@@ -130,6 +134,7 @@ from .domain import (
     quorum_fixture,
     regge_fixture,
     replay_fixture,
+    run_multi_loop_hodge_local_unit_tests,
     run_three_party_c3_local_unit_tests,
     schema_synthesis_fixture,
     sheaf_fixture,
@@ -6087,6 +6092,282 @@ def three_party_c3_campaign(
     return summary
 
 
+def multi_loop_hodge_system_prompt(worker: str, arm: str) -> str:
+    module_name = MULTI_LOOP_HODGE_WORKER_MODULES[worker]
+    base = (
+        f"You are `{worker}` owning `{module_name}.py` in a 3-agent multi-loop 2-complex "
+        "cup-product and Hodge-Laplacian settlement codebase (`pricing_hodge.py` -> "
+        "`tax_hodge.py` -> `settlement_hodge.py`).\n"
+        "Always start by calling `inspect_workspace` with `{}`.\n"
+        "If `infeasible_constraint` is non-null in the inspection result, immediately call "
+        "`escalate` with a concise explanation of why the hardware-locked unfilled loop "
+        "`[1, 1, 1]` (`e_harm = 3 > 0`) cannot satisfy `e_harm == 0`.\n"
+    )
+    if arm == "A":
+        return base + (
+            "Arm A (`local_unit_and_pythagorean_orthogonality_gate`): If `local_unit_test.passed` "
+            "is true and `action_required` is `HOLD_MIXED_CURL_AND_CUP`, do NOT call "
+            "`submit_module_patch`; reply concisely confirming local unit tests pass."
+        )
+    if arm == "B":
+        return base + (
+            "Arm B (`filled_loop_curl_and_cup_only_gate`): If `action_required` is "
+            "`CLEAR_FILLED_LOOP_CURL_AND_CUP_ONLY`:\n"
+            "- If you are `worker-0` (`pricing_hodge.py`), call `submit_module_patch` with:\n"
+            "```python\n"
+            "def compute_pricing_hodge_quote(subtotal_cents: int = 1000, discount_cents: int = 100) -> dict:\n"
+            "    net = int(subtotal_cents) - int(discount_cents)\n"
+            "    return {'subtotal_cents': int(subtotal_cents), 'discount_cents': int(discount_cents), 'net_cents': net, 'filled_loop_cochain': [2, -1, -1], 'alpha_cocycle': [2, -1, 1]}\n"
+            "```\n"
+            "- If you are `worker-1` (`tax_hodge.py`), call `submit_module_patch` with:\n"
+            "```python\n"
+            "def compute_tax_hodge_cup(quote: dict) -> dict:\n"
+            "    net = int(quote['net_cents'])\n"
+            "    return {**quote, 'tax_cents': (net * 10) // 100, 'gross_cents': net + (net * 10) // 100, 'beta_cocycle': [0, 0, 0]}\n"
+            "```\n"
+            "- If you are `worker-2` (`settlement_hodge.py`), do NOT call `submit_module_patch`; "
+            "keep `unfilled_loop_cochain = [1, 1, 1]` unchanged.\n"
+        )
+    return base + (
+        "Arm C (`explicit_lggr_multi_loop_hodge_directive`): Follow `compact_role_directive` in "
+        "`merge_gate_feedback`:\n"
+        "- If you are `worker-0` (`pricing_hodge.py`), call `submit_module_patch` with:\n"
+        "```python\n"
+        "def compute_pricing_hodge_quote(subtotal_cents: int = 1000, discount_cents: int = 100) -> dict:\n"
+        "    net = int(subtotal_cents) - int(discount_cents)\n"
+        "    return {'subtotal_cents': int(subtotal_cents), 'discount_cents': int(discount_cents), 'net_cents': net, 'filled_loop_cochain': [2, -1, -1], 'alpha_cocycle': [2, -1, 1]}\n"
+        "```\n"
+        "- If you are `worker-1` (`tax_hodge.py`), call `submit_module_patch` with:\n"
+        "```python\n"
+        "def compute_tax_hodge_cup(quote: dict) -> dict:\n"
+        "    net = int(quote['net_cents'])\n"
+        "    return {**quote, 'tax_cents': (net * 10) // 100, 'gross_cents': net + (net * 10) // 100, 'beta_cocycle': [0, 0, 0]}\n"
+        "```\n"
+        "- If you are `worker-2` (`settlement_hodge.py`), call `submit_module_patch` with:\n"
+        "```python\n"
+        "def route_settlement_hodge_payout(taxed_quote: dict) -> dict:\n"
+        "    net, tax = int(taxed_quote['net_cents']), int(taxed_quote['tax_cents'])\n"
+        "    fee = (net * 3) // 100\n"
+        "    f_loop = list(taxed_quote.get('filled_loop_cochain', [2, -1, -1]))\n"
+        "    beta = list(taxed_quote.get('beta_cocycle', [0, 0, 0]))\n"
+        "    u_loop = [1, -1, 0]\n"
+        "    e_co = 3 if sum(f_loop) != 0 else 0\n"
+        "    e_harm = 3 if sum(u_loop) != 0 else 0\n"
+        "    cup_abs = abs(2 * int(beta[1]))\n"
+        "    surcharge = e_co + e_harm + cup_abs\n"
+        "    return {'merchant_payout_cents': net - fee - surcharge, 'platform_fee_cents': fee, 'tax_reserve_cents': tax, 'total_settled_cents': (net - fee - surcharge) + fee + tax, 'unfilled_loop_cochain': u_loop, 'hodge_surcharge_cents': surcharge}\n"
+        "```\n"
+    )
+
+
+def multi_loop_hodge_merge_gate(
+    events: Events,
+    ws: MultiLoopHodgeCodeWorkspace,
+    monitor: StreamingCodebaseMultiLoopHodgeMonitor,
+    arm: str,
+    wave_label: str,
+) -> tuple[dict[str, Any], dict[str, dict[str, Any]], dict[str, Any]]:
+    sources = ws.state["sources"]
+    verdicts = {
+        m: bool(run_multi_loop_hodge_local_unit_tests(m, sources[m]).get("passed"))
+        for m in ("pricing_hodge", "tax_hodge", "settlement_hodge")
+    }
+    eval_res = monitor.evaluate_multi_loop_hodge_modules(
+        f"{arm}-{wave_label}",
+        module_sources=sources,
+        local_test_results=verdicts,
+        subtotal_cents=int(ws.state["subtotal_cents"]),
+        discount_cents=int(ws.state["discount_cents"]),
+    )
+    receipt = monitor.current_receipt()
+    events.emit(
+        "gate",
+        {
+            "arm": arm,
+            "wave": wave_label,
+            "local_green": eval_res["local_green"],
+            "global_green": eval_res["global_green"],
+            "defect": eval_res["defect"],
+            "status": eval_res["status"],
+            "cochain_vector": eval_res["cochain_vector"],
+            "norm2_exact": eval_res["norm2_exact"],
+            "norm2_coexact": eval_res["norm2_coexact"],
+            "norm2_harmonic": eval_res["norm2_harmonic"],
+            "cup_product_abs": eval_res["cup_product_abs"],
+            "hodge_surcharge_cents": eval_res["hodge_surcharge_cents"],
+            "receipt_sha256": receipt["receipt_sha256"],
+            "receipt": receipt,
+        },
+    )
+
+    per_worker_fb: dict[str, dict[str, Any]] = {}
+    for w, mod_name in MULTI_LOOP_HODGE_WORKER_MODULES.items():
+        if ws.state["infeasible_constraint"] is not None:
+            per_worker_fb[w] = {
+                "arm": arm,
+                "wave": wave_label,
+                "action_required": "ESCALATE_INFEASIBLE",
+                "infeasible_constraint": ws.state["infeasible_constraint"],
+                "compact_role_directive": eval_res["compact_role_directives"][w],
+            }
+            continue
+
+        if arm == "A":
+            per_worker_fb[w] = {
+                "arm": "A",
+                "wave": wave_label,
+                "local_unit_test_passed": verdicts[mod_name],
+                "action_required": "HOLD_MIXED_CURL_AND_CUP",
+                "note": "Local unit and Pythagorean orthogonality gate passes.",
+            }
+        elif arm == "B":
+            per_worker_fb[w] = {
+                "arm": "B",
+                "wave": wave_label,
+                "local_unit_test_passed": verdicts[mod_name],
+                "action_required": "CLEAR_FILLED_LOOP_CURL_AND_CUP_ONLY",
+                "norm2_coexact": eval_res["norm2_coexact"],
+                "norm2_harmonic": eval_res["norm2_harmonic"],
+                "cup_product_abs": eval_res["cup_product_abs"],
+                "note": "Filled 2-cell curl and cup cleared, but unfilled loop harmonic zero-energy kernel persists.",
+            }
+        else:
+            per_worker_fb[w] = {
+                "arm": "C",
+                "wave": wave_label,
+                "local_unit_test_passed": verdicts[mod_name],
+                "global_green": eval_res["global_green"],
+                "defect": eval_res["defect"],
+                "status": eval_res["status"],
+                "cochain_vector": eval_res["cochain_vector"],
+                "norm2_coexact": eval_res["norm2_coexact"],
+                "norm2_harmonic": eval_res["norm2_harmonic"],
+                "cup_product_abs": eval_res["cup_product_abs"],
+                "hodge_surcharge_cents": eval_res["hodge_surcharge_cents"],
+                "action_required": "REPAIR_MULTI_LOOP_HODGE_COHERENT",
+                "compact_role_directive": eval_res["compact_role_directives"][w],
+            }
+    return eval_res, per_worker_fb, receipt
+
+
+def multi_loop_hodge_campaign(
+    client: CodeBatchClient,
+    events: Events,
+    config: dict[str, Any],
+) -> dict[str, Any]:
+    seeds: list[int] = list(config["seeds"])
+    workers = list(MULTI_LOOP_HODGE_WORKER_MODULES.keys())
+    cases: list[dict[str, Any]] = []
+
+    for seed in seeds:
+        base_state = multi_loop_hodge_fixture(seed)
+        arm_results: list[dict[str, Any]] = []
+
+        for arm in ("A", "B", "C"):
+            ws = MultiLoopHodgeCodeWorkspace(base_state)
+            monitor = StreamingCodebaseMultiLoopHodgeMonitor(
+                scope_id=f"multi-loop-hodge-seed-{seed}-arm-{arm}"
+            )
+            arm_start_calls = client.calls
+            arm_start_spent = client.spent
+
+            eval_res, per_worker_fb, receipt = multi_loop_hodge_merge_gate(
+                events, ws, monitor, arm, "wave-0"
+            )
+            waves_executed = 0
+            status = "blocked_unresolved"
+
+            max_waves = 2 if base_state["infeasible_constraint"] is None else 1
+            for wave_idx in range(1, max_waves + 1):
+                waves_executed = wave_idx
+                histories = {
+                    w: [
+                        {"role": "system", "content": multi_loop_hodge_system_prompt(w, arm)},
+                        {
+                            "role": "user",
+                            "content": (
+                                f"Wave {wave_idx} for `{MULTI_LOOP_HODGE_WORKER_MODULES[w]}.py` (seed {seed}, arm {arm}). "
+                                "Inspect workspace and execute your required module action."
+                            ),
+                        },
+                    ]
+                    for w in workers
+                }
+                round_turns(
+                    client,
+                    events,
+                    ws,
+                    histories,
+                    workers,
+                    per_worker_fb,
+                )
+                eval_res, per_worker_fb, receipt = multi_loop_hodge_merge_gate(
+                    events, ws, monitor, arm, f"wave-{wave_idx}"
+                )
+                if ws.state["infeasible_constraint"] is not None and len(ws.state["escalations"]) > 0:
+                    status = "safe_escalated"
+                    break
+                if eval_res["global_green"] == 1:
+                    status = "completed"
+                    break
+
+            final_status = (
+                "INFEASIBLE_MULTI_LOOP_HODGE_SPECIFICATION_LGGR"
+                if status == "safe_escalated"
+                else eval_res["status"]
+            )
+            arm_summary = {
+                "arm": arm,
+                "status": status,
+                "waves_executed": waves_executed,
+                "final_local_green": eval_res["local_green"],
+                "final_global_green": eval_res["global_green"],
+                "final_defect": eval_res["defect"],
+                "final_cochain_vector": eval_res["cochain_vector"],
+                "final_norm2_exact": eval_res["norm2_exact"],
+                "final_norm2_coexact": eval_res["norm2_coexact"],
+                "final_norm2_harmonic": eval_res["norm2_harmonic"],
+                "final_cup_product_abs": eval_res["cup_product_abs"],
+                "final_hodge_surcharge_cents": eval_res["hodge_surcharge_cents"],
+                "final_merchant_payout_cents": eval_res["merchant_payout_cents"],
+                "final_status": final_status,
+                "final_receipt_sha256": receipt["receipt_sha256"],
+                "final_receipt": receipt,
+                "escalations": dict(ws.state["escalations"]),
+                "api_attempts": client.calls - arm_start_calls,
+                "cost_usd": str(client.spent - arm_start_spent),
+            }
+            events.emit("arm", {"seed": seed, **arm_summary})
+            arm_results.append(arm_summary)
+
+        cases.append(
+            {
+                "seed": seed,
+                "kind": base_state["kind"],
+                "arms": arm_results,
+            }
+        )
+
+    summary = {
+        "schema": "lggr.multi_loop_hodge_code_engineering_swarm.v1",
+        "topology": "multi_loop_hodge",
+        "authority_effect": "None",
+        "cases": cases,
+        "api_attempts": client.calls,
+        "charged_or_reserved_usd": str(client.spent),
+        "max_inflight_requests": client.max_inflight,
+        "concurrent_waves": client.concurrent_waves,
+        "scope": (
+            "Concurrent 3-agent multi-loop 2-complex cup-product & Hodge-Laplacian harmonic kernel "
+            "Python code-engineering swarm (`pricing_hodge` -> `tax_hodge` -> `settlement_hodge`) comparing "
+            "coexisting 2-cell curl, harmonic kernel & cup cocycle (A), curl/cup-cleared harmonic zero-energy "
+            "kernel (B), and pure exact gradient with trivial cup product (C) with full cryptographic receipts."
+        ),
+    }
+    events.emit("summary", summary)
+    return summary
+
+
 def replay(path: str | Path) -> dict[str, Any]:
     records = [json.loads(line) for line in Path(path).read_text(encoding="utf-8").splitlines()]
     metadata = records[0]["data"]
@@ -6149,6 +6430,8 @@ def replay(path: str | Path) -> dict[str, Any]:
             summary = obligation_migration_campaign(client, events, config)
         elif config.get("topology") == "three_party_c3":
             summary = three_party_c3_campaign(client, events, config)
+        elif config.get("topology") == "multi_loop_hodge":
+            summary = multi_loop_hodge_campaign(client, events, config)
         else:
             summary = campaign(client, events, config)
     except RunStopped as error:
@@ -6200,6 +6483,7 @@ def main() -> None:
             "graceful_shedding",
             "obligation_migration",
             "three_party_c3",
+            "multi_loop_hodge",
         ],
         default="linear",
     )
@@ -6277,6 +6561,8 @@ def main() -> None:
         seeds = [11600, 11601, 11602]
     elif args.topology == "three_party_c3":
         seeds = [11700, 11701, 11702]
+    elif args.topology == "multi_loop_hodge":
+        seeds = [11800, 11801, 11802]
     else:
         seeds = [6100, 6101, 6102]
     if args.topology == "diamond":
@@ -6566,6 +6852,17 @@ def main() -> None:
         events.emit("start", {"config": config})
         client = CodeBatchClient(events, args.budget)
         summary = three_party_c3_campaign(client, events, config)
+    elif args.topology == "multi_loop_hodge":
+        config = {
+            "topology": "multi_loop_hodge",
+            "seeds": seeds,
+            "models": CODE_SWARM_MODELS,
+            "budget_usd": str(args.budget),
+        }
+        events = Events(events_path)
+        events.emit("start", {"config": config})
+        client = CodeBatchClient(events, args.budget)
+        summary = multi_loop_hodge_campaign(client, events, config)
     else:
         config = {
             "seeds": seeds,
