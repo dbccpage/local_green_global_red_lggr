@@ -22177,6 +22177,463 @@ class StreamingCodebaseOptionalStoppingMonitor:
         return json_value({**body, "receipt_sha256": digest(body)})
 
 
+class StreamingCodebaseCPTPChannelMonitor:
+    """Online state-dependent CPTP trace blindspot vs. operator-level completeness monitor for a 3-module codebase (Theorem 103).
+
+    Composes `StreamingCPTPTraceMonitor`, `StreamingCPTPBlindspotCompletionMonitor`,
+    `StreamingCodebaseInterfaceMergeMonitor`, and `StreamingFiberMonitor` across a 3-module
+    stochastic/Kraus settlement channel codebase (`pricing_channel.py`, `tax_channel.py`,
+    `settlement_channel.py`) acting on a 3-dimensional state space `{rho_0, rho_1, rho_2}`:
+      - `pricing_channel.py` (`worker-0`, `compute_channel_quote`): defines ground-state Kraus
+        sector weight `k0_diag = 1` (`K_0 = diag(k0_diag, 0, 0)`), which preserves trace on the
+        standard unit-test probe state `rho_0 = diag(1, 0, 0)`.
+      - `tax_channel.py` (`worker-1`, `apply_channel_tax`): defines first excited-state (tax-audit)
+        Kraus sector weight `k1_diag` (`K_1 = diag(0, k1_diag, 0)`).
+      - `settlement_channel.py` (`worker-2`, `route_channel_settlement`): defines second
+        excited-state (disputed-escrow) Kraus sector weight `k2_diag` (`K_2 = diag(0, 0, k2_diag)`)
+        and settlement payout conservation `873 + 27 + 180 = 1080`.
+      - Separates:
+          1. Phase 1 (Incomplete Kraus family `k0_diag = 1, k1_diag = 0, k2_diag = 0`):
+             Probing only ground state `rho_0 = diag(1, 0, 0)` in isolated unit tests yields
+             `tr(E(rho_0)) - tr(rho_0) == 0` (`local_green = 1`), yet operator trace-preservation
+             residual `R_TP(E) = sum_r K_r^T K_r - I_3 = diag(0, -1, -1)` has L1 norm `2 > 0`
+             (`CPTP_STATE_BLINDSPOT_NON_TP_LGGR`, `global_green = 0`, `defect = -1`).
+          2. Phase 2 (Partial Kraus completion `k0_diag = 1, k1_diag = 1, k2_diag = 0`):
+             Completing `tax_channel` (`k1_diag = 1`) preserves trace on `rho_0` and `rho_1`
+             and reduces `||R_TP||_1` from `2` to `1` (`local_green = 1`), yet `rho_2` still
+             leaks trace (`tr(E(rho_2)) - tr(rho_2) == -1 != 0`) with `||R_TP||_1 = 1 > 0`
+             (`EXCITED_STATE_TRACE_LEAKAGE_LGGR`, `global_green = 0`, `defect = -1`).
+          3. Phase 3 (Full operator completion `k0_diag = 1, k1_diag = 1, k2_diag = 1`):
+             Completing all 3 Kraus sectors yields `sum_r K_r^T K_r == I_3`, `||R_TP||_1 == 0`,
+             zero trace discrepancy across `{rho_0, rho_1, rho_2}`, and exact settlement
+             conservation `873 + 27 + 180 = 1080` (`CODEBASE_CPTP_OPERATOR_COMPLETE_LGGG`,
+             `local_green = 1`, `global_green = 1`, `defect = 0`).
+    """
+
+    MODULES: tuple[str, ...] = ("pricing_channel", "tax_channel", "settlement_channel")
+    MODULE_FUNCTIONS: dict[str, str] = {
+        "pricing_channel": "compute_channel_quote",
+        "tax_channel": "apply_channel_tax",
+        "settlement_channel": "route_channel_settlement",
+    }
+
+    def __init__(
+        self,
+        *,
+        scope_id: str = "streaming-codebase-cptp-channel-scope",
+    ) -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.completion_monitor = StreamingCPTPBlindspotCompletionMonitor(
+            scope_id=f"{self.scope_id}-completion",
+        )
+        self.fiber_monitor = StreamingFiberMonitor()
+        self.evaluations: list[dict[str, Any]] = []
+        self.three_phase_audits: list[dict[str, Any]] = []
+
+    def evaluate_codebase_cptp_channel(
+        self,
+        evaluation_id: str,
+        *,
+        sources: Mapping[str, str],
+        local_test_results: Mapping[str, bool],
+        infeasible_constraint: Mapping[str, Any] | None = None,
+        model_id: str = "deterministic",
+    ) -> dict[str, Any]:
+        eval_id = text(evaluation_id, "evaluation_id")
+        mid = text(model_id, "model_id")
+        for m in self.MODULES:
+            if m not in sources:
+                raise ValidationError(f"missing source for module {m}")
+            if m not in local_test_results:
+                raise ValidationError(f"missing local_test_results for module {m}")
+
+        all_local_pass = all(bool(local_test_results[m]) for m in self.MODULES)
+
+        ast_summaries: dict[str, dict[str, Any]] = {}
+        fn_map: dict[str, Any] = {}
+        for m in self.MODULES:
+            fname = self.MODULE_FUNCTIONS[m]
+            ast_summaries[m] = StreamingCodebaseInterfaceMergeMonitor.inspect_module_ast(
+                m, sources[m]
+            )
+            try:
+                ns = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(m, sources[m])
+                fn_map[m] = ns.get(fname)
+            except ValidationError:
+                fn_map[m] = None
+
+        items = [
+            {"sku": "tier_a", "unit_cents": 600, "qty": 1},
+            {"sku": "tier_b", "unit_cents": 400, "qty": 1},
+        ]
+        runtime_error: str | None = None
+        quote_out: dict[str, Any] = {}
+        tax_out: dict[str, Any] = {}
+        settle_out: dict[str, Any] = {}
+
+        if all(fn_map[m] is not None for m in self.MODULES):
+            try:
+                q_res = fn_map["pricing_channel"](items, 1000)
+                if not isinstance(q_res, Mapping):
+                    raise ValidationError("pricing_channel did not return a dict")
+                quote_out = dict(q_res)
+                t_res = fn_map["tax_channel"](quote_out, 2000)
+                if not isinstance(t_res, Mapping):
+                    raise ValidationError("tax_channel did not return a dict")
+                tax_out = dict(t_res)
+                s_res = fn_map["settlement_channel"](tax_out, 300)
+                if not isinstance(s_res, Mapping):
+                    raise ValidationError("settlement_channel did not return a dict")
+                settle_out = dict(s_res)
+            except Exception as exc:
+                runtime_error = f"{type(exc).__name__}: {exc}"
+        else:
+            runtime_error = "One or more modules failed AST compilation"
+
+        k0_diag = int(quote_out.get("k0_diag", 1)) if runtime_error is None else 1
+        k1_diag = int(tax_out.get("k1_diag", 0)) if runtime_error is None else 0
+        k2_diag = int(settle_out.get("k2_diag", 0)) if runtime_error is None else 0
+
+        k0_mat = ((k0_diag, 0, 0), (0, 0, 0), (0, 0, 0))
+        k1_mat = ((0, 0, 0), (0, k1_diag, 0), (0, 0, 0))
+        k2_mat = ((0, 0, 0), (0, 0, 0), (0, 0, k2_diag))
+
+        rho0_mat = ((1, 0, 0), (0, 0, 0), (0, 0, 0))
+        rho1_mat = ((0, 0, 0), (0, 1, 0), (0, 0, 0))
+        rho2_mat = ((0, 0, 0), (0, 0, 0), (0, 0, 1))
+
+        cptp_mon = StreamingCPTPTraceMonitor(
+            [k0_mat, k1_mat, k2_mat],
+            scope_id=f"{self.scope_id}-{eval_id}",
+        )
+        probe_0 = cptp_mon.probe_state("rho_0_ground", rho0_mat)
+        probe_1 = cptp_mon.probe_state("rho_1_tax_sector", rho1_mat)
+        probe_2 = cptp_mon.probe_state("rho_2_settlement_sector", rho2_mat)
+        cptp_receipt = cptp_mon.get_receipt()
+
+        tr_diff_0 = int(rational(probe_0["trace_discrepancy"]))
+        tr_diff_1 = int(rational(probe_1["trace_discrepancy"]))
+        tr_diff_2 = int(rational(probe_2["trace_discrepancy"]))
+        res_l1 = int(rational(cptp_receipt["residual_l1_norm"]))
+        op_tp_ok = bool(cptp_receipt["operator_trace_preserving"])
+
+        net_val = int(quote_out.get("net_cents", 0)) if runtime_error is None else 0
+        gross_val = int(settle_out.get("gross_cents", 0)) if runtime_error is None else 0
+        fee_val = int(settle_out.get("platform_fee_cents", 0)) if runtime_error is None else 0
+        tax_val = int(settle_out.get("tax_reserve_cents", 0)) if runtime_error is None else 0
+        payout_val = int(settle_out.get("merchant_payout_cents", 0)) if runtime_error is None else 0
+
+        conservation_ok = (
+            runtime_error is None
+            and net_val == 900
+            and gross_val == 1080
+            and fee_val == 27
+            and tax_val == 180
+            and payout_val == 873
+            and payout_val + fee_val + tax_val == gross_val
+            and op_tp_ok
+            and res_l1 == 0
+            and tr_diff_0 == 0
+            and tr_diff_1 == 0
+            and tr_diff_2 == 0
+            and k0_diag == 1
+            and k1_diag == 1
+            and k2_diag == 1
+        )
+
+        comp_eval = self.completion_monitor.evaluate_cptp_completion(f"{eval_id}_comp")
+
+        l_green = 1 if (all_local_pass and tr_diff_0 == 0 and infeasible_constraint is None) else 0
+        eg_green = 1 if (l_green == 1 and conservation_ok) else 0
+        defect = eg_green - l_green
+
+        self.fiber_monitor.observe(
+            state_id=f"{eval_id}_{mid}",
+            report={
+                "local_unit_tests_all_pass": all_local_pass,
+                "ground_state_trace_preserved": tr_diff_0 == 0,
+            },
+            query="LGGG" if eg_green == 1 else "LGGR",
+            metadata={
+                "k0_diag": k0_diag,
+                "k1_diag": k1_diag,
+                "k2_diag": k2_diag,
+                "residual_l1_norm": res_l1,
+                "trace_discrepancies": [tr_diff_0, tr_diff_1, tr_diff_2],
+            },
+        )
+
+        if infeasible_constraint is not None:
+            status = "INFEASIBLE_CPTP_CHANNEL_LOCK_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif eg_green == 1:
+            status = "CODEBASE_CPTP_OPERATOR_COMPLETE_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        elif l_green == 1 and res_l1 >= 2:
+            status = "CPTP_STATE_BLINDSPOT_NON_TP_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif l_green == 1 and res_l1 > 0:
+            status = "EXCITED_STATE_TRACE_LEAKAGE_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "LOCAL_UNIT_OR_GROUND_TRACE_FAILURE_LRGR"
+            contract_status = "OBSTRUCTED_LGGR"
+
+        directives: dict[str, dict[str, Any]] = {}
+        if infeasible_constraint is not None:
+            for w_idx, m in enumerate(self.MODULES):
+                directives[f"worker-{w_idx}"] = {
+                    "module": m,
+                    "action": "HALT_AND_ESCALATE",
+                    "reason": str(
+                        infeasible_constraint.get(
+                            "reason", "Infeasible CPTP Kraus channel completion lock."
+                        )
+                    ),
+                }
+        elif eg_green == 1:
+            for w_idx, m in enumerate(self.MODULES):
+                directives[f"worker-{w_idx}"] = {
+                    "module": m,
+                    "action": "NO_OP_CPTP_COMPLETE",
+                    "reason": (
+                        "Kraus channel is operator-level trace preserving (`sum_r K_r^T K_r == I_3`, "
+                        "`||R_TP||_1 == 0`) with exact settlement conservation 873 + 27 + 180 = 1080."
+                    ),
+                }
+        else:
+            directives["worker-0"] = {
+                "module": "pricing_channel",
+                "action": "HOLD_GROUND_KRAUS_SECTOR",
+                "target_k0_diag": 1,
+                "reason": (
+                    "Hold `pricing_channel.py` ground-state Kraus sector weight at `k0_diag = 1` "
+                    "(`net_cents = 900`, `tr(E(rho_0)) - tr(rho_0) == 0`)."
+                ),
+            }
+            directives["worker-1"] = {
+                "module": "tax_channel",
+                "action": "COMPLETE_TAX_KRAUS_SECTOR" if k1_diag != 1 else "HOLD_TAX_KRAUS_SECTOR",
+                "current_k1_diag": k1_diag,
+                "target_k1_diag": 1,
+                "reason": (
+                    f"Operator CPTP residual audit detected `k1_diag = {k1_diag}` (`tr(E(rho_1)) - tr(rho_1) = {tr_diff_1}`). "
+                    "Set `'k1_diag': 1` in `tax_channel.py` (`tax_cents = 180`, `gross_cents = 1080`) so sector 1 is trace-preserving."
+                ),
+            }
+            directives["worker-2"] = {
+                "module": "settlement_channel",
+                "action": "COMPLETE_SETTLEMENT_KRAUS_SECTOR",
+                "current_k2_diag": k2_diag,
+                "target_k2_diag": 1,
+                "residual_l1_norm": res_l1,
+                "reason": (
+                    f"Operator CPTP residual audit detected `||R_TP||_1 = {res_l1} > 0` with "
+                    f"`k2_diag = {k2_diag}` (`tr(E(rho_2)) - tr(rho_2) = {tr_diff_2}`). "
+                    "Update `settlement_channel.py` so `'k2_diag': 1` and `merchant_payout_cents = gross - fee - tax = 873`."
+                ),
+            }
+
+        rec_body: dict[str, Any] = {
+            "evaluation_id": eval_id,
+            "model_id": mid,
+            "status": status,
+            "contract_status": contract_status,
+            "local_green": l_green,
+            "global_green": eg_green,
+            "defect": defect,
+            "k0_diag": k0_diag,
+            "k1_diag": k1_diag,
+            "k2_diag": k2_diag,
+            "residual_l1_norm": res_l1,
+            "trace_discrepancy_rho0": tr_diff_0,
+            "trace_discrepancy_rho1": tr_diff_1,
+            "trace_discrepancy_rho2": tr_diff_2,
+            "operator_trace_preserving": op_tp_ok,
+            "conservation_ok": conservation_ok,
+            "runtime_error": runtime_error,
+            "ast_summaries": ast_summaries,
+            "compact_role_directives": directives,
+            "cptp_trace_receipt": cptp_receipt,
+            "completion_evaluation": comp_eval,
+        }
+        signed_rec = json_value({**rec_body, "receipt_sha256": digest(rec_body)})
+        self.evaluations.append(signed_rec)
+        return signed_rec
+
+    def record_three_phase_codebase_cptp_audit(
+        self,
+        evaluation_id: str,
+        *,
+        model_id: str = "deterministic",
+    ) -> dict[str, Any]:
+        """Record the 3-phase CPTP channel codebase audit (Theorem 103)."""
+        eval_id = text(evaluation_id, "evaluation_id")
+        mid = text(model_id, "model_id")
+
+        src_p = (
+            "def compute_channel_quote(items: list[dict], discount_bps: int) -> dict:\n"
+            "    subtotal = sum(int(item['unit_cents']) * int(item['qty']) for item in items)\n"
+            "    discount = (subtotal * int(discount_bps)) // 10000\n"
+            "    net = subtotal - discount\n"
+            "    return {\n"
+            "        'subtotal_cents': subtotal,\n"
+            "        'discount_cents': discount,\n"
+            "        'net_cents': net,\n"
+            "        'k0_diag': 1,\n"
+            "    }\n"
+        )
+        src_t_inc = (
+            "def apply_channel_tax(quote: dict, tax_rate_bps: int) -> dict:\n"
+            "    net = int(quote['net_cents'])\n"
+            "    tax = (net * int(tax_rate_bps)) // 10000\n"
+            "    gross = net + tax\n"
+            "    return {\n"
+            "        'net_cents': net,\n"
+            "        'tax_cents': tax,\n"
+            "        'gross_cents': gross,\n"
+            "        'k0_diag': int(quote.get('k0_diag', 1)),\n"
+            "        'k1_diag': 0,\n"
+            "    }\n"
+        )
+        src_t_comp = (
+            "def apply_channel_tax(quote: dict, tax_rate_bps: int) -> dict:\n"
+            "    net = int(quote['net_cents'])\n"
+            "    tax = (net * int(tax_rate_bps)) // 10000\n"
+            "    gross = net + tax\n"
+            "    return {\n"
+            "        'net_cents': net,\n"
+            "        'tax_cents': tax,\n"
+            "        'gross_cents': gross,\n"
+            "        'k0_diag': int(quote.get('k0_diag', 1)),\n"
+            "        'k1_diag': 1,\n"
+            "    }\n"
+        )
+        src_s_inc = (
+            "def route_channel_settlement(taxed_quote: dict, fee_bps: int) -> dict:\n"
+            "    net = int(taxed_quote['net_cents'])\n"
+            "    tax = int(taxed_quote['tax_cents'])\n"
+            "    gross = int(taxed_quote['gross_cents'])\n"
+            "    fee = (net * int(fee_bps)) // 10000\n"
+            "    payout = gross - fee - tax\n"
+            "    return {\n"
+            "        'gross_cents': gross,\n"
+            "        'platform_fee_cents': fee,\n"
+            "        'tax_reserve_cents': tax,\n"
+            "        'merchant_payout_cents': payout,\n"
+            "        'k0_diag': int(taxed_quote.get('k0_diag', 1)),\n"
+            "        'k1_diag': int(taxed_quote.get('k1_diag', 0)),\n"
+            "        'k2_diag': 0,\n"
+            "    }\n"
+        )
+        src_s_comp = (
+            "def route_channel_settlement(taxed_quote: dict, fee_bps: int) -> dict:\n"
+            "    net = int(taxed_quote['net_cents'])\n"
+            "    tax = int(taxed_quote['tax_cents'])\n"
+            "    gross = int(taxed_quote['gross_cents'])\n"
+            "    fee = (net * int(fee_bps)) // 10000\n"
+            "    payout = gross - fee - tax\n"
+            "    return {\n"
+            "        'gross_cents': gross,\n"
+            "        'platform_fee_cents': fee,\n"
+            "        'tax_reserve_cents': tax,\n"
+            "        'merchant_payout_cents': payout,\n"
+            "        'k0_diag': int(taxed_quote.get('k0_diag', 1)),\n"
+            "        'k1_diag': int(taxed_quote.get('k1_diag', 1)),\n"
+            "        'k2_diag': 1,\n"
+            "    }\n"
+        )
+
+        all_local_green = {
+            "pricing_channel": True,
+            "tax_channel": True,
+            "settlement_channel": True,
+        }
+
+        p1 = self.evaluate_codebase_cptp_channel(
+            f"{eval_id}_phase1_ground_blindspot",
+            sources={
+                "pricing_channel": src_p,
+                "tax_channel": src_t_inc,
+                "settlement_channel": src_s_inc,
+            },
+            local_test_results=all_local_green,
+            model_id=mid,
+        )
+        p2 = self.evaluate_codebase_cptp_channel(
+            f"{eval_id}_phase2_partial_completion",
+            sources={
+                "pricing_channel": src_p,
+                "tax_channel": src_t_comp,
+                "settlement_channel": src_s_inc,
+            },
+            local_test_results=all_local_green,
+            model_id=mid,
+        )
+        p3 = self.evaluate_codebase_cptp_channel(
+            f"{eval_id}_phase3_full_operator_completion",
+            sources={
+                "pricing_channel": src_p,
+                "tax_channel": src_t_comp,
+                "settlement_channel": src_s_comp,
+            },
+            local_test_results=all_local_green,
+            model_id=mid,
+        )
+
+        audit_rec = json_value(
+            {
+                "evaluation_id": eval_id,
+                "model_id": mid,
+                "phase_1_residual_l1_norm": p1["residual_l1_norm"],
+                "phase_1_trace_discrepancy_rho0": p1["trace_discrepancy_rho0"],
+                "phase_1_local_green": p1["local_green"],
+                "phase_1_global_green": p1["global_green"],
+                "phase_1_defect": p1["defect"],
+                "phase_1_status": p1["status"],
+                "phase_1_directives": p1["compact_role_directives"],
+                "phase_2_residual_l1_norm": p2["residual_l1_norm"],
+                "phase_2_trace_discrepancy_rho2": p2["trace_discrepancy_rho2"],
+                "phase_2_local_green": p2["local_green"],
+                "phase_2_global_green": p2["global_green"],
+                "phase_2_defect": p2["defect"],
+                "phase_2_status": p2["status"],
+                "phase_3_residual_l1_norm": p3["residual_l1_norm"],
+                "phase_3_local_green": p3["local_green"],
+                "phase_3_global_green": p3["global_green"],
+                "phase_3_defect": p3["defect"],
+                "phase_3_status": p3["status"],
+            }
+        )
+        self.three_phase_audits.append(audit_rec)
+        return audit_rec
+
+    def current_receipt(self) -> dict[str, Any]:
+        if not self.evaluations:
+            raise ValidationError("at least one codebase CPTP channel evaluation must be recorded")
+        n = len(self.evaluations)
+        lggr_count = sum(1 for e in self.evaluations if e["defect"] == -1)
+        lggg_count = sum(1 for e in self.evaluations if e["global_green"] == 1)
+        last = self.evaluations[-1]
+
+        body: dict[str, Any] = {
+            "schema": "lggr.online_codebase_cptp_channel.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": last["status"],
+            "contract_status": last["contract_status"],
+            "evaluation_count": n,
+            "lggr_obstruction_count": lggr_count,
+            "lggg_coherent_count": lggg_count,
+            "completion_receipt": self.completion_monitor.current_receipt(),
+            "fiber_receipt": self.fiber_monitor.get_receipt(),
+            "three_phase_audits": self.three_phase_audits,
+            "evaluations": self.evaluations,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+
 
 
 

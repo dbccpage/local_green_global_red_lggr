@@ -1,0 +1,126 @@
+{
+  "schema": "lggr.cptp_channel_code_engineering_swarm.v1",
+  "topology": "cptp",
+  "authority_effect": "None",
+  "cases": [
+    {
+      "seed": 10000,
+      "kind": "incomplete_kraus_ground_state_blindspot",
+      "arms": [
+        {
+          "arm": "A",
+          "outcome": "blocked_unresolved",
+          "initial_local_green_global_red": true,
+          "final_local_green": 1,
+          "final_global_green": 0,
+          "final_defect": -1,
+          "final_k0_diag": 1,
+          "final_k1_diag": 0,
+          "final_k2_diag": 0,
+          "final_residual_l1_norm": 2,
+          "final_status": "CPTP_STATE_BLINDSPOT_NON_TP_LGGR",
+          "waves_run": 1,
+          "escalations": 0,
+          "api_attempts": 6,
+          "cost_usd": "0.0060568638"
+        },
+        {
+          "arm": "B",
+          "outcome": "blocked_unresolved",
+          "initial_local_green_global_red": true,
+          "final_local_green": 1,
+          "final_global_green": 0,
+          "final_defect": -1,
+          "final_k0_diag": 1,
+          "final_k1_diag": 1,
+          "final_k2_diag": 0,
+          "final_residual_l1_norm": 1,
+          "final_status": "EXCITED_STATE_TRACE_LEAKAGE_LGGR",
+          "waves_run": 1,
+          "escalations": 0,
+          "api_attempts": 6,
+          "cost_usd": "0.0058554557"
+        },
+        {
+          "arm": "C",
+          "outcome": "completed",
+          "initial_local_green_global_red": true,
+          "final_local_green": 1,
+          "final_global_green": 1,
+          "final_defect": 0,
+          "final_k0_diag": 1,
+          "final_k1_diag": 1,
+          "final_k2_diag": 1,
+          "final_residual_l1_norm": 0,
+          "final_status": "CODEBASE_CPTP_OPERATOR_COMPLETE_LGGG",
+          "waves_run": 2,
+          "escalations": 0,
+          "api_attempts": 13,
+          "cost_usd": "0.0199305837"
+        }
+      ]
+    },
+    {
+      "seed": 10001,
+      "kind": "incomplete_kraus_ground_state_blindspot",
+      "arms": [
+        {
+          "arm": "A",
+          "outcome": "blocked_unresolved",
+          "initial_local_green_global_red": true,
+          "final_local_green": 1,
+          "final_global_green": 0,
+          "final_defect": -1,
+          "final_k0_diag": 1,
+          "final_k1_diag": 0,
+          "final_k2_diag": 0,
+          "final_residual_l1_norm": 2,
+          "final_status": "CPTP_STATE_BLINDSPOT_NON_TP_LGGR",
+          "waves_run": 1,
+          "escalations": 0,
+          "api_attempts": 6,
+          "cost_usd": "0.0060753804"
+        },
+        {
+          "arm": "B",
+          "outcome": "blocked_unresolved",
+          "initial_local_green_global_red": true,
+          "final_local_green": 1,
+          "final_global_green": 0,
+          "final_defect": -1,
+          "final_k0_diag": 1,
+          "final_k1_diag": 1,
+          "final_k2_diag": 0,
+          "final_residual_l1_norm": 1,
+          "final_status": "EXCITED_STATE_TRACE_LEAKAGE_LGGR",
+          "waves_run": 1,
+          "escalations": 0,
+          "api_attempts": 6,
+          "cost_usd": "0.0058554557"
+        },
+        {
+          "arm": "C",
+          "outcome": "completed",
+          "initial_local_green_global_red": true,
+          "final_local_green": 1,
+          "final_global_green": 1,
+          "final_defect": 0,
+          "final_k0_diag": 1,
+          "final_k1_diag": 1,
+          "final_k2_diag": 1,
+          "final_residual_l1_norm": 0,
+          "final_status": "CODEBASE_CPTP_OPERATOR_COMPLETE_LGGG",
+          "waves_run": 2,
+          "escalations": 0,
+          "api_attempts": 13,
+          "cost_usd": "0.0199038411"
+        }
+      ]
+    }
+  ],
+  "api_attempts": 50,
+  "charged_or_reserved_usd": "0.0636775804",
+  "max_inflight_requests": 3,
+  "concurrent_waves": 16,
+  "scope": "Concurrent 3-agent CPTP channel Python code-engineering swarm (`pricing_channel` -> `tax_channel` -> `settlement_channel`) comparing ground-state probe trace gating (A), partial sector-1 Kraus completion (B), and explicit LGGR operator-level CPTP completion directives (C) with full cryptographic receipts retained in the host audit log."
+}

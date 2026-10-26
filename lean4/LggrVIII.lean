@@ -4084,4 +4084,68 @@ theorem optional_stopping_codebase_early_gain_skew_and_drawdown_cap_audit :
   intro s r h
   omega
 
+/-- 103. State-dependent CPTP trace blindspot vs. operator-level completeness in a 3-module codebase
+    (`pricing_channel`, `tax_channel`, `settlement_channel`):
+    1. Symbolic 3-state diagonal Kraus channel trace-blindspot vs. operator-residual law:
+       - For any ground-state Kraus weight `k0 = 1` and excited-state indicator deficiencies
+         `d1, d2 : Int` (`d1 ≥ 1`, `d2 ≥ 1`), the ground-state trace discrepancy is `k0 - 1 = 0`,
+         whereas the full operator trace-preservation residual L1 norm is `d1 + d2 ≥ 2 > 0`;
+       - Completing sector 1 (`d1 = 0`, `d2 ≥ 1`) strictly reduces the operator residual to
+         `d2 < d1 + d2` while leaving `d2 ≥ 1 > 0`;
+       - Completing both sectors (`d1 = 0`, `d2 = 0`) yields zero operator residual across the
+         full basis;
+    2. Concrete 3-phase 3-module CPTP channel codebase audit:
+       - Phase 1 (Incomplete Kraus family `k0 = 1, k1 = 0, k2 = 0` across `pricing_channel`,
+         `tax_channel`, `settlement_channel`):
+         ground-state trace discrepancy on `ρ_0` is `0` (`L_blind = 1`), yet operator residual
+         L1 norm is `2 > 0` (`Eg_blind = 0`, `Δ_{E,blind} = -1`);
+       - Phase 2 (Partial Kraus completion `k0 = 1, k1 = 1, k2 = 0` in `tax_channel`):
+         trace discrepancies on `ρ_0, ρ_1` are `0` and residual norm drops to `1 < 2` (`L_leak = 1`),
+         yet `ρ_2` leaks trace (`-1 ≠ 0`) with residual norm `1 > 0` (`Eg_leak = 0`, `Δ_{E,leak} = -1`);
+       - Phase 3 (Full operator completion `k0 = 1, k1 = 1, k2 = 1` across all 3 modules):
+         operator residual L1 norm is `0`, all basis states `ρ_0, ρ_1, ρ_2` preserve trace, and
+         settlement conservation `873 + 27 + 180 = 1080` holds (`L_comp = 1`, `Eg_comp = 1`, `Δ_{E,comp} = 0`). -/
+theorem cptp_codebase_state_blindspot_and_operator_completion_audit :
+    (∀ d1 d2 : Int,
+      (d1 ≥ 1 ∧ d2 ≥ 1) →
+      (let k0 : Int := 1;
+       let tr_diff_rho0 := k0 - 1;
+       let res_p1 := d1 + d2;
+       let res_p2 := d2;
+       let res_p3 : Int := 0;
+       (tr_diff_rho0 = 0) ∧
+       (res_p1 ≥ 2) ∧
+       (res_p2 < res_p1) ∧
+       (res_p2 ≥ 1) ∧
+       (res_p3 = 0))) ∧
+    (let tr0_p1 : Int := 0;
+     let res_p1 : Int := 2;
+     let tr0_p2 : Int := 0;
+     let tr1_p2 : Int := 0;
+     let tr2_p2 : Int := -1;
+     let res_p2 : Int := 1;
+     let tr0_p3 : Int := 0;
+     let tr1_p3 : Int := 0;
+     let tr2_p3 : Int := 0;
+     let res_p3 : Int := 0;
+     let payout_p3 : Int := 873;
+     let fee_p3 : Int := 27;
+     let tax_p3 : Int := 180;
+     let gross_p3 : Int := 1080;
+     let l_blind := if (tr0_p1 = 0) ∧ (res_p1 > 0) then (1 : Int) else 0;
+     let eg_blind := if (l_blind = 1) ∧ (res_p1 = 0) then (1 : Int) else 0;
+     let defect_blind := eg_blind - l_blind;
+     let l_leak := if (tr0_p2 = 0) ∧ (tr1_p2 = 0) ∧ (res_p2 < res_p1) ∧ (tr2_p2 ≠ 0) then (1 : Int) else 0;
+     let eg_leak := if (l_leak = 1) ∧ (res_p2 = 0) then (1 : Int) else 0;
+     let defect_leak := eg_leak - l_leak;
+     let l_comp := if (tr0_p3 = 0) ∧ (tr1_p3 = 0) ∧ (tr2_p3 = 0) ∧ (res_p3 = 0) ∧ (payout_p3 + fee_p3 + tax_p3 = gross_p3) then (1 : Int) else 0;
+     let eg_comp := if (l_comp = 1) ∧ (res_p3 < res_p2) then (1 : Int) else 0;
+     let defect_comp := eg_comp - l_comp;
+     (l_blind = 1 ∧ eg_blind = 0 ∧ defect_blind = -1) ∧
+     (l_leak = 1 ∧ eg_leak = 0 ∧ defect_leak = -1) ∧
+     (l_comp = 1 ∧ eg_comp = 1 ∧ defect_comp = 0)) := by
+  refine ⟨?_, ⟨⟨by decide, by decide, by decide⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨by decide, by decide, by decide⟩⟩⟩⟩
+  intro d1 d2 h
+  omega
+
 end LggrVIII

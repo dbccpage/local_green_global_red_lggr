@@ -119,3 +119,5 @@ import LggrVIII
 #print axioms LggrVIII.mayer_vietoris_codebase_disconnected_overlap_and_coboundary_audit
 #print axioms LggrVIII.windowed_drift_codebase_horizon_truncation_and_rebalancing_audit
 #print axioms LggrVIII.optional_stopping_codebase_early_gain_skew_and_drawdown_cap_audit
+#print axioms LggrVIII.cptp_codebase_state_blindspot_and_operator_completion_audit
+
