@@ -46,6 +46,7 @@ from lggr.streaming import (
     StreamingCodebaseDisagreementCouncilMonitor,
     StreamingCodebaseDynamicSchemaMonitor,
     StreamingCodebaseFiberSplittingMonitor,
+    StreamingCodebaseFigureEightWedgeMonitor,
     StreamingCodebaseGracefulSheddingMonitor,
     StreamingCodebaseInterfaceMergeMonitor,
     StreamingCodebaseJacobianSoundnessMonitor,
@@ -6199,6 +6200,53 @@ class TestStreamingBaselineComparator(unittest.TestCase):
 
         receipt = mon.current_receipt()
         self.assertEqual(receipt["status"], "CODEBASE_MULTI_LOOP_HODGE_COHERENT_LGGG")
+        self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(receipt["lggr_obstruction_count"], 2)
+        self.assertEqual(receipt["lggg_coherent_count"], 1)
+
+    def test_figure_eight_wedge_codebase_junction_gauge_and_hodge_audit(self) -> None:
+        """Verify Theorem 122: Coupled figure-eight wedge junction gauge & Hodge codebase audit."""
+        mon = StreamingCodebaseFigureEightWedgeMonitor(
+            scope_id="unit-codebase-figure-eight-wedge-scope",
+        )
+        obs = mon.record_three_phase_codebase_audit(
+            model_id="unit-figure-eight-wedge-eval-01",
+        )
+        self.assertEqual(obs["phase_1_norm2_exact"], 6)
+        self.assertEqual(obs["phase_1_norm2_coexact"], 3)
+        self.assertEqual(obs["phase_1_norm2_harmonic"], 3)
+        self.assertEqual(obs["phase_1_gauge_mismatch_cents"], 0)
+        self.assertEqual(obs["phase_1_surcharge_cents"], 6)
+        self.assertEqual(obs["phase_1_payout_cents"], 867)
+        self.assertEqual(obs["phase_1_local_green"], 1)
+        self.assertEqual(obs["phase_1_global_green"], 0)
+        self.assertEqual(obs["phase_1_defect"], -1)
+        self.assertEqual(obs["phase_1_status"], "WEDGE_CURL_AND_HARMONIC_OBSTRUCTION_LGGR")
+
+        self.assertEqual(obs["phase_2_norm2_exact"], 2)
+        self.assertEqual(obs["phase_2_norm2_coexact"], 0)
+        self.assertEqual(obs["phase_2_norm2_harmonic"], 3)
+        self.assertEqual(obs["phase_2_gauge_mismatch_cents"], 1)
+        self.assertEqual(obs["phase_2_surcharge_cents"], 4)
+        self.assertEqual(obs["phase_2_payout_cents"], 869)
+        self.assertEqual(obs["phase_2_local_green"], 1)
+        self.assertEqual(obs["phase_2_global_green"], 0)
+        self.assertEqual(obs["phase_2_defect"], -1)
+        self.assertEqual(obs["phase_2_status"], "WEDGE_HARMONIC_LOOP_AND_GAUGE_MISMATCH_LGGR")
+
+        self.assertEqual(obs["phase_3_norm2_exact"], 20)
+        self.assertEqual(obs["phase_3_norm2_coexact"], 0)
+        self.assertEqual(obs["phase_3_norm2_harmonic"], 0)
+        self.assertEqual(obs["phase_3_gauge_mismatch_cents"], 0)
+        self.assertEqual(obs["phase_3_surcharge_cents"], 0)
+        self.assertEqual(obs["phase_3_payout_cents"], 873)
+        self.assertEqual(obs["phase_3_local_green"], 1)
+        self.assertEqual(obs["phase_3_global_green"], 1)
+        self.assertEqual(obs["phase_3_defect"], 0)
+        self.assertEqual(obs["phase_3_status"], "WEDGE_GAUGE_GLUED_EXACT_LGGG")
+
+        receipt = mon.current_receipt()
+        self.assertEqual(receipt["status"], "WEDGE_GAUGE_GLUED_EXACT_LGGG")
         self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
         self.assertEqual(receipt["lggr_obstruction_count"], 2)
         self.assertEqual(receipt["lggg_coherent_count"], 1)

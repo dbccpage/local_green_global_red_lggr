@@ -138,6 +138,7 @@ import LggrVIII
 #print axioms LggrVIII.obligation_migration_codebase_equal_info_audit
 #print axioms LggrVIII.three_party_c3_codebase_constant_bound_audit
 #print axioms LggrVIII.multi_loop_hodge_codebase_cup_and_harmonic_kernel_audit
+#print axioms LggrVIII.figure_eight_wedge_codebase_junction_gauge_and_hodge_audit
 
 
 

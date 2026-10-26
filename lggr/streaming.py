@@ -31299,6 +31299,443 @@ class StreamingCodebaseMultiLoopHodgeMonitor:
         return json_value({**body, "receipt_sha256": digest(body)})
 
 
+class StreamingCodebaseFigureEightWedgeMonitor:
+    """Audit 3-module figure-eight wedge settlement codebases (`pricing_wedge`, `tax_wedge`,
+    `settlement_wedge`) on the 5-vertex, 6-edge, 1-filled-triangle figure-eight wedge
+    2-complex K = T_filled v_{v0} T_unfilled sharing degree-4 junction vertex v0 under
+    `StreamingFigureEightWedgeHodgeMonitor`, `StreamingHodgeDecompositionMonitor`,
+    `StreamingMayerVietorisMonitor`, `StreamingCodebaseInterfaceMergeMonitor`, and
+    `StreamingFiberMonitor` (Theorem 122).
+
+    AuthorityEffect: None.
+    """
+
+    WEDGE_D0: tuple[tuple[int, ...], ...] = StreamingFigureEightWedgeHodgeMonitor.WEDGE_D0
+    WEDGE_D1: tuple[tuple[int, ...], ...] = StreamingFigureEightWedgeHodgeMonitor.WEDGE_D1
+
+    PHASE_1_PRICING_WEDGE_SOURCE = (
+        "def compute_pricing_wedge(items, discount_bps):\n"
+        "    subtotal = sum(int(item['unit_cents']) * int(item['quantity']) for item in items)\n"
+        "    discount = (subtotal * int(discount_bps)) // 10000\n"
+        "    net = subtotal - discount\n"
+        "    # Phase 1: U = T_filled has 2-cell curl d1(h_U) = 3 + 0 + 0 = 3 != 0; unshifted v0 = 0\n"
+        "    return {\n"
+        "        'subtotal_cents': subtotal,\n"
+        "        'discount_cents': discount,\n"
+        "        'net_cents': net,\n"
+        "        'filled_loop_edges': [3, 0, 0],\n"
+        "        'junction_v0_potential': 0,\n"
+        "    }\n"
+    )
+    PHASE_1_TAX_WEDGE_SOURCE = (
+        "def compute_tax_wedge(quote, tax_bps):\n"
+        "    net = int(quote['net_cents'])\n"
+        "    tax = (net * int(tax_bps)) // 10000\n"
+        "    gross = net + tax\n"
+        "    # Phase 1: V = T_unfilled has non-exact harmonic circulation 1 + 1 + 1 = 3 != 0; v0 = 0\n"
+        "    return {\n"
+        "        'net_cents': net,\n"
+        "        'tax_cents': tax,\n"
+        "        'gross_cents': gross,\n"
+        "        'filled_loop_edges': list(quote['filled_loop_edges']),\n"
+        "        'unfilled_loop_edges': [1, 1, 1],\n"
+        "        'junction_v0_potential': int(quote['junction_v0_potential']),\n"
+        "        'tax_junction_v0_potential': 0,\n"
+        "    }\n"
+    )
+    PHASE_1_SETTLEMENT_WEDGE_SOURCE = (
+        "def compute_settlement_wedge(taxed_quote, fee_bps):\n"
+        "    gross = int(taxed_quote['gross_cents'])\n"
+        "    net = int(taxed_quote['net_cents'])\n"
+        "    tax = int(taxed_quote['tax_cents'])\n"
+        "    fee = (net * int(fee_bps)) // 10000\n"
+        "    u_edges = [int(x) for x in taxed_quote['filled_loop_edges']]\n"
+        "    v_edges = [int(x) for x in taxed_quote['unfilled_loop_edges']]\n"
+        "    p_v0 = int(taxed_quote['junction_v0_potential'])\n"
+        "    t_v0 = int(taxed_quote['tax_junction_v0_potential'])\n"
+        "    # Phase 1: h = [3, 0, 0, 1, 1, 1] -> e_co = 3, e_harm = 3, g_mis = 0 -> surcharge = 6\n"
+        "    curl_u = sum(u_edges)\n"
+        "    coexact_energy = (curl_u * curl_u) // 3\n"
+        "    circ_v = sum(v_edges)\n"
+        "    harmonic_energy = (circ_v * circ_v) // 3\n"
+        "    gauge_mismatch = abs(p_v0 - t_v0)\n"
+        "    surcharge = coexact_energy + harmonic_energy + gauge_mismatch\n"
+        "    payout = net - fee - surcharge\n"
+        "    return {\n"
+        "        'gross_cents': gross,\n"
+        "        'platform_fee_cents': fee,\n"
+        "        'tax_reserve_cents': tax,\n"
+        "        'merchant_payout_cents': payout,\n"
+        "        'wedge_surcharge_cents': surcharge,\n"
+        "        'cochain_1': u_edges + v_edges,\n"
+        "        'coexact_energy': coexact_energy,\n"
+        "        'harmonic_energy': harmonic_energy,\n"
+        "        'junction_gauge_mismatch_cents': gauge_mismatch,\n"
+        "        'junction_v0_potential': p_v0,\n"
+        "        'tax_junction_v0_potential': t_v0,\n"
+        "    }\n"
+    )
+
+    PHASE_2_PRICING_WEDGE_SOURCE = (
+        "def compute_pricing_wedge(items, discount_bps):\n"
+        "    subtotal = sum(int(item['unit_cents']) * int(item['quantity']) for item in items)\n"
+        "    discount = (subtotal * int(discount_bps)) // 10000\n"
+        "    net = subtotal - discount\n"
+        "    # Phase 2: U = T_filled curl-cleared [1, 0, -1] but shifts junction_v0_potential = -1\n"
+        "    return {\n"
+        "        'subtotal_cents': subtotal,\n"
+        "        'discount_cents': discount,\n"
+        "        'net_cents': net,\n"
+        "        'filled_loop_edges': [1, 0, -1],\n"
+        "        'junction_v0_potential': -1,\n"
+        "    }\n"
+    )
+    PHASE_2_TAX_WEDGE_SOURCE = PHASE_1_TAX_WEDGE_SOURCE
+    PHASE_2_SETTLEMENT_WEDGE_SOURCE = PHASE_1_SETTLEMENT_WEDGE_SOURCE
+
+    PHASE_3_PRICING_WEDGE_SOURCE = (
+        "def compute_pricing_wedge(items, discount_bps):\n"
+        "    subtotal = sum(int(item['unit_cents']) * int(item['quantity']) for item in items)\n"
+        "    discount = (subtotal * int(discount_bps)) // 10000\n"
+        "    net = subtotal - discount\n"
+        "    # Phase 3: Synchronized junction shift s = -1 at v0 -> phi_U = [-1, 1, 0] -> [2, -1, -1]\n"
+        "    return {\n"
+        "        'subtotal_cents': subtotal,\n"
+        "        'discount_cents': discount,\n"
+        "        'net_cents': net,\n"
+        "        'filled_loop_edges': [2, -1, -1],\n"
+        "        'junction_v0_potential': -1,\n"
+        "    }\n"
+    )
+    PHASE_3_TAX_WEDGE_SOURCE = (
+        "def compute_tax_wedge(quote, tax_bps):\n"
+        "    net = int(quote['net_cents'])\n"
+        "    tax = (net * int(tax_bps)) // 10000\n"
+        "    gross = net + tax\n"
+        "    # Phase 3: Synchronized junction shift s = -1 at v0 -> phi_V = [-1, 2, 0] -> [3, -2, -1]\n"
+        "    return {\n"
+        "        'net_cents': net,\n"
+        "        'tax_cents': tax,\n"
+        "        'gross_cents': gross,\n"
+        "        'filled_loop_edges': list(quote['filled_loop_edges']),\n"
+        "        'unfilled_loop_edges': [3, -2, -1],\n"
+        "        'junction_v0_potential': int(quote['junction_v0_potential']),\n"
+        "        'tax_junction_v0_potential': -1,\n"
+        "    }\n"
+    )
+    PHASE_3_SETTLEMENT_WEDGE_SOURCE = PHASE_1_SETTLEMENT_WEDGE_SOURCE
+
+    def __init__(
+        self,
+        *,
+        scope_id: str = "streaming-codebase-figure-eight-wedge-scope",
+    ) -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.wedge_monitor = StreamingFigureEightWedgeHodgeMonitor(
+            scope_id=f"{self.scope_id}-wedge",
+        )
+        self.fiber_monitor = StreamingFiberMonitor()
+        self.evaluations: list[dict[str, Any]] = []
+        self.three_phase_audits: list[dict[str, Any]] = []
+
+    def evaluate_figure_eight_wedge_modules(
+        self,
+        evaluation_id: str,
+        *,
+        pricing_wedge_source: str,
+        tax_wedge_source: str,
+        settlement_wedge_source: str,
+        infeasible_constraint: Mapping[str, Any] | None = None,
+        model_id: str = "deterministic",
+    ) -> dict[str, Any]:
+        eval_id = text(evaluation_id, "evaluation_id")
+        mid = text(model_id, "model_id")
+
+        ns_p = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(
+            "pricing_wedge", pricing_wedge_source
+        )
+        ns_t = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(
+            "tax_wedge", tax_wedge_source
+        )
+        ns_s = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(
+            "settlement_wedge", settlement_wedge_source
+        )
+
+        for mod_name, ns, fn_name in (
+            ("pricing_wedge", ns_p, "compute_pricing_wedge"),
+            ("tax_wedge", ns_t, "compute_tax_wedge"),
+            ("settlement_wedge", ns_s, "compute_settlement_wedge"),
+        ):
+            if fn_name not in ns or not callable(ns[fn_name]):
+                raise ValidationError(f"{mod_name} missing callable {fn_name}")
+
+        items = [
+            {"sku": "wedge_u", "unit_cents": 600, "quantity": 1},
+            {"sku": "wedge_v", "unit_cents": 400, "quantity": 1},
+        ]
+        quote = ns_p["compute_pricing_wedge"](items, 1000)
+        taxed = ns_t["compute_tax_wedge"](quote, 1000)
+        settled = ns_s["compute_settlement_wedge"](taxed, 300)
+
+        h_vec = [exact_int(x, f"cochain_1[{idx}]") for idx, x in enumerate(settled["cochain_1"])]
+        if len(h_vec) != 6:
+            raise ValidationError("cochain_1 must have length 6")
+
+        p_v0 = exact_int(settled["junction_v0_potential"], "junction_v0_potential")
+        t_v0 = exact_int(settled["tax_junction_v0_potential"], "tax_junction_v0_potential")
+        gauge_mismatch = abs(p_v0 - t_v0)
+
+        d0 = [list(row) for row in self.WEDGE_D0]
+        d1 = [list(row) for row in self.WEDGE_D1]
+
+        hodge_mon = StreamingHodgeDecompositionMonitor(
+            scope_id=f"{self.scope_id}-{eval_id}-hodge",
+        )
+        hrec = hodge_mon.record_complex_cochain(f"{eval_id}_hodge", d0, h_vec, D1=d1)
+        mvrec = StreamingFigureEightWedgeHodgeMonitor._record_wedge_mayer_vietoris(
+            f"{self.scope_id}-{eval_id}-mv", h_vec
+        )
+        self.wedge_monitor.record_wedge_evaluation(f"{eval_id}_wedge", model_id=mid)
+
+        norm2_exact = exact_int(int(Fraction(hrec["norm2_exact"])), "norm2_exact")
+        norm2_coexact = exact_int(int(Fraction(hrec["norm2_coexact"])), "norm2_coexact")
+        norm2_harmonic = exact_int(int(Fraction(hrec["norm2_harmonic"])), "norm2_harmonic")
+        norm2_total = exact_int(int(Fraction(hrec["norm2_total"])), "norm2_total")
+
+        surcharge_cents = exact_int(settled["wedge_surcharge_cents"], "wedge_surcharge_cents")
+        payout_cents = exact_int(settled["merchant_payout_cents"], "merchant_payout_cents")
+        fee_cents = exact_int(settled["platform_fee_cents"], "platform_fee_cents")
+        tax_cents = exact_int(settled["tax_reserve_cents"], "tax_reserve_cents")
+        gross_cents = exact_int(settled["gross_cents"], "gross_cents")
+
+        local_unit_ok = (
+            exact_int(quote["net_cents"], "net_cents") == 900
+            and tax_cents == 90
+            and gross_cents == 990
+            and fee_cents == 27
+            and bool(hrec["pythagorean_energy_verified"])
+            and bool(hrec["orthogonality_verified"])
+            and mvrec["overlap_vertices"] == ["v0"]
+            and surcharge_cents == norm2_coexact + norm2_harmonic + gauge_mismatch
+        )
+
+        l_green = 1 if (local_unit_ok and infeasible_constraint is None) else 0
+        eg_green = (
+            1
+            if (
+                l_green == 1
+                and norm2_coexact == 0
+                and norm2_harmonic == 0
+                and gauge_mismatch == 0
+                and bool(mvrec["u_locally_exact"])
+                and bool(mvrec["v_locally_exact"])
+                and bool(mvrec["union_globally_exact"])
+                and mvrec["connecting_coboundary_spread"] == "0"
+                and p_v0 == -1
+                and t_v0 == -1
+                and h_vec == [2, -1, -1, 3, -2, -1]
+                and surcharge_cents == 0
+                and payout_cents == 873
+                and payout_cents + fee_cents + tax_cents == gross_cents
+            )
+            else 0
+        )
+        defect = eg_green - l_green
+
+        if infeasible_constraint is not None:
+            status = "INFEASIBLE_FIGURE_EIGHT_WEDGE_LOCK_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif eg_green == 1:
+            status = "WEDGE_GAUGE_GLUED_EXACT_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        elif norm2_coexact > 0:
+            status = "WEDGE_CURL_AND_HARMONIC_OBSTRUCTION_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "WEDGE_HARMONIC_LOOP_AND_GAUGE_MISMATCH_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+
+        directives: dict[str, Any] = {
+            "worker-0": {
+                "module": "pricing_wedge",
+                "action": (
+                    "HOLD_PRICING_WEDGE"
+                    if (norm2_coexact == 0 and h_vec[:3] == [2, -1, -1] and p_v0 == -1)
+                    else "REPAIR_PRICING_WEDGE_FILLED_LOOP_AND_JUNCTION_GAUGE"
+                ),
+                "target_filled_loop_edges": [2, -1, -1],
+                "target_junction_v0_potential": -1,
+            },
+            "worker-1": {
+                "module": "tax_wedge",
+                "action": (
+                    "HOLD_TAX_WEDGE"
+                    if (norm2_harmonic == 0 and h_vec[3:] == [3, -2, -1] and t_v0 == -1)
+                    else "REPAIR_TAX_WEDGE_UNFILLED_LOOP_AND_JUNCTION_GAUGE"
+                ),
+                "target_unfilled_loop_edges": [3, -2, -1],
+                "target_tax_junction_v0_potential": -1,
+            },
+            "worker-2": {
+                "module": "settlement_wedge",
+                "action": (
+                    "HOLD_SETTLEMENT_WEDGE"
+                    if eg_green == 1
+                    else "REPAIR_SETTLEMENT_WEDGE_SURCHARGE_GATE"
+                ),
+                "target_surcharge_cents": 0,
+                "target_payout_cents": 873,
+            },
+        }
+
+        self.fiber_monitor.observe(
+            state_id=f"{eval_id}_{mid}",
+            report={
+                "local_unit_ok": local_unit_ok,
+                "pythagorean_energy_verified": bool(hrec["pythagorean_energy_verified"]),
+                "overlap_vertices": mvrec["overlap_vertices"],
+            },
+            query="LGGG" if eg_green == 1 else "LGGR",
+            metadata={
+                "cochain_1": h_vec,
+                "norm2_exact": norm2_exact,
+                "norm2_coexact": norm2_coexact,
+                "norm2_harmonic": norm2_harmonic,
+                "junction_gauge_mismatch_cents": gauge_mismatch,
+                "wedge_surcharge_cents": surcharge_cents,
+            },
+        )
+
+        rec: dict[str, Any] = json_value(
+            {
+                "evaluation_id": eval_id,
+                "model_id": mid,
+                "cochain_1": h_vec,
+                "junction_v0_potential": p_v0,
+                "tax_junction_v0_potential": t_v0,
+                "junction_gauge_mismatch_cents": gauge_mismatch,
+                "overlap_vertices": mvrec["overlap_vertices"],
+                "u_locally_exact": bool(mvrec["u_locally_exact"]),
+                "v_locally_exact": bool(mvrec["v_locally_exact"]),
+                "union_globally_exact": bool(mvrec["union_globally_exact"]),
+                "connecting_coboundary_spread": mvrec["connecting_coboundary_spread"],
+                "norm2_exact": norm2_exact,
+                "norm2_coexact": norm2_coexact,
+                "norm2_harmonic": norm2_harmonic,
+                "norm2_total": norm2_total,
+                "pythagorean_energy_verified": bool(hrec["pythagorean_energy_verified"]),
+                "orthogonality_verified": bool(hrec["orthogonality_verified"]),
+                "wedge_surcharge_cents": surcharge_cents,
+                "merchant_payout_cents": payout_cents,
+                "platform_fee_cents": fee_cents,
+                "tax_reserve_cents": tax_cents,
+                "gross_cents": gross_cents,
+                "local_green": l_green,
+                "global_green": eg_green,
+                "defect": defect,
+                "status": status,
+                "contract_status": contract_status,
+                "directives": directives,
+            }
+        )
+        self.evaluations.append(rec)
+        return rec
+
+    def record_three_phase_codebase_audit(
+        self,
+        *,
+        model_id: str = "deterministic",
+    ) -> dict[str, Any]:
+        mid = text(model_id, "model_id")
+        p1 = self.evaluate_figure_eight_wedge_modules(
+            f"{mid}::phase_1_wedge_curl_and_harmonic",
+            pricing_wedge_source=self.PHASE_1_PRICING_WEDGE_SOURCE,
+            tax_wedge_source=self.PHASE_1_TAX_WEDGE_SOURCE,
+            settlement_wedge_source=self.PHASE_1_SETTLEMENT_WEDGE_SOURCE,
+            model_id=mid,
+        )
+        p2 = self.evaluate_figure_eight_wedge_modules(
+            f"{mid}::phase_2_wedge_harmonic_and_gauge_mismatch",
+            pricing_wedge_source=self.PHASE_2_PRICING_WEDGE_SOURCE,
+            tax_wedge_source=self.PHASE_2_TAX_WEDGE_SOURCE,
+            settlement_wedge_source=self.PHASE_2_SETTLEMENT_WEDGE_SOURCE,
+            model_id=mid,
+        )
+        p3 = self.evaluate_figure_eight_wedge_modules(
+            f"{mid}::phase_3_wedge_gauge_glued_exact",
+            pricing_wedge_source=self.PHASE_3_PRICING_WEDGE_SOURCE,
+            tax_wedge_source=self.PHASE_3_TAX_WEDGE_SOURCE,
+            settlement_wedge_source=self.PHASE_3_SETTLEMENT_WEDGE_SOURCE,
+            model_id=mid,
+        )
+
+        audit_rec = json_value(
+            {
+                "model_id": mid,
+                "phase_1_norm2_exact": p1["norm2_exact"],
+                "phase_1_norm2_coexact": p1["norm2_coexact"],
+                "phase_1_norm2_harmonic": p1["norm2_harmonic"],
+                "phase_1_gauge_mismatch_cents": p1["junction_gauge_mismatch_cents"],
+                "phase_1_surcharge_cents": p1["wedge_surcharge_cents"],
+                "phase_1_payout_cents": p1["merchant_payout_cents"],
+                "phase_1_local_green": p1["local_green"],
+                "phase_1_global_green": p1["global_green"],
+                "phase_1_defect": p1["defect"],
+                "phase_1_status": p1["status"],
+                "phase_2_norm2_exact": p2["norm2_exact"],
+                "phase_2_norm2_coexact": p2["norm2_coexact"],
+                "phase_2_norm2_harmonic": p2["norm2_harmonic"],
+                "phase_2_gauge_mismatch_cents": p2["junction_gauge_mismatch_cents"],
+                "phase_2_surcharge_cents": p2["wedge_surcharge_cents"],
+                "phase_2_payout_cents": p2["merchant_payout_cents"],
+                "phase_2_local_green": p2["local_green"],
+                "phase_2_global_green": p2["global_green"],
+                "phase_2_defect": p2["defect"],
+                "phase_2_status": p2["status"],
+                "phase_3_norm2_exact": p3["norm2_exact"],
+                "phase_3_norm2_coexact": p3["norm2_coexact"],
+                "phase_3_norm2_harmonic": p3["norm2_harmonic"],
+                "phase_3_gauge_mismatch_cents": p3["junction_gauge_mismatch_cents"],
+                "phase_3_surcharge_cents": p3["wedge_surcharge_cents"],
+                "phase_3_payout_cents": p3["merchant_payout_cents"],
+                "phase_3_local_green": p3["local_green"],
+                "phase_3_global_green": p3["global_green"],
+                "phase_3_defect": p3["defect"],
+                "phase_3_status": p3["status"],
+            }
+        )
+        self.three_phase_audits.append(audit_rec)
+        return audit_rec
+
+    def current_receipt(self) -> dict[str, Any]:
+        if not self.evaluations:
+            raise ValidationError("at least one codebase figure-eight wedge evaluation must be recorded")
+        n = len(self.evaluations)
+        lggr_count = sum(1 for e in self.evaluations if e["defect"] == -1)
+        lggg_count = sum(1 for e in self.evaluations if e["global_green"] == 1)
+        last = self.evaluations[-1]
+
+        body: dict[str, Any] = {
+            "schema": "lggr.online_codebase_figure_eight_wedge.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": last["status"],
+            "contract_status": last["contract_status"],
+            "evaluation_count": n,
+            "lggr_obstruction_count": lggr_count,
+            "lggg_coherent_count": lggg_count,
+            "figure_eight_wedge_hodge_receipt": (
+                self.wedge_monitor.current_receipt()
+                if self.wedge_monitor.evaluations
+                else None
+            ),
+            "fiber_receipt": self.fiber_monitor.get_receipt(),
+            "three_phase_audits": self.three_phase_audits,
+            "evaluations": self.evaluations,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
 
 
 

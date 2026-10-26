@@ -7,6 +7,7 @@ from typing import Any
 from lggr.streaming import (
     StreamingCodebaseCatalystEvolutionMonitor,
     StreamingCodebaseCoalitionalMonitor,
+    StreamingCodebaseFigureEightWedgeMonitor,
     StreamingCodebaseInterfaceMergeMonitor,
     StreamingCodebaseReplayOrderMonitor,
     StreamingDiamondCodebasePullbackMonitor,
@@ -7746,6 +7747,214 @@ class MultiLoopHodgeCodeWorkspace:
                 "module": module_name,
                 "local_unit_test_result": local_res,
                 "scope": "isolated module unit tests passed; multi-loop Hodge decomposition and cup-product cocycle are checked at merge gate",
+            }
+
+        return {"accepted": False, "error": f"unsupported tool {name} or malformed arguments"}
+
+
+FIGURE_EIGHT_WEDGE_WORKER_MODULES: dict[str, str] = {
+    "worker-0": "pricing_wedge",
+    "worker-1": "tax_wedge",
+    "worker-2": "settlement_wedge",
+}
+
+INITIAL_PRICING_WEDGE_P1_PY = StreamingCodebaseFigureEightWedgeMonitor.PHASE_1_PRICING_WEDGE_SOURCE
+INITIAL_PRICING_WEDGE_P2_PY = StreamingCodebaseFigureEightWedgeMonitor.PHASE_2_PRICING_WEDGE_SOURCE
+INITIAL_PRICING_WEDGE_COHERENT_PY = StreamingCodebaseFigureEightWedgeMonitor.PHASE_3_PRICING_WEDGE_SOURCE
+
+INITIAL_TAX_WEDGE_P1_P2_PY = StreamingCodebaseFigureEightWedgeMonitor.PHASE_1_TAX_WEDGE_SOURCE
+INITIAL_TAX_WEDGE_COHERENT_PY = StreamingCodebaseFigureEightWedgeMonitor.PHASE_3_TAX_WEDGE_SOURCE
+
+INITIAL_SETTLEMENT_WEDGE_PY = StreamingCodebaseFigureEightWedgeMonitor.PHASE_1_SETTLEMENT_WEDGE_SOURCE
+
+
+def run_figure_eight_wedge_local_unit_tests(module_name: str, source_code: str) -> dict[str, Any]:
+    """Execute isolated per-module unit tests for `pricing_wedge`, `tax_wedge`, or `settlement_wedge`."""
+    try:
+        ns = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(module_name, source_code)
+    except Exception as exc:
+        return {"passed": False, "module": module_name, "error": str(exc)}
+
+    try:
+        if module_name == "pricing_wedge":
+            fn = ns.get("compute_pricing_wedge")
+            if not callable(fn):
+                return {"passed": False, "module": module_name, "error": "missing compute_pricing_wedge"}
+            items = [
+                {"sku": "wedge_u", "unit_cents": 600, "quantity": 1},
+                {"sku": "wedge_v", "unit_cents": 400, "quantity": 1},
+            ]
+            res = fn(items, 1000)
+            ok = (
+                isinstance(res, dict)
+                and res.get("net_cents") == 900
+                and res.get("filled_loop_edges") in ([3, 0, 0], [1, 0, -1], [2, -1, -1])
+                and res.get("junction_v0_potential") in (0, -1)
+            )
+            return {"passed": bool(ok), "module": module_name, "sample_output": res}
+
+        if module_name == "tax_wedge":
+            fn = ns.get("compute_tax_wedge")
+            if not callable(fn):
+                return {"passed": False, "module": module_name, "error": "missing compute_tax_wedge"}
+            res = fn(
+                {
+                    "subtotal_cents": 1000,
+                    "discount_cents": 100,
+                    "net_cents": 900,
+                    "filled_loop_edges": [2, -1, -1],
+                    "junction_v0_potential": -1,
+                },
+                1000,
+            )
+            ok = (
+                isinstance(res, dict)
+                and res.get("tax_cents") == 90
+                and res.get("gross_cents") == 990
+                and res.get("unfilled_loop_edges") in ([1, 1, 1], [3, -2, -1])
+                and res.get("tax_junction_v0_potential") in (0, -1)
+            )
+            return {"passed": bool(ok), "module": module_name, "sample_output": res}
+
+        if module_name == "settlement_wedge":
+            fn = ns.get("compute_settlement_wedge")
+            if not callable(fn):
+                return {"passed": False, "module": module_name, "error": "missing compute_settlement_wedge"}
+            res = fn(
+                {
+                    "subtotal_cents": 1000,
+                    "discount_cents": 100,
+                    "net_cents": 900,
+                    "tax_cents": 90,
+                    "gross_cents": 990,
+                    "filled_loop_edges": [2, -1, -1],
+                    "unfilled_loop_edges": [3, -2, -1],
+                    "junction_v0_potential": -1,
+                    "tax_junction_v0_potential": -1,
+                },
+                300,
+            )
+            ok = (
+                isinstance(res, dict)
+                and res.get("platform_fee_cents") == 27
+                and res.get("tax_reserve_cents") == 90
+                and int(res.get("merchant_payout_cents", 0)) in (867, 869, 873)
+                and int(res.get("wedge_surcharge_cents", -1)) in (6, 4, 0)
+            )
+            return {"passed": bool(ok), "module": module_name, "sample_output": res}
+    except Exception as exc:
+        return {"passed": False, "module": module_name, "error": str(exc)}
+
+    return {"passed": False, "module": module_name, "error": f"unknown module {module_name}"}
+
+
+def figure_eight_wedge_fixture(seed: int) -> dict[str, Any]:
+    if seed in (11900, 11902):
+        return {
+            "seed": seed,
+            "kind": "repairable_figure_eight_wedge_junction_gauge_and_hodge_defect",
+            "locked_workers": [],
+            "infeasible_constraint": None,
+            "sources": {
+                "pricing_wedge": INITIAL_PRICING_WEDGE_P1_PY,
+                "tax_wedge": INITIAL_TAX_WEDGE_P1_P2_PY,
+                "settlement_wedge": INITIAL_SETTLEMENT_WEDGE_PY,
+            },
+            "escalations": {},
+        }
+    if seed == 11901:
+        return {
+            "seed": seed,
+            "kind": "infeasible_hardware_locked_unfilled_wedge_loop_and_junction_v0",
+            "locked_workers": ["worker-1"],
+            "infeasible_constraint": (
+                "Legacy figure-eight wedge hardware lock: `tax_wedge.py` is locked in read-only ROM "
+                "with `unfilled_loop_edges = [1, 1, 1]` (`e_harm = 3 > 0`) and `tax_junction_v0_potential = 0`, "
+                "while the LGGR figure-eight wedge merge gate requires zero harmonic circulation (`e_harm == 0`), "
+                "zero 2-cell curl (`e_co == 0`), and synchronized junction gauge shift `s = -1` at `v0`. "
+                "Escalate to human architecture review."
+            ),
+            "sources": {
+                "pricing_wedge": INITIAL_PRICING_WEDGE_P1_PY,
+                "tax_wedge": INITIAL_TAX_WEDGE_P1_P2_PY,
+                "settlement_wedge": INITIAL_SETTLEMENT_WEDGE_PY,
+            },
+            "escalations": {},
+        }
+    raise ValueError(f"unsupported figure_eight_wedge seed {seed}")
+
+
+class FigureEightWedgeCodeWorkspace:
+    """Workspace for the 3-agent coupled figure-eight wedge junction gauge & Hodge swarm."""
+
+    def __init__(self, state: dict[str, Any]) -> None:
+        self.state = deepcopy(state)
+
+    def tool(
+        self,
+        worker: str,
+        name: str,
+        arguments: dict[str, Any],
+        feedback: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
+        """Dispatch a worker tool call (`inspect_workspace`, `run_local_tests`, `submit_module_patch`, `escalate`)."""
+        if worker not in FIGURE_EIGHT_WEDGE_WORKER_MODULES:
+            return {"accepted": False, "error": f"unknown worker {worker}"}
+        module_name = FIGURE_EIGHT_WEDGE_WORKER_MODULES[worker]
+        if name == "inspect_workspace" and arguments == {}:
+            own_src = self.state["sources"][module_name]
+            local_res = run_figure_eight_wedge_local_unit_tests(module_name, own_src)
+            payload: dict[str, Any] = {
+                "worker": worker,
+                "owned_module": f"{module_name}.py",
+                "locked": worker in self.state["locked_workers"],
+                "source_code": own_src,
+                "local_unit_test": local_res,
+                "peer_signatures": {
+                    "pricing_wedge.py": "def compute_pricing_wedge(items, discount_bps) -> dict",
+                    "tax_wedge.py": "def compute_tax_wedge(quote, tax_bps) -> dict",
+                    "settlement_wedge.py": "def compute_settlement_wedge(taxed_quote, fee_bps) -> dict",
+                },
+                "infeasible_constraint": self.state["infeasible_constraint"],
+            }
+            if feedback is not None:
+                payload["merge_gate_feedback"] = feedback
+            return payload
+
+        if name in ("run_local_tests", "run_local_unit_tests") and arguments == {}:
+            own_src = self.state["sources"][module_name]
+            return run_figure_eight_wedge_local_unit_tests(module_name, own_src)
+
+        if name == "escalate":
+            reason = arguments.get("reason")
+            if set(arguments) != {"reason"} or not isinstance(reason, str) or not reason.strip():
+                return {"accepted": False, "error": "escalate requires a non-empty string 'reason'"}
+            self.state["escalations"][worker] = reason.strip()[:1000]
+            return {
+                "escalated": True,
+                "worker": worker,
+                "reason": self.state["escalations"][worker],
+            }
+
+        if name == "submit_module_patch":
+            if worker in self.state["locked_workers"]:
+                return {"accepted": False, "error": "owned module is locked; escalate if contract is infeasible"}
+            new_src = arguments.get("source_code")
+            if set(arguments) != {"source_code"} or not isinstance(new_src, str) or not new_src.strip():
+                return {"accepted": False, "error": "submit_module_patch requires non-empty 'source_code'"}
+            local_res = run_figure_eight_wedge_local_unit_tests(module_name, new_src)
+            if not local_res.get("passed"):
+                return {
+                    "accepted": False,
+                    "error": "patch failed local unit tests",
+                    "local_unit_test_result": local_res,
+                }
+            self.state["sources"][module_name] = new_src
+            return {
+                "accepted": True,
+                "module": module_name,
+                "local_unit_test_result": local_res,
+                "scope": "isolated module unit tests passed; figure-eight wedge Hodge decomposition and junction gauge alignment are checked at merge gate",
             }
 
         return {"accepted": False, "error": f"unsupported tool {name} or malformed arguments"}

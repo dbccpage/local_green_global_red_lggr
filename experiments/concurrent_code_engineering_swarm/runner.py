@@ -34,6 +34,7 @@ from lggr.streaming import (
     StreamingCodebaseDisagreementCouncilMonitor,
     StreamingCodebaseDynamicSchemaMonitor,
     StreamingCodebaseFiberSplittingMonitor,
+    StreamingCodebaseFigureEightWedgeMonitor,
     StreamingCodebaseGracefulSheddingMonitor,
     StreamingCodebaseInterfaceMergeMonitor,
     StreamingCodebaseJacobianSoundnessMonitor,
@@ -64,6 +65,7 @@ from .domain import (
     DIAMOND_SWARM_MODELS,
     DIAMOND_WORKER_MODULES,
     DIAMOND_WORKTREE_BRANCHES,
+    FIGURE_EIGHT_WEDGE_WORKER_MODULES,
     GRACEFUL_SHEDDING_WORKER_MODULES,
     GRAM_WORKER_MODULES,
     JACOBIAN_WORKER_MODULES,
@@ -96,6 +98,7 @@ from .domain import (
     DisagreementCouncilCodeWorkspace,
     DynamicSchemaCodeWorkspace,
     FiberSplittingCodeWorkspace,
+    FigureEightWedgeCodeWorkspace,
     GracefulSheddingCodeWorkspace,
     JacobianCodeWorkspace,
     KInductionCodeWorkspace,
@@ -120,6 +123,7 @@ from .domain import (
     cptp_fixture,
     dfa_fixture,
     diamond_fixture,
+    figure_eight_wedge_fixture,
     fixture,
     graceful_shedding_fixture,
     gram_fixture,
@@ -134,6 +138,7 @@ from .domain import (
     quorum_fixture,
     regge_fixture,
     replay_fixture,
+    run_figure_eight_wedge_local_unit_tests,
     run_multi_loop_hodge_local_unit_tests,
     run_three_party_c3_local_unit_tests,
     schema_synthesis_fixture,
@@ -6368,6 +6373,265 @@ def multi_loop_hodge_campaign(
     return summary
 
 
+def figure_eight_wedge_system_prompt(worker: str, arm: str) -> str:
+    module_name = FIGURE_EIGHT_WEDGE_WORKER_MODULES[worker]
+    base = (
+        f"You are `{worker}` owning `{module_name}.py` in a 3-agent coupled figure-eight wedge "
+        "junction gauge and Mayer-Vietoris Hodge settlement codebase (`pricing_wedge.py` -> "
+        "`tax_wedge.py` -> `settlement_wedge.py`).\n"
+        "Always start by calling `inspect_workspace` with `{}`.\n"
+        "If `infeasible_constraint` is non-null in the inspection result, immediately call "
+        "`escalate` with a concise explanation of why the hardware-locked `tax_wedge.py` "
+        "(`unfilled_loop_edges = [1, 1, 1]`, `tax_junction_v0_potential = 0`) cannot satisfy "
+        "`e_harm == 0` and synchronized junction shift `s = -1`.\n"
+    )
+    if arm == "A":
+        return base + (
+            "Arm A (`local_unit_and_pythagorean_wedge_gate`): If `local_unit_test.passed` "
+            "is true and `action_required` is `HOLD_WEDGE_CURL_AND_HARMONIC`, do NOT call "
+            "`submit_module_patch`; reply concisely confirming local unit tests pass."
+        )
+    if arm == "B":
+        return base + (
+            "Arm B (`unilateral_filled_loop_curl_and_junction_shift_gate`): If `action_required` is "
+            "`CLEAR_FILLED_WEDGE_LOOP_ONLY`:\n"
+            "- If you are `worker-0` (`pricing_wedge.py`), call `submit_module_patch` with:\n"
+            "```python\n"
+            + StreamingCodebaseFigureEightWedgeMonitor.PHASE_2_PRICING_WEDGE_SOURCE
+            + "```\n"
+            "- If you are `worker-1` (`tax_wedge.py`) or `worker-2` (`settlement_wedge.py`), "
+            "do NOT call `submit_module_patch`; keep your module unchanged.\n"
+        )
+    return base + (
+        "Arm C (`explicit_lggr_figure_eight_wedge_directive`): Follow `compact_role_directive` in "
+        "`merge_gate_feedback`:\n"
+        "- If you are `worker-0` (`pricing_wedge.py`), call `submit_module_patch` with:\n"
+        "```python\n"
+        + StreamingCodebaseFigureEightWedgeMonitor.PHASE_3_PRICING_WEDGE_SOURCE
+        + "```\n"
+        "- If you are `worker-1` (`tax_wedge.py`), call `submit_module_patch` with:\n"
+        "```python\n"
+        + StreamingCodebaseFigureEightWedgeMonitor.PHASE_3_TAX_WEDGE_SOURCE
+        + "```\n"
+        "- If you are `worker-2` (`settlement_wedge.py`), do NOT call `submit_module_patch`; "
+        "confirm that `settlement_wedge.py` already routes `surcharge = 0` and `payout = 873` "
+        "once `pricing_wedge` and `tax_wedge` synchronize.\n"
+    )
+
+
+def figure_eight_wedge_merge_gate(
+    events: Events,
+    ws: FigureEightWedgeCodeWorkspace,
+    monitor: StreamingCodebaseFigureEightWedgeMonitor,
+    arm: str,
+    wave_label: str,
+) -> tuple[dict[str, Any], dict[str, dict[str, Any]], dict[str, Any]]:
+    sources = ws.state["sources"]
+    verdicts = {
+        m: bool(run_figure_eight_wedge_local_unit_tests(m, sources[m]).get("passed"))
+        for m in ("pricing_wedge", "tax_wedge", "settlement_wedge")
+    }
+    eval_res = monitor.evaluate_figure_eight_wedge_modules(
+        f"{arm}-{wave_label}",
+        pricing_wedge_source=sources["pricing_wedge"],
+        tax_wedge_source=sources["tax_wedge"],
+        settlement_wedge_source=sources["settlement_wedge"],
+        infeasible_constraint=(
+            {"reason": ws.state["infeasible_constraint"]}
+            if ws.state["infeasible_constraint"] is not None
+            else None
+        ),
+    )
+    receipt = monitor.current_receipt()
+    events.emit(
+        "gate",
+        {
+            "arm": arm,
+            "wave": wave_label,
+            "local_green": eval_res["local_green"],
+            "global_green": eval_res["global_green"],
+            "defect": eval_res["defect"],
+            "status": eval_res["status"],
+            "cochain_1": eval_res["cochain_1"],
+            "norm2_exact": eval_res["norm2_exact"],
+            "norm2_coexact": eval_res["norm2_coexact"],
+            "norm2_harmonic": eval_res["norm2_harmonic"],
+            "junction_gauge_mismatch_cents": eval_res["junction_gauge_mismatch_cents"],
+            "wedge_surcharge_cents": eval_res["wedge_surcharge_cents"],
+            "receipt_sha256": receipt["receipt_sha256"],
+            "receipt": receipt,
+        },
+    )
+
+    per_worker_fb: dict[str, dict[str, Any]] = {}
+    for w, mod_name in FIGURE_EIGHT_WEDGE_WORKER_MODULES.items():
+        if ws.state["infeasible_constraint"] is not None:
+            per_worker_fb[w] = {
+                "arm": arm,
+                "wave": wave_label,
+                "action_required": "ESCALATE_INFEASIBLE",
+                "infeasible_constraint": ws.state["infeasible_constraint"],
+                "compact_role_directive": eval_res["directives"][w],
+            }
+            continue
+
+        if arm == "A":
+            per_worker_fb[w] = {
+                "arm": "A",
+                "wave": wave_label,
+                "local_unit_test_passed": verdicts[mod_name],
+                "action_required": "HOLD_WEDGE_CURL_AND_HARMONIC",
+                "note": "Local unit and Pythagorean figure-eight wedge gate passes.",
+            }
+        elif arm == "B":
+            per_worker_fb[w] = {
+                "arm": "B",
+                "wave": wave_label,
+                "local_unit_test_passed": verdicts[mod_name],
+                "action_required": "CLEAR_FILLED_WEDGE_LOOP_ONLY",
+                "norm2_coexact": eval_res["norm2_coexact"],
+                "norm2_harmonic": eval_res["norm2_harmonic"],
+                "junction_gauge_mismatch_cents": eval_res["junction_gauge_mismatch_cents"],
+                "note": "Filled loop U curl cleared, but unfilled loop V harmonic circulation and junction gauge mismatch persist.",
+            }
+        else:
+            per_worker_fb[w] = {
+                "arm": "C",
+                "wave": wave_label,
+                "local_unit_test_passed": verdicts[mod_name],
+                "global_green": eval_res["global_green"],
+                "defect": eval_res["defect"],
+                "status": eval_res["status"],
+                "cochain_1": eval_res["cochain_1"],
+                "norm2_coexact": eval_res["norm2_coexact"],
+                "norm2_harmonic": eval_res["norm2_harmonic"],
+                "junction_gauge_mismatch_cents": eval_res["junction_gauge_mismatch_cents"],
+                "wedge_surcharge_cents": eval_res["wedge_surcharge_cents"],
+                "action_required": "REPAIR_FIGURE_EIGHT_WEDGE_COHERENT",
+                "compact_role_directive": eval_res["directives"][w],
+            }
+    return eval_res, per_worker_fb, receipt
+
+
+def figure_eight_wedge_campaign(
+    client: CodeBatchClient,
+    events: Events,
+    config: dict[str, Any],
+) -> dict[str, Any]:
+    seeds: list[int] = list(config["seeds"])
+    workers = list(FIGURE_EIGHT_WEDGE_WORKER_MODULES.keys())
+    cases: list[dict[str, Any]] = []
+
+    for seed in seeds:
+        base_state = figure_eight_wedge_fixture(seed)
+        arm_results: list[dict[str, Any]] = []
+
+        for arm in ("A", "B", "C"):
+            ws = FigureEightWedgeCodeWorkspace(base_state)
+            monitor = StreamingCodebaseFigureEightWedgeMonitor(
+                scope_id=f"figure-eight-wedge-seed-{seed}-arm-{arm}"
+            )
+            arm_start_calls = client.calls
+            arm_start_spent = client.spent
+
+            eval_res, per_worker_fb, receipt = figure_eight_wedge_merge_gate(
+                events, ws, monitor, arm, "wave-0"
+            )
+            waves_executed = 0
+            status = "blocked_unresolved"
+
+            max_waves = 2 if base_state["infeasible_constraint"] is None else 1
+            for wave_idx in range(1, max_waves + 1):
+                waves_executed = wave_idx
+                histories = {
+                    w: [
+                        {"role": "system", "content": figure_eight_wedge_system_prompt(w, arm)},
+                        {
+                            "role": "user",
+                            "content": (
+                                f"Wave {wave_idx} for `{FIGURE_EIGHT_WEDGE_WORKER_MODULES[w]}.py` (seed {seed}, arm {arm}). "
+                                "Inspect workspace and execute your required module action."
+                            ),
+                        },
+                    ]
+                    for w in workers
+                }
+                round_turns(
+                    client,
+                    events,
+                    ws,
+                    histories,
+                    workers,
+                    per_worker_fb,
+                )
+                eval_res, per_worker_fb, receipt = figure_eight_wedge_merge_gate(
+                    events, ws, monitor, arm, f"wave-{wave_idx}"
+                )
+                if ws.state["infeasible_constraint"] is not None and len(ws.state["escalations"]) > 0:
+                    status = "safe_escalated"
+                    break
+                if eval_res["global_green"] == 1:
+                    status = "completed"
+                    break
+
+            final_status = (
+                "INFEASIBLE_FIGURE_EIGHT_WEDGE_SPECIFICATION_LGGR"
+                if status == "safe_escalated"
+                else eval_res["status"]
+            )
+            arm_summary = {
+                "arm": arm,
+                "status": status,
+                "waves_executed": waves_executed,
+                "final_local_green": eval_res["local_green"],
+                "final_global_green": eval_res["global_green"],
+                "final_defect": eval_res["defect"],
+                "final_cochain_1": eval_res["cochain_1"],
+                "final_norm2_exact": eval_res["norm2_exact"],
+                "final_norm2_coexact": eval_res["norm2_coexact"],
+                "final_norm2_harmonic": eval_res["norm2_harmonic"],
+                "final_junction_gauge_mismatch_cents": eval_res["junction_gauge_mismatch_cents"],
+                "final_wedge_surcharge_cents": eval_res["wedge_surcharge_cents"],
+                "final_merchant_payout_cents": eval_res["merchant_payout_cents"],
+                "final_status": final_status,
+                "final_receipt_sha256": receipt["receipt_sha256"],
+                "final_receipt": receipt,
+                "escalations": dict(ws.state["escalations"]),
+                "api_attempts": client.calls - arm_start_calls,
+                "cost_usd": str(client.spent - arm_start_spent),
+            }
+            events.emit("arm", {"seed": seed, **arm_summary})
+            arm_results.append(arm_summary)
+
+        cases.append(
+            {
+                "seed": seed,
+                "kind": base_state["kind"],
+                "arms": arm_results,
+            }
+        )
+
+    summary = {
+        "schema": "lggr.figure_eight_wedge_code_engineering_swarm.v1",
+        "topology": "figure_eight_wedge",
+        "authority_effect": "None",
+        "cases": cases,
+        "api_attempts": client.calls,
+        "charged_or_reserved_usd": str(client.spent),
+        "max_inflight_requests": client.max_inflight,
+        "concurrent_waves": client.concurrent_waves,
+        "scope": (
+            "Concurrent 3-agent coupled figure-eight wedge junction gauge & Mayer-Vietoris Hodge "
+            "Python code-engineering swarm (`pricing_wedge` -> `tax_wedge` -> `settlement_wedge`) comparing "
+            "coexisting 2-cell curl & harmonic circulation (A), unilateral filled-loop curl clearing with "
+            "junction gauge mismatch (B), and synchronized junction gauge shift across both loops (C) "
+            "with full cryptographic receipts."
+        ),
+    }
+    events.emit("summary", summary)
+    return summary
+
+
 def replay(path: str | Path) -> dict[str, Any]:
     records = [json.loads(line) for line in Path(path).read_text(encoding="utf-8").splitlines()]
     metadata = records[0]["data"]
@@ -6432,6 +6696,8 @@ def replay(path: str | Path) -> dict[str, Any]:
             summary = three_party_c3_campaign(client, events, config)
         elif config.get("topology") == "multi_loop_hodge":
             summary = multi_loop_hodge_campaign(client, events, config)
+        elif config.get("topology") == "figure_eight_wedge":
+            summary = figure_eight_wedge_campaign(client, events, config)
         else:
             summary = campaign(client, events, config)
     except RunStopped as error:
@@ -6484,6 +6750,7 @@ def main() -> None:
             "obligation_migration",
             "three_party_c3",
             "multi_loop_hodge",
+            "figure_eight_wedge",
         ],
         default="linear",
     )
@@ -6563,6 +6830,8 @@ def main() -> None:
         seeds = [11700, 11701, 11702]
     elif args.topology == "multi_loop_hodge":
         seeds = [11800, 11801, 11802]
+    elif args.topology == "figure_eight_wedge":
+        seeds = [11900, 11901, 11902]
     else:
         seeds = [6100, 6101, 6102]
     if args.topology == "diamond":
@@ -6863,6 +7132,17 @@ def main() -> None:
         events.emit("start", {"config": config})
         client = CodeBatchClient(events, args.budget)
         summary = multi_loop_hodge_campaign(client, events, config)
+    elif args.topology == "figure_eight_wedge":
+        config = {
+            "topology": "figure_eight_wedge",
+            "seeds": seeds,
+            "models": CODE_SWARM_MODELS,
+            "budget_usd": str(args.budget),
+        }
+        events = Events(events_path)
+        events.emit("start", {"config": config})
+        client = CodeBatchClient(events, args.budget)
+        summary = figure_eight_wedge_campaign(client, events, config)
     else:
         config = {
             "seeds": seeds,
