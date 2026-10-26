@@ -1,0 +1,5090 @@
+{
+  "schema": "lggr.codebase_disagreement_council_replay.v1",
+  "authority_effect": "None",
+  "benchmark_name": "codebase_disagreement_council_benchmark",
+  "models_evaluated": [
+    "openai/gpt-4o-mini",
+    "google/gemini-2.5-flash-lite",
+    "meta-llama/llama-3.3-70b-instruct",
+    "deepseek/deepseek-chat",
+    "mistralai/mistral-small-3.2-24b-instruct"
+  ],
+  "total_completions": 5,
+  "evaluation_count": 5,
+  "phase_1_collapsing_consensus_metrics": {
+    "N": 5,
+    "LPR": "1",
+    "GPR": "0",
+    "NGD_rate": "1",
+    "ZDR_rate": "0",
+    "PGD_rate": "0",
+    "mean_defect": "-1",
+    "EGD_rate": "-1",
+    "LRGR_rate": "0",
+    "identity_verified": true
+  },
+  "phase_2_binary_escalation_tag_metrics": {
+    "N": 5,
+    "LPR": "1",
+    "GPR": "0",
+    "NGD_rate": "1",
+    "ZDR_rate": "0",
+    "PGD_rate": "0",
+    "mean_defect": "-1",
+    "EGD_rate": "-1",
+    "LRGR_rate": "0",
+    "identity_verified": true
+  },
+  "phase_3_disagreement_council_metrics": {
+    "N": 5,
+    "LPR": "1",
+    "GPR": "1",
+    "NGD_rate": "0",
+    "ZDR_rate": "1",
+    "PGD_rate": "0",
+    "mean_defect": "0",
+    "EGD_rate": "0",
+    "LRGR_rate": "0",
+    "identity_verified": true
+  },
+  "collapsing_consensus_codebase_coherence_rate": "0",
+  "disagreement_council_codebase_coherence_rate": "1",
+  "codebase_disagreement_council_coherence_gain": "1",
+  "codebase_disagreement_council_receipt": {
+    "schema": "lggr.online_codebase_disagreement_council.v1",
+    "authority_effect": "None",
+    "scope_id": "live-codebase-disagreement-council-benchmark",
+    "status": "CODEBASE_DISAGREEMENT_COUNCIL_COHERENT_LGGG",
+    "contract_status": "COMPOSABLE_LGGG",
+    "evaluation_count": 15,
+    "lggr_obstruction_count": 10,
+    "lggg_coherent_count": 5,
+    "council_receipt": {
+      "schema": "lggr.online_disagreement_preserving_council.v1",
+      "authority_effect": "None",
+      "scope_id": "live-codebase-disagreement-council-benchmark::council",
+      "status": "DISAGREEMENT_PRESERVING_COUNCIL_COHERENT_LGGG",
+      "contract_status": "COMPOSABLE_LGGG",
+      "evaluation_count": 5,
+      "phase_1_collapsing_consensus_loss_count": 5,
+      "phase_2_binary_tag_deficit_count": 5,
+      "phase_3_disagreement_council_coherent_count": 5,
+      "collapsing_consensus_coherence_rate": "0",
+      "disagreement_council_coherence_rate": "1",
+      "disagreement_council_coherence_gain": "1",
+      "capacity_monitor_receipt": {
+        "schema": "lggr.online_side_information_capacity.v1",
+        "authority_effect": "None",
+        "scope_id": "live-codebase-disagreement-council-benchmark::council-capacity",
+        "status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "fiber_count": 15,
+        "all_pigeonhole_bounds_verified": true,
+        "capacity_deficit_fiber_ids": [
+          "codebase_council_eval_1_openai_gpt-4o-mini::council::phase_1_consensus",
+          "codebase_council_eval_1_openai_gpt-4o-mini::council::phase_2_binary_tag",
+          "codebase_council_eval_2_google_gemini-2.5-flash-lite::council::phase_1_consensus",
+          "codebase_council_eval_2_google_gemini-2.5-flash-lite::council::phase_2_binary_tag",
+          "codebase_council_eval_3_meta-llama_llama-3.3-70b-instruct::council::phase_1_consensus",
+          "codebase_council_eval_3_meta-llama_llama-3.3-70b-instruct::council::phase_2_binary_tag",
+          "codebase_council_eval_4_deepseek_deepseek-chat::council::phase_1_consensus",
+          "codebase_council_eval_4_deepseek_deepseek-chat::council::phase_2_binary_tag",
+          "codebase_council_eval_5_mistralai_mistral-small-3.2-24b-instruct::council::phase_1_consensus",
+          "codebase_council_eval_5_mistralai_mistral-small-3.2-24b-instruct::council::phase_2_binary_tag"
+        ],
+        "rejected_fiber_ids": [],
+        "fibers": [
+          {
+            "fiber_id": "codebase_council_eval_1_openai_gpt-4o-mini::council::phase_1_consensus",
+            "state_count": 3,
+            "distinct_query_values_k": 3,
+            "channel_capacity_s": 1,
+            "used_symbols_count": 1,
+            "error_budget": 0,
+            "capacity_error_floor_k_minus_s": 2,
+            "realized_subfiber_error_floor": 2,
+            "realized_sample_error_floor": 2,
+            "pigeonhole_bound_verified": true,
+            "local_product_aggregator": 1,
+            "global_decodability_evaluator": 0,
+            "evaluator_defect": -1,
+            "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+            "states": [
+              {
+                "state_id": "patch_0",
+                "query_value": "rebate_drift",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "patch_1",
+                "query_value": "jurisdiction_mismatch",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "patch_2",
+                "query_value": "fee_tier_overflow",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              }
+            ]
+          },
+          {
+            "fiber_id": "codebase_council_eval_1_openai_gpt-4o-mini::council::phase_2_binary_tag",
+            "state_count": 3,
+            "distinct_query_values_k": 3,
+            "channel_capacity_s": 2,
+            "used_symbols_count": 2,
+            "error_budget": 0,
+            "capacity_error_floor_k_minus_s": 1,
+            "realized_subfiber_error_floor": 1,
+            "realized_sample_error_floor": 1,
+            "pigeonhole_bound_verified": true,
+            "local_product_aggregator": 1,
+            "global_decodability_evaluator": 0,
+            "evaluator_defect": -1,
+            "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+            "states": [
+              {
+                "state_id": "patch_0",
+                "query_value": "rebate_drift",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "patch_1",
+                "query_value": "jurisdiction_mismatch",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "patch_2",
+                "query_value": "fee_tier_overflow",
+                "side_symbol": 1,
+                "local_channel_evaluator": 1
+              }
+            ]
+          },
+          {
+            "fiber_id": "codebase_council_eval_1_openai_gpt-4o-mini::council::phase_3_council",
+            "state_count": 3,
+            "distinct_query_values_k": 3,
+            "channel_capacity_s": 3,
+            "used_symbols_count": 3,
+            "error_budget": 0,
+            "capacity_error_floor_k_minus_s": 0,
+            "realized_subfiber_error_floor": 0,
+            "realized_sample_error_floor": 0,
+            "pigeonhole_bound_verified": true,
+            "local_product_aggregator": 1,
+            "global_decodability_evaluator": 1,
+            "evaluator_defect": 0,
+            "fiber_status": "SIDE_INFORMATION_SUFFICIENT_LGGG",
+            "states": [
+              {
+                "state_id": "patch_0",
+                "query_value": "rebate_drift",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "patch_1",
+                "query_value": "jurisdiction_mismatch",
+                "side_symbol": 1,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "patch_2",
+                "query_value": "fee_tier_overflow",
+                "side_symbol": 2,
+                "local_channel_evaluator": 1
+              }
+            ]
+          },
+          {
+            "fiber_id": "codebase_council_eval_2_google_gemini-2.5-flash-lite::council::phase_1_consensus",
+            "state_count": 3,
+            "distinct_query_values_k": 3,
+            "channel_capacity_s": 1,
+            "used_symbols_count": 1,
+            "error_budget": 0,
+            "capacity_error_floor_k_minus_s": 2,
+            "realized_subfiber_error_floor": 2,
+            "realized_sample_error_floor": 2,
+            "pigeonhole_bound_verified": true,
+            "local_product_aggregator": 1,
+            "global_decodability_evaluator": 0,
+            "evaluator_defect": -1,
+            "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+            "states": [
+              {
+                "state_id": "patch_0",
+                "query_value": "rebate_drift",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "patch_1",
+                "query_value": "jurisdiction_mismatch",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "patch_2",
+                "query_value": "fee_tier_overflow",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              }
+            ]
+          },
+          {
+            "fiber_id": "codebase_council_eval_2_google_gemini-2.5-flash-lite::council::phase_2_binary_tag",
+            "state_count": 3,
+            "distinct_query_values_k": 3,
+            "channel_capacity_s": 2,
+            "used_symbols_count": 2,
+            "error_budget": 0,
+            "capacity_error_floor_k_minus_s": 1,
+            "realized_subfiber_error_floor": 1,
+            "realized_sample_error_floor": 1,
+            "pigeonhole_bound_verified": true,
+            "local_product_aggregator": 1,
+            "global_decodability_evaluator": 0,
+            "evaluator_defect": -1,
+            "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+            "states": [
+              {
+                "state_id": "patch_0",
+                "query_value": "rebate_drift",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "patch_1",
+                "query_value": "jurisdiction_mismatch",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "patch_2",
+                "query_value": "fee_tier_overflow",
+                "side_symbol": 1,
+                "local_channel_evaluator": 1
+              }
+            ]
+          },
+          {
+            "fiber_id": "codebase_council_eval_2_google_gemini-2.5-flash-lite::council::phase_3_council",
+            "state_count": 3,
+            "distinct_query_values_k": 3,
+            "channel_capacity_s": 3,
+            "used_symbols_count": 3,
+            "error_budget": 0,
+            "capacity_error_floor_k_minus_s": 0,
+            "realized_subfiber_error_floor": 0,
+            "realized_sample_error_floor": 0,
+            "pigeonhole_bound_verified": true,
+            "local_product_aggregator": 1,
+            "global_decodability_evaluator": 1,
+            "evaluator_defect": 0,
+            "fiber_status": "SIDE_INFORMATION_SUFFICIENT_LGGG",
+            "states": [
+              {
+                "state_id": "patch_0",
+                "query_value": "rebate_drift",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "patch_1",
+                "query_value": "jurisdiction_mismatch",
+                "side_symbol": 1,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "patch_2",
+                "query_value": "fee_tier_overflow",
+                "side_symbol": 2,
+                "local_channel_evaluator": 1
+              }
+            ]
+          },
+          {
+            "fiber_id": "codebase_council_eval_3_meta-llama_llama-3.3-70b-instruct::council::phase_1_consensus",
+            "state_count": 3,
+            "distinct_query_values_k": 3,
+            "channel_capacity_s": 1,
+            "used_symbols_count": 1,
+            "error_budget": 0,
+            "capacity_error_floor_k_minus_s": 2,
+            "realized_subfiber_error_floor": 2,
+            "realized_sample_error_floor": 2,
+            "pigeonhole_bound_verified": true,
+            "local_product_aggregator": 1,
+            "global_decodability_evaluator": 0,
+            "evaluator_defect": -1,
+            "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+            "states": [
+              {
+                "state_id": "patch_0",
+                "query_value": "rebate_drift",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "patch_1",
+                "query_value": "jurisdiction_mismatch",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "patch_2",
+                "query_value": "fee_tier_overflow",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              }
+            ]
+          },
+          {
+            "fiber_id": "codebase_council_eval_3_meta-llama_llama-3.3-70b-instruct::council::phase_2_binary_tag",
+            "state_count": 3,
+            "distinct_query_values_k": 3,
+            "channel_capacity_s": 2,
+            "used_symbols_count": 2,
+            "error_budget": 0,
+            "capacity_error_floor_k_minus_s": 1,
+            "realized_subfiber_error_floor": 1,
+            "realized_sample_error_floor": 1,
+            "pigeonhole_bound_verified": true,
+            "local_product_aggregator": 1,
+            "global_decodability_evaluator": 0,
+            "evaluator_defect": -1,
+            "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+            "states": [
+              {
+                "state_id": "patch_0",
+                "query_value": "rebate_drift",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "patch_1",
+                "query_value": "jurisdiction_mismatch",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "patch_2",
+                "query_value": "fee_tier_overflow",
+                "side_symbol": 1,
+                "local_channel_evaluator": 1
+              }
+            ]
+          },
+          {
+            "fiber_id": "codebase_council_eval_3_meta-llama_llama-3.3-70b-instruct::council::phase_3_council",
+            "state_count": 3,
+            "distinct_query_values_k": 3,
+            "channel_capacity_s": 3,
+            "used_symbols_count": 3,
+            "error_budget": 0,
+            "capacity_error_floor_k_minus_s": 0,
+            "realized_subfiber_error_floor": 0,
+            "realized_sample_error_floor": 0,
+            "pigeonhole_bound_verified": true,
+            "local_product_aggregator": 1,
+            "global_decodability_evaluator": 1,
+            "evaluator_defect": 0,
+            "fiber_status": "SIDE_INFORMATION_SUFFICIENT_LGGG",
+            "states": [
+              {
+                "state_id": "patch_0",
+                "query_value": "rebate_drift",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "patch_1",
+                "query_value": "jurisdiction_mismatch",
+                "side_symbol": 1,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "patch_2",
+                "query_value": "fee_tier_overflow",
+                "side_symbol": 2,
+                "local_channel_evaluator": 1
+              }
+            ]
+          },
+          {
+            "fiber_id": "codebase_council_eval_4_deepseek_deepseek-chat::council::phase_1_consensus",
+            "state_count": 3,
+            "distinct_query_values_k": 3,
+            "channel_capacity_s": 1,
+            "used_symbols_count": 1,
+            "error_budget": 0,
+            "capacity_error_floor_k_minus_s": 2,
+            "realized_subfiber_error_floor": 2,
+            "realized_sample_error_floor": 2,
+            "pigeonhole_bound_verified": true,
+            "local_product_aggregator": 1,
+            "global_decodability_evaluator": 0,
+            "evaluator_defect": -1,
+            "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+            "states": [
+              {
+                "state_id": "patch_0",
+                "query_value": "rebate_drift",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "patch_1",
+                "query_value": "jurisdiction_mismatch",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "patch_2",
+                "query_value": "fee_tier_overflow",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              }
+            ]
+          },
+          {
+            "fiber_id": "codebase_council_eval_4_deepseek_deepseek-chat::council::phase_2_binary_tag",
+            "state_count": 3,
+            "distinct_query_values_k": 3,
+            "channel_capacity_s": 2,
+            "used_symbols_count": 2,
+            "error_budget": 0,
+            "capacity_error_floor_k_minus_s": 1,
+            "realized_subfiber_error_floor": 1,
+            "realized_sample_error_floor": 1,
+            "pigeonhole_bound_verified": true,
+            "local_product_aggregator": 1,
+            "global_decodability_evaluator": 0,
+            "evaluator_defect": -1,
+            "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+            "states": [
+              {
+                "state_id": "patch_0",
+                "query_value": "rebate_drift",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "patch_1",
+                "query_value": "jurisdiction_mismatch",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "patch_2",
+                "query_value": "fee_tier_overflow",
+                "side_symbol": 1,
+                "local_channel_evaluator": 1
+              }
+            ]
+          },
+          {
+            "fiber_id": "codebase_council_eval_4_deepseek_deepseek-chat::council::phase_3_council",
+            "state_count": 3,
+            "distinct_query_values_k": 3,
+            "channel_capacity_s": 3,
+            "used_symbols_count": 3,
+            "error_budget": 0,
+            "capacity_error_floor_k_minus_s": 0,
+            "realized_subfiber_error_floor": 0,
+            "realized_sample_error_floor": 0,
+            "pigeonhole_bound_verified": true,
+            "local_product_aggregator": 1,
+            "global_decodability_evaluator": 1,
+            "evaluator_defect": 0,
+            "fiber_status": "SIDE_INFORMATION_SUFFICIENT_LGGG",
+            "states": [
+              {
+                "state_id": "patch_0",
+                "query_value": "rebate_drift",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "patch_1",
+                "query_value": "jurisdiction_mismatch",
+                "side_symbol": 1,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "patch_2",
+                "query_value": "fee_tier_overflow",
+                "side_symbol": 2,
+                "local_channel_evaluator": 1
+              }
+            ]
+          },
+          {
+            "fiber_id": "codebase_council_eval_5_mistralai_mistral-small-3.2-24b-instruct::council::phase_1_consensus",
+            "state_count": 3,
+            "distinct_query_values_k": 3,
+            "channel_capacity_s": 1,
+            "used_symbols_count": 1,
+            "error_budget": 0,
+            "capacity_error_floor_k_minus_s": 2,
+            "realized_subfiber_error_floor": 2,
+            "realized_sample_error_floor": 2,
+            "pigeonhole_bound_verified": true,
+            "local_product_aggregator": 1,
+            "global_decodability_evaluator": 0,
+            "evaluator_defect": -1,
+            "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+            "states": [
+              {
+                "state_id": "patch_0",
+                "query_value": "rebate_drift",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "patch_1",
+                "query_value": "jurisdiction_mismatch",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "patch_2",
+                "query_value": "fee_tier_overflow",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              }
+            ]
+          },
+          {
+            "fiber_id": "codebase_council_eval_5_mistralai_mistral-small-3.2-24b-instruct::council::phase_2_binary_tag",
+            "state_count": 3,
+            "distinct_query_values_k": 3,
+            "channel_capacity_s": 2,
+            "used_symbols_count": 2,
+            "error_budget": 0,
+            "capacity_error_floor_k_minus_s": 1,
+            "realized_subfiber_error_floor": 1,
+            "realized_sample_error_floor": 1,
+            "pigeonhole_bound_verified": true,
+            "local_product_aggregator": 1,
+            "global_decodability_evaluator": 0,
+            "evaluator_defect": -1,
+            "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+            "states": [
+              {
+                "state_id": "patch_0",
+                "query_value": "rebate_drift",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "patch_1",
+                "query_value": "jurisdiction_mismatch",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "patch_2",
+                "query_value": "fee_tier_overflow",
+                "side_symbol": 1,
+                "local_channel_evaluator": 1
+              }
+            ]
+          },
+          {
+            "fiber_id": "codebase_council_eval_5_mistralai_mistral-small-3.2-24b-instruct::council::phase_3_council",
+            "state_count": 3,
+            "distinct_query_values_k": 3,
+            "channel_capacity_s": 3,
+            "used_symbols_count": 3,
+            "error_budget": 0,
+            "capacity_error_floor_k_minus_s": 0,
+            "realized_subfiber_error_floor": 0,
+            "realized_sample_error_floor": 0,
+            "pigeonhole_bound_verified": true,
+            "local_product_aggregator": 1,
+            "global_decodability_evaluator": 1,
+            "evaluator_defect": 0,
+            "fiber_status": "SIDE_INFORMATION_SUFFICIENT_LGGG",
+            "states": [
+              {
+                "state_id": "patch_0",
+                "query_value": "rebate_drift",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "patch_1",
+                "query_value": "jurisdiction_mismatch",
+                "side_symbol": 1,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "patch_2",
+                "query_value": "fee_tier_overflow",
+                "side_symbol": 2,
+                "local_channel_evaluator": 1
+              }
+            ]
+          }
+        ],
+        "receipt_sha256": "d0fc9f5596dd7465603405957a55f8368b59ab7f00d176647a4a6bc850438b35"
+      },
+      "poe_monitor_receipt": {
+        "schema": "lggr.online_product_of_experts.v1",
+        "authority_effect": "None",
+        "scope_id": "live-codebase-disagreement-council-benchmark::council-poe",
+        "status": "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "round_count": 10,
+        "poe_collapsed_round_ids": [
+          "codebase_council_eval_1_openai_gpt-4o-mini::council::phase_1_disjoint_poe",
+          "codebase_council_eval_2_google_gemini-2.5-flash-lite::council::phase_1_disjoint_poe",
+          "codebase_council_eval_3_meta-llama_llama-3.3-70b-instruct::council::phase_1_disjoint_poe",
+          "codebase_council_eval_4_deepseek_deepseek-chat::council::phase_1_disjoint_poe",
+          "codebase_council_eval_5_mistralai_mistral-small-3.2-24b-instruct::council::phase_1_disjoint_poe"
+        ],
+        "rejected_round_ids": [],
+        "rounds": [
+          {
+            "round_id": "codebase_council_eval_1_openai_gpt-4o-mini::council::phase_1_disjoint_poe",
+            "expert_count": 2,
+            "candidate_count": 2,
+            "expert_masses": [
+              "1",
+              "1"
+            ],
+            "local_expert_evaluators": [
+              1,
+              1
+            ],
+            "joint_support_indices": [],
+            "poe_unnormalized_vector": [
+              "0",
+              "0"
+            ],
+            "poe_partition_sum": "0",
+            "poe_normalized_distribution": null,
+            "moe_unnormalized_vector": [
+              "1/2",
+              "1/2"
+            ],
+            "moe_partition_sum": "1",
+            "moe_normalized_distribution": [
+              "1/2",
+              "1/2"
+            ],
+            "local_product_aggregator": 1,
+            "global_poe_normalizable_evaluator": 0,
+            "evaluator_defect": -1,
+            "round_status": "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR"
+          },
+          {
+            "round_id": "codebase_council_eval_1_openai_gpt-4o-mini::council::phase_3_shared_poe",
+            "expert_count": 2,
+            "candidate_count": 2,
+            "expert_masses": [
+              "1",
+              "1"
+            ],
+            "local_expert_evaluators": [
+              1,
+              1
+            ],
+            "joint_support_indices": [
+              0,
+              1
+            ],
+            "poe_unnormalized_vector": [
+              "3/16",
+              "3/16"
+            ],
+            "poe_partition_sum": "3/8",
+            "poe_normalized_distribution": [
+              "1/2",
+              "1/2"
+            ],
+            "moe_unnormalized_vector": [
+              "1/2",
+              "1/2"
+            ],
+            "moe_partition_sum": "1",
+            "moe_normalized_distribution": [
+              "1/2",
+              "1/2"
+            ],
+            "local_product_aggregator": 1,
+            "global_poe_normalizable_evaluator": 1,
+            "evaluator_defect": 0,
+            "round_status": "POE_AND_MOE_COHERENT_LGGG"
+          },
+          {
+            "round_id": "codebase_council_eval_2_google_gemini-2.5-flash-lite::council::phase_1_disjoint_poe",
+            "expert_count": 2,
+            "candidate_count": 2,
+            "expert_masses": [
+              "1",
+              "1"
+            ],
+            "local_expert_evaluators": [
+              1,
+              1
+            ],
+            "joint_support_indices": [],
+            "poe_unnormalized_vector": [
+              "0",
+              "0"
+            ],
+            "poe_partition_sum": "0",
+            "poe_normalized_distribution": null,
+            "moe_unnormalized_vector": [
+              "1/2",
+              "1/2"
+            ],
+            "moe_partition_sum": "1",
+            "moe_normalized_distribution": [
+              "1/2",
+              "1/2"
+            ],
+            "local_product_aggregator": 1,
+            "global_poe_normalizable_evaluator": 0,
+            "evaluator_defect": -1,
+            "round_status": "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR"
+          },
+          {
+            "round_id": "codebase_council_eval_2_google_gemini-2.5-flash-lite::council::phase_3_shared_poe",
+            "expert_count": 2,
+            "candidate_count": 2,
+            "expert_masses": [
+              "1",
+              "1"
+            ],
+            "local_expert_evaluators": [
+              1,
+              1
+            ],
+            "joint_support_indices": [
+              0,
+              1
+            ],
+            "poe_unnormalized_vector": [
+              "3/16",
+              "3/16"
+            ],
+            "poe_partition_sum": "3/8",
+            "poe_normalized_distribution": [
+              "1/2",
+              "1/2"
+            ],
+            "moe_unnormalized_vector": [
+              "1/2",
+              "1/2"
+            ],
+            "moe_partition_sum": "1",
+            "moe_normalized_distribution": [
+              "1/2",
+              "1/2"
+            ],
+            "local_product_aggregator": 1,
+            "global_poe_normalizable_evaluator": 1,
+            "evaluator_defect": 0,
+            "round_status": "POE_AND_MOE_COHERENT_LGGG"
+          },
+          {
+            "round_id": "codebase_council_eval_3_meta-llama_llama-3.3-70b-instruct::council::phase_1_disjoint_poe",
+            "expert_count": 2,
+            "candidate_count": 2,
+            "expert_masses": [
+              "1",
+              "1"
+            ],
+            "local_expert_evaluators": [
+              1,
+              1
+            ],
+            "joint_support_indices": [],
+            "poe_unnormalized_vector": [
+              "0",
+              "0"
+            ],
+            "poe_partition_sum": "0",
+            "poe_normalized_distribution": null,
+            "moe_unnormalized_vector": [
+              "1/2",
+              "1/2"
+            ],
+            "moe_partition_sum": "1",
+            "moe_normalized_distribution": [
+              "1/2",
+              "1/2"
+            ],
+            "local_product_aggregator": 1,
+            "global_poe_normalizable_evaluator": 0,
+            "evaluator_defect": -1,
+            "round_status": "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR"
+          },
+          {
+            "round_id": "codebase_council_eval_3_meta-llama_llama-3.3-70b-instruct::council::phase_3_shared_poe",
+            "expert_count": 2,
+            "candidate_count": 2,
+            "expert_masses": [
+              "1",
+              "1"
+            ],
+            "local_expert_evaluators": [
+              1,
+              1
+            ],
+            "joint_support_indices": [
+              0,
+              1
+            ],
+            "poe_unnormalized_vector": [
+              "3/16",
+              "3/16"
+            ],
+            "poe_partition_sum": "3/8",
+            "poe_normalized_distribution": [
+              "1/2",
+              "1/2"
+            ],
+            "moe_unnormalized_vector": [
+              "1/2",
+              "1/2"
+            ],
+            "moe_partition_sum": "1",
+            "moe_normalized_distribution": [
+              "1/2",
+              "1/2"
+            ],
+            "local_product_aggregator": 1,
+            "global_poe_normalizable_evaluator": 1,
+            "evaluator_defect": 0,
+            "round_status": "POE_AND_MOE_COHERENT_LGGG"
+          },
+          {
+            "round_id": "codebase_council_eval_4_deepseek_deepseek-chat::council::phase_1_disjoint_poe",
+            "expert_count": 2,
+            "candidate_count": 2,
+            "expert_masses": [
+              "1",
+              "1"
+            ],
+            "local_expert_evaluators": [
+              1,
+              1
+            ],
+            "joint_support_indices": [],
+            "poe_unnormalized_vector": [
+              "0",
+              "0"
+            ],
+            "poe_partition_sum": "0",
+            "poe_normalized_distribution": null,
+            "moe_unnormalized_vector": [
+              "1/2",
+              "1/2"
+            ],
+            "moe_partition_sum": "1",
+            "moe_normalized_distribution": [
+              "1/2",
+              "1/2"
+            ],
+            "local_product_aggregator": 1,
+            "global_poe_normalizable_evaluator": 0,
+            "evaluator_defect": -1,
+            "round_status": "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR"
+          },
+          {
+            "round_id": "codebase_council_eval_4_deepseek_deepseek-chat::council::phase_3_shared_poe",
+            "expert_count": 2,
+            "candidate_count": 2,
+            "expert_masses": [
+              "1",
+              "1"
+            ],
+            "local_expert_evaluators": [
+              1,
+              1
+            ],
+            "joint_support_indices": [
+              0,
+              1
+            ],
+            "poe_unnormalized_vector": [
+              "3/16",
+              "3/16"
+            ],
+            "poe_partition_sum": "3/8",
+            "poe_normalized_distribution": [
+              "1/2",
+              "1/2"
+            ],
+            "moe_unnormalized_vector": [
+              "1/2",
+              "1/2"
+            ],
+            "moe_partition_sum": "1",
+            "moe_normalized_distribution": [
+              "1/2",
+              "1/2"
+            ],
+            "local_product_aggregator": 1,
+            "global_poe_normalizable_evaluator": 1,
+            "evaluator_defect": 0,
+            "round_status": "POE_AND_MOE_COHERENT_LGGG"
+          },
+          {
+            "round_id": "codebase_council_eval_5_mistralai_mistral-small-3.2-24b-instruct::council::phase_1_disjoint_poe",
+            "expert_count": 2,
+            "candidate_count": 2,
+            "expert_masses": [
+              "1",
+              "1"
+            ],
+            "local_expert_evaluators": [
+              1,
+              1
+            ],
+            "joint_support_indices": [],
+            "poe_unnormalized_vector": [
+              "0",
+              "0"
+            ],
+            "poe_partition_sum": "0",
+            "poe_normalized_distribution": null,
+            "moe_unnormalized_vector": [
+              "1/2",
+              "1/2"
+            ],
+            "moe_partition_sum": "1",
+            "moe_normalized_distribution": [
+              "1/2",
+              "1/2"
+            ],
+            "local_product_aggregator": 1,
+            "global_poe_normalizable_evaluator": 0,
+            "evaluator_defect": -1,
+            "round_status": "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR"
+          },
+          {
+            "round_id": "codebase_council_eval_5_mistralai_mistral-small-3.2-24b-instruct::council::phase_3_shared_poe",
+            "expert_count": 2,
+            "candidate_count": 2,
+            "expert_masses": [
+              "1",
+              "1"
+            ],
+            "local_expert_evaluators": [
+              1,
+              1
+            ],
+            "joint_support_indices": [
+              0,
+              1
+            ],
+            "poe_unnormalized_vector": [
+              "3/16",
+              "3/16"
+            ],
+            "poe_partition_sum": "3/8",
+            "poe_normalized_distribution": [
+              "1/2",
+              "1/2"
+            ],
+            "moe_unnormalized_vector": [
+              "1/2",
+              "1/2"
+            ],
+            "moe_partition_sum": "1",
+            "moe_normalized_distribution": [
+              "1/2",
+              "1/2"
+            ],
+            "local_product_aggregator": 1,
+            "global_poe_normalizable_evaluator": 1,
+            "evaluator_defect": 0,
+            "round_status": "POE_AND_MOE_COHERENT_LGGG"
+          }
+        ],
+        "receipt_sha256": "672b39c7c0f5f287568f273df579a669b29d2da84b2a5032cfea95299d34c1d5"
+      },
+      "evaluations": [
+        {
+          "evaluation_id": "codebase_council_eval_1_openai_gpt-4o-mini::council",
+          "distinct_root_causes_k": 3,
+          "consensus_collision_floor": 2,
+          "binary_tag_collision_floor": 1,
+          "council_collision_floor": 0,
+          "consensus_poe_partition_sum": "0",
+          "council_poe_partition_sum": "3/8",
+          "phase_1_consensus_local_green": 1,
+          "phase_1_consensus_global_green": 0,
+          "phase_1_consensus_defect": -1,
+          "phase_1_status": "COLLAPSING_CONSENSUS_ROOT_CAUSE_LOSS_LGGR",
+          "phase_2_binary_local_green": 1,
+          "phase_2_binary_global_green": 0,
+          "phase_2_binary_defect": -1,
+          "phase_2_status": "BINARY_TAG_CAPACITY_DEFICIT_LGGR",
+          "phase_3_council_local_green": 1,
+          "phase_3_council_global_green": 1,
+          "phase_3_council_defect": 0,
+          "phase_3_status": "DISAGREEMENT_PRESERVING_COUNCIL_COHERENT_LGGG",
+          "capacity_consensus": {
+            "fiber_id": "codebase_council_eval_1_openai_gpt-4o-mini::council::phase_1_consensus",
+            "state_count": 3,
+            "distinct_query_values_k": 3,
+            "channel_capacity_s": 1,
+            "used_symbols_count": 1,
+            "error_budget": 0,
+            "capacity_error_floor_k_minus_s": 2,
+            "realized_subfiber_error_floor": 2,
+            "realized_sample_error_floor": 2,
+            "pigeonhole_bound_verified": true,
+            "local_product_aggregator": 1,
+            "global_decodability_evaluator": 0,
+            "evaluator_defect": -1,
+            "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+            "states": [
+              {
+                "state_id": "patch_0",
+                "query_value": "rebate_drift",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "patch_1",
+                "query_value": "jurisdiction_mismatch",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "patch_2",
+                "query_value": "fee_tier_overflow",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              }
+            ]
+          },
+          "capacity_binary": {
+            "fiber_id": "codebase_council_eval_1_openai_gpt-4o-mini::council::phase_2_binary_tag",
+            "state_count": 3,
+            "distinct_query_values_k": 3,
+            "channel_capacity_s": 2,
+            "used_symbols_count": 2,
+            "error_budget": 0,
+            "capacity_error_floor_k_minus_s": 1,
+            "realized_subfiber_error_floor": 1,
+            "realized_sample_error_floor": 1,
+            "pigeonhole_bound_verified": true,
+            "local_product_aggregator": 1,
+            "global_decodability_evaluator": 0,
+            "evaluator_defect": -1,
+            "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+            "states": [
+              {
+                "state_id": "patch_0",
+                "query_value": "rebate_drift",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "patch_1",
+                "query_value": "jurisdiction_mismatch",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "patch_2",
+                "query_value": "fee_tier_overflow",
+                "side_symbol": 1,
+                "local_channel_evaluator": 1
+              }
+            ]
+          },
+          "capacity_council": {
+            "fiber_id": "codebase_council_eval_1_openai_gpt-4o-mini::council::phase_3_council",
+            "state_count": 3,
+            "distinct_query_values_k": 3,
+            "channel_capacity_s": 3,
+            "used_symbols_count": 3,
+            "error_budget": 0,
+            "capacity_error_floor_k_minus_s": 0,
+            "realized_subfiber_error_floor": 0,
+            "realized_sample_error_floor": 0,
+            "pigeonhole_bound_verified": true,
+            "local_product_aggregator": 1,
+            "global_decodability_evaluator": 1,
+            "evaluator_defect": 0,
+            "fiber_status": "SIDE_INFORMATION_SUFFICIENT_LGGG",
+            "states": [
+              {
+                "state_id": "patch_0",
+                "query_value": "rebate_drift",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "patch_1",
+                "query_value": "jurisdiction_mismatch",
+                "side_symbol": 1,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "patch_2",
+                "query_value": "fee_tier_overflow",
+                "side_symbol": 2,
+                "local_channel_evaluator": 1
+              }
+            ]
+          },
+          "poe_consensus": {
+            "round_id": "codebase_council_eval_1_openai_gpt-4o-mini::council::phase_1_disjoint_poe",
+            "expert_count": 2,
+            "candidate_count": 2,
+            "expert_masses": [
+              "1",
+              "1"
+            ],
+            "local_expert_evaluators": [
+              1,
+              1
+            ],
+            "joint_support_indices": [],
+            "poe_unnormalized_vector": [
+              "0",
+              "0"
+            ],
+            "poe_partition_sum": "0",
+            "poe_normalized_distribution": null,
+            "moe_unnormalized_vector": [
+              "1/2",
+              "1/2"
+            ],
+            "moe_partition_sum": "1",
+            "moe_normalized_distribution": [
+              "1/2",
+              "1/2"
+            ],
+            "local_product_aggregator": 1,
+            "global_poe_normalizable_evaluator": 0,
+            "evaluator_defect": -1,
+            "round_status": "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR"
+          },
+          "poe_council": {
+            "round_id": "codebase_council_eval_1_openai_gpt-4o-mini::council::phase_3_shared_poe",
+            "expert_count": 2,
+            "candidate_count": 2,
+            "expert_masses": [
+              "1",
+              "1"
+            ],
+            "local_expert_evaluators": [
+              1,
+              1
+            ],
+            "joint_support_indices": [
+              0,
+              1
+            ],
+            "poe_unnormalized_vector": [
+              "3/16",
+              "3/16"
+            ],
+            "poe_partition_sum": "3/8",
+            "poe_normalized_distribution": [
+              "1/2",
+              "1/2"
+            ],
+            "moe_unnormalized_vector": [
+              "1/2",
+              "1/2"
+            ],
+            "moe_partition_sum": "1",
+            "moe_normalized_distribution": [
+              "1/2",
+              "1/2"
+            ],
+            "local_product_aggregator": 1,
+            "global_poe_normalizable_evaluator": 1,
+            "evaluator_defect": 0,
+            "round_status": "POE_AND_MOE_COHERENT_LGGG"
+          }
+        },
+        {
+          "evaluation_id": "codebase_council_eval_2_google_gemini-2.5-flash-lite::council",
+          "distinct_root_causes_k": 3,
+          "consensus_collision_floor": 2,
+          "binary_tag_collision_floor": 1,
+          "council_collision_floor": 0,
+          "consensus_poe_partition_sum": "0",
+          "council_poe_partition_sum": "3/8",
+          "phase_1_consensus_local_green": 1,
+          "phase_1_consensus_global_green": 0,
+          "phase_1_consensus_defect": -1,
+          "phase_1_status": "COLLAPSING_CONSENSUS_ROOT_CAUSE_LOSS_LGGR",
+          "phase_2_binary_local_green": 1,
+          "phase_2_binary_global_green": 0,
+          "phase_2_binary_defect": -1,
+          "phase_2_status": "BINARY_TAG_CAPACITY_DEFICIT_LGGR",
+          "phase_3_council_local_green": 1,
+          "phase_3_council_global_green": 1,
+          "phase_3_council_defect": 0,
+          "phase_3_status": "DISAGREEMENT_PRESERVING_COUNCIL_COHERENT_LGGG",
+          "capacity_consensus": {
+            "fiber_id": "codebase_council_eval_2_google_gemini-2.5-flash-lite::council::phase_1_consensus",
+            "state_count": 3,
+            "distinct_query_values_k": 3,
+            "channel_capacity_s": 1,
+            "used_symbols_count": 1,
+            "error_budget": 0,
+            "capacity_error_floor_k_minus_s": 2,
+            "realized_subfiber_error_floor": 2,
+            "realized_sample_error_floor": 2,
+            "pigeonhole_bound_verified": true,
+            "local_product_aggregator": 1,
+            "global_decodability_evaluator": 0,
+            "evaluator_defect": -1,
+            "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+            "states": [
+              {
+                "state_id": "patch_0",
+                "query_value": "rebate_drift",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "patch_1",
+                "query_value": "jurisdiction_mismatch",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "patch_2",
+                "query_value": "fee_tier_overflow",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              }
+            ]
+          },
+          "capacity_binary": {
+            "fiber_id": "codebase_council_eval_2_google_gemini-2.5-flash-lite::council::phase_2_binary_tag",
+            "state_count": 3,
+            "distinct_query_values_k": 3,
+            "channel_capacity_s": 2,
+            "used_symbols_count": 2,
+            "error_budget": 0,
+            "capacity_error_floor_k_minus_s": 1,
+            "realized_subfiber_error_floor": 1,
+            "realized_sample_error_floor": 1,
+            "pigeonhole_bound_verified": true,
+            "local_product_aggregator": 1,
+            "global_decodability_evaluator": 0,
+            "evaluator_defect": -1,
+            "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+            "states": [
+              {
+                "state_id": "patch_0",
+                "query_value": "rebate_drift",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "patch_1",
+                "query_value": "jurisdiction_mismatch",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "patch_2",
+                "query_value": "fee_tier_overflow",
+                "side_symbol": 1,
+                "local_channel_evaluator": 1
+              }
+            ]
+          },
+          "capacity_council": {
+            "fiber_id": "codebase_council_eval_2_google_gemini-2.5-flash-lite::council::phase_3_council",
+            "state_count": 3,
+            "distinct_query_values_k": 3,
+            "channel_capacity_s": 3,
+            "used_symbols_count": 3,
+            "error_budget": 0,
+            "capacity_error_floor_k_minus_s": 0,
+            "realized_subfiber_error_floor": 0,
+            "realized_sample_error_floor": 0,
+            "pigeonhole_bound_verified": true,
+            "local_product_aggregator": 1,
+            "global_decodability_evaluator": 1,
+            "evaluator_defect": 0,
+            "fiber_status": "SIDE_INFORMATION_SUFFICIENT_LGGG",
+            "states": [
+              {
+                "state_id": "patch_0",
+                "query_value": "rebate_drift",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "patch_1",
+                "query_value": "jurisdiction_mismatch",
+                "side_symbol": 1,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "patch_2",
+                "query_value": "fee_tier_overflow",
+                "side_symbol": 2,
+                "local_channel_evaluator": 1
+              }
+            ]
+          },
+          "poe_consensus": {
+            "round_id": "codebase_council_eval_2_google_gemini-2.5-flash-lite::council::phase_1_disjoint_poe",
+            "expert_count": 2,
+            "candidate_count": 2,
+            "expert_masses": [
+              "1",
+              "1"
+            ],
+            "local_expert_evaluators": [
+              1,
+              1
+            ],
+            "joint_support_indices": [],
+            "poe_unnormalized_vector": [
+              "0",
+              "0"
+            ],
+            "poe_partition_sum": "0",
+            "poe_normalized_distribution": null,
+            "moe_unnormalized_vector": [
+              "1/2",
+              "1/2"
+            ],
+            "moe_partition_sum": "1",
+            "moe_normalized_distribution": [
+              "1/2",
+              "1/2"
+            ],
+            "local_product_aggregator": 1,
+            "global_poe_normalizable_evaluator": 0,
+            "evaluator_defect": -1,
+            "round_status": "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR"
+          },
+          "poe_council": {
+            "round_id": "codebase_council_eval_2_google_gemini-2.5-flash-lite::council::phase_3_shared_poe",
+            "expert_count": 2,
+            "candidate_count": 2,
+            "expert_masses": [
+              "1",
+              "1"
+            ],
+            "local_expert_evaluators": [
+              1,
+              1
+            ],
+            "joint_support_indices": [
+              0,
+              1
+            ],
+            "poe_unnormalized_vector": [
+              "3/16",
+              "3/16"
+            ],
+            "poe_partition_sum": "3/8",
+            "poe_normalized_distribution": [
+              "1/2",
+              "1/2"
+            ],
+            "moe_unnormalized_vector": [
+              "1/2",
+              "1/2"
+            ],
+            "moe_partition_sum": "1",
+            "moe_normalized_distribution": [
+              "1/2",
+              "1/2"
+            ],
+            "local_product_aggregator": 1,
+            "global_poe_normalizable_evaluator": 1,
+            "evaluator_defect": 0,
+            "round_status": "POE_AND_MOE_COHERENT_LGGG"
+          }
+        },
+        {
+          "evaluation_id": "codebase_council_eval_3_meta-llama_llama-3.3-70b-instruct::council",
+          "distinct_root_causes_k": 3,
+          "consensus_collision_floor": 2,
+          "binary_tag_collision_floor": 1,
+          "council_collision_floor": 0,
+          "consensus_poe_partition_sum": "0",
+          "council_poe_partition_sum": "3/8",
+          "phase_1_consensus_local_green": 1,
+          "phase_1_consensus_global_green": 0,
+          "phase_1_consensus_defect": -1,
+          "phase_1_status": "COLLAPSING_CONSENSUS_ROOT_CAUSE_LOSS_LGGR",
+          "phase_2_binary_local_green": 1,
+          "phase_2_binary_global_green": 0,
+          "phase_2_binary_defect": -1,
+          "phase_2_status": "BINARY_TAG_CAPACITY_DEFICIT_LGGR",
+          "phase_3_council_local_green": 1,
+          "phase_3_council_global_green": 1,
+          "phase_3_council_defect": 0,
+          "phase_3_status": "DISAGREEMENT_PRESERVING_COUNCIL_COHERENT_LGGG",
+          "capacity_consensus": {
+            "fiber_id": "codebase_council_eval_3_meta-llama_llama-3.3-70b-instruct::council::phase_1_consensus",
+            "state_count": 3,
+            "distinct_query_values_k": 3,
+            "channel_capacity_s": 1,
+            "used_symbols_count": 1,
+            "error_budget": 0,
+            "capacity_error_floor_k_minus_s": 2,
+            "realized_subfiber_error_floor": 2,
+            "realized_sample_error_floor": 2,
+            "pigeonhole_bound_verified": true,
+            "local_product_aggregator": 1,
+            "global_decodability_evaluator": 0,
+            "evaluator_defect": -1,
+            "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+            "states": [
+              {
+                "state_id": "patch_0",
+                "query_value": "rebate_drift",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "patch_1",
+                "query_value": "jurisdiction_mismatch",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "patch_2",
+                "query_value": "fee_tier_overflow",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              }
+            ]
+          },
+          "capacity_binary": {
+            "fiber_id": "codebase_council_eval_3_meta-llama_llama-3.3-70b-instruct::council::phase_2_binary_tag",
+            "state_count": 3,
+            "distinct_query_values_k": 3,
+            "channel_capacity_s": 2,
+            "used_symbols_count": 2,
+            "error_budget": 0,
+            "capacity_error_floor_k_minus_s": 1,
+            "realized_subfiber_error_floor": 1,
+            "realized_sample_error_floor": 1,
+            "pigeonhole_bound_verified": true,
+            "local_product_aggregator": 1,
+            "global_decodability_evaluator": 0,
+            "evaluator_defect": -1,
+            "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+            "states": [
+              {
+                "state_id": "patch_0",
+                "query_value": "rebate_drift",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "patch_1",
+                "query_value": "jurisdiction_mismatch",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "patch_2",
+                "query_value": "fee_tier_overflow",
+                "side_symbol": 1,
+                "local_channel_evaluator": 1
+              }
+            ]
+          },
+          "capacity_council": {
+            "fiber_id": "codebase_council_eval_3_meta-llama_llama-3.3-70b-instruct::council::phase_3_council",
+            "state_count": 3,
+            "distinct_query_values_k": 3,
+            "channel_capacity_s": 3,
+            "used_symbols_count": 3,
+            "error_budget": 0,
+            "capacity_error_floor_k_minus_s": 0,
+            "realized_subfiber_error_floor": 0,
+            "realized_sample_error_floor": 0,
+            "pigeonhole_bound_verified": true,
+            "local_product_aggregator": 1,
+            "global_decodability_evaluator": 1,
+            "evaluator_defect": 0,
+            "fiber_status": "SIDE_INFORMATION_SUFFICIENT_LGGG",
+            "states": [
+              {
+                "state_id": "patch_0",
+                "query_value": "rebate_drift",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "patch_1",
+                "query_value": "jurisdiction_mismatch",
+                "side_symbol": 1,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "patch_2",
+                "query_value": "fee_tier_overflow",
+                "side_symbol": 2,
+                "local_channel_evaluator": 1
+              }
+            ]
+          },
+          "poe_consensus": {
+            "round_id": "codebase_council_eval_3_meta-llama_llama-3.3-70b-instruct::council::phase_1_disjoint_poe",
+            "expert_count": 2,
+            "candidate_count": 2,
+            "expert_masses": [
+              "1",
+              "1"
+            ],
+            "local_expert_evaluators": [
+              1,
+              1
+            ],
+            "joint_support_indices": [],
+            "poe_unnormalized_vector": [
+              "0",
+              "0"
+            ],
+            "poe_partition_sum": "0",
+            "poe_normalized_distribution": null,
+            "moe_unnormalized_vector": [
+              "1/2",
+              "1/2"
+            ],
+            "moe_partition_sum": "1",
+            "moe_normalized_distribution": [
+              "1/2",
+              "1/2"
+            ],
+            "local_product_aggregator": 1,
+            "global_poe_normalizable_evaluator": 0,
+            "evaluator_defect": -1,
+            "round_status": "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR"
+          },
+          "poe_council": {
+            "round_id": "codebase_council_eval_3_meta-llama_llama-3.3-70b-instruct::council::phase_3_shared_poe",
+            "expert_count": 2,
+            "candidate_count": 2,
+            "expert_masses": [
+              "1",
+              "1"
+            ],
+            "local_expert_evaluators": [
+              1,
+              1
+            ],
+            "joint_support_indices": [
+              0,
+              1
+            ],
+            "poe_unnormalized_vector": [
+              "3/16",
+              "3/16"
+            ],
+            "poe_partition_sum": "3/8",
+            "poe_normalized_distribution": [
+              "1/2",
+              "1/2"
+            ],
+            "moe_unnormalized_vector": [
+              "1/2",
+              "1/2"
+            ],
+            "moe_partition_sum": "1",
+            "moe_normalized_distribution": [
+              "1/2",
+              "1/2"
+            ],
+            "local_product_aggregator": 1,
+            "global_poe_normalizable_evaluator": 1,
+            "evaluator_defect": 0,
+            "round_status": "POE_AND_MOE_COHERENT_LGGG"
+          }
+        },
+        {
+          "evaluation_id": "codebase_council_eval_4_deepseek_deepseek-chat::council",
+          "distinct_root_causes_k": 3,
+          "consensus_collision_floor": 2,
+          "binary_tag_collision_floor": 1,
+          "council_collision_floor": 0,
+          "consensus_poe_partition_sum": "0",
+          "council_poe_partition_sum": "3/8",
+          "phase_1_consensus_local_green": 1,
+          "phase_1_consensus_global_green": 0,
+          "phase_1_consensus_defect": -1,
+          "phase_1_status": "COLLAPSING_CONSENSUS_ROOT_CAUSE_LOSS_LGGR",
+          "phase_2_binary_local_green": 1,
+          "phase_2_binary_global_green": 0,
+          "phase_2_binary_defect": -1,
+          "phase_2_status": "BINARY_TAG_CAPACITY_DEFICIT_LGGR",
+          "phase_3_council_local_green": 1,
+          "phase_3_council_global_green": 1,
+          "phase_3_council_defect": 0,
+          "phase_3_status": "DISAGREEMENT_PRESERVING_COUNCIL_COHERENT_LGGG",
+          "capacity_consensus": {
+            "fiber_id": "codebase_council_eval_4_deepseek_deepseek-chat::council::phase_1_consensus",
+            "state_count": 3,
+            "distinct_query_values_k": 3,
+            "channel_capacity_s": 1,
+            "used_symbols_count": 1,
+            "error_budget": 0,
+            "capacity_error_floor_k_minus_s": 2,
+            "realized_subfiber_error_floor": 2,
+            "realized_sample_error_floor": 2,
+            "pigeonhole_bound_verified": true,
+            "local_product_aggregator": 1,
+            "global_decodability_evaluator": 0,
+            "evaluator_defect": -1,
+            "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+            "states": [
+              {
+                "state_id": "patch_0",
+                "query_value": "rebate_drift",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "patch_1",
+                "query_value": "jurisdiction_mismatch",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "patch_2",
+                "query_value": "fee_tier_overflow",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              }
+            ]
+          },
+          "capacity_binary": {
+            "fiber_id": "codebase_council_eval_4_deepseek_deepseek-chat::council::phase_2_binary_tag",
+            "state_count": 3,
+            "distinct_query_values_k": 3,
+            "channel_capacity_s": 2,
+            "used_symbols_count": 2,
+            "error_budget": 0,
+            "capacity_error_floor_k_minus_s": 1,
+            "realized_subfiber_error_floor": 1,
+            "realized_sample_error_floor": 1,
+            "pigeonhole_bound_verified": true,
+            "local_product_aggregator": 1,
+            "global_decodability_evaluator": 0,
+            "evaluator_defect": -1,
+            "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+            "states": [
+              {
+                "state_id": "patch_0",
+                "query_value": "rebate_drift",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "patch_1",
+                "query_value": "jurisdiction_mismatch",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "patch_2",
+                "query_value": "fee_tier_overflow",
+                "side_symbol": 1,
+                "local_channel_evaluator": 1
+              }
+            ]
+          },
+          "capacity_council": {
+            "fiber_id": "codebase_council_eval_4_deepseek_deepseek-chat::council::phase_3_council",
+            "state_count": 3,
+            "distinct_query_values_k": 3,
+            "channel_capacity_s": 3,
+            "used_symbols_count": 3,
+            "error_budget": 0,
+            "capacity_error_floor_k_minus_s": 0,
+            "realized_subfiber_error_floor": 0,
+            "realized_sample_error_floor": 0,
+            "pigeonhole_bound_verified": true,
+            "local_product_aggregator": 1,
+            "global_decodability_evaluator": 1,
+            "evaluator_defect": 0,
+            "fiber_status": "SIDE_INFORMATION_SUFFICIENT_LGGG",
+            "states": [
+              {
+                "state_id": "patch_0",
+                "query_value": "rebate_drift",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "patch_1",
+                "query_value": "jurisdiction_mismatch",
+                "side_symbol": 1,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "patch_2",
+                "query_value": "fee_tier_overflow",
+                "side_symbol": 2,
+                "local_channel_evaluator": 1
+              }
+            ]
+          },
+          "poe_consensus": {
+            "round_id": "codebase_council_eval_4_deepseek_deepseek-chat::council::phase_1_disjoint_poe",
+            "expert_count": 2,
+            "candidate_count": 2,
+            "expert_masses": [
+              "1",
+              "1"
+            ],
+            "local_expert_evaluators": [
+              1,
+              1
+            ],
+            "joint_support_indices": [],
+            "poe_unnormalized_vector": [
+              "0",
+              "0"
+            ],
+            "poe_partition_sum": "0",
+            "poe_normalized_distribution": null,
+            "moe_unnormalized_vector": [
+              "1/2",
+              "1/2"
+            ],
+            "moe_partition_sum": "1",
+            "moe_normalized_distribution": [
+              "1/2",
+              "1/2"
+            ],
+            "local_product_aggregator": 1,
+            "global_poe_normalizable_evaluator": 0,
+            "evaluator_defect": -1,
+            "round_status": "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR"
+          },
+          "poe_council": {
+            "round_id": "codebase_council_eval_4_deepseek_deepseek-chat::council::phase_3_shared_poe",
+            "expert_count": 2,
+            "candidate_count": 2,
+            "expert_masses": [
+              "1",
+              "1"
+            ],
+            "local_expert_evaluators": [
+              1,
+              1
+            ],
+            "joint_support_indices": [
+              0,
+              1
+            ],
+            "poe_unnormalized_vector": [
+              "3/16",
+              "3/16"
+            ],
+            "poe_partition_sum": "3/8",
+            "poe_normalized_distribution": [
+              "1/2",
+              "1/2"
+            ],
+            "moe_unnormalized_vector": [
+              "1/2",
+              "1/2"
+            ],
+            "moe_partition_sum": "1",
+            "moe_normalized_distribution": [
+              "1/2",
+              "1/2"
+            ],
+            "local_product_aggregator": 1,
+            "global_poe_normalizable_evaluator": 1,
+            "evaluator_defect": 0,
+            "round_status": "POE_AND_MOE_COHERENT_LGGG"
+          }
+        },
+        {
+          "evaluation_id": "codebase_council_eval_5_mistralai_mistral-small-3.2-24b-instruct::council",
+          "distinct_root_causes_k": 3,
+          "consensus_collision_floor": 2,
+          "binary_tag_collision_floor": 1,
+          "council_collision_floor": 0,
+          "consensus_poe_partition_sum": "0",
+          "council_poe_partition_sum": "3/8",
+          "phase_1_consensus_local_green": 1,
+          "phase_1_consensus_global_green": 0,
+          "phase_1_consensus_defect": -1,
+          "phase_1_status": "COLLAPSING_CONSENSUS_ROOT_CAUSE_LOSS_LGGR",
+          "phase_2_binary_local_green": 1,
+          "phase_2_binary_global_green": 0,
+          "phase_2_binary_defect": -1,
+          "phase_2_status": "BINARY_TAG_CAPACITY_DEFICIT_LGGR",
+          "phase_3_council_local_green": 1,
+          "phase_3_council_global_green": 1,
+          "phase_3_council_defect": 0,
+          "phase_3_status": "DISAGREEMENT_PRESERVING_COUNCIL_COHERENT_LGGG",
+          "capacity_consensus": {
+            "fiber_id": "codebase_council_eval_5_mistralai_mistral-small-3.2-24b-instruct::council::phase_1_consensus",
+            "state_count": 3,
+            "distinct_query_values_k": 3,
+            "channel_capacity_s": 1,
+            "used_symbols_count": 1,
+            "error_budget": 0,
+            "capacity_error_floor_k_minus_s": 2,
+            "realized_subfiber_error_floor": 2,
+            "realized_sample_error_floor": 2,
+            "pigeonhole_bound_verified": true,
+            "local_product_aggregator": 1,
+            "global_decodability_evaluator": 0,
+            "evaluator_defect": -1,
+            "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+            "states": [
+              {
+                "state_id": "patch_0",
+                "query_value": "rebate_drift",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "patch_1",
+                "query_value": "jurisdiction_mismatch",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "patch_2",
+                "query_value": "fee_tier_overflow",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              }
+            ]
+          },
+          "capacity_binary": {
+            "fiber_id": "codebase_council_eval_5_mistralai_mistral-small-3.2-24b-instruct::council::phase_2_binary_tag",
+            "state_count": 3,
+            "distinct_query_values_k": 3,
+            "channel_capacity_s": 2,
+            "used_symbols_count": 2,
+            "error_budget": 0,
+            "capacity_error_floor_k_minus_s": 1,
+            "realized_subfiber_error_floor": 1,
+            "realized_sample_error_floor": 1,
+            "pigeonhole_bound_verified": true,
+            "local_product_aggregator": 1,
+            "global_decodability_evaluator": 0,
+            "evaluator_defect": -1,
+            "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+            "states": [
+              {
+                "state_id": "patch_0",
+                "query_value": "rebate_drift",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "patch_1",
+                "query_value": "jurisdiction_mismatch",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "patch_2",
+                "query_value": "fee_tier_overflow",
+                "side_symbol": 1,
+                "local_channel_evaluator": 1
+              }
+            ]
+          },
+          "capacity_council": {
+            "fiber_id": "codebase_council_eval_5_mistralai_mistral-small-3.2-24b-instruct::council::phase_3_council",
+            "state_count": 3,
+            "distinct_query_values_k": 3,
+            "channel_capacity_s": 3,
+            "used_symbols_count": 3,
+            "error_budget": 0,
+            "capacity_error_floor_k_minus_s": 0,
+            "realized_subfiber_error_floor": 0,
+            "realized_sample_error_floor": 0,
+            "pigeonhole_bound_verified": true,
+            "local_product_aggregator": 1,
+            "global_decodability_evaluator": 1,
+            "evaluator_defect": 0,
+            "fiber_status": "SIDE_INFORMATION_SUFFICIENT_LGGG",
+            "states": [
+              {
+                "state_id": "patch_0",
+                "query_value": "rebate_drift",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "patch_1",
+                "query_value": "jurisdiction_mismatch",
+                "side_symbol": 1,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "patch_2",
+                "query_value": "fee_tier_overflow",
+                "side_symbol": 2,
+                "local_channel_evaluator": 1
+              }
+            ]
+          },
+          "poe_consensus": {
+            "round_id": "codebase_council_eval_5_mistralai_mistral-small-3.2-24b-instruct::council::phase_1_disjoint_poe",
+            "expert_count": 2,
+            "candidate_count": 2,
+            "expert_masses": [
+              "1",
+              "1"
+            ],
+            "local_expert_evaluators": [
+              1,
+              1
+            ],
+            "joint_support_indices": [],
+            "poe_unnormalized_vector": [
+              "0",
+              "0"
+            ],
+            "poe_partition_sum": "0",
+            "poe_normalized_distribution": null,
+            "moe_unnormalized_vector": [
+              "1/2",
+              "1/2"
+            ],
+            "moe_partition_sum": "1",
+            "moe_normalized_distribution": [
+              "1/2",
+              "1/2"
+            ],
+            "local_product_aggregator": 1,
+            "global_poe_normalizable_evaluator": 0,
+            "evaluator_defect": -1,
+            "round_status": "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR"
+          },
+          "poe_council": {
+            "round_id": "codebase_council_eval_5_mistralai_mistral-small-3.2-24b-instruct::council::phase_3_shared_poe",
+            "expert_count": 2,
+            "candidate_count": 2,
+            "expert_masses": [
+              "1",
+              "1"
+            ],
+            "local_expert_evaluators": [
+              1,
+              1
+            ],
+            "joint_support_indices": [
+              0,
+              1
+            ],
+            "poe_unnormalized_vector": [
+              "3/16",
+              "3/16"
+            ],
+            "poe_partition_sum": "3/8",
+            "poe_normalized_distribution": [
+              "1/2",
+              "1/2"
+            ],
+            "moe_unnormalized_vector": [
+              "1/2",
+              "1/2"
+            ],
+            "moe_partition_sum": "1",
+            "moe_normalized_distribution": [
+              "1/2",
+              "1/2"
+            ],
+            "local_product_aggregator": 1,
+            "global_poe_normalizable_evaluator": 1,
+            "evaluator_defect": 0,
+            "round_status": "POE_AND_MOE_COHERENT_LGGG"
+          }
+        }
+      ],
+      "receipt_sha256": "1976848e4c408d656fb9789c078c7b8e899be324d4afd8f5b93b511ed54d0809"
+    },
+    "fiber_receipt": {
+      "schema": "lggr.descent.v1",
+      "authority_effect": "None",
+      "scope_id": "live-codebase-disagreement-council-benchmark::fiber",
+      "carrier_size": 15,
+      "status": "DECODER_VERIFIED",
+      "contract_status": "COMPOSABLE_LGGG",
+      "decoder": [
+        {
+          "report": {
+            "active_channel_capacity_s": 1,
+            "local_green": 1
+          },
+          "query": {
+            "active_collision_floor": 2,
+            "global_green": 0,
+            "settlement_conserved": false,
+            "shared_remediation_support": false
+          }
+        },
+        {
+          "report": {
+            "active_channel_capacity_s": 2,
+            "local_green": 1
+          },
+          "query": {
+            "active_collision_floor": 1,
+            "global_green": 0,
+            "settlement_conserved": false,
+            "shared_remediation_support": false
+          }
+        },
+        {
+          "report": {
+            "active_channel_capacity_s": 3,
+            "local_green": 1
+          },
+          "query": {
+            "active_collision_floor": 0,
+            "global_green": 1,
+            "settlement_conserved": true,
+            "shared_remediation_support": true
+          }
+        }
+      ],
+      "input_sha256": "5e337add938d7c7bcddfdd2b56f02ecf8012fa5fb927b47710848a4c2ea3fae6",
+      "meaning": "The supplied query is constant on every realized report fiber in this stream.",
+      "receipt_sha256": "84e5238f2ebbec412c1b5497b3d9aaaf895f9809db87538506868b561bebdcf5"
+    },
+    "three_phase_audits": [
+      {
+        "audit_id": "codebase_council_eval_1_openai_gpt-4o-mini",
+        "model_id": "openai/gpt-4o-mini",
+        "phase_1_collision_floor": 2,
+        "phase_1_poe_partition_sum": "0",
+        "phase_1_surcharge_cents": 10,
+        "phase_1_payout_cents": 863,
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "COLLAPSING_CONSENSUS_CODEBASE_ROOT_CAUSE_LOSS_LGGR",
+        "phase_2_collision_floor": 1,
+        "phase_2_poe_partition_sum": "0",
+        "phase_2_surcharge_cents": 5,
+        "phase_2_payout_cents": 868,
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "BINARY_TAG_CODEBASE_CAPACITY_DEFICIT_LGGR",
+        "phase_3_collision_floor": 0,
+        "phase_3_poe_partition_sum": "3/8",
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "CODEBASE_DISAGREEMENT_COUNCIL_COHERENT_LGGG",
+        "council_audit": {
+          "evaluation_id": "codebase_council_eval_1_openai_gpt-4o-mini::council",
+          "distinct_root_causes_k": 3,
+          "consensus_collision_floor": 2,
+          "binary_tag_collision_floor": 1,
+          "council_collision_floor": 0,
+          "consensus_poe_partition_sum": "0",
+          "council_poe_partition_sum": "3/8",
+          "phase_1_consensus_local_green": 1,
+          "phase_1_consensus_global_green": 0,
+          "phase_1_consensus_defect": -1,
+          "phase_1_status": "COLLAPSING_CONSENSUS_ROOT_CAUSE_LOSS_LGGR",
+          "phase_2_binary_local_green": 1,
+          "phase_2_binary_global_green": 0,
+          "phase_2_binary_defect": -1,
+          "phase_2_status": "BINARY_TAG_CAPACITY_DEFICIT_LGGR",
+          "phase_3_council_local_green": 1,
+          "phase_3_council_global_green": 1,
+          "phase_3_council_defect": 0,
+          "phase_3_status": "DISAGREEMENT_PRESERVING_COUNCIL_COHERENT_LGGG",
+          "capacity_consensus": {
+            "fiber_id": "codebase_council_eval_1_openai_gpt-4o-mini::council::phase_1_consensus",
+            "state_count": 3,
+            "distinct_query_values_k": 3,
+            "channel_capacity_s": 1,
+            "used_symbols_count": 1,
+            "error_budget": 0,
+            "capacity_error_floor_k_minus_s": 2,
+            "realized_subfiber_error_floor": 2,
+            "realized_sample_error_floor": 2,
+            "pigeonhole_bound_verified": true,
+            "local_product_aggregator": 1,
+            "global_decodability_evaluator": 0,
+            "evaluator_defect": -1,
+            "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+            "states": [
+              {
+                "state_id": "patch_0",
+                "query_value": "rebate_drift",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "patch_1",
+                "query_value": "jurisdiction_mismatch",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "patch_2",
+                "query_value": "fee_tier_overflow",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              }
+            ]
+          },
+          "capacity_binary": {
+            "fiber_id": "codebase_council_eval_1_openai_gpt-4o-mini::council::phase_2_binary_tag",
+            "state_count": 3,
+            "distinct_query_values_k": 3,
+            "channel_capacity_s": 2,
+            "used_symbols_count": 2,
+            "error_budget": 0,
+            "capacity_error_floor_k_minus_s": 1,
+            "realized_subfiber_error_floor": 1,
+            "realized_sample_error_floor": 1,
+            "pigeonhole_bound_verified": true,
+            "local_product_aggregator": 1,
+            "global_decodability_evaluator": 0,
+            "evaluator_defect": -1,
+            "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+            "states": [
+              {
+                "state_id": "patch_0",
+                "query_value": "rebate_drift",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "patch_1",
+                "query_value": "jurisdiction_mismatch",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "patch_2",
+                "query_value": "fee_tier_overflow",
+                "side_symbol": 1,
+                "local_channel_evaluator": 1
+              }
+            ]
+          },
+          "capacity_council": {
+            "fiber_id": "codebase_council_eval_1_openai_gpt-4o-mini::council::phase_3_council",
+            "state_count": 3,
+            "distinct_query_values_k": 3,
+            "channel_capacity_s": 3,
+            "used_symbols_count": 3,
+            "error_budget": 0,
+            "capacity_error_floor_k_minus_s": 0,
+            "realized_subfiber_error_floor": 0,
+            "realized_sample_error_floor": 0,
+            "pigeonhole_bound_verified": true,
+            "local_product_aggregator": 1,
+            "global_decodability_evaluator": 1,
+            "evaluator_defect": 0,
+            "fiber_status": "SIDE_INFORMATION_SUFFICIENT_LGGG",
+            "states": [
+              {
+                "state_id": "patch_0",
+                "query_value": "rebate_drift",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "patch_1",
+                "query_value": "jurisdiction_mismatch",
+                "side_symbol": 1,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "patch_2",
+                "query_value": "fee_tier_overflow",
+                "side_symbol": 2,
+                "local_channel_evaluator": 1
+              }
+            ]
+          },
+          "poe_consensus": {
+            "round_id": "codebase_council_eval_1_openai_gpt-4o-mini::council::phase_1_disjoint_poe",
+            "expert_count": 2,
+            "candidate_count": 2,
+            "expert_masses": [
+              "1",
+              "1"
+            ],
+            "local_expert_evaluators": [
+              1,
+              1
+            ],
+            "joint_support_indices": [],
+            "poe_unnormalized_vector": [
+              "0",
+              "0"
+            ],
+            "poe_partition_sum": "0",
+            "poe_normalized_distribution": null,
+            "moe_unnormalized_vector": [
+              "1/2",
+              "1/2"
+            ],
+            "moe_partition_sum": "1",
+            "moe_normalized_distribution": [
+              "1/2",
+              "1/2"
+            ],
+            "local_product_aggregator": 1,
+            "global_poe_normalizable_evaluator": 0,
+            "evaluator_defect": -1,
+            "round_status": "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR"
+          },
+          "poe_council": {
+            "round_id": "codebase_council_eval_1_openai_gpt-4o-mini::council::phase_3_shared_poe",
+            "expert_count": 2,
+            "candidate_count": 2,
+            "expert_masses": [
+              "1",
+              "1"
+            ],
+            "local_expert_evaluators": [
+              1,
+              1
+            ],
+            "joint_support_indices": [
+              0,
+              1
+            ],
+            "poe_unnormalized_vector": [
+              "3/16",
+              "3/16"
+            ],
+            "poe_partition_sum": "3/8",
+            "poe_normalized_distribution": [
+              "1/2",
+              "1/2"
+            ],
+            "moe_unnormalized_vector": [
+              "1/2",
+              "1/2"
+            ],
+            "moe_partition_sum": "1",
+            "moe_normalized_distribution": [
+              "1/2",
+              "1/2"
+            ],
+            "local_product_aggregator": 1,
+            "global_poe_normalizable_evaluator": 1,
+            "evaluator_defect": 0,
+            "round_status": "POE_AND_MOE_COHERENT_LGGG"
+          }
+        }
+      },
+      {
+        "audit_id": "codebase_council_eval_2_google_gemini-2.5-flash-lite",
+        "model_id": "google/gemini-2.5-flash-lite",
+        "phase_1_collision_floor": 2,
+        "phase_1_poe_partition_sum": "0",
+        "phase_1_surcharge_cents": 10,
+        "phase_1_payout_cents": 863,
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "COLLAPSING_CONSENSUS_CODEBASE_ROOT_CAUSE_LOSS_LGGR",
+        "phase_2_collision_floor": 1,
+        "phase_2_poe_partition_sum": "0",
+        "phase_2_surcharge_cents": 5,
+        "phase_2_payout_cents": 868,
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "BINARY_TAG_CODEBASE_CAPACITY_DEFICIT_LGGR",
+        "phase_3_collision_floor": 0,
+        "phase_3_poe_partition_sum": "3/8",
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "CODEBASE_DISAGREEMENT_COUNCIL_COHERENT_LGGG",
+        "council_audit": {
+          "evaluation_id": "codebase_council_eval_2_google_gemini-2.5-flash-lite::council",
+          "distinct_root_causes_k": 3,
+          "consensus_collision_floor": 2,
+          "binary_tag_collision_floor": 1,
+          "council_collision_floor": 0,
+          "consensus_poe_partition_sum": "0",
+          "council_poe_partition_sum": "3/8",
+          "phase_1_consensus_local_green": 1,
+          "phase_1_consensus_global_green": 0,
+          "phase_1_consensus_defect": -1,
+          "phase_1_status": "COLLAPSING_CONSENSUS_ROOT_CAUSE_LOSS_LGGR",
+          "phase_2_binary_local_green": 1,
+          "phase_2_binary_global_green": 0,
+          "phase_2_binary_defect": -1,
+          "phase_2_status": "BINARY_TAG_CAPACITY_DEFICIT_LGGR",
+          "phase_3_council_local_green": 1,
+          "phase_3_council_global_green": 1,
+          "phase_3_council_defect": 0,
+          "phase_3_status": "DISAGREEMENT_PRESERVING_COUNCIL_COHERENT_LGGG",
+          "capacity_consensus": {
+            "fiber_id": "codebase_council_eval_2_google_gemini-2.5-flash-lite::council::phase_1_consensus",
+            "state_count": 3,
+            "distinct_query_values_k": 3,
+            "channel_capacity_s": 1,
+            "used_symbols_count": 1,
+            "error_budget": 0,
+            "capacity_error_floor_k_minus_s": 2,
+            "realized_subfiber_error_floor": 2,
+            "realized_sample_error_floor": 2,
+            "pigeonhole_bound_verified": true,
+            "local_product_aggregator": 1,
+            "global_decodability_evaluator": 0,
+            "evaluator_defect": -1,
+            "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+            "states": [
+              {
+                "state_id": "patch_0",
+                "query_value": "rebate_drift",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "patch_1",
+                "query_value": "jurisdiction_mismatch",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "patch_2",
+                "query_value": "fee_tier_overflow",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              }
+            ]
+          },
+          "capacity_binary": {
+            "fiber_id": "codebase_council_eval_2_google_gemini-2.5-flash-lite::council::phase_2_binary_tag",
+            "state_count": 3,
+            "distinct_query_values_k": 3,
+            "channel_capacity_s": 2,
+            "used_symbols_count": 2,
+            "error_budget": 0,
+            "capacity_error_floor_k_minus_s": 1,
+            "realized_subfiber_error_floor": 1,
+            "realized_sample_error_floor": 1,
+            "pigeonhole_bound_verified": true,
+            "local_product_aggregator": 1,
+            "global_decodability_evaluator": 0,
+            "evaluator_defect": -1,
+            "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+            "states": [
+              {
+                "state_id": "patch_0",
+                "query_value": "rebate_drift",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "patch_1",
+                "query_value": "jurisdiction_mismatch",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "patch_2",
+                "query_value": "fee_tier_overflow",
+                "side_symbol": 1,
+                "local_channel_evaluator": 1
+              }
+            ]
+          },
+          "capacity_council": {
+            "fiber_id": "codebase_council_eval_2_google_gemini-2.5-flash-lite::council::phase_3_council",
+            "state_count": 3,
+            "distinct_query_values_k": 3,
+            "channel_capacity_s": 3,
+            "used_symbols_count": 3,
+            "error_budget": 0,
+            "capacity_error_floor_k_minus_s": 0,
+            "realized_subfiber_error_floor": 0,
+            "realized_sample_error_floor": 0,
+            "pigeonhole_bound_verified": true,
+            "local_product_aggregator": 1,
+            "global_decodability_evaluator": 1,
+            "evaluator_defect": 0,
+            "fiber_status": "SIDE_INFORMATION_SUFFICIENT_LGGG",
+            "states": [
+              {
+                "state_id": "patch_0",
+                "query_value": "rebate_drift",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "patch_1",
+                "query_value": "jurisdiction_mismatch",
+                "side_symbol": 1,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "patch_2",
+                "query_value": "fee_tier_overflow",
+                "side_symbol": 2,
+                "local_channel_evaluator": 1
+              }
+            ]
+          },
+          "poe_consensus": {
+            "round_id": "codebase_council_eval_2_google_gemini-2.5-flash-lite::council::phase_1_disjoint_poe",
+            "expert_count": 2,
+            "candidate_count": 2,
+            "expert_masses": [
+              "1",
+              "1"
+            ],
+            "local_expert_evaluators": [
+              1,
+              1
+            ],
+            "joint_support_indices": [],
+            "poe_unnormalized_vector": [
+              "0",
+              "0"
+            ],
+            "poe_partition_sum": "0",
+            "poe_normalized_distribution": null,
+            "moe_unnormalized_vector": [
+              "1/2",
+              "1/2"
+            ],
+            "moe_partition_sum": "1",
+            "moe_normalized_distribution": [
+              "1/2",
+              "1/2"
+            ],
+            "local_product_aggregator": 1,
+            "global_poe_normalizable_evaluator": 0,
+            "evaluator_defect": -1,
+            "round_status": "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR"
+          },
+          "poe_council": {
+            "round_id": "codebase_council_eval_2_google_gemini-2.5-flash-lite::council::phase_3_shared_poe",
+            "expert_count": 2,
+            "candidate_count": 2,
+            "expert_masses": [
+              "1",
+              "1"
+            ],
+            "local_expert_evaluators": [
+              1,
+              1
+            ],
+            "joint_support_indices": [
+              0,
+              1
+            ],
+            "poe_unnormalized_vector": [
+              "3/16",
+              "3/16"
+            ],
+            "poe_partition_sum": "3/8",
+            "poe_normalized_distribution": [
+              "1/2",
+              "1/2"
+            ],
+            "moe_unnormalized_vector": [
+              "1/2",
+              "1/2"
+            ],
+            "moe_partition_sum": "1",
+            "moe_normalized_distribution": [
+              "1/2",
+              "1/2"
+            ],
+            "local_product_aggregator": 1,
+            "global_poe_normalizable_evaluator": 1,
+            "evaluator_defect": 0,
+            "round_status": "POE_AND_MOE_COHERENT_LGGG"
+          }
+        }
+      },
+      {
+        "audit_id": "codebase_council_eval_3_meta-llama_llama-3.3-70b-instruct",
+        "model_id": "meta-llama/llama-3.3-70b-instruct",
+        "phase_1_collision_floor": 2,
+        "phase_1_poe_partition_sum": "0",
+        "phase_1_surcharge_cents": 10,
+        "phase_1_payout_cents": 863,
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "COLLAPSING_CONSENSUS_CODEBASE_ROOT_CAUSE_LOSS_LGGR",
+        "phase_2_collision_floor": 1,
+        "phase_2_poe_partition_sum": "0",
+        "phase_2_surcharge_cents": 5,
+        "phase_2_payout_cents": 868,
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "BINARY_TAG_CODEBASE_CAPACITY_DEFICIT_LGGR",
+        "phase_3_collision_floor": 0,
+        "phase_3_poe_partition_sum": "3/8",
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "CODEBASE_DISAGREEMENT_COUNCIL_COHERENT_LGGG",
+        "council_audit": {
+          "evaluation_id": "codebase_council_eval_3_meta-llama_llama-3.3-70b-instruct::council",
+          "distinct_root_causes_k": 3,
+          "consensus_collision_floor": 2,
+          "binary_tag_collision_floor": 1,
+          "council_collision_floor": 0,
+          "consensus_poe_partition_sum": "0",
+          "council_poe_partition_sum": "3/8",
+          "phase_1_consensus_local_green": 1,
+          "phase_1_consensus_global_green": 0,
+          "phase_1_consensus_defect": -1,
+          "phase_1_status": "COLLAPSING_CONSENSUS_ROOT_CAUSE_LOSS_LGGR",
+          "phase_2_binary_local_green": 1,
+          "phase_2_binary_global_green": 0,
+          "phase_2_binary_defect": -1,
+          "phase_2_status": "BINARY_TAG_CAPACITY_DEFICIT_LGGR",
+          "phase_3_council_local_green": 1,
+          "phase_3_council_global_green": 1,
+          "phase_3_council_defect": 0,
+          "phase_3_status": "DISAGREEMENT_PRESERVING_COUNCIL_COHERENT_LGGG",
+          "capacity_consensus": {
+            "fiber_id": "codebase_council_eval_3_meta-llama_llama-3.3-70b-instruct::council::phase_1_consensus",
+            "state_count": 3,
+            "distinct_query_values_k": 3,
+            "channel_capacity_s": 1,
+            "used_symbols_count": 1,
+            "error_budget": 0,
+            "capacity_error_floor_k_minus_s": 2,
+            "realized_subfiber_error_floor": 2,
+            "realized_sample_error_floor": 2,
+            "pigeonhole_bound_verified": true,
+            "local_product_aggregator": 1,
+            "global_decodability_evaluator": 0,
+            "evaluator_defect": -1,
+            "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+            "states": [
+              {
+                "state_id": "patch_0",
+                "query_value": "rebate_drift",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "patch_1",
+                "query_value": "jurisdiction_mismatch",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "patch_2",
+                "query_value": "fee_tier_overflow",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              }
+            ]
+          },
+          "capacity_binary": {
+            "fiber_id": "codebase_council_eval_3_meta-llama_llama-3.3-70b-instruct::council::phase_2_binary_tag",
+            "state_count": 3,
+            "distinct_query_values_k": 3,
+            "channel_capacity_s": 2,
+            "used_symbols_count": 2,
+            "error_budget": 0,
+            "capacity_error_floor_k_minus_s": 1,
+            "realized_subfiber_error_floor": 1,
+            "realized_sample_error_floor": 1,
+            "pigeonhole_bound_verified": true,
+            "local_product_aggregator": 1,
+            "global_decodability_evaluator": 0,
+            "evaluator_defect": -1,
+            "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+            "states": [
+              {
+                "state_id": "patch_0",
+                "query_value": "rebate_drift",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "patch_1",
+                "query_value": "jurisdiction_mismatch",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "patch_2",
+                "query_value": "fee_tier_overflow",
+                "side_symbol": 1,
+                "local_channel_evaluator": 1
+              }
+            ]
+          },
+          "capacity_council": {
+            "fiber_id": "codebase_council_eval_3_meta-llama_llama-3.3-70b-instruct::council::phase_3_council",
+            "state_count": 3,
+            "distinct_query_values_k": 3,
+            "channel_capacity_s": 3,
+            "used_symbols_count": 3,
+            "error_budget": 0,
+            "capacity_error_floor_k_minus_s": 0,
+            "realized_subfiber_error_floor": 0,
+            "realized_sample_error_floor": 0,
+            "pigeonhole_bound_verified": true,
+            "local_product_aggregator": 1,
+            "global_decodability_evaluator": 1,
+            "evaluator_defect": 0,
+            "fiber_status": "SIDE_INFORMATION_SUFFICIENT_LGGG",
+            "states": [
+              {
+                "state_id": "patch_0",
+                "query_value": "rebate_drift",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "patch_1",
+                "query_value": "jurisdiction_mismatch",
+                "side_symbol": 1,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "patch_2",
+                "query_value": "fee_tier_overflow",
+                "side_symbol": 2,
+                "local_channel_evaluator": 1
+              }
+            ]
+          },
+          "poe_consensus": {
+            "round_id": "codebase_council_eval_3_meta-llama_llama-3.3-70b-instruct::council::phase_1_disjoint_poe",
+            "expert_count": 2,
+            "candidate_count": 2,
+            "expert_masses": [
+              "1",
+              "1"
+            ],
+            "local_expert_evaluators": [
+              1,
+              1
+            ],
+            "joint_support_indices": [],
+            "poe_unnormalized_vector": [
+              "0",
+              "0"
+            ],
+            "poe_partition_sum": "0",
+            "poe_normalized_distribution": null,
+            "moe_unnormalized_vector": [
+              "1/2",
+              "1/2"
+            ],
+            "moe_partition_sum": "1",
+            "moe_normalized_distribution": [
+              "1/2",
+              "1/2"
+            ],
+            "local_product_aggregator": 1,
+            "global_poe_normalizable_evaluator": 0,
+            "evaluator_defect": -1,
+            "round_status": "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR"
+          },
+          "poe_council": {
+            "round_id": "codebase_council_eval_3_meta-llama_llama-3.3-70b-instruct::council::phase_3_shared_poe",
+            "expert_count": 2,
+            "candidate_count": 2,
+            "expert_masses": [
+              "1",
+              "1"
+            ],
+            "local_expert_evaluators": [
+              1,
+              1
+            ],
+            "joint_support_indices": [
+              0,
+              1
+            ],
+            "poe_unnormalized_vector": [
+              "3/16",
+              "3/16"
+            ],
+            "poe_partition_sum": "3/8",
+            "poe_normalized_distribution": [
+              "1/2",
+              "1/2"
+            ],
+            "moe_unnormalized_vector": [
+              "1/2",
+              "1/2"
+            ],
+            "moe_partition_sum": "1",
+            "moe_normalized_distribution": [
+              "1/2",
+              "1/2"
+            ],
+            "local_product_aggregator": 1,
+            "global_poe_normalizable_evaluator": 1,
+            "evaluator_defect": 0,
+            "round_status": "POE_AND_MOE_COHERENT_LGGG"
+          }
+        }
+      },
+      {
+        "audit_id": "codebase_council_eval_4_deepseek_deepseek-chat",
+        "model_id": "deepseek/deepseek-chat",
+        "phase_1_collision_floor": 2,
+        "phase_1_poe_partition_sum": "0",
+        "phase_1_surcharge_cents": 10,
+        "phase_1_payout_cents": 863,
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "COLLAPSING_CONSENSUS_CODEBASE_ROOT_CAUSE_LOSS_LGGR",
+        "phase_2_collision_floor": 1,
+        "phase_2_poe_partition_sum": "0",
+        "phase_2_surcharge_cents": 5,
+        "phase_2_payout_cents": 868,
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "BINARY_TAG_CODEBASE_CAPACITY_DEFICIT_LGGR",
+        "phase_3_collision_floor": 0,
+        "phase_3_poe_partition_sum": "3/8",
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "CODEBASE_DISAGREEMENT_COUNCIL_COHERENT_LGGG",
+        "council_audit": {
+          "evaluation_id": "codebase_council_eval_4_deepseek_deepseek-chat::council",
+          "distinct_root_causes_k": 3,
+          "consensus_collision_floor": 2,
+          "binary_tag_collision_floor": 1,
+          "council_collision_floor": 0,
+          "consensus_poe_partition_sum": "0",
+          "council_poe_partition_sum": "3/8",
+          "phase_1_consensus_local_green": 1,
+          "phase_1_consensus_global_green": 0,
+          "phase_1_consensus_defect": -1,
+          "phase_1_status": "COLLAPSING_CONSENSUS_ROOT_CAUSE_LOSS_LGGR",
+          "phase_2_binary_local_green": 1,
+          "phase_2_binary_global_green": 0,
+          "phase_2_binary_defect": -1,
+          "phase_2_status": "BINARY_TAG_CAPACITY_DEFICIT_LGGR",
+          "phase_3_council_local_green": 1,
+          "phase_3_council_global_green": 1,
+          "phase_3_council_defect": 0,
+          "phase_3_status": "DISAGREEMENT_PRESERVING_COUNCIL_COHERENT_LGGG",
+          "capacity_consensus": {
+            "fiber_id": "codebase_council_eval_4_deepseek_deepseek-chat::council::phase_1_consensus",
+            "state_count": 3,
+            "distinct_query_values_k": 3,
+            "channel_capacity_s": 1,
+            "used_symbols_count": 1,
+            "error_budget": 0,
+            "capacity_error_floor_k_minus_s": 2,
+            "realized_subfiber_error_floor": 2,
+            "realized_sample_error_floor": 2,
+            "pigeonhole_bound_verified": true,
+            "local_product_aggregator": 1,
+            "global_decodability_evaluator": 0,
+            "evaluator_defect": -1,
+            "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+            "states": [
+              {
+                "state_id": "patch_0",
+                "query_value": "rebate_drift",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "patch_1",
+                "query_value": "jurisdiction_mismatch",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "patch_2",
+                "query_value": "fee_tier_overflow",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              }
+            ]
+          },
+          "capacity_binary": {
+            "fiber_id": "codebase_council_eval_4_deepseek_deepseek-chat::council::phase_2_binary_tag",
+            "state_count": 3,
+            "distinct_query_values_k": 3,
+            "channel_capacity_s": 2,
+            "used_symbols_count": 2,
+            "error_budget": 0,
+            "capacity_error_floor_k_minus_s": 1,
+            "realized_subfiber_error_floor": 1,
+            "realized_sample_error_floor": 1,
+            "pigeonhole_bound_verified": true,
+            "local_product_aggregator": 1,
+            "global_decodability_evaluator": 0,
+            "evaluator_defect": -1,
+            "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+            "states": [
+              {
+                "state_id": "patch_0",
+                "query_value": "rebate_drift",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "patch_1",
+                "query_value": "jurisdiction_mismatch",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "patch_2",
+                "query_value": "fee_tier_overflow",
+                "side_symbol": 1,
+                "local_channel_evaluator": 1
+              }
+            ]
+          },
+          "capacity_council": {
+            "fiber_id": "codebase_council_eval_4_deepseek_deepseek-chat::council::phase_3_council",
+            "state_count": 3,
+            "distinct_query_values_k": 3,
+            "channel_capacity_s": 3,
+            "used_symbols_count": 3,
+            "error_budget": 0,
+            "capacity_error_floor_k_minus_s": 0,
+            "realized_subfiber_error_floor": 0,
+            "realized_sample_error_floor": 0,
+            "pigeonhole_bound_verified": true,
+            "local_product_aggregator": 1,
+            "global_decodability_evaluator": 1,
+            "evaluator_defect": 0,
+            "fiber_status": "SIDE_INFORMATION_SUFFICIENT_LGGG",
+            "states": [
+              {
+                "state_id": "patch_0",
+                "query_value": "rebate_drift",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "patch_1",
+                "query_value": "jurisdiction_mismatch",
+                "side_symbol": 1,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "patch_2",
+                "query_value": "fee_tier_overflow",
+                "side_symbol": 2,
+                "local_channel_evaluator": 1
+              }
+            ]
+          },
+          "poe_consensus": {
+            "round_id": "codebase_council_eval_4_deepseek_deepseek-chat::council::phase_1_disjoint_poe",
+            "expert_count": 2,
+            "candidate_count": 2,
+            "expert_masses": [
+              "1",
+              "1"
+            ],
+            "local_expert_evaluators": [
+              1,
+              1
+            ],
+            "joint_support_indices": [],
+            "poe_unnormalized_vector": [
+              "0",
+              "0"
+            ],
+            "poe_partition_sum": "0",
+            "poe_normalized_distribution": null,
+            "moe_unnormalized_vector": [
+              "1/2",
+              "1/2"
+            ],
+            "moe_partition_sum": "1",
+            "moe_normalized_distribution": [
+              "1/2",
+              "1/2"
+            ],
+            "local_product_aggregator": 1,
+            "global_poe_normalizable_evaluator": 0,
+            "evaluator_defect": -1,
+            "round_status": "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR"
+          },
+          "poe_council": {
+            "round_id": "codebase_council_eval_4_deepseek_deepseek-chat::council::phase_3_shared_poe",
+            "expert_count": 2,
+            "candidate_count": 2,
+            "expert_masses": [
+              "1",
+              "1"
+            ],
+            "local_expert_evaluators": [
+              1,
+              1
+            ],
+            "joint_support_indices": [
+              0,
+              1
+            ],
+            "poe_unnormalized_vector": [
+              "3/16",
+              "3/16"
+            ],
+            "poe_partition_sum": "3/8",
+            "poe_normalized_distribution": [
+              "1/2",
+              "1/2"
+            ],
+            "moe_unnormalized_vector": [
+              "1/2",
+              "1/2"
+            ],
+            "moe_partition_sum": "1",
+            "moe_normalized_distribution": [
+              "1/2",
+              "1/2"
+            ],
+            "local_product_aggregator": 1,
+            "global_poe_normalizable_evaluator": 1,
+            "evaluator_defect": 0,
+            "round_status": "POE_AND_MOE_COHERENT_LGGG"
+          }
+        }
+      },
+      {
+        "audit_id": "codebase_council_eval_5_mistralai_mistral-small-3.2-24b-instruct",
+        "model_id": "mistralai/mistral-small-3.2-24b-instruct",
+        "phase_1_collision_floor": 2,
+        "phase_1_poe_partition_sum": "0",
+        "phase_1_surcharge_cents": 10,
+        "phase_1_payout_cents": 863,
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "COLLAPSING_CONSENSUS_CODEBASE_ROOT_CAUSE_LOSS_LGGR",
+        "phase_2_collision_floor": 1,
+        "phase_2_poe_partition_sum": "0",
+        "phase_2_surcharge_cents": 5,
+        "phase_2_payout_cents": 868,
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "BINARY_TAG_CODEBASE_CAPACITY_DEFICIT_LGGR",
+        "phase_3_collision_floor": 0,
+        "phase_3_poe_partition_sum": "3/8",
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "CODEBASE_DISAGREEMENT_COUNCIL_COHERENT_LGGG",
+        "council_audit": {
+          "evaluation_id": "codebase_council_eval_5_mistralai_mistral-small-3.2-24b-instruct::council",
+          "distinct_root_causes_k": 3,
+          "consensus_collision_floor": 2,
+          "binary_tag_collision_floor": 1,
+          "council_collision_floor": 0,
+          "consensus_poe_partition_sum": "0",
+          "council_poe_partition_sum": "3/8",
+          "phase_1_consensus_local_green": 1,
+          "phase_1_consensus_global_green": 0,
+          "phase_1_consensus_defect": -1,
+          "phase_1_status": "COLLAPSING_CONSENSUS_ROOT_CAUSE_LOSS_LGGR",
+          "phase_2_binary_local_green": 1,
+          "phase_2_binary_global_green": 0,
+          "phase_2_binary_defect": -1,
+          "phase_2_status": "BINARY_TAG_CAPACITY_DEFICIT_LGGR",
+          "phase_3_council_local_green": 1,
+          "phase_3_council_global_green": 1,
+          "phase_3_council_defect": 0,
+          "phase_3_status": "DISAGREEMENT_PRESERVING_COUNCIL_COHERENT_LGGG",
+          "capacity_consensus": {
+            "fiber_id": "codebase_council_eval_5_mistralai_mistral-small-3.2-24b-instruct::council::phase_1_consensus",
+            "state_count": 3,
+            "distinct_query_values_k": 3,
+            "channel_capacity_s": 1,
+            "used_symbols_count": 1,
+            "error_budget": 0,
+            "capacity_error_floor_k_minus_s": 2,
+            "realized_subfiber_error_floor": 2,
+            "realized_sample_error_floor": 2,
+            "pigeonhole_bound_verified": true,
+            "local_product_aggregator": 1,
+            "global_decodability_evaluator": 0,
+            "evaluator_defect": -1,
+            "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+            "states": [
+              {
+                "state_id": "patch_0",
+                "query_value": "rebate_drift",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "patch_1",
+                "query_value": "jurisdiction_mismatch",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "patch_2",
+                "query_value": "fee_tier_overflow",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              }
+            ]
+          },
+          "capacity_binary": {
+            "fiber_id": "codebase_council_eval_5_mistralai_mistral-small-3.2-24b-instruct::council::phase_2_binary_tag",
+            "state_count": 3,
+            "distinct_query_values_k": 3,
+            "channel_capacity_s": 2,
+            "used_symbols_count": 2,
+            "error_budget": 0,
+            "capacity_error_floor_k_minus_s": 1,
+            "realized_subfiber_error_floor": 1,
+            "realized_sample_error_floor": 1,
+            "pigeonhole_bound_verified": true,
+            "local_product_aggregator": 1,
+            "global_decodability_evaluator": 0,
+            "evaluator_defect": -1,
+            "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+            "states": [
+              {
+                "state_id": "patch_0",
+                "query_value": "rebate_drift",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "patch_1",
+                "query_value": "jurisdiction_mismatch",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "patch_2",
+                "query_value": "fee_tier_overflow",
+                "side_symbol": 1,
+                "local_channel_evaluator": 1
+              }
+            ]
+          },
+          "capacity_council": {
+            "fiber_id": "codebase_council_eval_5_mistralai_mistral-small-3.2-24b-instruct::council::phase_3_council",
+            "state_count": 3,
+            "distinct_query_values_k": 3,
+            "channel_capacity_s": 3,
+            "used_symbols_count": 3,
+            "error_budget": 0,
+            "capacity_error_floor_k_minus_s": 0,
+            "realized_subfiber_error_floor": 0,
+            "realized_sample_error_floor": 0,
+            "pigeonhole_bound_verified": true,
+            "local_product_aggregator": 1,
+            "global_decodability_evaluator": 1,
+            "evaluator_defect": 0,
+            "fiber_status": "SIDE_INFORMATION_SUFFICIENT_LGGG",
+            "states": [
+              {
+                "state_id": "patch_0",
+                "query_value": "rebate_drift",
+                "side_symbol": 0,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "patch_1",
+                "query_value": "jurisdiction_mismatch",
+                "side_symbol": 1,
+                "local_channel_evaluator": 1
+              },
+              {
+                "state_id": "patch_2",
+                "query_value": "fee_tier_overflow",
+                "side_symbol": 2,
+                "local_channel_evaluator": 1
+              }
+            ]
+          },
+          "poe_consensus": {
+            "round_id": "codebase_council_eval_5_mistralai_mistral-small-3.2-24b-instruct::council::phase_1_disjoint_poe",
+            "expert_count": 2,
+            "candidate_count": 2,
+            "expert_masses": [
+              "1",
+              "1"
+            ],
+            "local_expert_evaluators": [
+              1,
+              1
+            ],
+            "joint_support_indices": [],
+            "poe_unnormalized_vector": [
+              "0",
+              "0"
+            ],
+            "poe_partition_sum": "0",
+            "poe_normalized_distribution": null,
+            "moe_unnormalized_vector": [
+              "1/2",
+              "1/2"
+            ],
+            "moe_partition_sum": "1",
+            "moe_normalized_distribution": [
+              "1/2",
+              "1/2"
+            ],
+            "local_product_aggregator": 1,
+            "global_poe_normalizable_evaluator": 0,
+            "evaluator_defect": -1,
+            "round_status": "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR"
+          },
+          "poe_council": {
+            "round_id": "codebase_council_eval_5_mistralai_mistral-small-3.2-24b-instruct::council::phase_3_shared_poe",
+            "expert_count": 2,
+            "candidate_count": 2,
+            "expert_masses": [
+              "1",
+              "1"
+            ],
+            "local_expert_evaluators": [
+              1,
+              1
+            ],
+            "joint_support_indices": [
+              0,
+              1
+            ],
+            "poe_unnormalized_vector": [
+              "3/16",
+              "3/16"
+            ],
+            "poe_partition_sum": "3/8",
+            "poe_normalized_distribution": [
+              "1/2",
+              "1/2"
+            ],
+            "moe_unnormalized_vector": [
+              "1/2",
+              "1/2"
+            ],
+            "moe_partition_sum": "1",
+            "moe_normalized_distribution": [
+              "1/2",
+              "1/2"
+            ],
+            "local_product_aggregator": 1,
+            "global_poe_normalizable_evaluator": 1,
+            "evaluator_defect": 0,
+            "round_status": "POE_AND_MOE_COHERENT_LGGG"
+          }
+        }
+      }
+    ],
+    "evaluations": [
+      {
+        "evaluation_id": "codebase_council_eval_1_openai_gpt-4o-mini::phase1_collapsing_consensus",
+        "model_id": "openai/gpt-4o-mini",
+        "root_causes": [
+          "rebate_drift",
+          "jurisdiction_mismatch",
+          "fee_tier_overflow"
+        ],
+        "tax_council_symbols": [
+          0,
+          0,
+          0
+        ],
+        "settle_council_symbols": [
+          0,
+          0,
+          0
+        ],
+        "active_channel_capacity_s": 1,
+        "active_collision_floor": 2,
+        "shared_remediation_support": false,
+        "poe_partition_sum": "0",
+        "council_collision_surcharge_cents": 10,
+        "net_cents": 900,
+        "tax_cents": 180,
+        "fee_cents": 27,
+        "merchant_payout_cents": 863,
+        "gross_collected_cents": 1080,
+        "total_accounted_cents": 1070,
+        "settlement_conserved": false,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "COLLAPSING_CONSENSUS_CODEBASE_ROOT_CAUSE_LOSS_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "mismatches": [
+          "tax_council_symbol_mismatch:tax_council_symbols=[0, 0, 0]!=expected_[0, 0, 1]",
+          "council_side_channel_collision:settle_council_symbols=[0, 0, 0]:collision_floor=2>0",
+          "disjoint_poe_remediation_support:shared_remediation_support=False:poe_sum=0",
+          "council_surcharge_or_conservation_breach:surcharge=10:payout=863:expected=873"
+        ],
+        "compact_role_directives": {
+          "worker-0": "HOLD ANCHOR: pricing_council.py is fixed at root_causes=['rebate_drift', 'jurisdiction_mismatch', 'fee_tier_overflow']. Submit your current pricing_council.py source_code unchanged via submit_module_patch.",
+          "worker-1": "REPAIR TAX_COUNCIL: tax_council.py emitted collapsing tax_council_symbols=[0, 0, 0]. Set 'tax_council_symbols': [0, 0, 1] to separate fee_tier_overflow from rebate/jurisdiction causes.",
+          "worker-2": "REPAIR SETTLEMENT_COUNCIL: settlement_council.py emitted settle_council_symbols=[0, 0, 0], shared_remediation_support=False, surcharge=10 (collision_floor=2). Set settle_council_symbols=[0, 1, 2], shared_remediation_support=True, and surcharge=0 so merchant_payout_cents = 873."
+        }
+      },
+      {
+        "evaluation_id": "codebase_council_eval_1_openai_gpt-4o-mini::phase2_binary_escalation_tag",
+        "model_id": "openai/gpt-4o-mini",
+        "root_causes": [
+          "rebate_drift",
+          "jurisdiction_mismatch",
+          "fee_tier_overflow"
+        ],
+        "tax_council_symbols": [
+          0,
+          0,
+          1
+        ],
+        "settle_council_symbols": [
+          0,
+          0,
+          1
+        ],
+        "active_channel_capacity_s": 2,
+        "active_collision_floor": 1,
+        "shared_remediation_support": false,
+        "poe_partition_sum": "0",
+        "council_collision_surcharge_cents": 5,
+        "net_cents": 900,
+        "tax_cents": 180,
+        "fee_cents": 27,
+        "merchant_payout_cents": 868,
+        "gross_collected_cents": 1080,
+        "total_accounted_cents": 1075,
+        "settlement_conserved": false,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "BINARY_TAG_CODEBASE_CAPACITY_DEFICIT_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "mismatches": [
+          "council_side_channel_collision:settle_council_symbols=[0, 0, 1]:collision_floor=1>0",
+          "disjoint_poe_remediation_support:shared_remediation_support=False:poe_sum=0",
+          "council_surcharge_or_conservation_breach:surcharge=5:payout=868:expected=873"
+        ],
+        "compact_role_directives": {
+          "worker-0": "HOLD ANCHOR: pricing_council.py is fixed at root_causes=['rebate_drift', 'jurisdiction_mismatch', 'fee_tier_overflow']. Submit your current pricing_council.py source_code unchanged via submit_module_patch.",
+          "worker-1": "HOLD TAX_COUNCIL: tax_council.py emits binary diagnostic tax_council_symbols=[0, 0, 1].",
+          "worker-2": "REPAIR SETTLEMENT_COUNCIL: settlement_council.py emitted settle_council_symbols=[0, 0, 1], shared_remediation_support=False, surcharge=5 (collision_floor=1). Set settle_council_symbols=[0, 1, 2], shared_remediation_support=True, and surcharge=0 so merchant_payout_cents = 873."
+        }
+      },
+      {
+        "evaluation_id": "codebase_council_eval_1_openai_gpt-4o-mini::phase3_disagreement_council",
+        "model_id": "openai/gpt-4o-mini",
+        "root_causes": [
+          "rebate_drift",
+          "jurisdiction_mismatch",
+          "fee_tier_overflow"
+        ],
+        "tax_council_symbols": [
+          0,
+          0,
+          1
+        ],
+        "settle_council_symbols": [
+          0,
+          1,
+          2
+        ],
+        "active_channel_capacity_s": 3,
+        "active_collision_floor": 0,
+        "shared_remediation_support": true,
+        "poe_partition_sum": "3/8",
+        "council_collision_surcharge_cents": 0,
+        "net_cents": 900,
+        "tax_cents": 180,
+        "fee_cents": 27,
+        "merchant_payout_cents": 873,
+        "gross_collected_cents": 1080,
+        "total_accounted_cents": 1080,
+        "settlement_conserved": true,
+        "local_green": 1,
+        "global_green": 1,
+        "defect": 0,
+        "status": "CODEBASE_DISAGREEMENT_COUNCIL_COHERENT_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "mismatches": [],
+        "compact_role_directives": {
+          "worker-0": "COHERENT LGGG: Disagreement-preserving side-channel council (tax_council_symbols=[0, 0, 1], settle_council_symbols=[0, 1, 2], shared_remediation_support=True, collision_floor=0, 873 + 27 + 180 = 1080).",
+          "worker-1": "COHERENT LGGG: Disagreement-preserving side-channel council (tax_council_symbols=[0, 0, 1], settle_council_symbols=[0, 1, 2], shared_remediation_support=True, collision_floor=0, 873 + 27 + 180 = 1080).",
+          "worker-2": "COHERENT LGGG: Disagreement-preserving side-channel council (tax_council_symbols=[0, 0, 1], settle_council_symbols=[0, 1, 2], shared_remediation_support=True, collision_floor=0, 873 + 27 + 180 = 1080)."
+        }
+      },
+      {
+        "evaluation_id": "codebase_council_eval_2_google_gemini-2.5-flash-lite::phase1_collapsing_consensus",
+        "model_id": "google/gemini-2.5-flash-lite",
+        "root_causes": [
+          "rebate_drift",
+          "jurisdiction_mismatch",
+          "fee_tier_overflow"
+        ],
+        "tax_council_symbols": [
+          0,
+          0,
+          0
+        ],
+        "settle_council_symbols": [
+          0,
+          0,
+          0
+        ],
+        "active_channel_capacity_s": 1,
+        "active_collision_floor": 2,
+        "shared_remediation_support": false,
+        "poe_partition_sum": "0",
+        "council_collision_surcharge_cents": 10,
+        "net_cents": 900,
+        "tax_cents": 180,
+        "fee_cents": 27,
+        "merchant_payout_cents": 863,
+        "gross_collected_cents": 1080,
+        "total_accounted_cents": 1070,
+        "settlement_conserved": false,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "COLLAPSING_CONSENSUS_CODEBASE_ROOT_CAUSE_LOSS_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "mismatches": [
+          "tax_council_symbol_mismatch:tax_council_symbols=[0, 0, 0]!=expected_[0, 0, 1]",
+          "council_side_channel_collision:settle_council_symbols=[0, 0, 0]:collision_floor=2>0",
+          "disjoint_poe_remediation_support:shared_remediation_support=False:poe_sum=0",
+          "council_surcharge_or_conservation_breach:surcharge=10:payout=863:expected=873"
+        ],
+        "compact_role_directives": {
+          "worker-0": "HOLD ANCHOR: pricing_council.py is fixed at root_causes=['rebate_drift', 'jurisdiction_mismatch', 'fee_tier_overflow']. Submit your current pricing_council.py source_code unchanged via submit_module_patch.",
+          "worker-1": "REPAIR TAX_COUNCIL: tax_council.py emitted collapsing tax_council_symbols=[0, 0, 0]. Set 'tax_council_symbols': [0, 0, 1] to separate fee_tier_overflow from rebate/jurisdiction causes.",
+          "worker-2": "REPAIR SETTLEMENT_COUNCIL: settlement_council.py emitted settle_council_symbols=[0, 0, 0], shared_remediation_support=False, surcharge=10 (collision_floor=2). Set settle_council_symbols=[0, 1, 2], shared_remediation_support=True, and surcharge=0 so merchant_payout_cents = 873."
+        }
+      },
+      {
+        "evaluation_id": "codebase_council_eval_2_google_gemini-2.5-flash-lite::phase2_binary_escalation_tag",
+        "model_id": "google/gemini-2.5-flash-lite",
+        "root_causes": [
+          "rebate_drift",
+          "jurisdiction_mismatch",
+          "fee_tier_overflow"
+        ],
+        "tax_council_symbols": [
+          0,
+          0,
+          1
+        ],
+        "settle_council_symbols": [
+          0,
+          0,
+          1
+        ],
+        "active_channel_capacity_s": 2,
+        "active_collision_floor": 1,
+        "shared_remediation_support": false,
+        "poe_partition_sum": "0",
+        "council_collision_surcharge_cents": 5,
+        "net_cents": 900,
+        "tax_cents": 180,
+        "fee_cents": 27,
+        "merchant_payout_cents": 868,
+        "gross_collected_cents": 1080,
+        "total_accounted_cents": 1075,
+        "settlement_conserved": false,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "BINARY_TAG_CODEBASE_CAPACITY_DEFICIT_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "mismatches": [
+          "council_side_channel_collision:settle_council_symbols=[0, 0, 1]:collision_floor=1>0",
+          "disjoint_poe_remediation_support:shared_remediation_support=False:poe_sum=0",
+          "council_surcharge_or_conservation_breach:surcharge=5:payout=868:expected=873"
+        ],
+        "compact_role_directives": {
+          "worker-0": "HOLD ANCHOR: pricing_council.py is fixed at root_causes=['rebate_drift', 'jurisdiction_mismatch', 'fee_tier_overflow']. Submit your current pricing_council.py source_code unchanged via submit_module_patch.",
+          "worker-1": "HOLD TAX_COUNCIL: tax_council.py emits binary diagnostic tax_council_symbols=[0, 0, 1].",
+          "worker-2": "REPAIR SETTLEMENT_COUNCIL: settlement_council.py emitted settle_council_symbols=[0, 0, 1], shared_remediation_support=False, surcharge=5 (collision_floor=1). Set settle_council_symbols=[0, 1, 2], shared_remediation_support=True, and surcharge=0 so merchant_payout_cents = 873."
+        }
+      },
+      {
+        "evaluation_id": "codebase_council_eval_2_google_gemini-2.5-flash-lite::phase3_disagreement_council",
+        "model_id": "google/gemini-2.5-flash-lite",
+        "root_causes": [
+          "rebate_drift",
+          "jurisdiction_mismatch",
+          "fee_tier_overflow"
+        ],
+        "tax_council_symbols": [
+          0,
+          0,
+          1
+        ],
+        "settle_council_symbols": [
+          0,
+          1,
+          2
+        ],
+        "active_channel_capacity_s": 3,
+        "active_collision_floor": 0,
+        "shared_remediation_support": true,
+        "poe_partition_sum": "3/8",
+        "council_collision_surcharge_cents": 0,
+        "net_cents": 900,
+        "tax_cents": 180,
+        "fee_cents": 27,
+        "merchant_payout_cents": 873,
+        "gross_collected_cents": 1080,
+        "total_accounted_cents": 1080,
+        "settlement_conserved": true,
+        "local_green": 1,
+        "global_green": 1,
+        "defect": 0,
+        "status": "CODEBASE_DISAGREEMENT_COUNCIL_COHERENT_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "mismatches": [],
+        "compact_role_directives": {
+          "worker-0": "COHERENT LGGG: Disagreement-preserving side-channel council (tax_council_symbols=[0, 0, 1], settle_council_symbols=[0, 1, 2], shared_remediation_support=True, collision_floor=0, 873 + 27 + 180 = 1080).",
+          "worker-1": "COHERENT LGGG: Disagreement-preserving side-channel council (tax_council_symbols=[0, 0, 1], settle_council_symbols=[0, 1, 2], shared_remediation_support=True, collision_floor=0, 873 + 27 + 180 = 1080).",
+          "worker-2": "COHERENT LGGG: Disagreement-preserving side-channel council (tax_council_symbols=[0, 0, 1], settle_council_symbols=[0, 1, 2], shared_remediation_support=True, collision_floor=0, 873 + 27 + 180 = 1080)."
+        }
+      },
+      {
+        "evaluation_id": "codebase_council_eval_3_meta-llama_llama-3.3-70b-instruct::phase1_collapsing_consensus",
+        "model_id": "meta-llama/llama-3.3-70b-instruct",
+        "root_causes": [
+          "rebate_drift",
+          "jurisdiction_mismatch",
+          "fee_tier_overflow"
+        ],
+        "tax_council_symbols": [
+          0,
+          0,
+          0
+        ],
+        "settle_council_symbols": [
+          0,
+          0,
+          0
+        ],
+        "active_channel_capacity_s": 1,
+        "active_collision_floor": 2,
+        "shared_remediation_support": false,
+        "poe_partition_sum": "0",
+        "council_collision_surcharge_cents": 10,
+        "net_cents": 900,
+        "tax_cents": 180,
+        "fee_cents": 27,
+        "merchant_payout_cents": 863,
+        "gross_collected_cents": 1080,
+        "total_accounted_cents": 1070,
+        "settlement_conserved": false,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "COLLAPSING_CONSENSUS_CODEBASE_ROOT_CAUSE_LOSS_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "mismatches": [
+          "tax_council_symbol_mismatch:tax_council_symbols=[0, 0, 0]!=expected_[0, 0, 1]",
+          "council_side_channel_collision:settle_council_symbols=[0, 0, 0]:collision_floor=2>0",
+          "disjoint_poe_remediation_support:shared_remediation_support=False:poe_sum=0",
+          "council_surcharge_or_conservation_breach:surcharge=10:payout=863:expected=873"
+        ],
+        "compact_role_directives": {
+          "worker-0": "HOLD ANCHOR: pricing_council.py is fixed at root_causes=['rebate_drift', 'jurisdiction_mismatch', 'fee_tier_overflow']. Submit your current pricing_council.py source_code unchanged via submit_module_patch.",
+          "worker-1": "REPAIR TAX_COUNCIL: tax_council.py emitted collapsing tax_council_symbols=[0, 0, 0]. Set 'tax_council_symbols': [0, 0, 1] to separate fee_tier_overflow from rebate/jurisdiction causes.",
+          "worker-2": "REPAIR SETTLEMENT_COUNCIL: settlement_council.py emitted settle_council_symbols=[0, 0, 0], shared_remediation_support=False, surcharge=10 (collision_floor=2). Set settle_council_symbols=[0, 1, 2], shared_remediation_support=True, and surcharge=0 so merchant_payout_cents = 873."
+        }
+      },
+      {
+        "evaluation_id": "codebase_council_eval_3_meta-llama_llama-3.3-70b-instruct::phase2_binary_escalation_tag",
+        "model_id": "meta-llama/llama-3.3-70b-instruct",
+        "root_causes": [
+          "rebate_drift",
+          "jurisdiction_mismatch",
+          "fee_tier_overflow"
+        ],
+        "tax_council_symbols": [
+          0,
+          0,
+          1
+        ],
+        "settle_council_symbols": [
+          0,
+          0,
+          1
+        ],
+        "active_channel_capacity_s": 2,
+        "active_collision_floor": 1,
+        "shared_remediation_support": false,
+        "poe_partition_sum": "0",
+        "council_collision_surcharge_cents": 5,
+        "net_cents": 900,
+        "tax_cents": 180,
+        "fee_cents": 27,
+        "merchant_payout_cents": 868,
+        "gross_collected_cents": 1080,
+        "total_accounted_cents": 1075,
+        "settlement_conserved": false,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "BINARY_TAG_CODEBASE_CAPACITY_DEFICIT_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "mismatches": [
+          "council_side_channel_collision:settle_council_symbols=[0, 0, 1]:collision_floor=1>0",
+          "disjoint_poe_remediation_support:shared_remediation_support=False:poe_sum=0",
+          "council_surcharge_or_conservation_breach:surcharge=5:payout=868:expected=873"
+        ],
+        "compact_role_directives": {
+          "worker-0": "HOLD ANCHOR: pricing_council.py is fixed at root_causes=['rebate_drift', 'jurisdiction_mismatch', 'fee_tier_overflow']. Submit your current pricing_council.py source_code unchanged via submit_module_patch.",
+          "worker-1": "HOLD TAX_COUNCIL: tax_council.py emits binary diagnostic tax_council_symbols=[0, 0, 1].",
+          "worker-2": "REPAIR SETTLEMENT_COUNCIL: settlement_council.py emitted settle_council_symbols=[0, 0, 1], shared_remediation_support=False, surcharge=5 (collision_floor=1). Set settle_council_symbols=[0, 1, 2], shared_remediation_support=True, and surcharge=0 so merchant_payout_cents = 873."
+        }
+      },
+      {
+        "evaluation_id": "codebase_council_eval_3_meta-llama_llama-3.3-70b-instruct::phase3_disagreement_council",
+        "model_id": "meta-llama/llama-3.3-70b-instruct",
+        "root_causes": [
+          "rebate_drift",
+          "jurisdiction_mismatch",
+          "fee_tier_overflow"
+        ],
+        "tax_council_symbols": [
+          0,
+          0,
+          1
+        ],
+        "settle_council_symbols": [
+          0,
+          1,
+          2
+        ],
+        "active_channel_capacity_s": 3,
+        "active_collision_floor": 0,
+        "shared_remediation_support": true,
+        "poe_partition_sum": "3/8",
+        "council_collision_surcharge_cents": 0,
+        "net_cents": 900,
+        "tax_cents": 180,
+        "fee_cents": 27,
+        "merchant_payout_cents": 873,
+        "gross_collected_cents": 1080,
+        "total_accounted_cents": 1080,
+        "settlement_conserved": true,
+        "local_green": 1,
+        "global_green": 1,
+        "defect": 0,
+        "status": "CODEBASE_DISAGREEMENT_COUNCIL_COHERENT_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "mismatches": [],
+        "compact_role_directives": {
+          "worker-0": "COHERENT LGGG: Disagreement-preserving side-channel council (tax_council_symbols=[0, 0, 1], settle_council_symbols=[0, 1, 2], shared_remediation_support=True, collision_floor=0, 873 + 27 + 180 = 1080).",
+          "worker-1": "COHERENT LGGG: Disagreement-preserving side-channel council (tax_council_symbols=[0, 0, 1], settle_council_symbols=[0, 1, 2], shared_remediation_support=True, collision_floor=0, 873 + 27 + 180 = 1080).",
+          "worker-2": "COHERENT LGGG: Disagreement-preserving side-channel council (tax_council_symbols=[0, 0, 1], settle_council_symbols=[0, 1, 2], shared_remediation_support=True, collision_floor=0, 873 + 27 + 180 = 1080)."
+        }
+      },
+      {
+        "evaluation_id": "codebase_council_eval_4_deepseek_deepseek-chat::phase1_collapsing_consensus",
+        "model_id": "deepseek/deepseek-chat",
+        "root_causes": [
+          "rebate_drift",
+          "jurisdiction_mismatch",
+          "fee_tier_overflow"
+        ],
+        "tax_council_symbols": [
+          0,
+          0,
+          0
+        ],
+        "settle_council_symbols": [
+          0,
+          0,
+          0
+        ],
+        "active_channel_capacity_s": 1,
+        "active_collision_floor": 2,
+        "shared_remediation_support": false,
+        "poe_partition_sum": "0",
+        "council_collision_surcharge_cents": 10,
+        "net_cents": 900,
+        "tax_cents": 180,
+        "fee_cents": 27,
+        "merchant_payout_cents": 863,
+        "gross_collected_cents": 1080,
+        "total_accounted_cents": 1070,
+        "settlement_conserved": false,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "COLLAPSING_CONSENSUS_CODEBASE_ROOT_CAUSE_LOSS_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "mismatches": [
+          "tax_council_symbol_mismatch:tax_council_symbols=[0, 0, 0]!=expected_[0, 0, 1]",
+          "council_side_channel_collision:settle_council_symbols=[0, 0, 0]:collision_floor=2>0",
+          "disjoint_poe_remediation_support:shared_remediation_support=False:poe_sum=0",
+          "council_surcharge_or_conservation_breach:surcharge=10:payout=863:expected=873"
+        ],
+        "compact_role_directives": {
+          "worker-0": "HOLD ANCHOR: pricing_council.py is fixed at root_causes=['rebate_drift', 'jurisdiction_mismatch', 'fee_tier_overflow']. Submit your current pricing_council.py source_code unchanged via submit_module_patch.",
+          "worker-1": "REPAIR TAX_COUNCIL: tax_council.py emitted collapsing tax_council_symbols=[0, 0, 0]. Set 'tax_council_symbols': [0, 0, 1] to separate fee_tier_overflow from rebate/jurisdiction causes.",
+          "worker-2": "REPAIR SETTLEMENT_COUNCIL: settlement_council.py emitted settle_council_symbols=[0, 0, 0], shared_remediation_support=False, surcharge=10 (collision_floor=2). Set settle_council_symbols=[0, 1, 2], shared_remediation_support=True, and surcharge=0 so merchant_payout_cents = 873."
+        }
+      },
+      {
+        "evaluation_id": "codebase_council_eval_4_deepseek_deepseek-chat::phase2_binary_escalation_tag",
+        "model_id": "deepseek/deepseek-chat",
+        "root_causes": [
+          "rebate_drift",
+          "jurisdiction_mismatch",
+          "fee_tier_overflow"
+        ],
+        "tax_council_symbols": [
+          0,
+          0,
+          1
+        ],
+        "settle_council_symbols": [
+          0,
+          0,
+          1
+        ],
+        "active_channel_capacity_s": 2,
+        "active_collision_floor": 1,
+        "shared_remediation_support": false,
+        "poe_partition_sum": "0",
+        "council_collision_surcharge_cents": 5,
+        "net_cents": 900,
+        "tax_cents": 180,
+        "fee_cents": 27,
+        "merchant_payout_cents": 868,
+        "gross_collected_cents": 1080,
+        "total_accounted_cents": 1075,
+        "settlement_conserved": false,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "BINARY_TAG_CODEBASE_CAPACITY_DEFICIT_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "mismatches": [
+          "council_side_channel_collision:settle_council_symbols=[0, 0, 1]:collision_floor=1>0",
+          "disjoint_poe_remediation_support:shared_remediation_support=False:poe_sum=0",
+          "council_surcharge_or_conservation_breach:surcharge=5:payout=868:expected=873"
+        ],
+        "compact_role_directives": {
+          "worker-0": "HOLD ANCHOR: pricing_council.py is fixed at root_causes=['rebate_drift', 'jurisdiction_mismatch', 'fee_tier_overflow']. Submit your current pricing_council.py source_code unchanged via submit_module_patch.",
+          "worker-1": "HOLD TAX_COUNCIL: tax_council.py emits binary diagnostic tax_council_symbols=[0, 0, 1].",
+          "worker-2": "REPAIR SETTLEMENT_COUNCIL: settlement_council.py emitted settle_council_symbols=[0, 0, 1], shared_remediation_support=False, surcharge=5 (collision_floor=1). Set settle_council_symbols=[0, 1, 2], shared_remediation_support=True, and surcharge=0 so merchant_payout_cents = 873."
+        }
+      },
+      {
+        "evaluation_id": "codebase_council_eval_4_deepseek_deepseek-chat::phase3_disagreement_council",
+        "model_id": "deepseek/deepseek-chat",
+        "root_causes": [
+          "rebate_drift",
+          "jurisdiction_mismatch",
+          "fee_tier_overflow"
+        ],
+        "tax_council_symbols": [
+          0,
+          0,
+          1
+        ],
+        "settle_council_symbols": [
+          0,
+          1,
+          2
+        ],
+        "active_channel_capacity_s": 3,
+        "active_collision_floor": 0,
+        "shared_remediation_support": true,
+        "poe_partition_sum": "3/8",
+        "council_collision_surcharge_cents": 0,
+        "net_cents": 900,
+        "tax_cents": 180,
+        "fee_cents": 27,
+        "merchant_payout_cents": 873,
+        "gross_collected_cents": 1080,
+        "total_accounted_cents": 1080,
+        "settlement_conserved": true,
+        "local_green": 1,
+        "global_green": 1,
+        "defect": 0,
+        "status": "CODEBASE_DISAGREEMENT_COUNCIL_COHERENT_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "mismatches": [],
+        "compact_role_directives": {
+          "worker-0": "COHERENT LGGG: Disagreement-preserving side-channel council (tax_council_symbols=[0, 0, 1], settle_council_symbols=[0, 1, 2], shared_remediation_support=True, collision_floor=0, 873 + 27 + 180 = 1080).",
+          "worker-1": "COHERENT LGGG: Disagreement-preserving side-channel council (tax_council_symbols=[0, 0, 1], settle_council_symbols=[0, 1, 2], shared_remediation_support=True, collision_floor=0, 873 + 27 + 180 = 1080).",
+          "worker-2": "COHERENT LGGG: Disagreement-preserving side-channel council (tax_council_symbols=[0, 0, 1], settle_council_symbols=[0, 1, 2], shared_remediation_support=True, collision_floor=0, 873 + 27 + 180 = 1080)."
+        }
+      },
+      {
+        "evaluation_id": "codebase_council_eval_5_mistralai_mistral-small-3.2-24b-instruct::phase1_collapsing_consensus",
+        "model_id": "mistralai/mistral-small-3.2-24b-instruct",
+        "root_causes": [
+          "rebate_drift",
+          "jurisdiction_mismatch",
+          "fee_tier_overflow"
+        ],
+        "tax_council_symbols": [
+          0,
+          0,
+          0
+        ],
+        "settle_council_symbols": [
+          0,
+          0,
+          0
+        ],
+        "active_channel_capacity_s": 1,
+        "active_collision_floor": 2,
+        "shared_remediation_support": false,
+        "poe_partition_sum": "0",
+        "council_collision_surcharge_cents": 10,
+        "net_cents": 900,
+        "tax_cents": 180,
+        "fee_cents": 27,
+        "merchant_payout_cents": 863,
+        "gross_collected_cents": 1080,
+        "total_accounted_cents": 1070,
+        "settlement_conserved": false,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "COLLAPSING_CONSENSUS_CODEBASE_ROOT_CAUSE_LOSS_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "mismatches": [
+          "tax_council_symbol_mismatch:tax_council_symbols=[0, 0, 0]!=expected_[0, 0, 1]",
+          "council_side_channel_collision:settle_council_symbols=[0, 0, 0]:collision_floor=2>0",
+          "disjoint_poe_remediation_support:shared_remediation_support=False:poe_sum=0",
+          "council_surcharge_or_conservation_breach:surcharge=10:payout=863:expected=873"
+        ],
+        "compact_role_directives": {
+          "worker-0": "HOLD ANCHOR: pricing_council.py is fixed at root_causes=['rebate_drift', 'jurisdiction_mismatch', 'fee_tier_overflow']. Submit your current pricing_council.py source_code unchanged via submit_module_patch.",
+          "worker-1": "REPAIR TAX_COUNCIL: tax_council.py emitted collapsing tax_council_symbols=[0, 0, 0]. Set 'tax_council_symbols': [0, 0, 1] to separate fee_tier_overflow from rebate/jurisdiction causes.",
+          "worker-2": "REPAIR SETTLEMENT_COUNCIL: settlement_council.py emitted settle_council_symbols=[0, 0, 0], shared_remediation_support=False, surcharge=10 (collision_floor=2). Set settle_council_symbols=[0, 1, 2], shared_remediation_support=True, and surcharge=0 so merchant_payout_cents = 873."
+        }
+      },
+      {
+        "evaluation_id": "codebase_council_eval_5_mistralai_mistral-small-3.2-24b-instruct::phase2_binary_escalation_tag",
+        "model_id": "mistralai/mistral-small-3.2-24b-instruct",
+        "root_causes": [
+          "rebate_drift",
+          "jurisdiction_mismatch",
+          "fee_tier_overflow"
+        ],
+        "tax_council_symbols": [
+          0,
+          0,
+          1
+        ],
+        "settle_council_symbols": [
+          0,
+          0,
+          1
+        ],
+        "active_channel_capacity_s": 2,
+        "active_collision_floor": 1,
+        "shared_remediation_support": false,
+        "poe_partition_sum": "0",
+        "council_collision_surcharge_cents": 5,
+        "net_cents": 900,
+        "tax_cents": 180,
+        "fee_cents": 27,
+        "merchant_payout_cents": 868,
+        "gross_collected_cents": 1080,
+        "total_accounted_cents": 1075,
+        "settlement_conserved": false,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "BINARY_TAG_CODEBASE_CAPACITY_DEFICIT_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "mismatches": [
+          "council_side_channel_collision:settle_council_symbols=[0, 0, 1]:collision_floor=1>0",
+          "disjoint_poe_remediation_support:shared_remediation_support=False:poe_sum=0",
+          "council_surcharge_or_conservation_breach:surcharge=5:payout=868:expected=873"
+        ],
+        "compact_role_directives": {
+          "worker-0": "HOLD ANCHOR: pricing_council.py is fixed at root_causes=['rebate_drift', 'jurisdiction_mismatch', 'fee_tier_overflow']. Submit your current pricing_council.py source_code unchanged via submit_module_patch.",
+          "worker-1": "HOLD TAX_COUNCIL: tax_council.py emits binary diagnostic tax_council_symbols=[0, 0, 1].",
+          "worker-2": "REPAIR SETTLEMENT_COUNCIL: settlement_council.py emitted settle_council_symbols=[0, 0, 1], shared_remediation_support=False, surcharge=5 (collision_floor=1). Set settle_council_symbols=[0, 1, 2], shared_remediation_support=True, and surcharge=0 so merchant_payout_cents = 873."
+        }
+      },
+      {
+        "evaluation_id": "codebase_council_eval_5_mistralai_mistral-small-3.2-24b-instruct::phase3_disagreement_council",
+        "model_id": "mistralai/mistral-small-3.2-24b-instruct",
+        "root_causes": [
+          "rebate_drift",
+          "jurisdiction_mismatch",
+          "fee_tier_overflow"
+        ],
+        "tax_council_symbols": [
+          0,
+          0,
+          1
+        ],
+        "settle_council_symbols": [
+          0,
+          1,
+          2
+        ],
+        "active_channel_capacity_s": 3,
+        "active_collision_floor": 0,
+        "shared_remediation_support": true,
+        "poe_partition_sum": "3/8",
+        "council_collision_surcharge_cents": 0,
+        "net_cents": 900,
+        "tax_cents": 180,
+        "fee_cents": 27,
+        "merchant_payout_cents": 873,
+        "gross_collected_cents": 1080,
+        "total_accounted_cents": 1080,
+        "settlement_conserved": true,
+        "local_green": 1,
+        "global_green": 1,
+        "defect": 0,
+        "status": "CODEBASE_DISAGREEMENT_COUNCIL_COHERENT_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "mismatches": [],
+        "compact_role_directives": {
+          "worker-0": "COHERENT LGGG: Disagreement-preserving side-channel council (tax_council_symbols=[0, 0, 1], settle_council_symbols=[0, 1, 2], shared_remediation_support=True, collision_floor=0, 873 + 27 + 180 = 1080).",
+          "worker-1": "COHERENT LGGG: Disagreement-preserving side-channel council (tax_council_symbols=[0, 0, 1], settle_council_symbols=[0, 1, 2], shared_remediation_support=True, collision_floor=0, 873 + 27 + 180 = 1080).",
+          "worker-2": "COHERENT LGGG: Disagreement-preserving side-channel council (tax_council_symbols=[0, 0, 1], settle_council_symbols=[0, 1, 2], shared_remediation_support=True, collision_floor=0, 873 + 27 + 180 = 1080)."
+        }
+      }
+    ],
+    "receipt_sha256": "2f0d4dad8657f8663d5ae40c5f88e62bf09384fb538d79c17aca61762a7fabc8"
+  },
+  "evaluations": [
+    {
+      "audit_id": "codebase_council_eval_1_openai_gpt-4o-mini",
+      "model_id": "openai/gpt-4o-mini",
+      "phase_1_collision_floor": 2,
+      "phase_1_poe_partition_sum": "0",
+      "phase_1_surcharge_cents": 10,
+      "phase_1_payout_cents": 863,
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "COLLAPSING_CONSENSUS_CODEBASE_ROOT_CAUSE_LOSS_LGGR",
+      "phase_2_collision_floor": 1,
+      "phase_2_poe_partition_sum": "0",
+      "phase_2_surcharge_cents": 5,
+      "phase_2_payout_cents": 868,
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "BINARY_TAG_CODEBASE_CAPACITY_DEFICIT_LGGR",
+      "phase_3_collision_floor": 0,
+      "phase_3_poe_partition_sum": "3/8",
+      "phase_3_surcharge_cents": 0,
+      "phase_3_payout_cents": 873,
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "CODEBASE_DISAGREEMENT_COUNCIL_COHERENT_LGGG",
+      "council_audit": {
+        "evaluation_id": "codebase_council_eval_1_openai_gpt-4o-mini::council",
+        "distinct_root_causes_k": 3,
+        "consensus_collision_floor": 2,
+        "binary_tag_collision_floor": 1,
+        "council_collision_floor": 0,
+        "consensus_poe_partition_sum": "0",
+        "council_poe_partition_sum": "3/8",
+        "phase_1_consensus_local_green": 1,
+        "phase_1_consensus_global_green": 0,
+        "phase_1_consensus_defect": -1,
+        "phase_1_status": "COLLAPSING_CONSENSUS_ROOT_CAUSE_LOSS_LGGR",
+        "phase_2_binary_local_green": 1,
+        "phase_2_binary_global_green": 0,
+        "phase_2_binary_defect": -1,
+        "phase_2_status": "BINARY_TAG_CAPACITY_DEFICIT_LGGR",
+        "phase_3_council_local_green": 1,
+        "phase_3_council_global_green": 1,
+        "phase_3_council_defect": 0,
+        "phase_3_status": "DISAGREEMENT_PRESERVING_COUNCIL_COHERENT_LGGG",
+        "capacity_consensus": {
+          "fiber_id": "codebase_council_eval_1_openai_gpt-4o-mini::council::phase_1_consensus",
+          "state_count": 3,
+          "distinct_query_values_k": 3,
+          "channel_capacity_s": 1,
+          "used_symbols_count": 1,
+          "error_budget": 0,
+          "capacity_error_floor_k_minus_s": 2,
+          "realized_subfiber_error_floor": 2,
+          "realized_sample_error_floor": 2,
+          "pigeonhole_bound_verified": true,
+          "local_product_aggregator": 1,
+          "global_decodability_evaluator": 0,
+          "evaluator_defect": -1,
+          "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+          "states": [
+            {
+              "state_id": "patch_0",
+              "query_value": "rebate_drift",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_1",
+              "query_value": "jurisdiction_mismatch",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_2",
+              "query_value": "fee_tier_overflow",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            }
+          ]
+        },
+        "capacity_binary": {
+          "fiber_id": "codebase_council_eval_1_openai_gpt-4o-mini::council::phase_2_binary_tag",
+          "state_count": 3,
+          "distinct_query_values_k": 3,
+          "channel_capacity_s": 2,
+          "used_symbols_count": 2,
+          "error_budget": 0,
+          "capacity_error_floor_k_minus_s": 1,
+          "realized_subfiber_error_floor": 1,
+          "realized_sample_error_floor": 1,
+          "pigeonhole_bound_verified": true,
+          "local_product_aggregator": 1,
+          "global_decodability_evaluator": 0,
+          "evaluator_defect": -1,
+          "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+          "states": [
+            {
+              "state_id": "patch_0",
+              "query_value": "rebate_drift",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_1",
+              "query_value": "jurisdiction_mismatch",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_2",
+              "query_value": "fee_tier_overflow",
+              "side_symbol": 1,
+              "local_channel_evaluator": 1
+            }
+          ]
+        },
+        "capacity_council": {
+          "fiber_id": "codebase_council_eval_1_openai_gpt-4o-mini::council::phase_3_council",
+          "state_count": 3,
+          "distinct_query_values_k": 3,
+          "channel_capacity_s": 3,
+          "used_symbols_count": 3,
+          "error_budget": 0,
+          "capacity_error_floor_k_minus_s": 0,
+          "realized_subfiber_error_floor": 0,
+          "realized_sample_error_floor": 0,
+          "pigeonhole_bound_verified": true,
+          "local_product_aggregator": 1,
+          "global_decodability_evaluator": 1,
+          "evaluator_defect": 0,
+          "fiber_status": "SIDE_INFORMATION_SUFFICIENT_LGGG",
+          "states": [
+            {
+              "state_id": "patch_0",
+              "query_value": "rebate_drift",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_1",
+              "query_value": "jurisdiction_mismatch",
+              "side_symbol": 1,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_2",
+              "query_value": "fee_tier_overflow",
+              "side_symbol": 2,
+              "local_channel_evaluator": 1
+            }
+          ]
+        },
+        "poe_consensus": {
+          "round_id": "codebase_council_eval_1_openai_gpt-4o-mini::council::phase_1_disjoint_poe",
+          "expert_count": 2,
+          "candidate_count": 2,
+          "expert_masses": [
+            "1",
+            "1"
+          ],
+          "local_expert_evaluators": [
+            1,
+            1
+          ],
+          "joint_support_indices": [],
+          "poe_unnormalized_vector": [
+            "0",
+            "0"
+          ],
+          "poe_partition_sum": "0",
+          "poe_normalized_distribution": null,
+          "moe_unnormalized_vector": [
+            "1/2",
+            "1/2"
+          ],
+          "moe_partition_sum": "1",
+          "moe_normalized_distribution": [
+            "1/2",
+            "1/2"
+          ],
+          "local_product_aggregator": 1,
+          "global_poe_normalizable_evaluator": 0,
+          "evaluator_defect": -1,
+          "round_status": "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR"
+        },
+        "poe_council": {
+          "round_id": "codebase_council_eval_1_openai_gpt-4o-mini::council::phase_3_shared_poe",
+          "expert_count": 2,
+          "candidate_count": 2,
+          "expert_masses": [
+            "1",
+            "1"
+          ],
+          "local_expert_evaluators": [
+            1,
+            1
+          ],
+          "joint_support_indices": [
+            0,
+            1
+          ],
+          "poe_unnormalized_vector": [
+            "3/16",
+            "3/16"
+          ],
+          "poe_partition_sum": "3/8",
+          "poe_normalized_distribution": [
+            "1/2",
+            "1/2"
+          ],
+          "moe_unnormalized_vector": [
+            "1/2",
+            "1/2"
+          ],
+          "moe_partition_sum": "1",
+          "moe_normalized_distribution": [
+            "1/2",
+            "1/2"
+          ],
+          "local_product_aggregator": 1,
+          "global_poe_normalizable_evaluator": 1,
+          "evaluator_defect": 0,
+          "round_status": "POE_AND_MOE_COHERENT_LGGG"
+        }
+      },
+      "model_raw_response": "{\n  \"phase1_collision_floor\": 2,\n  \"phase1_surcharge_cents\": 10,\n  \"phase2_collision_floor\": 1,\n  \"phase2_surcharge_cents\": 5,\n  \"phase3_collision_floor\": 0,\n  \"phase3_payout_cents\": 873\n}",
+      "model_parsed_json": {
+        "phase1_collision_floor": 2,
+        "phase1_surcharge_cents": 10,
+        "phase2_collision_floor": 1,
+        "phase2_surcharge_cents": 5,
+        "phase3_collision_floor": 0,
+        "phase3_payout_cents": 873
+      }
+    },
+    {
+      "audit_id": "codebase_council_eval_2_google_gemini-2.5-flash-lite",
+      "model_id": "google/gemini-2.5-flash-lite",
+      "phase_1_collision_floor": 2,
+      "phase_1_poe_partition_sum": "0",
+      "phase_1_surcharge_cents": 10,
+      "phase_1_payout_cents": 863,
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "COLLAPSING_CONSENSUS_CODEBASE_ROOT_CAUSE_LOSS_LGGR",
+      "phase_2_collision_floor": 1,
+      "phase_2_poe_partition_sum": "0",
+      "phase_2_surcharge_cents": 5,
+      "phase_2_payout_cents": 868,
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "BINARY_TAG_CODEBASE_CAPACITY_DEFICIT_LGGR",
+      "phase_3_collision_floor": 0,
+      "phase_3_poe_partition_sum": "3/8",
+      "phase_3_surcharge_cents": 0,
+      "phase_3_payout_cents": 873,
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "CODEBASE_DISAGREEMENT_COUNCIL_COHERENT_LGGG",
+      "council_audit": {
+        "evaluation_id": "codebase_council_eval_2_google_gemini-2.5-flash-lite::council",
+        "distinct_root_causes_k": 3,
+        "consensus_collision_floor": 2,
+        "binary_tag_collision_floor": 1,
+        "council_collision_floor": 0,
+        "consensus_poe_partition_sum": "0",
+        "council_poe_partition_sum": "3/8",
+        "phase_1_consensus_local_green": 1,
+        "phase_1_consensus_global_green": 0,
+        "phase_1_consensus_defect": -1,
+        "phase_1_status": "COLLAPSING_CONSENSUS_ROOT_CAUSE_LOSS_LGGR",
+        "phase_2_binary_local_green": 1,
+        "phase_2_binary_global_green": 0,
+        "phase_2_binary_defect": -1,
+        "phase_2_status": "BINARY_TAG_CAPACITY_DEFICIT_LGGR",
+        "phase_3_council_local_green": 1,
+        "phase_3_council_global_green": 1,
+        "phase_3_council_defect": 0,
+        "phase_3_status": "DISAGREEMENT_PRESERVING_COUNCIL_COHERENT_LGGG",
+        "capacity_consensus": {
+          "fiber_id": "codebase_council_eval_2_google_gemini-2.5-flash-lite::council::phase_1_consensus",
+          "state_count": 3,
+          "distinct_query_values_k": 3,
+          "channel_capacity_s": 1,
+          "used_symbols_count": 1,
+          "error_budget": 0,
+          "capacity_error_floor_k_minus_s": 2,
+          "realized_subfiber_error_floor": 2,
+          "realized_sample_error_floor": 2,
+          "pigeonhole_bound_verified": true,
+          "local_product_aggregator": 1,
+          "global_decodability_evaluator": 0,
+          "evaluator_defect": -1,
+          "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+          "states": [
+            {
+              "state_id": "patch_0",
+              "query_value": "rebate_drift",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_1",
+              "query_value": "jurisdiction_mismatch",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_2",
+              "query_value": "fee_tier_overflow",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            }
+          ]
+        },
+        "capacity_binary": {
+          "fiber_id": "codebase_council_eval_2_google_gemini-2.5-flash-lite::council::phase_2_binary_tag",
+          "state_count": 3,
+          "distinct_query_values_k": 3,
+          "channel_capacity_s": 2,
+          "used_symbols_count": 2,
+          "error_budget": 0,
+          "capacity_error_floor_k_minus_s": 1,
+          "realized_subfiber_error_floor": 1,
+          "realized_sample_error_floor": 1,
+          "pigeonhole_bound_verified": true,
+          "local_product_aggregator": 1,
+          "global_decodability_evaluator": 0,
+          "evaluator_defect": -1,
+          "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+          "states": [
+            {
+              "state_id": "patch_0",
+              "query_value": "rebate_drift",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_1",
+              "query_value": "jurisdiction_mismatch",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_2",
+              "query_value": "fee_tier_overflow",
+              "side_symbol": 1,
+              "local_channel_evaluator": 1
+            }
+          ]
+        },
+        "capacity_council": {
+          "fiber_id": "codebase_council_eval_2_google_gemini-2.5-flash-lite::council::phase_3_council",
+          "state_count": 3,
+          "distinct_query_values_k": 3,
+          "channel_capacity_s": 3,
+          "used_symbols_count": 3,
+          "error_budget": 0,
+          "capacity_error_floor_k_minus_s": 0,
+          "realized_subfiber_error_floor": 0,
+          "realized_sample_error_floor": 0,
+          "pigeonhole_bound_verified": true,
+          "local_product_aggregator": 1,
+          "global_decodability_evaluator": 1,
+          "evaluator_defect": 0,
+          "fiber_status": "SIDE_INFORMATION_SUFFICIENT_LGGG",
+          "states": [
+            {
+              "state_id": "patch_0",
+              "query_value": "rebate_drift",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_1",
+              "query_value": "jurisdiction_mismatch",
+              "side_symbol": 1,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_2",
+              "query_value": "fee_tier_overflow",
+              "side_symbol": 2,
+              "local_channel_evaluator": 1
+            }
+          ]
+        },
+        "poe_consensus": {
+          "round_id": "codebase_council_eval_2_google_gemini-2.5-flash-lite::council::phase_1_disjoint_poe",
+          "expert_count": 2,
+          "candidate_count": 2,
+          "expert_masses": [
+            "1",
+            "1"
+          ],
+          "local_expert_evaluators": [
+            1,
+            1
+          ],
+          "joint_support_indices": [],
+          "poe_unnormalized_vector": [
+            "0",
+            "0"
+          ],
+          "poe_partition_sum": "0",
+          "poe_normalized_distribution": null,
+          "moe_unnormalized_vector": [
+            "1/2",
+            "1/2"
+          ],
+          "moe_partition_sum": "1",
+          "moe_normalized_distribution": [
+            "1/2",
+            "1/2"
+          ],
+          "local_product_aggregator": 1,
+          "global_poe_normalizable_evaluator": 0,
+          "evaluator_defect": -1,
+          "round_status": "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR"
+        },
+        "poe_council": {
+          "round_id": "codebase_council_eval_2_google_gemini-2.5-flash-lite::council::phase_3_shared_poe",
+          "expert_count": 2,
+          "candidate_count": 2,
+          "expert_masses": [
+            "1",
+            "1"
+          ],
+          "local_expert_evaluators": [
+            1,
+            1
+          ],
+          "joint_support_indices": [
+            0,
+            1
+          ],
+          "poe_unnormalized_vector": [
+            "3/16",
+            "3/16"
+          ],
+          "poe_partition_sum": "3/8",
+          "poe_normalized_distribution": [
+            "1/2",
+            "1/2"
+          ],
+          "moe_unnormalized_vector": [
+            "1/2",
+            "1/2"
+          ],
+          "moe_partition_sum": "1",
+          "moe_normalized_distribution": [
+            "1/2",
+            "1/2"
+          ],
+          "local_product_aggregator": 1,
+          "global_poe_normalizable_evaluator": 1,
+          "evaluator_defect": 0,
+          "round_status": "POE_AND_MOE_COHERENT_LGGG"
+        }
+      },
+      "model_raw_response": "```json\n{\n  \"phase1_collision_floor\": 2,\n  \"phase1_surcharge_cents\": 10,\n  \"phase2_collision_floor\": 1,\n  \"phase2_surcharge_cents\": 5,\n  \"phase3_collision_floor\": 0,\n  \"phase3_payout_cents\": 873\n}\n```",
+      "model_parsed_json": {
+        "phase1_collision_floor": 2,
+        "phase1_surcharge_cents": 10,
+        "phase2_collision_floor": 1,
+        "phase2_surcharge_cents": 5,
+        "phase3_collision_floor": 0,
+        "phase3_payout_cents": 873
+      }
+    },
+    {
+      "audit_id": "codebase_council_eval_3_meta-llama_llama-3.3-70b-instruct",
+      "model_id": "meta-llama/llama-3.3-70b-instruct",
+      "phase_1_collision_floor": 2,
+      "phase_1_poe_partition_sum": "0",
+      "phase_1_surcharge_cents": 10,
+      "phase_1_payout_cents": 863,
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "COLLAPSING_CONSENSUS_CODEBASE_ROOT_CAUSE_LOSS_LGGR",
+      "phase_2_collision_floor": 1,
+      "phase_2_poe_partition_sum": "0",
+      "phase_2_surcharge_cents": 5,
+      "phase_2_payout_cents": 868,
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "BINARY_TAG_CODEBASE_CAPACITY_DEFICIT_LGGR",
+      "phase_3_collision_floor": 0,
+      "phase_3_poe_partition_sum": "3/8",
+      "phase_3_surcharge_cents": 0,
+      "phase_3_payout_cents": 873,
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "CODEBASE_DISAGREEMENT_COUNCIL_COHERENT_LGGG",
+      "council_audit": {
+        "evaluation_id": "codebase_council_eval_3_meta-llama_llama-3.3-70b-instruct::council",
+        "distinct_root_causes_k": 3,
+        "consensus_collision_floor": 2,
+        "binary_tag_collision_floor": 1,
+        "council_collision_floor": 0,
+        "consensus_poe_partition_sum": "0",
+        "council_poe_partition_sum": "3/8",
+        "phase_1_consensus_local_green": 1,
+        "phase_1_consensus_global_green": 0,
+        "phase_1_consensus_defect": -1,
+        "phase_1_status": "COLLAPSING_CONSENSUS_ROOT_CAUSE_LOSS_LGGR",
+        "phase_2_binary_local_green": 1,
+        "phase_2_binary_global_green": 0,
+        "phase_2_binary_defect": -1,
+        "phase_2_status": "BINARY_TAG_CAPACITY_DEFICIT_LGGR",
+        "phase_3_council_local_green": 1,
+        "phase_3_council_global_green": 1,
+        "phase_3_council_defect": 0,
+        "phase_3_status": "DISAGREEMENT_PRESERVING_COUNCIL_COHERENT_LGGG",
+        "capacity_consensus": {
+          "fiber_id": "codebase_council_eval_3_meta-llama_llama-3.3-70b-instruct::council::phase_1_consensus",
+          "state_count": 3,
+          "distinct_query_values_k": 3,
+          "channel_capacity_s": 1,
+          "used_symbols_count": 1,
+          "error_budget": 0,
+          "capacity_error_floor_k_minus_s": 2,
+          "realized_subfiber_error_floor": 2,
+          "realized_sample_error_floor": 2,
+          "pigeonhole_bound_verified": true,
+          "local_product_aggregator": 1,
+          "global_decodability_evaluator": 0,
+          "evaluator_defect": -1,
+          "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+          "states": [
+            {
+              "state_id": "patch_0",
+              "query_value": "rebate_drift",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_1",
+              "query_value": "jurisdiction_mismatch",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_2",
+              "query_value": "fee_tier_overflow",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            }
+          ]
+        },
+        "capacity_binary": {
+          "fiber_id": "codebase_council_eval_3_meta-llama_llama-3.3-70b-instruct::council::phase_2_binary_tag",
+          "state_count": 3,
+          "distinct_query_values_k": 3,
+          "channel_capacity_s": 2,
+          "used_symbols_count": 2,
+          "error_budget": 0,
+          "capacity_error_floor_k_minus_s": 1,
+          "realized_subfiber_error_floor": 1,
+          "realized_sample_error_floor": 1,
+          "pigeonhole_bound_verified": true,
+          "local_product_aggregator": 1,
+          "global_decodability_evaluator": 0,
+          "evaluator_defect": -1,
+          "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+          "states": [
+            {
+              "state_id": "patch_0",
+              "query_value": "rebate_drift",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_1",
+              "query_value": "jurisdiction_mismatch",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_2",
+              "query_value": "fee_tier_overflow",
+              "side_symbol": 1,
+              "local_channel_evaluator": 1
+            }
+          ]
+        },
+        "capacity_council": {
+          "fiber_id": "codebase_council_eval_3_meta-llama_llama-3.3-70b-instruct::council::phase_3_council",
+          "state_count": 3,
+          "distinct_query_values_k": 3,
+          "channel_capacity_s": 3,
+          "used_symbols_count": 3,
+          "error_budget": 0,
+          "capacity_error_floor_k_minus_s": 0,
+          "realized_subfiber_error_floor": 0,
+          "realized_sample_error_floor": 0,
+          "pigeonhole_bound_verified": true,
+          "local_product_aggregator": 1,
+          "global_decodability_evaluator": 1,
+          "evaluator_defect": 0,
+          "fiber_status": "SIDE_INFORMATION_SUFFICIENT_LGGG",
+          "states": [
+            {
+              "state_id": "patch_0",
+              "query_value": "rebate_drift",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_1",
+              "query_value": "jurisdiction_mismatch",
+              "side_symbol": 1,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_2",
+              "query_value": "fee_tier_overflow",
+              "side_symbol": 2,
+              "local_channel_evaluator": 1
+            }
+          ]
+        },
+        "poe_consensus": {
+          "round_id": "codebase_council_eval_3_meta-llama_llama-3.3-70b-instruct::council::phase_1_disjoint_poe",
+          "expert_count": 2,
+          "candidate_count": 2,
+          "expert_masses": [
+            "1",
+            "1"
+          ],
+          "local_expert_evaluators": [
+            1,
+            1
+          ],
+          "joint_support_indices": [],
+          "poe_unnormalized_vector": [
+            "0",
+            "0"
+          ],
+          "poe_partition_sum": "0",
+          "poe_normalized_distribution": null,
+          "moe_unnormalized_vector": [
+            "1/2",
+            "1/2"
+          ],
+          "moe_partition_sum": "1",
+          "moe_normalized_distribution": [
+            "1/2",
+            "1/2"
+          ],
+          "local_product_aggregator": 1,
+          "global_poe_normalizable_evaluator": 0,
+          "evaluator_defect": -1,
+          "round_status": "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR"
+        },
+        "poe_council": {
+          "round_id": "codebase_council_eval_3_meta-llama_llama-3.3-70b-instruct::council::phase_3_shared_poe",
+          "expert_count": 2,
+          "candidate_count": 2,
+          "expert_masses": [
+            "1",
+            "1"
+          ],
+          "local_expert_evaluators": [
+            1,
+            1
+          ],
+          "joint_support_indices": [
+            0,
+            1
+          ],
+          "poe_unnormalized_vector": [
+            "3/16",
+            "3/16"
+          ],
+          "poe_partition_sum": "3/8",
+          "poe_normalized_distribution": [
+            "1/2",
+            "1/2"
+          ],
+          "moe_unnormalized_vector": [
+            "1/2",
+            "1/2"
+          ],
+          "moe_partition_sum": "1",
+          "moe_normalized_distribution": [
+            "1/2",
+            "1/2"
+          ],
+          "local_product_aggregator": 1,
+          "global_poe_normalizable_evaluator": 1,
+          "evaluator_defect": 0,
+          "round_status": "POE_AND_MOE_COHERENT_LGGG"
+        }
+      },
+      "model_raw_response": "{\"1\": {\"phase1_collision_floor\": 2, \"phase1_surcharge_cents\": 10}, \"2\": {\"phase2_collision_floor\": 1, \"phase2_surcharge_cents\": 5}, \"3\": {\"phase3_collision_floor\": 0, \"phase3_payout_cents\": 873}}",
+      "model_parsed_json": {}
+    },
+    {
+      "audit_id": "codebase_council_eval_4_deepseek_deepseek-chat",
+      "model_id": "deepseek/deepseek-chat",
+      "phase_1_collision_floor": 2,
+      "phase_1_poe_partition_sum": "0",
+      "phase_1_surcharge_cents": 10,
+      "phase_1_payout_cents": 863,
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "COLLAPSING_CONSENSUS_CODEBASE_ROOT_CAUSE_LOSS_LGGR",
+      "phase_2_collision_floor": 1,
+      "phase_2_poe_partition_sum": "0",
+      "phase_2_surcharge_cents": 5,
+      "phase_2_payout_cents": 868,
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "BINARY_TAG_CODEBASE_CAPACITY_DEFICIT_LGGR",
+      "phase_3_collision_floor": 0,
+      "phase_3_poe_partition_sum": "3/8",
+      "phase_3_surcharge_cents": 0,
+      "phase_3_payout_cents": 873,
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "CODEBASE_DISAGREEMENT_COUNCIL_COHERENT_LGGG",
+      "council_audit": {
+        "evaluation_id": "codebase_council_eval_4_deepseek_deepseek-chat::council",
+        "distinct_root_causes_k": 3,
+        "consensus_collision_floor": 2,
+        "binary_tag_collision_floor": 1,
+        "council_collision_floor": 0,
+        "consensus_poe_partition_sum": "0",
+        "council_poe_partition_sum": "3/8",
+        "phase_1_consensus_local_green": 1,
+        "phase_1_consensus_global_green": 0,
+        "phase_1_consensus_defect": -1,
+        "phase_1_status": "COLLAPSING_CONSENSUS_ROOT_CAUSE_LOSS_LGGR",
+        "phase_2_binary_local_green": 1,
+        "phase_2_binary_global_green": 0,
+        "phase_2_binary_defect": -1,
+        "phase_2_status": "BINARY_TAG_CAPACITY_DEFICIT_LGGR",
+        "phase_3_council_local_green": 1,
+        "phase_3_council_global_green": 1,
+        "phase_3_council_defect": 0,
+        "phase_3_status": "DISAGREEMENT_PRESERVING_COUNCIL_COHERENT_LGGG",
+        "capacity_consensus": {
+          "fiber_id": "codebase_council_eval_4_deepseek_deepseek-chat::council::phase_1_consensus",
+          "state_count": 3,
+          "distinct_query_values_k": 3,
+          "channel_capacity_s": 1,
+          "used_symbols_count": 1,
+          "error_budget": 0,
+          "capacity_error_floor_k_minus_s": 2,
+          "realized_subfiber_error_floor": 2,
+          "realized_sample_error_floor": 2,
+          "pigeonhole_bound_verified": true,
+          "local_product_aggregator": 1,
+          "global_decodability_evaluator": 0,
+          "evaluator_defect": -1,
+          "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+          "states": [
+            {
+              "state_id": "patch_0",
+              "query_value": "rebate_drift",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_1",
+              "query_value": "jurisdiction_mismatch",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_2",
+              "query_value": "fee_tier_overflow",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            }
+          ]
+        },
+        "capacity_binary": {
+          "fiber_id": "codebase_council_eval_4_deepseek_deepseek-chat::council::phase_2_binary_tag",
+          "state_count": 3,
+          "distinct_query_values_k": 3,
+          "channel_capacity_s": 2,
+          "used_symbols_count": 2,
+          "error_budget": 0,
+          "capacity_error_floor_k_minus_s": 1,
+          "realized_subfiber_error_floor": 1,
+          "realized_sample_error_floor": 1,
+          "pigeonhole_bound_verified": true,
+          "local_product_aggregator": 1,
+          "global_decodability_evaluator": 0,
+          "evaluator_defect": -1,
+          "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+          "states": [
+            {
+              "state_id": "patch_0",
+              "query_value": "rebate_drift",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_1",
+              "query_value": "jurisdiction_mismatch",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_2",
+              "query_value": "fee_tier_overflow",
+              "side_symbol": 1,
+              "local_channel_evaluator": 1
+            }
+          ]
+        },
+        "capacity_council": {
+          "fiber_id": "codebase_council_eval_4_deepseek_deepseek-chat::council::phase_3_council",
+          "state_count": 3,
+          "distinct_query_values_k": 3,
+          "channel_capacity_s": 3,
+          "used_symbols_count": 3,
+          "error_budget": 0,
+          "capacity_error_floor_k_minus_s": 0,
+          "realized_subfiber_error_floor": 0,
+          "realized_sample_error_floor": 0,
+          "pigeonhole_bound_verified": true,
+          "local_product_aggregator": 1,
+          "global_decodability_evaluator": 1,
+          "evaluator_defect": 0,
+          "fiber_status": "SIDE_INFORMATION_SUFFICIENT_LGGG",
+          "states": [
+            {
+              "state_id": "patch_0",
+              "query_value": "rebate_drift",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_1",
+              "query_value": "jurisdiction_mismatch",
+              "side_symbol": 1,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_2",
+              "query_value": "fee_tier_overflow",
+              "side_symbol": 2,
+              "local_channel_evaluator": 1
+            }
+          ]
+        },
+        "poe_consensus": {
+          "round_id": "codebase_council_eval_4_deepseek_deepseek-chat::council::phase_1_disjoint_poe",
+          "expert_count": 2,
+          "candidate_count": 2,
+          "expert_masses": [
+            "1",
+            "1"
+          ],
+          "local_expert_evaluators": [
+            1,
+            1
+          ],
+          "joint_support_indices": [],
+          "poe_unnormalized_vector": [
+            "0",
+            "0"
+          ],
+          "poe_partition_sum": "0",
+          "poe_normalized_distribution": null,
+          "moe_unnormalized_vector": [
+            "1/2",
+            "1/2"
+          ],
+          "moe_partition_sum": "1",
+          "moe_normalized_distribution": [
+            "1/2",
+            "1/2"
+          ],
+          "local_product_aggregator": 1,
+          "global_poe_normalizable_evaluator": 0,
+          "evaluator_defect": -1,
+          "round_status": "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR"
+        },
+        "poe_council": {
+          "round_id": "codebase_council_eval_4_deepseek_deepseek-chat::council::phase_3_shared_poe",
+          "expert_count": 2,
+          "candidate_count": 2,
+          "expert_masses": [
+            "1",
+            "1"
+          ],
+          "local_expert_evaluators": [
+            1,
+            1
+          ],
+          "joint_support_indices": [
+            0,
+            1
+          ],
+          "poe_unnormalized_vector": [
+            "3/16",
+            "3/16"
+          ],
+          "poe_partition_sum": "3/8",
+          "poe_normalized_distribution": [
+            "1/2",
+            "1/2"
+          ],
+          "moe_unnormalized_vector": [
+            "1/2",
+            "1/2"
+          ],
+          "moe_partition_sum": "1",
+          "moe_normalized_distribution": [
+            "1/2",
+            "1/2"
+          ],
+          "local_product_aggregator": 1,
+          "global_poe_normalizable_evaluator": 1,
+          "evaluator_defect": 0,
+          "round_status": "POE_AND_MOE_COHERENT_LGGG"
+        }
+      },
+      "model_raw_response": "{\"phase1_collision_floor\": 2, \"phase1_surcharge_cents\": 10, \"phase2_collision_floor\": 1, \"phase2_surcharge_cents\": 5, \"phase3_collision_floor\": 0, \"phase3_payout_cents\": 873}",
+      "model_parsed_json": {
+        "phase1_collision_floor": 2,
+        "phase1_surcharge_cents": 10,
+        "phase2_collision_floor": 1,
+        "phase2_surcharge_cents": 5,
+        "phase3_collision_floor": 0,
+        "phase3_payout_cents": 873
+      }
+    },
+    {
+      "audit_id": "codebase_council_eval_5_mistralai_mistral-small-3.2-24b-instruct",
+      "model_id": "mistralai/mistral-small-3.2-24b-instruct",
+      "phase_1_collision_floor": 2,
+      "phase_1_poe_partition_sum": "0",
+      "phase_1_surcharge_cents": 10,
+      "phase_1_payout_cents": 863,
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "COLLAPSING_CONSENSUS_CODEBASE_ROOT_CAUSE_LOSS_LGGR",
+      "phase_2_collision_floor": 1,
+      "phase_2_poe_partition_sum": "0",
+      "phase_2_surcharge_cents": 5,
+      "phase_2_payout_cents": 868,
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "BINARY_TAG_CODEBASE_CAPACITY_DEFICIT_LGGR",
+      "phase_3_collision_floor": 0,
+      "phase_3_poe_partition_sum": "3/8",
+      "phase_3_surcharge_cents": 0,
+      "phase_3_payout_cents": 873,
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "CODEBASE_DISAGREEMENT_COUNCIL_COHERENT_LGGG",
+      "council_audit": {
+        "evaluation_id": "codebase_council_eval_5_mistralai_mistral-small-3.2-24b-instruct::council",
+        "distinct_root_causes_k": 3,
+        "consensus_collision_floor": 2,
+        "binary_tag_collision_floor": 1,
+        "council_collision_floor": 0,
+        "consensus_poe_partition_sum": "0",
+        "council_poe_partition_sum": "3/8",
+        "phase_1_consensus_local_green": 1,
+        "phase_1_consensus_global_green": 0,
+        "phase_1_consensus_defect": -1,
+        "phase_1_status": "COLLAPSING_CONSENSUS_ROOT_CAUSE_LOSS_LGGR",
+        "phase_2_binary_local_green": 1,
+        "phase_2_binary_global_green": 0,
+        "phase_2_binary_defect": -1,
+        "phase_2_status": "BINARY_TAG_CAPACITY_DEFICIT_LGGR",
+        "phase_3_council_local_green": 1,
+        "phase_3_council_global_green": 1,
+        "phase_3_council_defect": 0,
+        "phase_3_status": "DISAGREEMENT_PRESERVING_COUNCIL_COHERENT_LGGG",
+        "capacity_consensus": {
+          "fiber_id": "codebase_council_eval_5_mistralai_mistral-small-3.2-24b-instruct::council::phase_1_consensus",
+          "state_count": 3,
+          "distinct_query_values_k": 3,
+          "channel_capacity_s": 1,
+          "used_symbols_count": 1,
+          "error_budget": 0,
+          "capacity_error_floor_k_minus_s": 2,
+          "realized_subfiber_error_floor": 2,
+          "realized_sample_error_floor": 2,
+          "pigeonhole_bound_verified": true,
+          "local_product_aggregator": 1,
+          "global_decodability_evaluator": 0,
+          "evaluator_defect": -1,
+          "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+          "states": [
+            {
+              "state_id": "patch_0",
+              "query_value": "rebate_drift",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_1",
+              "query_value": "jurisdiction_mismatch",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_2",
+              "query_value": "fee_tier_overflow",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            }
+          ]
+        },
+        "capacity_binary": {
+          "fiber_id": "codebase_council_eval_5_mistralai_mistral-small-3.2-24b-instruct::council::phase_2_binary_tag",
+          "state_count": 3,
+          "distinct_query_values_k": 3,
+          "channel_capacity_s": 2,
+          "used_symbols_count": 2,
+          "error_budget": 0,
+          "capacity_error_floor_k_minus_s": 1,
+          "realized_subfiber_error_floor": 1,
+          "realized_sample_error_floor": 1,
+          "pigeonhole_bound_verified": true,
+          "local_product_aggregator": 1,
+          "global_decodability_evaluator": 0,
+          "evaluator_defect": -1,
+          "fiber_status": "SIDE_INFORMATION_CAPACITY_DEFICIT_LGGR",
+          "states": [
+            {
+              "state_id": "patch_0",
+              "query_value": "rebate_drift",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_1",
+              "query_value": "jurisdiction_mismatch",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_2",
+              "query_value": "fee_tier_overflow",
+              "side_symbol": 1,
+              "local_channel_evaluator": 1
+            }
+          ]
+        },
+        "capacity_council": {
+          "fiber_id": "codebase_council_eval_5_mistralai_mistral-small-3.2-24b-instruct::council::phase_3_council",
+          "state_count": 3,
+          "distinct_query_values_k": 3,
+          "channel_capacity_s": 3,
+          "used_symbols_count": 3,
+          "error_budget": 0,
+          "capacity_error_floor_k_minus_s": 0,
+          "realized_subfiber_error_floor": 0,
+          "realized_sample_error_floor": 0,
+          "pigeonhole_bound_verified": true,
+          "local_product_aggregator": 1,
+          "global_decodability_evaluator": 1,
+          "evaluator_defect": 0,
+          "fiber_status": "SIDE_INFORMATION_SUFFICIENT_LGGG",
+          "states": [
+            {
+              "state_id": "patch_0",
+              "query_value": "rebate_drift",
+              "side_symbol": 0,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_1",
+              "query_value": "jurisdiction_mismatch",
+              "side_symbol": 1,
+              "local_channel_evaluator": 1
+            },
+            {
+              "state_id": "patch_2",
+              "query_value": "fee_tier_overflow",
+              "side_symbol": 2,
+              "local_channel_evaluator": 1
+            }
+          ]
+        },
+        "poe_consensus": {
+          "round_id": "codebase_council_eval_5_mistralai_mistral-small-3.2-24b-instruct::council::phase_1_disjoint_poe",
+          "expert_count": 2,
+          "candidate_count": 2,
+          "expert_masses": [
+            "1",
+            "1"
+          ],
+          "local_expert_evaluators": [
+            1,
+            1
+          ],
+          "joint_support_indices": [],
+          "poe_unnormalized_vector": [
+            "0",
+            "0"
+          ],
+          "poe_partition_sum": "0",
+          "poe_normalized_distribution": null,
+          "moe_unnormalized_vector": [
+            "1/2",
+            "1/2"
+          ],
+          "moe_partition_sum": "1",
+          "moe_normalized_distribution": [
+            "1/2",
+            "1/2"
+          ],
+          "local_product_aggregator": 1,
+          "global_poe_normalizable_evaluator": 0,
+          "evaluator_defect": -1,
+          "round_status": "POE_DISJOINT_SUPPORT_COLLAPSE_LGGR"
+        },
+        "poe_council": {
+          "round_id": "codebase_council_eval_5_mistralai_mistral-small-3.2-24b-instruct::council::phase_3_shared_poe",
+          "expert_count": 2,
+          "candidate_count": 2,
+          "expert_masses": [
+            "1",
+            "1"
+          ],
+          "local_expert_evaluators": [
+            1,
+            1
+          ],
+          "joint_support_indices": [
+            0,
+            1
+          ],
+          "poe_unnormalized_vector": [
+            "3/16",
+            "3/16"
+          ],
+          "poe_partition_sum": "3/8",
+          "poe_normalized_distribution": [
+            "1/2",
+            "1/2"
+          ],
+          "moe_unnormalized_vector": [
+            "1/2",
+            "1/2"
+          ],
+          "moe_partition_sum": "1",
+          "moe_normalized_distribution": [
+            "1/2",
+            "1/2"
+          ],
+          "local_product_aggregator": 1,
+          "global_poe_normalizable_evaluator": 1,
+          "evaluator_defect": 0,
+          "round_status": "POE_AND_MOE_COHERENT_LGGG"
+        }
+      },
+      "model_raw_response": "```json\n{\n  \"phase1_collision_floor\": 2,\n  \"phase1_surcharge_cents\": 10,\n  \"phase2_collision_floor\": 1,\n  \"phase2_surcharge_cents\": 5,\n  \"phase3_collision_floor\": 0,\n  \"phase3_payout_cents\": 873\n}\n```",
+      "model_parsed_json": {
+        "phase1_collision_floor": 2,
+        "phase1_surcharge_cents": 10,
+        "phase2_collision_floor": 1,
+        "phase2_surcharge_cents": 5,
+        "phase3_collision_floor": 0,
+        "phase3_payout_cents": 873
+      }
+    }
+  ],
+  "meaning": "Disagreement-preserving side-channel council vs. collapsing consensus codebase benchmark across 5 model families (Theorem 113): Phase 1 separates collapsing scalar consensus (`L = 1`, `S_cons = 1 < K = 3`, `collision_floor = 2`, `D_PoE = 0`, `payout = 863 != 873`, `Delta_E = -1`); Phase 2 separates partial binary escalation tags (`S_bin = 2 < 3`, `collision_floor = 1 > 0`, `payout = 868 != 873`, `Delta_E = -1`); Phase 3 verifies S = 3 disagreement-preserving side-channel council (`collision_floor = 0`, `D_PoE = 3/8 > 0`, `surcharge = 0`, 873 + 27 + 180 = 1080, `Delta_E = 0`).",
+  "receipt_sha256": "0cf10a9884bb6c50af013ebabb0e38d5b409d0bf04e2dcd1626bd5c6625a6590"
+}

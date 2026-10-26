@@ -42,6 +42,7 @@ from lggr.streaming import (
     StreamingCodebaseCatalystEvolutionMonitor,
     StreamingCodebaseCoalitionalMonitor,
     StreamingCodebaseContextualSheafMonitor,
+    StreamingCodebaseDisagreementCouncilMonitor,
     StreamingCodebaseFiberSplittingMonitor,
     StreamingCodebaseInterfaceMergeMonitor,
     StreamingCodebaseJacobianSoundnessMonitor,
@@ -5803,6 +5804,47 @@ class TestStreamingBaselineComparator(unittest.TestCase):
 
         receipt = mon.current_receipt()
         self.assertEqual(receipt["status"], "CODEBASE_TOOL_ASSISTED_FIBER_SPLIT_RESOLVED_LGGG")
+        self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(receipt["lggr_obstruction_count"], 2)
+        self.assertEqual(receipt["lggg_coherent_count"], 1)
+
+    def test_disagreement_council_codebase_collapsing_consensus_and_side_channel_audit(self) -> None:
+        """Verify Theorem 113: Disagreement-preserving side-channel council S >= K > 2 vs. collapsing consensus."""
+        mon = StreamingCodebaseDisagreementCouncilMonitor(
+            scope_id="unit-codebase-disagreement-council-scope",
+        )
+        obs = mon.evaluate_three_phase_council_audit(
+            "codebase-council-eval-01",
+        )
+        self.assertEqual(obs["phase_1_collision_floor"], 2)
+        self.assertEqual(obs["phase_1_poe_partition_sum"], "0")
+        self.assertEqual(obs["phase_1_surcharge_cents"], 10)
+        self.assertEqual(obs["phase_1_payout_cents"], 863)
+        self.assertEqual(obs["phase_1_local_green"], 1)
+        self.assertEqual(obs["phase_1_global_green"], 0)
+        self.assertEqual(obs["phase_1_defect"], -1)
+        self.assertEqual(obs["phase_1_status"], "COLLAPSING_CONSENSUS_CODEBASE_ROOT_CAUSE_LOSS_LGGR")
+
+        self.assertEqual(obs["phase_2_collision_floor"], 1)
+        self.assertEqual(obs["phase_2_poe_partition_sum"], "0")
+        self.assertEqual(obs["phase_2_surcharge_cents"], 5)
+        self.assertEqual(obs["phase_2_payout_cents"], 868)
+        self.assertEqual(obs["phase_2_local_green"], 1)
+        self.assertEqual(obs["phase_2_global_green"], 0)
+        self.assertEqual(obs["phase_2_defect"], -1)
+        self.assertEqual(obs["phase_2_status"], "BINARY_TAG_CODEBASE_CAPACITY_DEFICIT_LGGR")
+
+        self.assertEqual(obs["phase_3_collision_floor"], 0)
+        self.assertEqual(obs["phase_3_poe_partition_sum"], "3/8")
+        self.assertEqual(obs["phase_3_surcharge_cents"], 0)
+        self.assertEqual(obs["phase_3_payout_cents"], 873)
+        self.assertEqual(obs["phase_3_local_green"], 1)
+        self.assertEqual(obs["phase_3_global_green"], 1)
+        self.assertEqual(obs["phase_3_defect"], 0)
+        self.assertEqual(obs["phase_3_status"], "CODEBASE_DISAGREEMENT_COUNCIL_COHERENT_LGGG")
+
+        receipt = mon.current_receipt()
+        self.assertEqual(receipt["status"], "CODEBASE_DISAGREEMENT_COUNCIL_COHERENT_LGGG")
         self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
         self.assertEqual(receipt["lggr_obstruction_count"], 2)
         self.assertEqual(receipt["lggg_coherent_count"], 1)
