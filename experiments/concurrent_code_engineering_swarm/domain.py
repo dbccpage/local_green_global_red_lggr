@@ -7512,6 +7512,245 @@ class ThreePartyC3CodeWorkspace:
         return {"accepted": False, "error": f"unsupported tool {name} or malformed arguments"}
 
 
+MULTI_LOOP_HODGE_WORKER_MODULES: dict[str, str] = {
+    "worker-0": "pricing_hodge",
+    "worker-1": "tax_hodge",
+    "worker-2": "settlement_hodge",
+}
+
+INITIAL_PRICING_HODGE_P1_PY = (
+    "def compute_pricing_hodge_quote(subtotal_cents: int = 1000, discount_cents: int = 100) -> dict:\n"
+    "    net = int(subtotal_cents) - int(discount_cents)\n"
+    "    return {'subtotal_cents': int(subtotal_cents), 'discount_cents': int(discount_cents), 'net_cents': net, 'filled_loop_cochain': [3, 0, 0], 'alpha_cocycle': [2, 3, 5]}\n"
+)
+
+INITIAL_PRICING_HODGE_COHERENT_PY = (
+    "def compute_pricing_hodge_quote(subtotal_cents: int = 1000, discount_cents: int = 100) -> dict:\n"
+    "    net = int(subtotal_cents) - int(discount_cents)\n"
+    "    return {'subtotal_cents': int(subtotal_cents), 'discount_cents': int(discount_cents), 'net_cents': net, 'filled_loop_cochain': [2, -1, -1], 'alpha_cocycle': [2, -1, 1]}\n"
+)
+
+INITIAL_TAX_HODGE_P1_PY = (
+    "def compute_tax_hodge_cup(quote: dict) -> dict:\n"
+    "    net = int(quote['net_cents'])\n"
+    "    return {**quote, 'tax_cents': (net * 10) // 100, 'gross_cents': net + (net * 10) // 100, 'beta_cocycle': [4, -1, 3]}\n"
+)
+
+INITIAL_TAX_HODGE_COHERENT_PY = (
+    "def compute_tax_hodge_cup(quote: dict) -> dict:\n"
+    "    net = int(quote['net_cents'])\n"
+    "    return {**quote, 'tax_cents': (net * 10) // 100, 'gross_cents': net + (net * 10) // 100, 'beta_cocycle': [0, 0, 0]}\n"
+)
+
+INITIAL_SETTLEMENT_HODGE_P1_P2_PY = (
+    "def route_settlement_hodge_payout(taxed_quote: dict) -> dict:\n"
+    "    net, tax = int(taxed_quote['net_cents']), int(taxed_quote['tax_cents'])\n"
+    "    fee = (net * 3) // 100\n"
+    "    f_loop = list(taxed_quote.get('filled_loop_cochain', [3, 0, 0]))\n"
+    "    beta = list(taxed_quote.get('beta_cocycle', [4, -1, 3]))\n"
+    "    u_loop = [1, 1, 1]\n"
+    "    e_co = 3 if sum(f_loop) != 0 else 0\n"
+    "    e_harm = 3 if sum(u_loop) != 0 else 0\n"
+    "    cup_abs = abs(2 * int(beta[1]))\n"
+    "    surcharge = e_co + e_harm + cup_abs\n"
+    "    return {'merchant_payout_cents': net - fee - surcharge, 'platform_fee_cents': fee, 'tax_reserve_cents': tax, 'total_settled_cents': (net - fee - surcharge) + fee + tax, 'unfilled_loop_cochain': u_loop, 'hodge_surcharge_cents': surcharge}\n"
+)
+
+INITIAL_SETTLEMENT_HODGE_COHERENT_PY = (
+    "def route_settlement_hodge_payout(taxed_quote: dict) -> dict:\n"
+    "    net, tax = int(taxed_quote['net_cents']), int(taxed_quote['tax_cents'])\n"
+    "    fee = (net * 3) // 100\n"
+    "    f_loop = list(taxed_quote.get('filled_loop_cochain', [2, -1, -1]))\n"
+    "    beta = list(taxed_quote.get('beta_cocycle', [0, 0, 0]))\n"
+    "    u_loop = [1, -1, 0]\n"
+    "    e_co = 3 if sum(f_loop) != 0 else 0\n"
+    "    e_harm = 3 if sum(u_loop) != 0 else 0\n"
+    "    cup_abs = abs(2 * int(beta[1]))\n"
+    "    surcharge = e_co + e_harm + cup_abs\n"
+    "    return {'merchant_payout_cents': net - fee - surcharge, 'platform_fee_cents': fee, 'tax_reserve_cents': tax, 'total_settled_cents': (net - fee - surcharge) + fee + tax, 'unfilled_loop_cochain': u_loop, 'hodge_surcharge_cents': surcharge}\n"
+)
+
+
+def run_multi_loop_hodge_local_unit_tests(module_name: str, source_code: str) -> dict[str, Any]:
+    """Execute isolated per-module unit tests for `pricing_hodge`, `tax_hodge`, or `settlement_hodge`."""
+    try:
+        ns = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(module_name, source_code)
+    except Exception as exc:
+        return {"passed": False, "module": module_name, "error": str(exc)}
+
+    try:
+        if module_name == "pricing_hodge":
+            fn = ns.get("compute_pricing_hodge_quote")
+            if not callable(fn):
+                return {"passed": False, "module": module_name, "error": "missing compute_pricing_hodge_quote"}
+            res = fn(1000, 100)
+            ok = (
+                isinstance(res, dict)
+                and res.get("net_cents") == 900
+                and res.get("filled_loop_cochain") in ([3, 0, 0], [2, -1, -1])
+                and res.get("alpha_cocycle") in ([2, 3, 5], [2, -1, 1])
+            )
+            return {"passed": bool(ok), "module": module_name, "sample_output": res}
+
+        if module_name == "tax_hodge":
+            fn = ns.get("compute_tax_hodge_cup")
+            if not callable(fn):
+                return {"passed": False, "module": module_name, "error": "missing compute_tax_hodge_cup"}
+            res = fn({"subtotal_cents": 1000, "discount_cents": 100, "net_cents": 900, "filled_loop_cochain": [2, -1, -1], "alpha_cocycle": [2, -1, 1]})
+            ok = (
+                isinstance(res, dict)
+                and res.get("tax_cents") == 90
+                and res.get("gross_cents") == 990
+                and res.get("beta_cocycle") in ([4, -1, 3], [0, 0, 0])
+            )
+            return {"passed": bool(ok), "module": module_name, "sample_output": res}
+
+        if module_name == "settlement_hodge":
+            fn = ns.get("route_settlement_hodge_payout")
+            if not callable(fn):
+                return {"passed": False, "module": module_name, "error": "missing route_settlement_hodge_payout"}
+            res = fn(
+                {
+                    "subtotal_cents": 1000,
+                    "discount_cents": 100,
+                    "net_cents": 900,
+                    "tax_cents": 90,
+                    "gross_cents": 990,
+                    "filled_loop_cochain": [2, -1, -1],
+                    "alpha_cocycle": [2, -1, 1],
+                    "beta_cocycle": [0, 0, 0],
+                }
+            )
+            ok = (
+                isinstance(res, dict)
+                and res.get("platform_fee_cents") == 27
+                and res.get("tax_reserve_cents") == 90
+                and int(res.get("merchant_payout_cents", 0)) in (865, 870, 873)
+                and res.get("unfilled_loop_cochain") in ([1, 1, 1], [1, -1, 0])
+            )
+            return {"passed": bool(ok), "module": module_name, "sample_output": res}
+    except Exception as exc:
+        return {"passed": False, "module": module_name, "error": str(exc)}
+
+    return {"passed": False, "module": module_name, "error": f"unknown module {module_name}"}
+
+
+def multi_loop_hodge_fixture(seed: int) -> dict[str, Any]:
+    if seed in (11800, 11802):
+        return {
+            "seed": seed,
+            "kind": "repairable_multi_loop_cup_and_harmonic_kernel_defect",
+            "subtotal_cents": 1000,
+            "discount_cents": 100,
+            "locked_workers": [],
+            "infeasible_constraint": None,
+            "sources": {
+                "pricing_hodge": INITIAL_PRICING_HODGE_P1_PY,
+                "tax_hodge": INITIAL_TAX_HODGE_P1_PY,
+                "settlement_hodge": INITIAL_SETTLEMENT_HODGE_P1_P2_PY,
+            },
+            "escalations": {},
+        }
+    if seed == 11801:
+        return {
+            "seed": seed,
+            "kind": "infeasible_hardware_locked_unfilled_loop_harmonic_kernel",
+            "subtotal_cents": 1000,
+            "discount_cents": 100,
+            "locked_workers": ["worker-2"],
+            "infeasible_constraint": (
+                "Legacy unfilled-loop hardware lock: `settlement_hodge.py` is locked in read-only ROM "
+                "with `unfilled_loop_cochain = [1, 1, 1]` (`e_harm = 3 > 0`), while the LGGR multi-loop "
+                "Hodge merge gate requires zero harmonic kernel energy (`e_harm == 0`), zero 2-cell curl "
+                "(`e_co == 0`), and trivial cup product (`|cup| == 0`) without surcharges. Escalate to "
+                "human architecture review."
+            ),
+            "sources": {
+                "pricing_hodge": INITIAL_PRICING_HODGE_P1_PY,
+                "tax_hodge": INITIAL_TAX_HODGE_P1_PY,
+                "settlement_hodge": INITIAL_SETTLEMENT_HODGE_P1_P2_PY,
+            },
+            "escalations": {},
+        }
+    raise ValueError(f"unsupported multi_loop_hodge seed {seed}")
+
+
+class MultiLoopHodgeCodeWorkspace:
+    """Workspace for the 3-agent multi-loop cup-product & Hodge harmonic kernel swarm."""
+
+    def __init__(self, state: dict[str, Any]) -> None:
+        self.state = deepcopy(state)
+
+    def tool(
+        self,
+        worker: str,
+        name: str,
+        arguments: dict[str, Any],
+        feedback: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
+        """Dispatch a worker tool call (`inspect_workspace`, `run_local_tests`, `submit_module_patch`, `escalate`)."""
+        if worker not in MULTI_LOOP_HODGE_WORKER_MODULES:
+            return {"accepted": False, "error": f"unknown worker {worker}"}
+        module_name = MULTI_LOOP_HODGE_WORKER_MODULES[worker]
+        if name == "inspect_workspace" and arguments == {}:
+            own_src = self.state["sources"][module_name]
+            local_res = run_multi_loop_hodge_local_unit_tests(module_name, own_src)
+            payload: dict[str, Any] = {
+                "worker": worker,
+                "owned_module": f"{module_name}.py",
+                "locked": worker in self.state["locked_workers"],
+                "source_code": own_src,
+                "local_unit_test": local_res,
+                "peer_signatures": {
+                    "pricing_hodge.py": "def compute_pricing_hodge_quote(subtotal_cents: int = 1000, discount_cents: int = 100) -> dict",
+                    "tax_hodge.py": "def compute_tax_hodge_cup(quote: dict) -> dict",
+                    "settlement_hodge.py": "def route_settlement_hodge_payout(taxed_quote: dict) -> dict",
+                },
+                "infeasible_constraint": self.state["infeasible_constraint"],
+            }
+            if feedback is not None:
+                payload["merge_gate_feedback"] = feedback
+            return payload
+
+        if name in ("run_local_tests", "run_local_unit_tests") and arguments == {}:
+            own_src = self.state["sources"][module_name]
+            return run_multi_loop_hodge_local_unit_tests(module_name, own_src)
+
+        if name == "escalate":
+            reason = arguments.get("reason")
+            if set(arguments) != {"reason"} or not isinstance(reason, str) or not reason.strip():
+                return {"accepted": False, "error": "escalate requires a non-empty string 'reason'"}
+            self.state["escalations"][worker] = reason.strip()[:1000]
+            return {
+                "escalated": True,
+                "worker": worker,
+                "reason": self.state["escalations"][worker],
+            }
+
+        if name == "submit_module_patch":
+            if worker in self.state["locked_workers"]:
+                return {"accepted": False, "error": "owned module is locked; escalate if contract is infeasible"}
+            new_src = arguments.get("source_code")
+            if set(arguments) != {"source_code"} or not isinstance(new_src, str) or not new_src.strip():
+                return {"accepted": False, "error": "submit_module_patch requires non-empty 'source_code'"}
+            local_res = run_multi_loop_hodge_local_unit_tests(module_name, new_src)
+            if not local_res.get("passed"):
+                return {
+                    "accepted": False,
+                    "error": "patch failed local unit tests",
+                    "local_unit_test_result": local_res,
+                }
+            self.state["sources"][module_name] = new_src
+            return {
+                "accepted": True,
+                "module": module_name,
+                "local_unit_test_result": local_res,
+                "scope": "isolated module unit tests passed; multi-loop Hodge decomposition and cup-product cocycle are checked at merge gate",
+            }
+
+        return {"accepted": False, "error": f"unsupported tool {name} or malformed arguments"}
+
+
 
 
 

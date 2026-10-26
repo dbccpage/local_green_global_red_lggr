@@ -444,13 +444,24 @@ In `--topology three_party_c3`, the 3 concurrent agents maintain a 3-module thre
 | `11700` | `repairable_three_party_c3_slice_bound_defect` | **C** | `explicit_lggr_three_party_c3_bracket_directive` | **`completed`** | **`76/25` (`228/75`)** | **`0`** | **`0`** | **`0`** | **`0`** | **2** | **12** | **`$0.015375`** |
 | `11701` | `infeasible_hardware_locked_bipartite_c2_surrogate_ceiling` | **A / B / C** | All policies | `safe_escalated` | `2` | `1` | `1` | `4` | `10` | 1 | 19 | `$0.024187` |
 
+## 28. Multi-Loop 2-Complex Cup-Product & Hodge-Laplacian Harmonic Kernel Audit (`--topology multi_loop_hodge`, Theorem 121)
+
+In `--topology multi_loop_hodge`, the 3 concurrent agents maintain a 3-module multi-loop settlement codebase (`pricing_hodge.py`, `tax_hodge.py`, `settlement_hodge.py`) on the 5-vertex, 6-edge, 1-filled-triangle 2-complex $K = T_{012} \sqcup C_{234}$ (`StreamingCodebaseMultiLoopHodgeMonitor`, Theorem 121):
+
+| Seed | Case | Arm | Gate Policy | Status | 1-Cochain $h$ | $e_{\mathrm{ex}}$ | $e_{\mathrm{co}}$ | $e_{\mathrm{harm}}$ | $|\mathrm{cup}|$ | Surcharge | Waves | API Calls | Cost (USD) |
+| :--- | :--- | :---: | :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| `11800` | `repairable_multi_loop_cup_and_harmonic_kernel_defect` | **A** | `local_unit_and_pythagorean_orthogonality_gate` | `blocked_unresolved` | `[3, 0, 0, 1, 1, 1]` | `6` | `3` | `3` | `2` | `8` | 2 | 18 | `$0.015919` |
+| `11800` | `repairable_multi_loop_cup_and_harmonic_kernel_defect` | **B** | `filled_loop_curl_and_cup_only_gate` | `blocked_unresolved` | `[2, -1, -1, 1, 1, 1]` | `6` | `0` | `3` | `0` | `3` | 2 | 14 | `$0.014760` |
+| `11800` | `repairable_multi_loop_cup_and_harmonic_kernel_defect` | **C** | `explicit_lggr_multi_loop_hodge_directive` | **`completed`** | **`[2, -1, -1, 1, -1, 0]`** | **`8`** | **`0`** | **`0`** | **`0`** | **`0`** | **1** | **6** | **`$0.008064`** |
+| `11801` | `infeasible_hardware_locked_unfilled_loop_harmonic_kernel` | **A / B / C** | All policies | `safe_escalated` | `[3, 0, 0, 1, 1, 1]` | `6` | `3` | `3` | `2` | `8` | 1 | 19 | `$0.022409` |
+
 ## Offline Verification & Live Execution
 
 ```powershell
 # Run unit, tamper, and deterministic replay tests (no API calls)
 python -m unittest tests.test_concurrent_code_engineering_swarm -v
 
-# Replay archived live 3-agent linear, 4-agent diamond, 3-agent catalyst, 3-agent stateful DFA, 3-agent replay-order, 3-agent coalitional, 3-agent Mayer-Vietoris, 3-agent windowed-drift, 3-agent optional-stopping, 3-agent CPTP channel, 3-agent Regge holonomy, 3-agent k-induction, 3-agent Jacobian, 3-agent boundary-quorum, 3-agent lease-overlap, 3-agent contextual-sheaf, 3-agent watcher-dropout, 3-agent policy-reversal, 3-agent fiber-splitting, 3-agent disagreement-council, 3-agent six-role deduplication, 3-agent path-kernel dashboard, 3-agent dynamic-schema synthesis, 3-agent adversarial-schema side-channel, 3-agent graceful-shedding, 3-agent obligation-migration, and 3-agent three-party-c3 evidence (no API calls)
+# Replay archived live 3-agent linear, 4-agent diamond, 3-agent catalyst, 3-agent stateful DFA, 3-agent replay-order, 3-agent coalitional, 3-agent Mayer-Vietoris, 3-agent windowed-drift, 3-agent optional-stopping, 3-agent CPTP channel, 3-agent Regge holonomy, 3-agent k-induction, 3-agent Jacobian, 3-agent boundary-quorum, 3-agent lease-overlap, 3-agent contextual-sheaf, 3-agent watcher-dropout, 3-agent policy-reversal, 3-agent fiber-splitting, 3-agent disagreement-council, 3-agent six-role deduplication, 3-agent path-kernel dashboard, 3-agent dynamic-schema synthesis, 3-agent adversarial-schema side-channel, 3-agent graceful-shedding, 3-agent obligation-migration, 3-agent three-party-c3, and 3-agent multi-loop-hodge evidence (no API calls)
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/diamond_pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/catalyst_pilot_run/events.jsonl
@@ -478,4 +489,5 @@ python -m experiments.concurrent_code_engineering_swarm.runner replay experiment
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/graceful_shedding_pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/obligation_migration_pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/three_party_c3_pilot_run/events.jsonl
+python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/multi_loop_hodge_pilot_run/events.jsonl
 ```

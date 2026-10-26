@@ -30856,6 +30856,449 @@ class StreamingCodebaseThreePartyConstantMonitor:
         return json_value({**body, "receipt_sha256": digest(body)})
 
 
+class StreamingCodebaseMultiLoopHodgeMonitor:
+    """Online multi-loop 2-complex cup-product and Hodge-Laplacian harmonic kernel monitor for concurrent code-engineering swarms (Theorem 121).
+
+    Composes ``StreamingMultiLoopCupHodgeMonitor``, ``StreamingHodgeDecompositionMonitor``,
+    ``StreamingDiscreteCurvatureMonitor``, ``StreamingSimplicialCupMonitor``,
+    ``StreamingCodebaseInterfaceMergeMonitor``, and ``StreamingFiberMonitor`` across a 3-module
+    settlement codebase (``pricing_hodge.py``, ``tax_hodge.py``, ``settlement_hodge.py``) over
+    the 2-loop 2-complex K = T_filled uplus T_unfilled with 1 cent surcharge per unit of
+    e_co + e_harm + |cup|:
+      - Phase 1 (Coexisting 2-cell curl, harmonic kernel & cup cocycle on h = [3, 0, 0, 1, 1, 1]):
+        Passes local unit tests and orthogonal Pythagorean energy check (L_p1 = 1), yet has
+        e_ex = 6, e_co = 3 > 0, e_harm = 3 > 0, and |cup| = |-2| = 2 > 0
+        (hodge_surcharge_cents = 8, payout = 865 != 873, Eg_p1 = 0, defect_p1 = -1).
+      - Phase 2 (2-cell curl & cup cleared, unfilled harmonic zero-energy kernel persists on
+        h = [2, -1, -1, 1, 1, 1]):
+        Clears 2-cell curl (e_co = 0) and cup product (|cup| = 0, L_p2 = 1), yet unfilled loop
+        retains harmonic zero-energy kernel e_harm = 3 > 0 (hodge_surcharge_cents = 3,
+        payout = 870 != 873, Eg_p2 = 0, defect_p2 = -1).
+      - Phase 3 (Pure exact gradient & trivial cup product on h = [2, -1, -1, 1, -1, 0]):
+        ``StreamingCodebaseMultiLoopHodgeMonitor`` issues role-scoped directives aligning
+        filled loop edges ``[2, -1, -1]``, cup cocycle ``beta = [0, 0, 0]``, and unfilled loop
+        edges ``[1, -1, 0]``, achieving e_ex = 8, e_co = 0, e_harm = 0, |cup| = 0,
+        hodge_surcharge_cents = 0, payout = 873, 873 + 27 + 90 = 990 (L_p3 = 1, Eg_p3 = 1,
+        defect_p3 = 0).
+    """
+
+    PHASE_1_PRICING_HODGE_SOURCE = (
+        "def compute_pricing_hodge_quote(subtotal_cents: int = 1000, discount_cents: int = 100) -> dict:\n"
+        "    net = int(subtotal_cents) - int(discount_cents)\n"
+        "    return {'subtotal_cents': int(subtotal_cents), 'discount_cents': int(discount_cents), 'net_cents': net, 'filled_loop_cochain': [3, 0, 0], 'alpha_cocycle': [2, 3, 5]}\n"
+    )
+
+    PHASE_1_TAX_HODGE_SOURCE = (
+        "def compute_tax_hodge_cup(quote: dict) -> dict:\n"
+        "    net = int(quote['net_cents'])\n"
+        "    return {**quote, 'tax_cents': (net * 10) // 100, 'gross_cents': net + (net * 10) // 100, 'beta_cocycle': [4, -1, 3]}\n"
+    )
+
+    PHASE_1_SETTLEMENT_HODGE_SOURCE = (
+        "def route_settlement_hodge_payout(taxed_quote: dict) -> dict:\n"
+        "    net, tax = int(taxed_quote['net_cents']), int(taxed_quote['tax_cents'])\n"
+        "    fee = (net * 3) // 100\n"
+        "    f_loop = list(taxed_quote.get('filled_loop_cochain', [3, 0, 0]))\n"
+        "    beta = list(taxed_quote.get('beta_cocycle', [4, -1, 3]))\n"
+        "    u_loop = [1, 1, 1]\n"
+        "    e_co = 3 if sum(f_loop) != 0 else 0\n"
+        "    e_harm = 3 if sum(u_loop) != 0 else 0\n"
+        "    cup_abs = abs(2 * int(beta[1]))\n"
+        "    surcharge = e_co + e_harm + cup_abs\n"
+        "    return {'merchant_payout_cents': net - fee - surcharge, 'platform_fee_cents': fee, 'tax_reserve_cents': tax, 'total_settled_cents': (net - fee - surcharge) + fee + tax, 'unfilled_loop_cochain': u_loop, 'hodge_surcharge_cents': surcharge}\n"
+    )
+
+    PHASE_2_PRICING_HODGE_SOURCE = (
+        "def compute_pricing_hodge_quote(subtotal_cents: int = 1000, discount_cents: int = 100) -> dict:\n"
+        "    net = int(subtotal_cents) - int(discount_cents)\n"
+        "    return {'subtotal_cents': int(subtotal_cents), 'discount_cents': int(discount_cents), 'net_cents': net, 'filled_loop_cochain': [2, -1, -1], 'alpha_cocycle': [2, -1, 1]}\n"
+    )
+
+    PHASE_2_TAX_HODGE_SOURCE = (
+        "def compute_tax_hodge_cup(quote: dict) -> dict:\n"
+        "    net = int(quote['net_cents'])\n"
+        "    return {**quote, 'tax_cents': (net * 10) // 100, 'gross_cents': net + (net * 10) // 100, 'beta_cocycle': [0, 0, 0]}\n"
+    )
+
+    PHASE_2_SETTLEMENT_HODGE_SOURCE = PHASE_1_SETTLEMENT_HODGE_SOURCE
+
+    PHASE_3_PRICING_HODGE_SOURCE = PHASE_2_PRICING_HODGE_SOURCE
+
+    PHASE_3_TAX_HODGE_SOURCE = PHASE_2_TAX_HODGE_SOURCE
+
+    PHASE_3_SETTLEMENT_HODGE_SOURCE = (
+        "def route_settlement_hodge_payout(taxed_quote: dict) -> dict:\n"
+        "    net, tax = int(taxed_quote['net_cents']), int(taxed_quote['tax_cents'])\n"
+        "    fee = (net * 3) // 100\n"
+        "    f_loop = list(taxed_quote.get('filled_loop_cochain', [2, -1, -1]))\n"
+        "    beta = list(taxed_quote.get('beta_cocycle', [0, 0, 0]))\n"
+        "    u_loop = [1, -1, 0]\n"
+        "    e_co = 3 if sum(f_loop) != 0 else 0\n"
+        "    e_harm = 3 if sum(u_loop) != 0 else 0\n"
+        "    cup_abs = abs(2 * int(beta[1]))\n"
+        "    surcharge = e_co + e_harm + cup_abs\n"
+        "    return {'merchant_payout_cents': net - fee - surcharge, 'platform_fee_cents': fee, 'tax_reserve_cents': tax, 'total_settled_cents': (net - fee - surcharge) + fee + tax, 'unfilled_loop_cochain': u_loop, 'hodge_surcharge_cents': surcharge}\n"
+    )
+
+    def __init__(self, *, scope_id: str = "streaming-codebase-multi-loop-hodge-scope") -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.multi_loop_monitor = StreamingMultiLoopCupHodgeMonitor(
+            scope_id=f"{self.scope_id}-multi-loop"
+        )
+        self.fiber_monitor = StreamingFiberMonitor(scope_id=f"{self.scope_id}-fiber")
+        self.evaluations: list[dict[str, Any]] = []
+        self.three_phase_audits: list[dict[str, Any]] = []
+
+    def evaluate_multi_loop_hodge_modules(
+        self,
+        evaluation_id: str,
+        *,
+        module_sources: Mapping[str, str] | None = None,
+        local_test_results: Mapping[str, bool] | None = None,
+        pricing_hodge_source: str | None = None,
+        tax_hodge_source: str | None = None,
+        settlement_hodge_source: str | None = None,
+        subtotal_cents: int = 1000,
+        discount_cents: int = 100,
+        expected_gross_cents: int = 990,
+        expected_payout_cents: int = 873,
+        expected_fee_cents: int = 27,
+        expected_tax_cents: int = 90,
+        model_id: str = "deterministic",
+    ) -> dict[str, Any]:
+        """Compile and evaluate a 3-module multi-loop Hodge & cup-product settlement codebase."""
+        eid = text(evaluation_id, "evaluation_id")
+        mid = text(model_id, "model_id")
+        sub = exact_int(subtotal_cents, "subtotal_cents")
+        disc = exact_int(discount_cents, "discount_cents")
+        exp_gross = exact_int(expected_gross_cents, "expected_gross_cents")
+        exp_payout = exact_int(expected_payout_cents, "expected_payout_cents")
+        exp_fee = exact_int(expected_fee_cents, "expected_fee_cents")
+        exp_tax = exact_int(expected_tax_cents, "expected_tax_cents")
+
+        if module_sources is not None:
+            for mod_name in ("pricing_hodge", "tax_hodge", "settlement_hodge"):
+                if mod_name not in module_sources:
+                    raise ValidationError(f"missing module source for {mod_name}")
+            p_src = module_sources["pricing_hodge"]
+            t_src = module_sources["tax_hodge"]
+            s_src = module_sources["settlement_hodge"]
+        else:
+            if pricing_hodge_source is None or tax_hodge_source is None or settlement_hodge_source is None:
+                raise ValidationError("either module_sources or all three *_hodge_source strings must be provided")
+            p_src = pricing_hodge_source
+            t_src = tax_hodge_source
+            s_src = settlement_hodge_source
+
+        if local_test_results is not None:
+            for mod_name in ("pricing_hodge", "tax_hodge", "settlement_hodge"):
+                if mod_name not in local_test_results:
+                    raise ValidationError(f"missing local_test_results entry for {mod_name}")
+            unit_tests_pass = all(bool(local_test_results[m]) for m in ("pricing_hodge", "tax_hodge", "settlement_hodge"))
+        else:
+            unit_tests_pass = True
+
+        p_ns = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(
+            "pricing_hodge", p_src
+        )
+        t_ns = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(
+            "tax_hodge", t_src
+        )
+        s_ns = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(
+            "settlement_hodge", s_src
+        )
+
+        p_fn = p_ns.get("compute_pricing_hodge_quote")
+        t_fn = t_ns.get("compute_tax_hodge_cup")
+        s_fn = s_ns.get("route_settlement_hodge_payout")
+        if not callable(p_fn) or not callable(t_fn) or not callable(s_fn):
+            raise ValidationError(
+                "modules must define compute_pricing_hodge_quote, compute_tax_hodge_cup, and route_settlement_hodge_payout"
+            )
+
+        try:
+            p_out = p_fn(sub, disc)
+            t_out = t_fn(p_out)
+            s_out = s_fn(t_out)
+            if not isinstance(p_out, dict) or not isinstance(t_out, dict) or not isinstance(s_out, dict):
+                raise TypeError("module outputs must be dicts")
+        except Exception as exc:
+            err_rec: dict[str, Any] = {
+                "evaluation_id": eid,
+                "model_id": mid,
+                "cochain_vector": [0, 0, 0, 0, 0, 0],
+                "norm2_exact": 0,
+                "norm2_coexact": 3,
+                "norm2_harmonic": 3,
+                "cup_product_abs": 2,
+                "hodge_surcharge_cents": 8,
+                "merchant_payout_cents": 0,
+                "platform_fee_cents": 0,
+                "tax_reserve_cents": 0,
+                "total_settled_cents": 0,
+                "conservation_holds": False,
+                "local_green": 0,
+                "global_green": 0,
+                "defect": 0,
+                "status": "RUNTIME_EXECUTION_ERROR_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "runtime_error": str(exc),
+                "compact_role_directives": {
+                    "worker-0": "REPAIR_PRICING_HODGE: set filled_loop_cochain=[2, -1, -1] and alpha_cocycle=[2, -1, 1].",
+                    "worker-1": "REPAIR_TAX_HODGE: set beta_cocycle=[0, 0, 0].",
+                    "worker-2": "REPAIR_SETTLEMENT_HODGE: set unfilled_loop_cochain=[1, -1, 0].",
+                },
+            }
+            self.evaluations.append(err_rec)
+            return json_value(err_rec)
+
+        filled_loop = [int(x) for x in p_out.get("filled_loop_cochain", [3, 0, 0])][:3]
+        while len(filled_loop) < 3:
+            filled_loop.append(0)
+        alpha = [int(x) for x in p_out.get("alpha_cocycle", [2, 3, 5])][:3]
+        while len(alpha) < 3:
+            alpha.append(0)
+        beta = [int(x) for x in t_out.get("beta_cocycle", [4, -1, 3])][:3]
+        while len(beta) < 3:
+            beta.append(0)
+        unfilled_loop = [int(x) for x in s_out.get("unfilled_loop_cochain", [1, 1, 1])][:3]
+        while len(unfilled_loop) < 3:
+            unfilled_loop.append(0)
+
+        h_vec = filled_loop + unfilled_loop
+        d0 = [list(row) for row in StreamingMultiLoopCupHodgeMonitor.DEFAULT_D0]
+        d1 = [list(row) for row in StreamingMultiLoopCupHodgeMonitor.DEFAULT_D1]
+
+        hodge_mon = StreamingHodgeDecompositionMonitor(scope_id=f"{self.scope_id}-{eid}-hodge")
+        hrec = hodge_mon.record_complex_cochain(f"{eid}::hodge", d0, h_vec, D1=d1)
+        cup_mon = StreamingSimplicialCupMonitor(scope_id=f"{self.scope_id}-{eid}-cup")
+        cuprec = cup_mon.evaluate_two_simplex(
+            f"{eid}::cup",
+            "v0",
+            "v1",
+            "v2",
+            alpha_01=alpha[0],
+            alpha_12=alpha[1],
+            alpha_02=alpha[2],
+            beta_01=beta[0],
+            beta_12=beta[1],
+            beta_02=beta[2],
+            f_v0=0,
+            f_v1=2,
+            f_v2=1,
+        )
+        multi_eval = self.multi_loop_monitor.record_multi_loop_evaluation(
+            f"{eid}::multi_loop", model_id=mid
+        )
+
+        e_ex = int(Fraction(str(hrec["norm2_exact"])))
+        e_co = int(Fraction(str(hrec["norm2_coexact"])))
+        e_harm = int(Fraction(str(hrec["norm2_harmonic"])))
+        cup_val = int(Fraction(str(cuprec["alpha_cup_beta"])))
+        cup_abs = abs(cup_val)
+        surcharge_cents = e_co + e_harm + cup_abs
+
+        payout = int(s_out.get("merchant_payout_cents", 0))
+        fee = int(s_out.get("platform_fee_cents", 0))
+        tax = int(s_out.get("tax_reserve_cents", 0))
+        total_settled = int(s_out.get("total_settled_cents", 0))
+
+        local_pass = (
+            unit_tests_pass
+            and int(p_out.get("net_cents", 0)) == sub - disc
+            and int(t_out.get("tax_cents", 0)) == exp_tax
+            and int(t_out.get("gross_cents", 0)) == exp_gross
+            and bool(hrec["pythagorean_energy_verified"])
+            and bool(hrec["orthogonality_verified"])
+            and bool(cuprec["alpha_is_cocycle"])
+            and bool(cuprec["beta_is_cocycle"])
+        )
+
+        conservation_holds = (
+            payout == exp_payout
+            and fee == exp_fee
+            and tax == exp_tax
+            and total_settled == exp_gross
+            and payout + fee + tax == exp_gross
+        )
+        hodge_coherent = (
+            h_vec == [2, -1, -1, 1, -1, 0]
+            and e_ex == 8
+            and e_co == 0
+            and e_harm == 0
+            and cup_abs == 0
+            and surcharge_cents == 0
+        )
+
+        local_green = 1 if local_pass else 0
+        global_green = 1 if (local_green == 1 and hodge_coherent and conservation_holds) else 0
+        defect = global_green - local_green
+
+        self.fiber_monitor.observe(
+            f"{eid}::multi_loop_hodge",
+            {"local_unit_tests": "pass" if local_green == 1 else "fail"},
+            global_green,
+            metadata={
+                "norm2_coexact": e_co,
+                "norm2_harmonic": e_harm,
+                "cup_product_abs": cup_abs,
+                "hodge_surcharge_cents": surcharge_cents,
+            },
+        )
+
+        if global_green == 1:
+            status = "CODEBASE_MULTI_LOOP_HODGE_COHERENT_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+            directives = {
+                "worker-0": "HOLD: pricing_hodge exact filled loop [2, -1, -1] verified.",
+                "worker-1": "HOLD: tax_hodge trivial cup cocycle beta=[0, 0, 0] verified.",
+                "worker-2": "HOLD: settlement_hodge exact unfilled loop [1, -1, 0] and payout=873 verified.",
+            }
+        elif e_co > 0 or cup_abs > 0:
+            status = "MIXED_CURL_AND_CUP_CODEBASE_OBSTRUCTION_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+            directives = {
+                "worker-0": "REPAIR_PRICING_HODGE: set filled_loop_cochain=[2, -1, -1] and alpha_cocycle=[2, -1, 1] to clear 2-cell curl.",
+                "worker-1": "REPAIR_TAX_HODGE: set beta_cocycle=[0, 0, 0] to clear cup-product cocycle.",
+                "worker-2": "REPAIR_SETTLEMENT_HODGE: set unfilled_loop_cochain=[1, -1, 0] so e_harm == 0 and payout == 873.",
+            }
+        elif e_harm > 0:
+            status = "HARMONIC_ZERO_ENERGY_KERNEL_CODEBASE_OBSTRUCTION_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+            directives = {
+                "worker-0": "HOLD: pricing_hodge exact filled loop [2, -1, -1] verified.",
+                "worker-1": "HOLD: tax_hodge trivial cup cocycle beta=[0, 0, 0] verified.",
+                "worker-2": "REPAIR_SETTLEMENT_HODGE: unfilled loop [1, 1, 1] has e_harm=3; set unfilled_loop_cochain=[1, -1, 0] so e_harm == 0 and payout == 873.",
+            }
+        else:
+            status = "MULTI_LOOP_HODGE_INVARIANT_MISMATCH_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+            directives = {
+                "worker-0": "REPAIR_PRICING_HODGE: set filled_loop_cochain=[2, -1, -1] and alpha_cocycle=[2, -1, 1].",
+                "worker-1": "REPAIR_TAX_HODGE: set beta_cocycle=[0, 0, 0].",
+                "worker-2": "REPAIR_SETTLEMENT_HODGE: set unfilled_loop_cochain=[1, -1, 0] and restore payout=873.",
+            }
+
+        rec: dict[str, Any] = {
+            "evaluation_id": eid,
+            "model_id": mid,
+            "cochain_vector": h_vec,
+            "norm2_exact": e_ex,
+            "norm2_coexact": e_co,
+            "norm2_harmonic": e_harm,
+            "cup_product_abs": cup_abs,
+            "hodge_surcharge_cents": surcharge_cents,
+            "merchant_payout_cents": payout,
+            "platform_fee_cents": fee,
+            "tax_reserve_cents": tax,
+            "total_settled_cents": total_settled,
+            "conservation_holds": conservation_holds,
+            "local_green": local_green,
+            "global_green": global_green,
+            "defect": defect,
+            "status": status,
+            "contract_status": contract_status,
+            "compact_role_directives": directives,
+            "multi_loop_reference_evaluation": multi_eval,
+        }
+        self.evaluations.append(rec)
+        return json_value(rec)
+
+    def evaluate_three_phase_multi_loop_hodge_audit(
+        self,
+        model_id: str,
+    ) -> dict[str, Any]:
+        """Run the 3-phase codebase multi-loop Hodge & cup-product audit for a model or benchmark trial."""
+        mid = text(model_id, "model_id")
+        p1 = self.evaluate_multi_loop_hodge_modules(
+            f"{mid}::phase_1_mixed_curl_harmonic_cup",
+            pricing_hodge_source=self.PHASE_1_PRICING_HODGE_SOURCE,
+            tax_hodge_source=self.PHASE_1_TAX_HODGE_SOURCE,
+            settlement_hodge_source=self.PHASE_1_SETTLEMENT_HODGE_SOURCE,
+            model_id=mid,
+        )
+        p2 = self.evaluate_multi_loop_hodge_modules(
+            f"{mid}::phase_2_harmonic_zero_energy_kernel",
+            pricing_hodge_source=self.PHASE_2_PRICING_HODGE_SOURCE,
+            tax_hodge_source=self.PHASE_2_TAX_HODGE_SOURCE,
+            settlement_hodge_source=self.PHASE_2_SETTLEMENT_HODGE_SOURCE,
+            model_id=mid,
+        )
+        p3 = self.evaluate_multi_loop_hodge_modules(
+            f"{mid}::phase_3_exact_gradient_and_cup_coherent",
+            pricing_hodge_source=self.PHASE_3_PRICING_HODGE_SOURCE,
+            tax_hodge_source=self.PHASE_3_TAX_HODGE_SOURCE,
+            settlement_hodge_source=self.PHASE_3_SETTLEMENT_HODGE_SOURCE,
+            model_id=mid,
+        )
+
+        audit_rec = json_value(
+            {
+                "model_id": mid,
+                "phase_1_norm2_exact": p1["norm2_exact"],
+                "phase_1_norm2_coexact": p1["norm2_coexact"],
+                "phase_1_norm2_harmonic": p1["norm2_harmonic"],
+                "phase_1_cup_abs": p1["cup_product_abs"],
+                "phase_1_surcharge_cents": p1["hodge_surcharge_cents"],
+                "phase_1_payout_cents": p1["merchant_payout_cents"],
+                "phase_1_local_green": p1["local_green"],
+                "phase_1_global_green": p1["global_green"],
+                "phase_1_defect": p1["defect"],
+                "phase_1_status": p1["status"],
+                "phase_2_norm2_exact": p2["norm2_exact"],
+                "phase_2_norm2_coexact": p2["norm2_coexact"],
+                "phase_2_norm2_harmonic": p2["norm2_harmonic"],
+                "phase_2_cup_abs": p2["cup_product_abs"],
+                "phase_2_surcharge_cents": p2["hodge_surcharge_cents"],
+                "phase_2_payout_cents": p2["merchant_payout_cents"],
+                "phase_2_local_green": p2["local_green"],
+                "phase_2_global_green": p2["global_green"],
+                "phase_2_defect": p2["defect"],
+                "phase_2_status": p2["status"],
+                "phase_3_norm2_exact": p3["norm2_exact"],
+                "phase_3_norm2_coexact": p3["norm2_coexact"],
+                "phase_3_norm2_harmonic": p3["norm2_harmonic"],
+                "phase_3_cup_abs": p3["cup_product_abs"],
+                "phase_3_surcharge_cents": p3["hodge_surcharge_cents"],
+                "phase_3_payout_cents": p3["merchant_payout_cents"],
+                "phase_3_local_green": p3["local_green"],
+                "phase_3_global_green": p3["global_green"],
+                "phase_3_defect": p3["defect"],
+                "phase_3_status": p3["status"],
+            }
+        )
+        self.three_phase_audits.append(audit_rec)
+        return audit_rec
+
+    def current_receipt(self) -> dict[str, Any]:
+        if not self.evaluations:
+            raise ValidationError("at least one codebase multi-loop Hodge evaluation must be recorded")
+        n = len(self.evaluations)
+        lggr_count = sum(1 for e in self.evaluations if e["defect"] == -1)
+        lggg_count = sum(1 for e in self.evaluations if e["global_green"] == 1)
+        last = self.evaluations[-1]
+
+        body: dict[str, Any] = {
+            "schema": "lggr.online_codebase_multi_loop_hodge.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": last["status"],
+            "contract_status": last["contract_status"],
+            "evaluation_count": n,
+            "lggr_obstruction_count": lggr_count,
+            "lggg_coherent_count": lggg_count,
+            "multi_loop_cup_hodge_receipt": (
+                self.multi_loop_monitor.current_receipt()
+                if self.multi_loop_monitor.evaluations
+                else None
+            ),
+            "fiber_receipt": self.fiber_monitor.get_receipt(),
+            "three_phase_audits": self.three_phase_audits,
+            "evaluations": self.evaluations,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
 
 
 
