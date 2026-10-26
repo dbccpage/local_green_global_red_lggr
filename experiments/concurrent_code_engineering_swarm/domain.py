@@ -7,6 +7,7 @@ from typing import Any
 from lggr.streaming import (
     StreamingCodebaseBellPolytopeMonitor,
     StreamingCodebaseCatalystEvolutionMonitor,
+    StreamingCodebaseClosedLoopRepairMonitor,
     StreamingCodebaseCoalitionalMonitor,
     StreamingCodebaseDeadlineBinPackingMonitor,
     StreamingCodebaseFigureEightWedgeMonitor,
@@ -11180,6 +11181,227 @@ class ThresholdGovernanceCodeWorkspace:
             }
 
         return {"accepted": False, "error": f"unsupported tool {name} or malformed arguments"}
+
+
+# ---------------------------------------------------------------------------
+# Closed-Loop Repair Convergence vs. Open-Loop Single-Shot Drift Workspace (Test 73, Theorem 138)
+# ---------------------------------------------------------------------------
+
+CLOSED_LOOP_REPAIR_WORKER_MODULES: dict[str, str] = {
+    "worker-0": "pricing_loop",
+    "worker-1": "tax_loop",
+    "worker-2": "settlement_loop",
+}
+
+INITIAL_PRICING_LOOP_P1_PY = StreamingCodebaseClosedLoopRepairMonitor.PHASE_1_PRICING_LOOP_SOURCE
+INITIAL_PRICING_LOOP_P2_P3_PY = StreamingCodebaseClosedLoopRepairMonitor.PHASE_2_PRICING_LOOP_SOURCE
+INITIAL_PRICING_LOOP_P2_PY = INITIAL_PRICING_LOOP_P2_P3_PY
+INITIAL_PRICING_LOOP_P3_PY = INITIAL_PRICING_LOOP_P2_P3_PY
+
+INITIAL_TAX_LOOP_P1_PY = StreamingCodebaseClosedLoopRepairMonitor.PHASE_1_TAX_LOOP_SOURCE
+INITIAL_TAX_LOOP_P2_PY = StreamingCodebaseClosedLoopRepairMonitor.PHASE_2_TAX_LOOP_SOURCE
+INITIAL_TAX_LOOP_P3_PY = StreamingCodebaseClosedLoopRepairMonitor.PHASE_3_TAX_LOOP_SOURCE
+
+INITIAL_SETTLEMENT_LOOP_P1_P2_PY = StreamingCodebaseClosedLoopRepairMonitor.PHASE_1_SETTLEMENT_LOOP_SOURCE
+INITIAL_SETTLEMENT_LOOP_P3_PY = StreamingCodebaseClosedLoopRepairMonitor.PHASE_3_SETTLEMENT_LOOP_SOURCE
+
+
+def run_closed_loop_repair_local_unit_tests(module_name: str, source_code: str) -> dict[str, Any]:
+    """Execute isolated per-module unit tests for `pricing_loop`, `tax_loop`, or `settlement_loop`."""
+    try:
+        ns = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(module_name, source_code)
+    except Exception as exc:
+        return {"passed": False, "module": module_name, "error": str(exc)}
+
+    try:
+        if module_name == "pricing_loop":
+            fn = ns.get("quote_loop_pricing")
+            if not callable(fn):
+                return {"passed": False, "module": module_name, "error": "missing quote_loop_pricing"}
+            res = fn(990)
+            c1 = res.get("pricing_step_correction_c1") if isinstance(res, dict) else None
+            r1 = res.get("residual_r1") if isinstance(res, dict) else None
+            ok = (
+                isinstance(res, dict)
+                and res.get("gross_cents") == 990
+                and res.get("platform_fee_cents") == 27
+                and res.get("net_after_fee_cents") == 963
+                and c1 in (0, 2, 4)
+                and r1 == 4 - c1
+            )
+            return {"passed": ok, "module": module_name, "sample_output": res}
+
+        if module_name == "tax_loop":
+            fn = ns.get("compute_loop_tax")
+            if not callable(fn):
+                return {"passed": False, "module": module_name, "error": "missing compute_loop_tax"}
+            res = fn(
+                {
+                    "gross_cents": 990,
+                    "platform_fee_cents": 27,
+                    "net_after_fee_cents": 963,
+                    "pricing_step_correction_c1": 4,
+                    "residual_r1": 0,
+                }
+            )
+            c2 = res.get("tax_step_correction_c2") if isinstance(res, dict) else None
+            r_vec = res.get("residual_vector") if isinstance(res, dict) else None
+            ok = (
+                isinstance(res, dict)
+                and res.get("tax_reserve_cents") == 90
+                and c2 in (0, 2, 4)
+                and r_vec == [0, 4 - c2]
+            )
+            return {"passed": ok, "module": module_name, "sample_output": res}
+
+        if module_name == "settlement_loop":
+            fn = ns.get("settle_loop_payout")
+            if not callable(fn):
+                return {"passed": False, "module": module_name, "error": "missing settle_loop_payout"}
+            res = fn(
+                {
+                    "gross_cents": 990,
+                    "platform_fee_cents": 27,
+                    "net_after_fee_cents": 963,
+                    "pricing_step_correction_c1": 4,
+                    "residual_r1": 0,
+                },
+                {
+                    "tax_reserve_cents": 90,
+                    "pricing_step_correction_c1": 4,
+                    "tax_step_correction_c2": 4,
+                    "correction_vector": [4, 4],
+                    "residual_vector": [0, 0],
+                },
+            )
+            ok = (
+                isinstance(res, dict)
+                and res.get("merchant_payout_cents") == 873
+                and res.get("platform_fee_cents") == 27
+                and res.get("tax_reserve_cents") == 90
+                and res.get("loop_surcharge_cents") == 0
+                and res.get("total_boundary_residual") == 0
+                and res.get("unrepaired_edge_count") == 0
+            )
+            return {"passed": ok, "module": module_name, "sample_output": res}
+    except Exception as exc:
+        return {"passed": False, "module": module_name, "error": str(exc)}
+
+    return {"passed": False, "module": module_name, "error": f"unknown module {module_name}"}
+
+
+def closed_loop_repair_fixture(seed: int) -> dict[str, Any]:
+    """Build initial 3-module workspace state for closed-loop repair swarm (seeds 13500, 13501, 13502)."""
+    infeasible = seed == 13501
+    return {
+        "seed": seed,
+        "kind": (
+            "infeasible_hardware_locked_tax_correction_c2_two"
+            if infeasible
+            else "repairable_open_loop_residual_and_closed_loop_witness_convergence"
+        ),
+        "sources": {
+            "pricing_loop": INITIAL_PRICING_LOOP_P1_PY,
+            "tax_loop": INITIAL_TAX_LOOP_P1_PY,
+            "settlement_loop": INITIAL_SETTLEMENT_LOOP_P1_P2_PY,
+        },
+        "locked_workers": ["worker-1"] if infeasible else [],
+        "infeasible_constraint": (
+            "Hardware ROM locks `tax_loop.py` (`worker-1`) to `tax_step_correction_c2 = 0` "
+            "(leaving boundary residual `r_2 = 4 > 0`, `unrepaired_edge_count >= 1`, and "
+            "`loop_surcharge_cents >= 6 > 0`), whereas the LGGR closed-loop merge gate requires "
+            "`residual_vector == [0, 0]` (`c_1 = 4, c_2 = 4`). Escalate with reason."
+            if infeasible
+            else None
+        ),
+        "escalations": {},
+    }
+
+
+class ClosedLoopRepairCodeWorkspace:
+    """Role-scoped tool dispatch for the 3-agent closed-loop repair code-engineering swarm."""
+
+    def __init__(self, state: dict[str, Any] | int) -> None:
+        if isinstance(state, int):
+            self.state = closed_loop_repair_fixture(state)
+        else:
+            self.state = deepcopy(state)
+
+    def tool(
+        self,
+        worker: str,
+        name: str,
+        arguments: dict[str, Any],
+        feedback: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
+        """Dispatch a worker tool call (`inspect_workspace`, `run_local_tests`, `submit_module_patch`, `escalate`)."""
+        if worker not in CLOSED_LOOP_REPAIR_WORKER_MODULES:
+            return {"accepted": False, "error": f"unknown worker {worker}"}
+        module_name = CLOSED_LOOP_REPAIR_WORKER_MODULES[worker]
+
+        if name == "inspect_workspace" and arguments == {}:
+            own_src = self.state["sources"][module_name]
+            local_res = run_closed_loop_repair_local_unit_tests(module_name, own_src)
+            payload: dict[str, Any] = {
+                "worker": worker,
+                "owned_module": f"{module_name}.py",
+                "locked": worker in self.state["locked_workers"],
+                "source_code": own_src,
+                "local_unit_test": local_res,
+                "peer_signatures": {
+                    "pricing_loop.py": "def quote_loop_pricing(gross_cents: int = 990) -> dict",
+                    "tax_loop.py": "def compute_loop_tax(pricing_out: dict) -> dict",
+                    "settlement_loop.py": "def settle_loop_payout(pricing_out: dict, tax_out: dict) -> dict",
+                },
+                "infeasible_constraint": self.state["infeasible_constraint"],
+            }
+            if feedback is not None:
+                payload["merge_gate_feedback"] = feedback
+            return payload
+
+        if name in ("run_local_tests", "run_local_unit_tests") and arguments == {}:
+            own_src = self.state["sources"][module_name]
+            return run_closed_loop_repair_local_unit_tests(module_name, own_src)
+
+        if name == "escalate":
+            if self.state["infeasible_constraint"] is None:
+                return {
+                    "accepted": False,
+                    "error": "infeasible_constraint is null; do not escalate on a repairable seed—call submit_module_patch with your target module source code",
+                }
+            reason = arguments.get("reason")
+            if set(arguments) != {"reason"} or not isinstance(reason, str) or not reason.strip():
+                return {"accepted": False, "error": "escalate requires a non-empty string 'reason'"}
+            self.state["escalations"][worker] = reason.strip()[:1000]
+            return {
+                "escalated": True,
+                "worker": worker,
+                "reason": self.state["escalations"][worker],
+            }
+
+        if name == "submit_module_patch":
+            if worker in self.state["locked_workers"]:
+                return {"accepted": False, "error": "owned module is locked; escalate if contract is infeasible"}
+            new_src = arguments.get("source_code")
+            if set(arguments) != {"source_code"} or not isinstance(new_src, str) or not new_src.strip():
+                return {"accepted": False, "error": "submit_module_patch requires non-empty 'source_code'"}
+            local_res = run_closed_loop_repair_local_unit_tests(module_name, new_src)
+            if not local_res.get("passed"):
+                return {
+                    "accepted": False,
+                    "error": "patch failed local unit tests",
+                    "local_unit_test_result": local_res,
+                }
+            self.state["sources"][module_name] = new_src
+            return {
+                "accepted": True,
+                "module": module_name,
+                "local_unit_test_result": local_res,
+                "scope": "isolated module unit tests passed; closed-loop zero boundary residual (r1=0, r2=0) is checked at merge gate",
+            }
+
+        return {"accepted": False, "error": f"unsupported tool {name} or malformed arguments"}
+
 
 
 

@@ -719,6 +719,25 @@ In the `weighted_relaxation` topology (`StreamingCodebaseWeightedRelaxationMonit
 | `13402` | `repairable_prefix_threshold_excursion_and_every_prefix_scheduling` | **B** | `coarsened_macro_boundary_only_gate` | `blocked_unresolved` | `[3, -3, 3, -3]` | `[3, 0, 3, 0]` | `3` | `0` | `1` | `0` | `2` | `871` | 2 | 14 | `$0.012991` |
 | `13402` | `repairable_prefix_threshold_excursion_and_every_prefix_scheduling` | **C** | `explicit_lggr_every_prefix_threshold_directive` | **`completed`** | **`[2, -2, 2, -2]`** | **`[2, 0, 2, 0]`** | **`2`** | **`0`** | **`0`** | **`0`** | **`0`** | **`873`** | **1** | **6** | **`$0.006281`** |
 
+## 45. Live 3-Agent Closed-Loop Witness-Guided Boundary Repair vs. Single-Shot Open-Loop Residual Codebase Campaign (`--topology closed_loop_repair`, Theorem 138)
+
+- **Evidence path:** `experiments/concurrent_code_engineering_swarm/evidence/closed_loop_repair_pilot_run/`
+- **5-model benchmark receipt:** `receipts/live_benchmarks/codebase_closed_loop_repair_benchmark.json` (`SHA-256: 41ceea3ebf74309a7d6b01f984133a4d4de6dce3bb0e0414e4ea9b57adccfc57`)
+- **Total API calls:** `92` (`max_inflight_requests = 3`, `concurrent_waves = 30`)
+- **Total OpenRouter spend:** `$0.0896549792`
+
+| Seed | Case | Arm | Gate Mode | Outcome | `correction_vector` | `residual_vector` | `total_residual` | `unrepaired_edges` | Surcharge | Payout | Waves | API Calls | Cost (USD) |
+| :--- | :--- | :---: | :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| `13500` | `repairable_open_loop_residual_and_closed_loop_witness_convergence` | **A** | `open_loop_baseline_no_repair_gate` | `blocked_unresolved` | `[0, 0]` | `[4, 4]` | `8` | `2` | `12` | `861` | 2 | 16 | `$0.014257` |
+| `13500` | `repairable_open_loop_residual_and_closed_loop_witness_convergence` | **B** | `single_shot_partial_repair_gate` | `blocked_unresolved` | `[4, 2]` | `[0, 2]` | `2` | `1` | `4` | `869` | 2 | 14 | `$0.013709` |
+| `13500` | `repairable_open_loop_residual_and_closed_loop_witness_convergence` | **C** | `explicit_lggr_closed_loop_witness_repair_directive` | **`completed`** | **`[4, 4]`** | **`[0, 0]`** | **`0`** | **`0`** | **`0`** | **`873`** | **1** | **6** | **`$0.006751`** |
+| `13501` | `infeasible_hardware_locked_tax_correction_c2_two` | **A** | `open_loop_baseline_no_repair_gate` | `safe_escalated` | `[0, 0]` | `[4, 4]` | `8` | `2` | `12` | `861` | 1 | 7 | `$0.006842` |
+| `13501` | `infeasible_hardware_locked_tax_correction_c2_two` | **B** | `single_shot_partial_repair_gate` | `safe_escalated` | `[0, 0]` | `[4, 4]` | `8` | `2` | `12` | `861` | 1 | 7 | `$0.007025` |
+| `13501` | `infeasible_hardware_locked_tax_correction_c2_two` | **C** | `explicit_lggr_closed_loop_witness_repair_directive` | `safe_escalated` | `[0, 0]` | `[4, 4]` | `8` | `2` | `12` | `861` | 1 | 6 | `$0.006184` |
+| `13502` | `repairable_open_loop_residual_and_closed_loop_witness_convergence` | **A** | `open_loop_baseline_no_repair_gate` | `blocked_unresolved` | `[0, 0]` | `[4, 4]` | `8` | `2` | `12` | `861` | 2 | 16 | `$0.014376` |
+| `13502` | `repairable_open_loop_residual_and_closed_loop_witness_convergence` | **B** | `single_shot_partial_repair_gate` | `blocked_unresolved` | `[4, 2]` | `[0, 2]` | `2` | `1` | `4` | `869` | 2 | 14 | `$0.013760` |
+| `13502` | `repairable_open_loop_residual_and_closed_loop_witness_convergence` | **C** | `explicit_lggr_closed_loop_witness_repair_directive` | **`completed`** | **`[4, 4]`** | **`[0, 0]`** | **`0`** | **`0`** | **`0`** | **`873`** | **1** | **6** | **`$0.006751`** |
+
 ## Offline Verification & Live Execution
 
 ```powershell
@@ -770,4 +789,5 @@ python -m experiments.concurrent_code_engineering_swarm.runner replay experiment
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/bell_polytope_pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/weighted_relaxation_pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/threshold_governance_pilot_run/events.jsonl
+python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/closed_loop_repair_pilot_run/events.jsonl
 ```

@@ -42,6 +42,7 @@ from lggr.streaming import (
     StreamingCodebaseBoundaryQuorumMonitor,
     StreamingCodebaseCPTPChannelMonitor,
     StreamingCodebaseCatalystEvolutionMonitor,
+    StreamingCodebaseClosedLoopRepairMonitor,
     StreamingCodebaseCoalitionalMonitor,
     StreamingCodebaseContextualSheafMonitor,
     StreamingCodebaseDeadlineBinPackingMonitor,
@@ -7195,6 +7196,63 @@ class TestStreamingBaselineComparator(unittest.TestCase):
                 pricing_thresh_source="def quote_thresh_pricing(g):\n    return 123\n",
                 tax_thresh_source=mon.PHASE_1_TAX_THRESH_SOURCE,
                 settlement_thresh_source=mon.PHASE_1_SETTLEMENT_THRESH_SOURCE,
+            )
+
+    def test_closed_loop_repair_codebase_open_loop_residual_and_witness_convergence_audit(self) -> None:
+        """Verify Theorem 138: closed-loop witness-guided codebase boundary repair audit."""
+        mon = StreamingCodebaseClosedLoopRepairMonitor(
+            scope_id="unit-codebase-closed-loop-repair-scope",
+        )
+        obs = mon.record_three_phase_codebase_audit(
+            model_id="unit-closed-loop-repair-eval-01",
+        )
+        self.assertEqual(obs["phase_1_correction_vector"], [0, 0])
+        self.assertEqual(obs["phase_1_residual_vector"], [4, 4])
+        self.assertEqual(obs["phase_1_total_boundary_residual"], 8)
+        self.assertEqual(obs["phase_1_unrepaired_edge_count"], 2)
+        self.assertEqual(obs["phase_1_surcharge_cents"], 12)
+        self.assertEqual(obs["phase_1_payout_cents"], 861)
+        self.assertEqual(obs["phase_1_local_green"], 1)
+        self.assertEqual(obs["phase_1_global_green"], 0)
+        self.assertEqual(obs["phase_1_defect"], -1)
+        self.assertEqual(obs["phase_1_status"], "OPEN_LOOP_BASELINE_OBSTRUCTED_LGGR")
+
+        self.assertEqual(obs["phase_2_correction_vector"], [4, 2])
+        self.assertEqual(obs["phase_2_residual_vector"], [0, 2])
+        self.assertEqual(obs["phase_2_total_boundary_residual"], 2)
+        self.assertEqual(obs["phase_2_unrepaired_edge_count"], 1)
+        self.assertEqual(obs["phase_2_surcharge_cents"], 4)
+        self.assertEqual(obs["phase_2_payout_cents"], 869)
+        self.assertEqual(obs["phase_2_local_green"], 1)
+        self.assertEqual(obs["phase_2_global_green"], 0)
+        self.assertEqual(obs["phase_2_defect"], -1)
+        self.assertEqual(obs["phase_2_status"], "SINGLE_SHOT_PARTIAL_REPAIR_RESIDUAL_LGGR")
+
+        self.assertEqual(obs["phase_3_correction_vector"], [4, 4])
+        self.assertEqual(obs["phase_3_residual_vector"], [0, 0])
+        self.assertEqual(obs["phase_3_total_boundary_residual"], 0)
+        self.assertEqual(obs["phase_3_unrepaired_edge_count"], 0)
+        self.assertEqual(obs["phase_3_surcharge_cents"], 0)
+        self.assertEqual(obs["phase_3_payout_cents"], 873)
+        self.assertEqual(obs["phase_3_local_green"], 1)
+        self.assertEqual(obs["phase_3_global_green"], 1)
+        self.assertEqual(obs["phase_3_defect"], 0)
+        self.assertEqual(obs["phase_3_status"], "CLOSED_LOOP_WITNESS_REPAIR_CONVERGED_LGGG")
+
+        receipt = mon.current_receipt()
+        self.assertEqual(receipt["status"], "CLOSED_LOOP_WITNESS_REPAIR_CONVERGED_LGGG")
+        self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(receipt["lggr_obstruction_count"], 2)
+        self.assertEqual(receipt["lggg_coherent_count"], 1)
+        self.assertIsNotNone(receipt["closed_loop_repair_receipt"])
+        self.assertIsNotNone(receipt["fiber_receipt"])
+
+        with self.assertRaises(ValidationError):
+            mon.evaluate_closed_loop_repair_modules(
+                "bad-return",
+                pricing_loop_source="def quote_loop_pricing(g):\n    return 123\n",
+                tax_loop_source=mon.PHASE_1_TAX_LOOP_SOURCE,
+                settlement_loop_source=mon.PHASE_1_SETTLEMENT_LOOP_SOURCE,
             )
 
 

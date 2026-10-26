@@ -30,6 +30,7 @@ from lggr.streaming import (
     StreamingCodebaseBoundaryQuorumMonitor,
     StreamingCodebaseCPTPChannelMonitor,
     StreamingCodebaseCatalystEvolutionMonitor,
+    StreamingCodebaseClosedLoopRepairMonitor,
     StreamingCodebaseCoalitionalMonitor,
     StreamingCodebaseContextualSheafMonitor,
     StreamingCodebaseDeadlineBinPackingMonitor,
@@ -73,6 +74,7 @@ from lggr.streaming import (
 from .domain import (
     ADVERSARIAL_SCHEMA_WORKER_MODULES,
     BELL_POLYTOPE_WORKER_MODULES,
+    CLOSED_LOOP_REPAIR_WORKER_MODULES,
     COALITIONAL_WORKER_MODULES,
     CODE_SWARM_MODELS,
     COUNCIL_WORKER_MODULES,
@@ -122,6 +124,7 @@ from .domain import (
     BoundaryQuorumCodeWorkspace,
     CPTPChannelCodeWorkspace,
     CatalystCodeWorkspace,
+    ClosedLoopRepairCodeWorkspace,
     CoalitionalCodeWorkspace,
     CodeWorkspace,
     ContextualSheafCodeWorkspace,
@@ -164,6 +167,7 @@ from .domain import (
     adversarial_schema_fixture,
     bell_polytope_fixture,
     catalyst_fixture,
+    closed_loop_repair_fixture,
     coalitional_fixture,
     council_fixture,
     cptp_fixture,
@@ -192,6 +196,7 @@ from .domain import (
     regge_fixture,
     replay_fixture,
     run_bell_polytope_local_unit_tests,
+    run_closed_loop_repair_local_unit_tests,
     run_deadline_bin_packing_local_unit_tests,
     run_figure_eight_wedge_local_unit_tests,
     run_governed_relaxation_local_unit_tests,
@@ -10832,6 +10837,282 @@ def threshold_governance_campaign(
     return summary
 
 
+# ---------------------------------------------------------------------------
+# Closed-Loop Repair Open-Loop Residual & Witness Convergence Campaign (Test 73, Theorem 138)
+# ---------------------------------------------------------------------------
+
+
+def closed_loop_repair_system_prompt(worker: str, arm: str) -> str:
+    mod_name = CLOSED_LOOP_REPAIR_WORKER_MODULES[worker]
+    base = (
+        f"You are `{worker}`, responsible SOLELY for `{mod_name}.py` in a 3-module "
+        "closed-loop witness-guided boundary repair settlement pipeline "
+        "(`pricing_loop.py` -> `tax_loop.py` -> `settlement_loop.py`). Call `inspect_workspace` first.\n"
+        "CRITICAL: Emit tool calls immediately with ZERO explanatory prose or preamble before the tool call so output never truncates.\n"
+        "IMPORTANT: Only call `escalate` if `infeasible_constraint` in the `inspect_workspace` result is a non-null string! "
+        "When `infeasible_constraint` is `null` and `locked` is `false`, NEVER call `escalate` — instead follow your Arm instructions below.\n"
+    )
+    if arm == "A":
+        return base + (
+            "Arm A (`open_loop_baseline_no_repair_gate`): If `local_unit_test.passed` "
+            "is true and `action_required` is `HOLD_OPEN_LOOP_UNREPAIRED_BASELINE`, do NOT call "
+            "`submit_module_patch`; reply concisely confirming local unit tests pass."
+        )
+    if arm == "B":
+        if worker == "worker-0":
+            return base + (
+                "Arm B (`single_shot_partial_repair_gate`): Immediately call `submit_module_patch` with:\n"
+                "```python\n"
+                + StreamingCodebaseClosedLoopRepairMonitor.PHASE_2_PRICING_LOOP_SOURCE
+                + "```\n"
+            )
+        if worker == "worker-1":
+            return base + (
+                "Arm B (`single_shot_partial_repair_gate`): Immediately call `submit_module_patch` with:\n"
+                "```python\n"
+                + StreamingCodebaseClosedLoopRepairMonitor.PHASE_2_TAX_LOOP_SOURCE
+                + "```\n"
+            )
+        return base + (
+            "Arm B (`single_shot_partial_repair_gate`): If `local_unit_test.passed` "
+            "is true, do NOT call `submit_module_patch`; reply concisely confirming local unit tests pass."
+        )
+    if worker == "worker-0":
+        return base + (
+            "Arm C (`explicit_lggr_closed_loop_witness_repair_directive`): Immediately call `submit_module_patch` with:\n"
+            "```python\n"
+            + StreamingCodebaseClosedLoopRepairMonitor.PHASE_3_PRICING_LOOP_SOURCE
+            + "```\n"
+        )
+    if worker == "worker-1":
+        return base + (
+            "Arm C (`explicit_lggr_closed_loop_witness_repair_directive`): Immediately call `submit_module_patch` with:\n"
+            "```python\n"
+            + StreamingCodebaseClosedLoopRepairMonitor.PHASE_3_TAX_LOOP_SOURCE
+            + "```\n"
+        )
+    return base + (
+        "Arm C (`explicit_lggr_closed_loop_witness_repair_directive`): Immediately call `submit_module_patch` with:\n"
+        "```python\n"
+        + StreamingCodebaseClosedLoopRepairMonitor.PHASE_3_SETTLEMENT_LOOP_SOURCE
+        + "```\n"
+    )
+
+
+def closed_loop_repair_merge_gate(
+    events: Events,
+    ws: ClosedLoopRepairCodeWorkspace,
+    monitor: StreamingCodebaseClosedLoopRepairMonitor,
+    arm: str,
+    wave_label: str,
+) -> tuple[dict[str, Any], dict[str, dict[str, Any]], dict[str, Any]]:
+    sources = ws.state["sources"]
+    verdicts = {
+        m: bool(run_closed_loop_repair_local_unit_tests(m, sources[m]).get("passed"))
+        for m in ("pricing_loop", "tax_loop", "settlement_loop")
+    }
+    eval_res = monitor.evaluate_closed_loop_repair_modules(
+        f"{arm}-{wave_label}",
+        pricing_loop_source=sources["pricing_loop"],
+        tax_loop_source=sources["tax_loop"],
+        settlement_loop_source=sources["settlement_loop"],
+        infeasible_constraint=(
+            ws.state["infeasible_constraint"]
+            if ws.state["infeasible_constraint"] is not None
+            else None
+        ),
+    )
+    receipt = monitor.current_receipt()
+    events.emit(
+        "gate",
+        {
+            "arm": arm,
+            "wave": wave_label,
+            "local_green": eval_res["local_green"],
+            "global_green": eval_res["global_green"],
+            "defect": eval_res["defect"],
+            "status": eval_res["status"],
+            "correction_vector": eval_res["correction_vector"],
+            "residual_vector": eval_res["residual_vector"],
+            "total_boundary_residual": eval_res["total_boundary_residual"],
+            "unrepaired_edge_count": eval_res["unrepaired_edge_count"],
+            "loop_surcharge_cents": eval_res["loop_surcharge_cents"],
+            "receipt_sha256": receipt["receipt_sha256"],
+            "receipt": receipt,
+        },
+    )
+
+    per_worker_fb: dict[str, dict[str, Any]] = {}
+    for w, mod_name in CLOSED_LOOP_REPAIR_WORKER_MODULES.items():
+        if ws.state["infeasible_constraint"] is not None:
+            per_worker_fb[w] = {
+                "arm": arm,
+                "wave": wave_label,
+                "action_required": "ESCALATE_INFEASIBLE",
+                "infeasible_constraint": ws.state["infeasible_constraint"],
+                "compact_role_directive": eval_res["directives"][w],
+            }
+            continue
+
+        if arm == "A":
+            per_worker_fb[w] = {
+                "arm": "A",
+                "wave": wave_label,
+                "local_unit_test_passed": verdicts[mod_name],
+                "action_required": "HOLD_OPEN_LOOP_UNREPAIRED_BASELINE",
+                "note": "Open-loop baseline correction (0, 0) satisfies local edge residual cap |r_i| <= 4 with residual (4, 4).",
+            }
+        elif arm == "B":
+            per_worker_fb[w] = {
+                "arm": "B",
+                "wave": wave_label,
+                "local_unit_test_passed": verdicts[mod_name],
+                "action_required": "APPLY_SINGLE_SHOT_PARTIAL_REPAIR",
+                "correction_vector": eval_res["correction_vector"],
+                "residual_vector": eval_res["residual_vector"],
+                "total_boundary_residual": eval_res["total_boundary_residual"],
+                "unrepaired_edge_count": eval_res["unrepaired_edge_count"],
+                "loop_surcharge_cents": eval_res["loop_surcharge_cents"],
+                "note": "Single-shot partial repair (4, 2) clears edge 1 (r_1=0) yet leaves residual r_2=2 > 0 (surcharge=4).",
+            }
+        else:
+            per_worker_fb[w] = {
+                "arm": "C",
+                "wave": wave_label,
+                "local_unit_test_passed": verdicts[mod_name],
+                "global_green": eval_res["global_green"],
+                "defect": eval_res["defect"],
+                "status": eval_res["status"],
+                "correction_vector": eval_res["correction_vector"],
+                "residual_vector": eval_res["residual_vector"],
+                "total_boundary_residual": eval_res["total_boundary_residual"],
+                "unrepaired_edge_count": eval_res["unrepaired_edge_count"],
+                "loop_surcharge_cents": eval_res["loop_surcharge_cents"],
+                "action_required": "ENFORCE_CLOSED_LOOP_WITNESS_CONVERGENCE_4_4",
+                "compact_role_directive": eval_res["directives"][w],
+            }
+    return eval_res, per_worker_fb, receipt
+
+
+def closed_loop_repair_campaign(
+    client: CodeBatchClient,
+    events: Events,
+    config: dict[str, Any],
+) -> dict[str, Any]:
+    seeds: list[int] = list(config["seeds"])
+    workers = list(CLOSED_LOOP_REPAIR_WORKER_MODULES.keys())
+    cases: list[dict[str, Any]] = []
+
+    for seed in seeds:
+        base_state = closed_loop_repair_fixture(seed)
+        arm_results: list[dict[str, Any]] = []
+
+        for arm in ("A", "B", "C"):
+            ws = ClosedLoopRepairCodeWorkspace(base_state)
+            monitor = StreamingCodebaseClosedLoopRepairMonitor(
+                scope_id=f"closed-loop-repair-seed-{seed}-arm-{arm}"
+            )
+            arm_start_calls = client.calls
+            arm_start_spent = client.spent
+
+            eval_res, per_worker_fb, receipt = closed_loop_repair_merge_gate(
+                events, ws, monitor, arm, "wave-0"
+            )
+            waves_executed = 0
+            status = "blocked_unresolved"
+
+            max_waves = 2 if base_state["infeasible_constraint"] is None else 1
+            for wave_idx in range(1, max_waves + 1):
+                waves_executed = wave_idx
+                histories = {
+                    w: [
+                        {"role": "system", "content": closed_loop_repair_system_prompt(w, arm)},
+                        {
+                            "role": "user",
+                            "content": (
+                                f"Wave {wave_idx} for `{CLOSED_LOOP_REPAIR_WORKER_MODULES[w]}.py` (seed {seed}, arm {arm}). "
+                                "Inspect workspace and execute your required module action."
+                            ),
+                        },
+                    ]
+                    for w in workers
+                }
+                round_turns(
+                    client,
+                    events,
+                    ws,
+                    histories,
+                    workers,
+                    per_worker_fb,
+                )
+                eval_res, per_worker_fb, receipt = closed_loop_repair_merge_gate(
+                    events, ws, monitor, arm, f"wave-{wave_idx}"
+                )
+                if ws.state["infeasible_constraint"] is not None and len(ws.state["escalations"]) > 0:
+                    status = "safe_escalated"
+                    break
+                if eval_res["global_green"] == 1:
+                    status = "completed"
+                    break
+
+            final_status = (
+                "INFEASIBLE_CLOSED_LOOP_REPAIR_SPECIFICATION_LGGR"
+                if status == "safe_escalated"
+                else eval_res["status"]
+            )
+            arm_summary = {
+                "arm": arm,
+                "status": status,
+                "waves_executed": waves_executed,
+                "final_local_green": eval_res["local_green"],
+                "final_global_green": eval_res["global_green"],
+                "final_defect": eval_res["defect"],
+                "final_correction_vector": eval_res["correction_vector"],
+                "final_residual_vector": eval_res["residual_vector"],
+                "final_total_boundary_residual": eval_res["total_boundary_residual"],
+                "final_unrepaired_edge_count": eval_res["unrepaired_edge_count"],
+                "final_loop_surcharge_cents": eval_res["loop_surcharge_cents"],
+                "final_merchant_payout_cents": eval_res["merchant_payout_cents"],
+                "final_status": final_status,
+                "final_receipt_sha256": receipt["receipt_sha256"],
+                "final_receipt": receipt,
+                "escalations": dict(ws.state["escalations"]),
+                "api_attempts": client.calls - arm_start_calls,
+                "cost_usd": str(client.spent - arm_start_spent),
+            }
+            events.emit("arm", {"seed": seed, **arm_summary})
+            arm_results.append(arm_summary)
+
+        cases.append(
+            {
+                "seed": seed,
+                "kind": base_state["kind"],
+                "arms": arm_results,
+            }
+        )
+
+    summary = {
+        "schema": "lggr.closed_loop_repair_code_engineering_swarm.v1",
+        "topology": "closed_loop_repair",
+        "authority_effect": "None",
+        "cases": cases,
+        "api_attempts": client.calls,
+        "charged_or_reserved_usd": str(client.spent),
+        "max_inflight_requests": client.max_inflight,
+        "concurrent_waves": client.concurrent_waves,
+        "scope": (
+            "Concurrent 3-agent closed-loop witness-guided boundary repair "
+            "Python code-engineering swarm (`pricing_loop` -> `tax_loop` -> `settlement_loop`) comparing "
+            "open-loop unrepaired baseline correction [0, 0] with residual [4, 4] and D_0 = 8 > 0 (A), "
+            "single-shot partial repair [4, 2] clearing edge 1 while leaving r_2 = 2 > 0 (B), "
+            "and closed-loop witness-guided repair [4, 4] with zero residual [0, 0] and D_2 = 0 (C) "
+            "with full cryptographic receipts."
+        ),
+    }
+    events.emit("summary", summary)
+    return summary
+
+
 def replay(path: str | Path) -> dict[str, Any]:
     records = [json.loads(line) for line in Path(path).read_text(encoding="utf-8").splitlines()]
     metadata = records[0]["data"]
@@ -10928,6 +11209,8 @@ def replay(path: str | Path) -> dict[str, Any]:
             summary = weighted_relaxation_campaign(client, events, config)
         elif config.get("topology") == "threshold_governance":
             summary = threshold_governance_campaign(client, events, config)
+        elif config.get("topology") == "closed_loop_repair":
+            summary = closed_loop_repair_campaign(client, events, config)
         else:
             summary = campaign(client, events, config)
     except RunStopped as error:
@@ -10996,6 +11279,7 @@ def main() -> None:
             "bell_polytope",
             "weighted_relaxation",
             "threshold_governance",
+            "closed_loop_repair",
         ],
         default="linear",
     )
@@ -11107,6 +11391,8 @@ def main() -> None:
         seeds = [13300, 13301, 13302]
     elif args.topology == "threshold_governance":
         seeds = [13400, 13401, 13402]
+    elif args.topology == "closed_loop_repair":
+        seeds = [13500, 13501, 13502]
     else:
         seeds = [6100, 6101, 6102]
     if args.topology == "diamond":
@@ -11583,6 +11869,17 @@ def main() -> None:
         events.emit("start", {"config": config})
         client = CodeBatchClient(events, args.budget)
         summary = threshold_governance_campaign(client, events, config)
+    elif args.topology == "closed_loop_repair":
+        config = {
+            "topology": "closed_loop_repair",
+            "seeds": seeds,
+            "models": CODE_SWARM_MODELS,
+            "budget_usd": str(args.budget),
+        }
+        events = Events(events_path)
+        events.emit("start", {"config": config})
+        client = CodeBatchClient(events, args.budget)
+        summary = closed_loop_repair_campaign(client, events, config)
     else:
         config = {
             "seeds": seeds,

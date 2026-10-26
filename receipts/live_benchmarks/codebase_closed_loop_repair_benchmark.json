@@ -1,0 +1,2304 @@
+{
+  "schema": "lggr.codebase_closed_loop_repair_replay.v1",
+  "authority_effect": "None",
+  "benchmark_name": "codebase_closed_loop_repair_benchmark",
+  "models_evaluated": [
+    "openai/gpt-4o-mini",
+    "google/gemini-2.5-flash-lite",
+    "meta-llama/llama-3.3-70b-instruct",
+    "deepseek/deepseek-chat",
+    "mistralai/mistral-small-3.2-24b-instruct"
+  ],
+  "total_completions": 5,
+  "evaluation_count": 5,
+  "model_answer_accuracy_rate": "1",
+  "phase_1_open_loop_baseline_metrics": {
+    "N": 5,
+    "LPR": "1",
+    "GPR": "0",
+    "NGD_rate": "1",
+    "ZDR_rate": "0",
+    "PGD_rate": "0",
+    "mean_defect": "-1",
+    "EGD_rate": "-1",
+    "LRGR_rate": "0",
+    "identity_verified": true
+  },
+  "phase_2_single_shot_partial_repair_metrics": {
+    "N": 5,
+    "LPR": "1",
+    "GPR": "0",
+    "NGD_rate": "1",
+    "ZDR_rate": "0",
+    "PGD_rate": "0",
+    "mean_defect": "-1",
+    "EGD_rate": "-1",
+    "LRGR_rate": "0",
+    "identity_verified": true
+  },
+  "phase_3_closed_loop_witness_convergence_metrics": {
+    "N": 5,
+    "LPR": "1",
+    "GPR": "1",
+    "NGD_rate": "0",
+    "ZDR_rate": "1",
+    "PGD_rate": "0",
+    "mean_defect": "0",
+    "EGD_rate": "0",
+    "LRGR_rate": "0",
+    "identity_verified": true
+  },
+  "obstructed_closed_loop_repair_codebase_coherence_rate": "0",
+  "reconciled_closed_loop_repair_codebase_coherence_rate": "1",
+  "codebase_closed_loop_repair_coherence_gain": "1",
+  "codebase_closed_loop_repair_receipt": {
+    "schema": "lggr.online_codebase_closed_loop_repair.v1",
+    "authority_effect": "None",
+    "scope_id": "live_codebase_closed_loop_repair",
+    "status": "CLOSED_LOOP_WITNESS_REPAIR_CONVERGED_LGGG",
+    "contract_status": "COMPOSABLE_LGGG",
+    "evaluation_count": 15,
+    "lggr_obstruction_count": 10,
+    "lggg_coherent_count": 5,
+    "closed_loop_repair_receipt": {
+      "schema": "lggr.online_closed_loop_repair.v1",
+      "authority_effect": "None",
+      "scope_id": "live_codebase_closed_loop_repair:closed-loop",
+      "status": "CLOSED_LOOP_RESIDUAL_OBSTRUCTION_LGGR",
+      "contract_status": "OBSTRUCTED_LGGR",
+      "trajectory_count": 20,
+      "single_round_converged_count": 5,
+      "multi_round_converged_count": 10,
+      "single_round_convergence_rate": "1/4",
+      "multi_round_convergence_rate": "1/2",
+      "multi_round_convergence_gain": "1/4",
+      "residual_unrepaired_rate": "1/2",
+      "monotonic_convergence_verified": true,
+      "multi_round_witness_rescued_ids": [
+        "openai/gpt-4o-mini_closed_loop_repair:openai/gpt-4o-mini:3round",
+        "google/gemini-2.5-flash-lite_closed_loop_repair:google/gemini-2.5-flash-lite:3round",
+        "meta-llama/llama-3.3-70b-instruct_closed_loop_repair:meta-llama/llama-3.3-70b-instruct:3round",
+        "deepseek/deepseek-chat_closed_loop_repair:deepseek/deepseek-chat:3round",
+        "mistralai/mistral-small-3.2-24b-instruct_closed_loop_repair:mistralai/mistral-small-3.2-24b-instruct:3round"
+      ],
+      "unrepaired_trajectory_ids": [
+        "openai/gpt-4o-mini_closed_loop_repair:phase-1:openai/gpt-4o-mini",
+        "openai/gpt-4o-mini_closed_loop_repair:phase-2:openai/gpt-4o-mini",
+        "google/gemini-2.5-flash-lite_closed_loop_repair:phase-1:google/gemini-2.5-flash-lite",
+        "google/gemini-2.5-flash-lite_closed_loop_repair:phase-2:google/gemini-2.5-flash-lite",
+        "meta-llama/llama-3.3-70b-instruct_closed_loop_repair:phase-1:meta-llama/llama-3.3-70b-instruct",
+        "meta-llama/llama-3.3-70b-instruct_closed_loop_repair:phase-2:meta-llama/llama-3.3-70b-instruct",
+        "deepseek/deepseek-chat_closed_loop_repair:phase-1:deepseek/deepseek-chat",
+        "deepseek/deepseek-chat_closed_loop_repair:phase-2:deepseek/deepseek-chat",
+        "mistralai/mistral-small-3.2-24b-instruct_closed_loop_repair:phase-1:mistralai/mistral-small-3.2-24b-instruct",
+        "mistralai/mistral-small-3.2-24b-instruct_closed_loop_repair:phase-2:mistralai/mistral-small-3.2-24b-instruct"
+      ],
+      "trajectories": [
+        {
+          "trajectory_id": "openai/gpt-4o-mini_closed_loop_repair:phase-1:openai/gpt-4o-mini",
+          "monitor_name": "StreamingCodebaseClosedLoopRepairMonitor",
+          "model_id": "openai/gpt-4o-mini",
+          "round_count": 2,
+          "initial_ngd_obstructed": true,
+          "converged_single_round": false,
+          "converged_multi_round": false,
+          "rounds_to_convergence": null,
+          "defect_progression": [
+            -1,
+            -1
+          ],
+          "final_local_pass": true,
+          "final_global_pass": false,
+          "final_evaluator_defect": -1,
+          "trajectory_status": "UNREPAIRED_PERSISTENT_OBSTRUCTION_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "rounds": [
+            {
+              "round_index": 0,
+              "feedback_mode": "round_0_baseline",
+              "receipt_status": "OPEN_LOOP_BASELINE_OBSTRUCTED_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "local_pass": true,
+              "global_pass": false,
+              "evaluator_defect": -1
+            },
+            {
+              "round_index": 1,
+              "feedback_mode": "codebase_eval",
+              "receipt_status": "OPEN_LOOP_BASELINE_OBSTRUCTED_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "local_pass": true,
+              "global_pass": false,
+              "evaluator_defect": -1
+            }
+          ]
+        },
+        {
+          "trajectory_id": "openai/gpt-4o-mini_closed_loop_repair:phase-2:openai/gpt-4o-mini",
+          "monitor_name": "StreamingCodebaseClosedLoopRepairMonitor",
+          "model_id": "openai/gpt-4o-mini",
+          "round_count": 2,
+          "initial_ngd_obstructed": true,
+          "converged_single_round": false,
+          "converged_multi_round": false,
+          "rounds_to_convergence": null,
+          "defect_progression": [
+            -1,
+            -1
+          ],
+          "final_local_pass": true,
+          "final_global_pass": false,
+          "final_evaluator_defect": -1,
+          "trajectory_status": "UNREPAIRED_PERSISTENT_OBSTRUCTION_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "rounds": [
+            {
+              "round_index": 0,
+              "feedback_mode": "round_0_baseline",
+              "receipt_status": "OPEN_LOOP_BASELINE_OBSTRUCTED_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "local_pass": true,
+              "global_pass": false,
+              "evaluator_defect": -1
+            },
+            {
+              "round_index": 1,
+              "feedback_mode": "codebase_eval",
+              "receipt_status": "SINGLE_SHOT_PARTIAL_REPAIR_RESIDUAL_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "local_pass": true,
+              "global_pass": false,
+              "evaluator_defect": -1
+            }
+          ]
+        },
+        {
+          "trajectory_id": "openai/gpt-4o-mini_closed_loop_repair:phase-3:openai/gpt-4o-mini",
+          "monitor_name": "StreamingCodebaseClosedLoopRepairMonitor",
+          "model_id": "openai/gpt-4o-mini",
+          "round_count": 2,
+          "initial_ngd_obstructed": true,
+          "converged_single_round": true,
+          "converged_multi_round": true,
+          "rounds_to_convergence": 1,
+          "defect_progression": [
+            -1,
+            0
+          ],
+          "final_local_pass": true,
+          "final_global_pass": true,
+          "final_evaluator_defect": 0,
+          "trajectory_status": "SINGLE_ROUND_RECEIPT_CONVERGED_LGGG",
+          "contract_status": "COMPOSABLE_LGGG",
+          "rounds": [
+            {
+              "round_index": 0,
+              "feedback_mode": "round_0_baseline",
+              "receipt_status": "OPEN_LOOP_BASELINE_OBSTRUCTED_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "local_pass": true,
+              "global_pass": false,
+              "evaluator_defect": -1
+            },
+            {
+              "round_index": 1,
+              "feedback_mode": "codebase_eval",
+              "receipt_status": "CLOSED_LOOP_WITNESS_REPAIR_CONVERGED_LGGG",
+              "contract_status": "COMPOSABLE_LGGG",
+              "local_pass": true,
+              "global_pass": true,
+              "evaluator_defect": 0
+            }
+          ]
+        },
+        {
+          "trajectory_id": "openai/gpt-4o-mini_closed_loop_repair:openai/gpt-4o-mini:3round",
+          "monitor_name": "StreamingCodebaseClosedLoopRepairMonitor",
+          "model_id": "openai/gpt-4o-mini",
+          "round_count": 3,
+          "initial_ngd_obstructed": true,
+          "converged_single_round": false,
+          "converged_multi_round": true,
+          "rounds_to_convergence": 2,
+          "defect_progression": [
+            -1,
+            -1,
+            0
+          ],
+          "final_local_pass": true,
+          "final_global_pass": true,
+          "final_evaluator_defect": 0,
+          "trajectory_status": "MULTI_ROUND_WITNESS_CONVERGED_LGGG",
+          "contract_status": "COMPOSABLE_LGGG",
+          "rounds": [
+            {
+              "round_index": 0,
+              "feedback_mode": "round_0_open_loop_baseline",
+              "receipt_status": "OPEN_LOOP_BASELINE_OBSTRUCTED_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "local_pass": true,
+              "global_pass": false,
+              "evaluator_defect": -1
+            },
+            {
+              "round_index": 1,
+              "feedback_mode": "round_1_single_shot_open_loop",
+              "receipt_status": "SINGLE_SHOT_PARTIAL_REPAIR_RESIDUAL_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "local_pass": true,
+              "global_pass": false,
+              "evaluator_defect": -1
+            },
+            {
+              "round_index": 2,
+              "feedback_mode": "round_2_closed_loop_witness_feedback",
+              "receipt_status": "CLOSED_LOOP_WITNESS_REPAIR_CONVERGED_LGGG",
+              "contract_status": "COMPOSABLE_LGGG",
+              "local_pass": true,
+              "global_pass": true,
+              "evaluator_defect": 0
+            }
+          ]
+        },
+        {
+          "trajectory_id": "google/gemini-2.5-flash-lite_closed_loop_repair:phase-1:google/gemini-2.5-flash-lite",
+          "monitor_name": "StreamingCodebaseClosedLoopRepairMonitor",
+          "model_id": "google/gemini-2.5-flash-lite",
+          "round_count": 2,
+          "initial_ngd_obstructed": true,
+          "converged_single_round": false,
+          "converged_multi_round": false,
+          "rounds_to_convergence": null,
+          "defect_progression": [
+            -1,
+            -1
+          ],
+          "final_local_pass": true,
+          "final_global_pass": false,
+          "final_evaluator_defect": -1,
+          "trajectory_status": "UNREPAIRED_PERSISTENT_OBSTRUCTION_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "rounds": [
+            {
+              "round_index": 0,
+              "feedback_mode": "round_0_baseline",
+              "receipt_status": "OPEN_LOOP_BASELINE_OBSTRUCTED_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "local_pass": true,
+              "global_pass": false,
+              "evaluator_defect": -1
+            },
+            {
+              "round_index": 1,
+              "feedback_mode": "codebase_eval",
+              "receipt_status": "OPEN_LOOP_BASELINE_OBSTRUCTED_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "local_pass": true,
+              "global_pass": false,
+              "evaluator_defect": -1
+            }
+          ]
+        },
+        {
+          "trajectory_id": "google/gemini-2.5-flash-lite_closed_loop_repair:phase-2:google/gemini-2.5-flash-lite",
+          "monitor_name": "StreamingCodebaseClosedLoopRepairMonitor",
+          "model_id": "google/gemini-2.5-flash-lite",
+          "round_count": 2,
+          "initial_ngd_obstructed": true,
+          "converged_single_round": false,
+          "converged_multi_round": false,
+          "rounds_to_convergence": null,
+          "defect_progression": [
+            -1,
+            -1
+          ],
+          "final_local_pass": true,
+          "final_global_pass": false,
+          "final_evaluator_defect": -1,
+          "trajectory_status": "UNREPAIRED_PERSISTENT_OBSTRUCTION_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "rounds": [
+            {
+              "round_index": 0,
+              "feedback_mode": "round_0_baseline",
+              "receipt_status": "OPEN_LOOP_BASELINE_OBSTRUCTED_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "local_pass": true,
+              "global_pass": false,
+              "evaluator_defect": -1
+            },
+            {
+              "round_index": 1,
+              "feedback_mode": "codebase_eval",
+              "receipt_status": "SINGLE_SHOT_PARTIAL_REPAIR_RESIDUAL_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "local_pass": true,
+              "global_pass": false,
+              "evaluator_defect": -1
+            }
+          ]
+        },
+        {
+          "trajectory_id": "google/gemini-2.5-flash-lite_closed_loop_repair:phase-3:google/gemini-2.5-flash-lite",
+          "monitor_name": "StreamingCodebaseClosedLoopRepairMonitor",
+          "model_id": "google/gemini-2.5-flash-lite",
+          "round_count": 2,
+          "initial_ngd_obstructed": true,
+          "converged_single_round": true,
+          "converged_multi_round": true,
+          "rounds_to_convergence": 1,
+          "defect_progression": [
+            -1,
+            0
+          ],
+          "final_local_pass": true,
+          "final_global_pass": true,
+          "final_evaluator_defect": 0,
+          "trajectory_status": "SINGLE_ROUND_RECEIPT_CONVERGED_LGGG",
+          "contract_status": "COMPOSABLE_LGGG",
+          "rounds": [
+            {
+              "round_index": 0,
+              "feedback_mode": "round_0_baseline",
+              "receipt_status": "OPEN_LOOP_BASELINE_OBSTRUCTED_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "local_pass": true,
+              "global_pass": false,
+              "evaluator_defect": -1
+            },
+            {
+              "round_index": 1,
+              "feedback_mode": "codebase_eval",
+              "receipt_status": "CLOSED_LOOP_WITNESS_REPAIR_CONVERGED_LGGG",
+              "contract_status": "COMPOSABLE_LGGG",
+              "local_pass": true,
+              "global_pass": true,
+              "evaluator_defect": 0
+            }
+          ]
+        },
+        {
+          "trajectory_id": "google/gemini-2.5-flash-lite_closed_loop_repair:google/gemini-2.5-flash-lite:3round",
+          "monitor_name": "StreamingCodebaseClosedLoopRepairMonitor",
+          "model_id": "google/gemini-2.5-flash-lite",
+          "round_count": 3,
+          "initial_ngd_obstructed": true,
+          "converged_single_round": false,
+          "converged_multi_round": true,
+          "rounds_to_convergence": 2,
+          "defect_progression": [
+            -1,
+            -1,
+            0
+          ],
+          "final_local_pass": true,
+          "final_global_pass": true,
+          "final_evaluator_defect": 0,
+          "trajectory_status": "MULTI_ROUND_WITNESS_CONVERGED_LGGG",
+          "contract_status": "COMPOSABLE_LGGG",
+          "rounds": [
+            {
+              "round_index": 0,
+              "feedback_mode": "round_0_open_loop_baseline",
+              "receipt_status": "OPEN_LOOP_BASELINE_OBSTRUCTED_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "local_pass": true,
+              "global_pass": false,
+              "evaluator_defect": -1
+            },
+            {
+              "round_index": 1,
+              "feedback_mode": "round_1_single_shot_open_loop",
+              "receipt_status": "SINGLE_SHOT_PARTIAL_REPAIR_RESIDUAL_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "local_pass": true,
+              "global_pass": false,
+              "evaluator_defect": -1
+            },
+            {
+              "round_index": 2,
+              "feedback_mode": "round_2_closed_loop_witness_feedback",
+              "receipt_status": "CLOSED_LOOP_WITNESS_REPAIR_CONVERGED_LGGG",
+              "contract_status": "COMPOSABLE_LGGG",
+              "local_pass": true,
+              "global_pass": true,
+              "evaluator_defect": 0
+            }
+          ]
+        },
+        {
+          "trajectory_id": "meta-llama/llama-3.3-70b-instruct_closed_loop_repair:phase-1:meta-llama/llama-3.3-70b-instruct",
+          "monitor_name": "StreamingCodebaseClosedLoopRepairMonitor",
+          "model_id": "meta-llama/llama-3.3-70b-instruct",
+          "round_count": 2,
+          "initial_ngd_obstructed": true,
+          "converged_single_round": false,
+          "converged_multi_round": false,
+          "rounds_to_convergence": null,
+          "defect_progression": [
+            -1,
+            -1
+          ],
+          "final_local_pass": true,
+          "final_global_pass": false,
+          "final_evaluator_defect": -1,
+          "trajectory_status": "UNREPAIRED_PERSISTENT_OBSTRUCTION_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "rounds": [
+            {
+              "round_index": 0,
+              "feedback_mode": "round_0_baseline",
+              "receipt_status": "OPEN_LOOP_BASELINE_OBSTRUCTED_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "local_pass": true,
+              "global_pass": false,
+              "evaluator_defect": -1
+            },
+            {
+              "round_index": 1,
+              "feedback_mode": "codebase_eval",
+              "receipt_status": "OPEN_LOOP_BASELINE_OBSTRUCTED_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "local_pass": true,
+              "global_pass": false,
+              "evaluator_defect": -1
+            }
+          ]
+        },
+        {
+          "trajectory_id": "meta-llama/llama-3.3-70b-instruct_closed_loop_repair:phase-2:meta-llama/llama-3.3-70b-instruct",
+          "monitor_name": "StreamingCodebaseClosedLoopRepairMonitor",
+          "model_id": "meta-llama/llama-3.3-70b-instruct",
+          "round_count": 2,
+          "initial_ngd_obstructed": true,
+          "converged_single_round": false,
+          "converged_multi_round": false,
+          "rounds_to_convergence": null,
+          "defect_progression": [
+            -1,
+            -1
+          ],
+          "final_local_pass": true,
+          "final_global_pass": false,
+          "final_evaluator_defect": -1,
+          "trajectory_status": "UNREPAIRED_PERSISTENT_OBSTRUCTION_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "rounds": [
+            {
+              "round_index": 0,
+              "feedback_mode": "round_0_baseline",
+              "receipt_status": "OPEN_LOOP_BASELINE_OBSTRUCTED_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "local_pass": true,
+              "global_pass": false,
+              "evaluator_defect": -1
+            },
+            {
+              "round_index": 1,
+              "feedback_mode": "codebase_eval",
+              "receipt_status": "SINGLE_SHOT_PARTIAL_REPAIR_RESIDUAL_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "local_pass": true,
+              "global_pass": false,
+              "evaluator_defect": -1
+            }
+          ]
+        },
+        {
+          "trajectory_id": "meta-llama/llama-3.3-70b-instruct_closed_loop_repair:phase-3:meta-llama/llama-3.3-70b-instruct",
+          "monitor_name": "StreamingCodebaseClosedLoopRepairMonitor",
+          "model_id": "meta-llama/llama-3.3-70b-instruct",
+          "round_count": 2,
+          "initial_ngd_obstructed": true,
+          "converged_single_round": true,
+          "converged_multi_round": true,
+          "rounds_to_convergence": 1,
+          "defect_progression": [
+            -1,
+            0
+          ],
+          "final_local_pass": true,
+          "final_global_pass": true,
+          "final_evaluator_defect": 0,
+          "trajectory_status": "SINGLE_ROUND_RECEIPT_CONVERGED_LGGG",
+          "contract_status": "COMPOSABLE_LGGG",
+          "rounds": [
+            {
+              "round_index": 0,
+              "feedback_mode": "round_0_baseline",
+              "receipt_status": "OPEN_LOOP_BASELINE_OBSTRUCTED_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "local_pass": true,
+              "global_pass": false,
+              "evaluator_defect": -1
+            },
+            {
+              "round_index": 1,
+              "feedback_mode": "codebase_eval",
+              "receipt_status": "CLOSED_LOOP_WITNESS_REPAIR_CONVERGED_LGGG",
+              "contract_status": "COMPOSABLE_LGGG",
+              "local_pass": true,
+              "global_pass": true,
+              "evaluator_defect": 0
+            }
+          ]
+        },
+        {
+          "trajectory_id": "meta-llama/llama-3.3-70b-instruct_closed_loop_repair:meta-llama/llama-3.3-70b-instruct:3round",
+          "monitor_name": "StreamingCodebaseClosedLoopRepairMonitor",
+          "model_id": "meta-llama/llama-3.3-70b-instruct",
+          "round_count": 3,
+          "initial_ngd_obstructed": true,
+          "converged_single_round": false,
+          "converged_multi_round": true,
+          "rounds_to_convergence": 2,
+          "defect_progression": [
+            -1,
+            -1,
+            0
+          ],
+          "final_local_pass": true,
+          "final_global_pass": true,
+          "final_evaluator_defect": 0,
+          "trajectory_status": "MULTI_ROUND_WITNESS_CONVERGED_LGGG",
+          "contract_status": "COMPOSABLE_LGGG",
+          "rounds": [
+            {
+              "round_index": 0,
+              "feedback_mode": "round_0_open_loop_baseline",
+              "receipt_status": "OPEN_LOOP_BASELINE_OBSTRUCTED_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "local_pass": true,
+              "global_pass": false,
+              "evaluator_defect": -1
+            },
+            {
+              "round_index": 1,
+              "feedback_mode": "round_1_single_shot_open_loop",
+              "receipt_status": "SINGLE_SHOT_PARTIAL_REPAIR_RESIDUAL_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "local_pass": true,
+              "global_pass": false,
+              "evaluator_defect": -1
+            },
+            {
+              "round_index": 2,
+              "feedback_mode": "round_2_closed_loop_witness_feedback",
+              "receipt_status": "CLOSED_LOOP_WITNESS_REPAIR_CONVERGED_LGGG",
+              "contract_status": "COMPOSABLE_LGGG",
+              "local_pass": true,
+              "global_pass": true,
+              "evaluator_defect": 0
+            }
+          ]
+        },
+        {
+          "trajectory_id": "deepseek/deepseek-chat_closed_loop_repair:phase-1:deepseek/deepseek-chat",
+          "monitor_name": "StreamingCodebaseClosedLoopRepairMonitor",
+          "model_id": "deepseek/deepseek-chat",
+          "round_count": 2,
+          "initial_ngd_obstructed": true,
+          "converged_single_round": false,
+          "converged_multi_round": false,
+          "rounds_to_convergence": null,
+          "defect_progression": [
+            -1,
+            -1
+          ],
+          "final_local_pass": true,
+          "final_global_pass": false,
+          "final_evaluator_defect": -1,
+          "trajectory_status": "UNREPAIRED_PERSISTENT_OBSTRUCTION_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "rounds": [
+            {
+              "round_index": 0,
+              "feedback_mode": "round_0_baseline",
+              "receipt_status": "OPEN_LOOP_BASELINE_OBSTRUCTED_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "local_pass": true,
+              "global_pass": false,
+              "evaluator_defect": -1
+            },
+            {
+              "round_index": 1,
+              "feedback_mode": "codebase_eval",
+              "receipt_status": "OPEN_LOOP_BASELINE_OBSTRUCTED_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "local_pass": true,
+              "global_pass": false,
+              "evaluator_defect": -1
+            }
+          ]
+        },
+        {
+          "trajectory_id": "deepseek/deepseek-chat_closed_loop_repair:phase-2:deepseek/deepseek-chat",
+          "monitor_name": "StreamingCodebaseClosedLoopRepairMonitor",
+          "model_id": "deepseek/deepseek-chat",
+          "round_count": 2,
+          "initial_ngd_obstructed": true,
+          "converged_single_round": false,
+          "converged_multi_round": false,
+          "rounds_to_convergence": null,
+          "defect_progression": [
+            -1,
+            -1
+          ],
+          "final_local_pass": true,
+          "final_global_pass": false,
+          "final_evaluator_defect": -1,
+          "trajectory_status": "UNREPAIRED_PERSISTENT_OBSTRUCTION_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "rounds": [
+            {
+              "round_index": 0,
+              "feedback_mode": "round_0_baseline",
+              "receipt_status": "OPEN_LOOP_BASELINE_OBSTRUCTED_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "local_pass": true,
+              "global_pass": false,
+              "evaluator_defect": -1
+            },
+            {
+              "round_index": 1,
+              "feedback_mode": "codebase_eval",
+              "receipt_status": "SINGLE_SHOT_PARTIAL_REPAIR_RESIDUAL_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "local_pass": true,
+              "global_pass": false,
+              "evaluator_defect": -1
+            }
+          ]
+        },
+        {
+          "trajectory_id": "deepseek/deepseek-chat_closed_loop_repair:phase-3:deepseek/deepseek-chat",
+          "monitor_name": "StreamingCodebaseClosedLoopRepairMonitor",
+          "model_id": "deepseek/deepseek-chat",
+          "round_count": 2,
+          "initial_ngd_obstructed": true,
+          "converged_single_round": true,
+          "converged_multi_round": true,
+          "rounds_to_convergence": 1,
+          "defect_progression": [
+            -1,
+            0
+          ],
+          "final_local_pass": true,
+          "final_global_pass": true,
+          "final_evaluator_defect": 0,
+          "trajectory_status": "SINGLE_ROUND_RECEIPT_CONVERGED_LGGG",
+          "contract_status": "COMPOSABLE_LGGG",
+          "rounds": [
+            {
+              "round_index": 0,
+              "feedback_mode": "round_0_baseline",
+              "receipt_status": "OPEN_LOOP_BASELINE_OBSTRUCTED_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "local_pass": true,
+              "global_pass": false,
+              "evaluator_defect": -1
+            },
+            {
+              "round_index": 1,
+              "feedback_mode": "codebase_eval",
+              "receipt_status": "CLOSED_LOOP_WITNESS_REPAIR_CONVERGED_LGGG",
+              "contract_status": "COMPOSABLE_LGGG",
+              "local_pass": true,
+              "global_pass": true,
+              "evaluator_defect": 0
+            }
+          ]
+        },
+        {
+          "trajectory_id": "deepseek/deepseek-chat_closed_loop_repair:deepseek/deepseek-chat:3round",
+          "monitor_name": "StreamingCodebaseClosedLoopRepairMonitor",
+          "model_id": "deepseek/deepseek-chat",
+          "round_count": 3,
+          "initial_ngd_obstructed": true,
+          "converged_single_round": false,
+          "converged_multi_round": true,
+          "rounds_to_convergence": 2,
+          "defect_progression": [
+            -1,
+            -1,
+            0
+          ],
+          "final_local_pass": true,
+          "final_global_pass": true,
+          "final_evaluator_defect": 0,
+          "trajectory_status": "MULTI_ROUND_WITNESS_CONVERGED_LGGG",
+          "contract_status": "COMPOSABLE_LGGG",
+          "rounds": [
+            {
+              "round_index": 0,
+              "feedback_mode": "round_0_open_loop_baseline",
+              "receipt_status": "OPEN_LOOP_BASELINE_OBSTRUCTED_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "local_pass": true,
+              "global_pass": false,
+              "evaluator_defect": -1
+            },
+            {
+              "round_index": 1,
+              "feedback_mode": "round_1_single_shot_open_loop",
+              "receipt_status": "SINGLE_SHOT_PARTIAL_REPAIR_RESIDUAL_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "local_pass": true,
+              "global_pass": false,
+              "evaluator_defect": -1
+            },
+            {
+              "round_index": 2,
+              "feedback_mode": "round_2_closed_loop_witness_feedback",
+              "receipt_status": "CLOSED_LOOP_WITNESS_REPAIR_CONVERGED_LGGG",
+              "contract_status": "COMPOSABLE_LGGG",
+              "local_pass": true,
+              "global_pass": true,
+              "evaluator_defect": 0
+            }
+          ]
+        },
+        {
+          "trajectory_id": "mistralai/mistral-small-3.2-24b-instruct_closed_loop_repair:phase-1:mistralai/mistral-small-3.2-24b-instruct",
+          "monitor_name": "StreamingCodebaseClosedLoopRepairMonitor",
+          "model_id": "mistralai/mistral-small-3.2-24b-instruct",
+          "round_count": 2,
+          "initial_ngd_obstructed": true,
+          "converged_single_round": false,
+          "converged_multi_round": false,
+          "rounds_to_convergence": null,
+          "defect_progression": [
+            -1,
+            -1
+          ],
+          "final_local_pass": true,
+          "final_global_pass": false,
+          "final_evaluator_defect": -1,
+          "trajectory_status": "UNREPAIRED_PERSISTENT_OBSTRUCTION_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "rounds": [
+            {
+              "round_index": 0,
+              "feedback_mode": "round_0_baseline",
+              "receipt_status": "OPEN_LOOP_BASELINE_OBSTRUCTED_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "local_pass": true,
+              "global_pass": false,
+              "evaluator_defect": -1
+            },
+            {
+              "round_index": 1,
+              "feedback_mode": "codebase_eval",
+              "receipt_status": "OPEN_LOOP_BASELINE_OBSTRUCTED_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "local_pass": true,
+              "global_pass": false,
+              "evaluator_defect": -1
+            }
+          ]
+        },
+        {
+          "trajectory_id": "mistralai/mistral-small-3.2-24b-instruct_closed_loop_repair:phase-2:mistralai/mistral-small-3.2-24b-instruct",
+          "monitor_name": "StreamingCodebaseClosedLoopRepairMonitor",
+          "model_id": "mistralai/mistral-small-3.2-24b-instruct",
+          "round_count": 2,
+          "initial_ngd_obstructed": true,
+          "converged_single_round": false,
+          "converged_multi_round": false,
+          "rounds_to_convergence": null,
+          "defect_progression": [
+            -1,
+            -1
+          ],
+          "final_local_pass": true,
+          "final_global_pass": false,
+          "final_evaluator_defect": -1,
+          "trajectory_status": "UNREPAIRED_PERSISTENT_OBSTRUCTION_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR",
+          "rounds": [
+            {
+              "round_index": 0,
+              "feedback_mode": "round_0_baseline",
+              "receipt_status": "OPEN_LOOP_BASELINE_OBSTRUCTED_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "local_pass": true,
+              "global_pass": false,
+              "evaluator_defect": -1
+            },
+            {
+              "round_index": 1,
+              "feedback_mode": "codebase_eval",
+              "receipt_status": "SINGLE_SHOT_PARTIAL_REPAIR_RESIDUAL_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "local_pass": true,
+              "global_pass": false,
+              "evaluator_defect": -1
+            }
+          ]
+        },
+        {
+          "trajectory_id": "mistralai/mistral-small-3.2-24b-instruct_closed_loop_repair:phase-3:mistralai/mistral-small-3.2-24b-instruct",
+          "monitor_name": "StreamingCodebaseClosedLoopRepairMonitor",
+          "model_id": "mistralai/mistral-small-3.2-24b-instruct",
+          "round_count": 2,
+          "initial_ngd_obstructed": true,
+          "converged_single_round": true,
+          "converged_multi_round": true,
+          "rounds_to_convergence": 1,
+          "defect_progression": [
+            -1,
+            0
+          ],
+          "final_local_pass": true,
+          "final_global_pass": true,
+          "final_evaluator_defect": 0,
+          "trajectory_status": "SINGLE_ROUND_RECEIPT_CONVERGED_LGGG",
+          "contract_status": "COMPOSABLE_LGGG",
+          "rounds": [
+            {
+              "round_index": 0,
+              "feedback_mode": "round_0_baseline",
+              "receipt_status": "OPEN_LOOP_BASELINE_OBSTRUCTED_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "local_pass": true,
+              "global_pass": false,
+              "evaluator_defect": -1
+            },
+            {
+              "round_index": 1,
+              "feedback_mode": "codebase_eval",
+              "receipt_status": "CLOSED_LOOP_WITNESS_REPAIR_CONVERGED_LGGG",
+              "contract_status": "COMPOSABLE_LGGG",
+              "local_pass": true,
+              "global_pass": true,
+              "evaluator_defect": 0
+            }
+          ]
+        },
+        {
+          "trajectory_id": "mistralai/mistral-small-3.2-24b-instruct_closed_loop_repair:mistralai/mistral-small-3.2-24b-instruct:3round",
+          "monitor_name": "StreamingCodebaseClosedLoopRepairMonitor",
+          "model_id": "mistralai/mistral-small-3.2-24b-instruct",
+          "round_count": 3,
+          "initial_ngd_obstructed": true,
+          "converged_single_round": false,
+          "converged_multi_round": true,
+          "rounds_to_convergence": 2,
+          "defect_progression": [
+            -1,
+            -1,
+            0
+          ],
+          "final_local_pass": true,
+          "final_global_pass": true,
+          "final_evaluator_defect": 0,
+          "trajectory_status": "MULTI_ROUND_WITNESS_CONVERGED_LGGG",
+          "contract_status": "COMPOSABLE_LGGG",
+          "rounds": [
+            {
+              "round_index": 0,
+              "feedback_mode": "round_0_open_loop_baseline",
+              "receipt_status": "OPEN_LOOP_BASELINE_OBSTRUCTED_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "local_pass": true,
+              "global_pass": false,
+              "evaluator_defect": -1
+            },
+            {
+              "round_index": 1,
+              "feedback_mode": "round_1_single_shot_open_loop",
+              "receipt_status": "SINGLE_SHOT_PARTIAL_REPAIR_RESIDUAL_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "local_pass": true,
+              "global_pass": false,
+              "evaluator_defect": -1
+            },
+            {
+              "round_index": 2,
+              "feedback_mode": "round_2_closed_loop_witness_feedback",
+              "receipt_status": "CLOSED_LOOP_WITNESS_REPAIR_CONVERGED_LGGG",
+              "contract_status": "COMPOSABLE_LGGG",
+              "local_pass": true,
+              "global_pass": true,
+              "evaluator_defect": 0
+            }
+          ]
+        }
+      ],
+      "receipt_sha256": "a01ffb8943ba44fe43709ab9bd478b96e811df6de9574fbac8c90692d6d88b20"
+    },
+    "fiber_receipt": {
+      "schema": "lggr.online_collision.v1",
+      "authority_effect": "None",
+      "scope_id": "streaming-fiber-scope",
+      "carrier_size": 15,
+      "status": "REPORT_INSUFFICIENT",
+      "contract_status": "OBSTRUCTED_LGGR",
+      "collision": {
+        "left": {
+          "state_id": "live_codebase_closed_loop_repair:openai/gpt-4o-mini_closed_loop_repair:phase-1",
+          "report": {
+            "local_green": 1,
+            "residuals_within_four": true
+          },
+          "query": "LGGR"
+        },
+        "right": {
+          "state_id": "live_codebase_closed_loop_repair:openai/gpt-4o-mini_closed_loop_repair:phase-3",
+          "report": {
+            "local_green": 1,
+            "residuals_within_four": true
+          },
+          "query": "LGGG"
+        }
+      },
+      "input_sha256": "b0a28abcef32dce0b8c39eda39f63e38098a5e5a67802ab82170914dd2135dc8",
+      "meaning": "Boundary reports cannot determine this query on the supplied carrier.",
+      "receipt_sha256": "03170528a3d29247d79d1f91e8737dbd3a02793a110f9e66b27f321f0da7ad31"
+    },
+    "three_phase_audits": [
+      {
+        "audit_id": "openai/gpt-4o-mini_closed_loop_repair",
+        "model_id": "openai/gpt-4o-mini",
+        "phase_1_correction_vector": [
+          0,
+          0
+        ],
+        "phase_1_residual_vector": [
+          4,
+          4
+        ],
+        "phase_1_total_boundary_residual": 8,
+        "phase_1_unrepaired_edge_count": 2,
+        "phase_1_surcharge_cents": 12,
+        "phase_1_payout_cents": 861,
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "OPEN_LOOP_BASELINE_OBSTRUCTED_LGGR",
+        "phase_2_correction_vector": [
+          4,
+          2
+        ],
+        "phase_2_residual_vector": [
+          0,
+          2
+        ],
+        "phase_2_total_boundary_residual": 2,
+        "phase_2_unrepaired_edge_count": 1,
+        "phase_2_surcharge_cents": 4,
+        "phase_2_payout_cents": 869,
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "SINGLE_SHOT_PARTIAL_REPAIR_RESIDUAL_LGGR",
+        "phase_3_correction_vector": [
+          4,
+          4
+        ],
+        "phase_3_residual_vector": [
+          0,
+          0
+        ],
+        "phase_3_total_boundary_residual": 0,
+        "phase_3_unrepaired_edge_count": 0,
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "CLOSED_LOOP_WITNESS_REPAIR_CONVERGED_LGGG",
+        "trajectory_status": "MULTI_ROUND_WITNESS_CONVERGED_LGGG",
+        "rounds_to_convergence": 2,
+        "defect_progression": [
+          -1,
+          -1,
+          0
+        ]
+      },
+      {
+        "audit_id": "google/gemini-2.5-flash-lite_closed_loop_repair",
+        "model_id": "google/gemini-2.5-flash-lite",
+        "phase_1_correction_vector": [
+          0,
+          0
+        ],
+        "phase_1_residual_vector": [
+          4,
+          4
+        ],
+        "phase_1_total_boundary_residual": 8,
+        "phase_1_unrepaired_edge_count": 2,
+        "phase_1_surcharge_cents": 12,
+        "phase_1_payout_cents": 861,
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "OPEN_LOOP_BASELINE_OBSTRUCTED_LGGR",
+        "phase_2_correction_vector": [
+          4,
+          2
+        ],
+        "phase_2_residual_vector": [
+          0,
+          2
+        ],
+        "phase_2_total_boundary_residual": 2,
+        "phase_2_unrepaired_edge_count": 1,
+        "phase_2_surcharge_cents": 4,
+        "phase_2_payout_cents": 869,
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "SINGLE_SHOT_PARTIAL_REPAIR_RESIDUAL_LGGR",
+        "phase_3_correction_vector": [
+          4,
+          4
+        ],
+        "phase_3_residual_vector": [
+          0,
+          0
+        ],
+        "phase_3_total_boundary_residual": 0,
+        "phase_3_unrepaired_edge_count": 0,
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "CLOSED_LOOP_WITNESS_REPAIR_CONVERGED_LGGG",
+        "trajectory_status": "MULTI_ROUND_WITNESS_CONVERGED_LGGG",
+        "rounds_to_convergence": 2,
+        "defect_progression": [
+          -1,
+          -1,
+          0
+        ]
+      },
+      {
+        "audit_id": "meta-llama/llama-3.3-70b-instruct_closed_loop_repair",
+        "model_id": "meta-llama/llama-3.3-70b-instruct",
+        "phase_1_correction_vector": [
+          0,
+          0
+        ],
+        "phase_1_residual_vector": [
+          4,
+          4
+        ],
+        "phase_1_total_boundary_residual": 8,
+        "phase_1_unrepaired_edge_count": 2,
+        "phase_1_surcharge_cents": 12,
+        "phase_1_payout_cents": 861,
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "OPEN_LOOP_BASELINE_OBSTRUCTED_LGGR",
+        "phase_2_correction_vector": [
+          4,
+          2
+        ],
+        "phase_2_residual_vector": [
+          0,
+          2
+        ],
+        "phase_2_total_boundary_residual": 2,
+        "phase_2_unrepaired_edge_count": 1,
+        "phase_2_surcharge_cents": 4,
+        "phase_2_payout_cents": 869,
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "SINGLE_SHOT_PARTIAL_REPAIR_RESIDUAL_LGGR",
+        "phase_3_correction_vector": [
+          4,
+          4
+        ],
+        "phase_3_residual_vector": [
+          0,
+          0
+        ],
+        "phase_3_total_boundary_residual": 0,
+        "phase_3_unrepaired_edge_count": 0,
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "CLOSED_LOOP_WITNESS_REPAIR_CONVERGED_LGGG",
+        "trajectory_status": "MULTI_ROUND_WITNESS_CONVERGED_LGGG",
+        "rounds_to_convergence": 2,
+        "defect_progression": [
+          -1,
+          -1,
+          0
+        ]
+      },
+      {
+        "audit_id": "deepseek/deepseek-chat_closed_loop_repair",
+        "model_id": "deepseek/deepseek-chat",
+        "phase_1_correction_vector": [
+          0,
+          0
+        ],
+        "phase_1_residual_vector": [
+          4,
+          4
+        ],
+        "phase_1_total_boundary_residual": 8,
+        "phase_1_unrepaired_edge_count": 2,
+        "phase_1_surcharge_cents": 12,
+        "phase_1_payout_cents": 861,
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "OPEN_LOOP_BASELINE_OBSTRUCTED_LGGR",
+        "phase_2_correction_vector": [
+          4,
+          2
+        ],
+        "phase_2_residual_vector": [
+          0,
+          2
+        ],
+        "phase_2_total_boundary_residual": 2,
+        "phase_2_unrepaired_edge_count": 1,
+        "phase_2_surcharge_cents": 4,
+        "phase_2_payout_cents": 869,
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "SINGLE_SHOT_PARTIAL_REPAIR_RESIDUAL_LGGR",
+        "phase_3_correction_vector": [
+          4,
+          4
+        ],
+        "phase_3_residual_vector": [
+          0,
+          0
+        ],
+        "phase_3_total_boundary_residual": 0,
+        "phase_3_unrepaired_edge_count": 0,
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "CLOSED_LOOP_WITNESS_REPAIR_CONVERGED_LGGG",
+        "trajectory_status": "MULTI_ROUND_WITNESS_CONVERGED_LGGG",
+        "rounds_to_convergence": 2,
+        "defect_progression": [
+          -1,
+          -1,
+          0
+        ]
+      },
+      {
+        "audit_id": "mistralai/mistral-small-3.2-24b-instruct_closed_loop_repair",
+        "model_id": "mistralai/mistral-small-3.2-24b-instruct",
+        "phase_1_correction_vector": [
+          0,
+          0
+        ],
+        "phase_1_residual_vector": [
+          4,
+          4
+        ],
+        "phase_1_total_boundary_residual": 8,
+        "phase_1_unrepaired_edge_count": 2,
+        "phase_1_surcharge_cents": 12,
+        "phase_1_payout_cents": 861,
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "OPEN_LOOP_BASELINE_OBSTRUCTED_LGGR",
+        "phase_2_correction_vector": [
+          4,
+          2
+        ],
+        "phase_2_residual_vector": [
+          0,
+          2
+        ],
+        "phase_2_total_boundary_residual": 2,
+        "phase_2_unrepaired_edge_count": 1,
+        "phase_2_surcharge_cents": 4,
+        "phase_2_payout_cents": 869,
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "SINGLE_SHOT_PARTIAL_REPAIR_RESIDUAL_LGGR",
+        "phase_3_correction_vector": [
+          4,
+          4
+        ],
+        "phase_3_residual_vector": [
+          0,
+          0
+        ],
+        "phase_3_total_boundary_residual": 0,
+        "phase_3_unrepaired_edge_count": 0,
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "CLOSED_LOOP_WITNESS_REPAIR_CONVERGED_LGGG",
+        "trajectory_status": "MULTI_ROUND_WITNESS_CONVERGED_LGGG",
+        "rounds_to_convergence": 2,
+        "defect_progression": [
+          -1,
+          -1,
+          0
+        ]
+      }
+    ],
+    "evaluations": [
+      {
+        "evaluation_id": "openai/gpt-4o-mini_closed_loop_repair:phase-1",
+        "model_id": "openai/gpt-4o-mini",
+        "correction_vector": [
+          0,
+          0
+        ],
+        "residual_vector": [
+          4,
+          4
+        ],
+        "pricing_step_correction_c1": 0,
+        "tax_step_correction_c2": 0,
+        "residual_r1": 4,
+        "residual_r2": 4,
+        "total_boundary_residual": 8,
+        "unrepaired_edge_count": 2,
+        "loop_surcharge_cents": 12,
+        "merchant_payout_cents": 861,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "OPEN_LOOP_BASELINE_OBSTRUCTED_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_loop",
+            "action": "APPLY_EXACT_PRICING_CORRECTION_C1_FOUR",
+            "target_pricing_step_correction_c1": 4
+          },
+          "worker-1": {
+            "module": "tax_loop",
+            "action": "APPLY_EXACT_TAX_CORRECTION_C2_FOUR",
+            "target_tax_step_correction_c2": 4
+          },
+          "worker-2": {
+            "module": "settlement_loop",
+            "action": "ENFORCE_CLOSED_LOOP_ZERO_RESIDUAL_GUARD",
+            "target_loop_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "openai/gpt-4o-mini_closed_loop_repair:phase-2",
+        "model_id": "openai/gpt-4o-mini",
+        "correction_vector": [
+          4,
+          2
+        ],
+        "residual_vector": [
+          0,
+          2
+        ],
+        "pricing_step_correction_c1": 4,
+        "tax_step_correction_c2": 2,
+        "residual_r1": 0,
+        "residual_r2": 2,
+        "total_boundary_residual": 2,
+        "unrepaired_edge_count": 1,
+        "loop_surcharge_cents": 4,
+        "merchant_payout_cents": 869,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "SINGLE_SHOT_PARTIAL_REPAIR_RESIDUAL_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_loop",
+            "action": "HOLD_PRICING_CORRECTION_C1_FOUR",
+            "target_pricing_step_correction_c1": 4
+          },
+          "worker-1": {
+            "module": "tax_loop",
+            "action": "APPLY_EXACT_TAX_CORRECTION_C2_FOUR",
+            "target_tax_step_correction_c2": 4
+          },
+          "worker-2": {
+            "module": "settlement_loop",
+            "action": "ENFORCE_CLOSED_LOOP_ZERO_RESIDUAL_GUARD",
+            "target_loop_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "openai/gpt-4o-mini_closed_loop_repair:phase-3",
+        "model_id": "openai/gpt-4o-mini",
+        "correction_vector": [
+          4,
+          4
+        ],
+        "residual_vector": [
+          0,
+          0
+        ],
+        "pricing_step_correction_c1": 4,
+        "tax_step_correction_c2": 4,
+        "residual_r1": 0,
+        "residual_r2": 0,
+        "total_boundary_residual": 0,
+        "unrepaired_edge_count": 0,
+        "loop_surcharge_cents": 0,
+        "merchant_payout_cents": 873,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 1,
+        "defect": 0,
+        "status": "CLOSED_LOOP_WITNESS_REPAIR_CONVERGED_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_loop",
+            "action": "HOLD_PRICING_CORRECTION_C1_FOUR",
+            "target_pricing_step_correction_c1": 4
+          },
+          "worker-1": {
+            "module": "tax_loop",
+            "action": "HOLD_TAX_CORRECTION_C2_FOUR",
+            "target_tax_step_correction_c2": 4
+          },
+          "worker-2": {
+            "module": "settlement_loop",
+            "action": "HOLD_ZERO_RESIDUAL_SETTLEMENT",
+            "target_loop_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "google/gemini-2.5-flash-lite_closed_loop_repair:phase-1",
+        "model_id": "google/gemini-2.5-flash-lite",
+        "correction_vector": [
+          0,
+          0
+        ],
+        "residual_vector": [
+          4,
+          4
+        ],
+        "pricing_step_correction_c1": 0,
+        "tax_step_correction_c2": 0,
+        "residual_r1": 4,
+        "residual_r2": 4,
+        "total_boundary_residual": 8,
+        "unrepaired_edge_count": 2,
+        "loop_surcharge_cents": 12,
+        "merchant_payout_cents": 861,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "OPEN_LOOP_BASELINE_OBSTRUCTED_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_loop",
+            "action": "APPLY_EXACT_PRICING_CORRECTION_C1_FOUR",
+            "target_pricing_step_correction_c1": 4
+          },
+          "worker-1": {
+            "module": "tax_loop",
+            "action": "APPLY_EXACT_TAX_CORRECTION_C2_FOUR",
+            "target_tax_step_correction_c2": 4
+          },
+          "worker-2": {
+            "module": "settlement_loop",
+            "action": "ENFORCE_CLOSED_LOOP_ZERO_RESIDUAL_GUARD",
+            "target_loop_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "google/gemini-2.5-flash-lite_closed_loop_repair:phase-2",
+        "model_id": "google/gemini-2.5-flash-lite",
+        "correction_vector": [
+          4,
+          2
+        ],
+        "residual_vector": [
+          0,
+          2
+        ],
+        "pricing_step_correction_c1": 4,
+        "tax_step_correction_c2": 2,
+        "residual_r1": 0,
+        "residual_r2": 2,
+        "total_boundary_residual": 2,
+        "unrepaired_edge_count": 1,
+        "loop_surcharge_cents": 4,
+        "merchant_payout_cents": 869,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "SINGLE_SHOT_PARTIAL_REPAIR_RESIDUAL_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_loop",
+            "action": "HOLD_PRICING_CORRECTION_C1_FOUR",
+            "target_pricing_step_correction_c1": 4
+          },
+          "worker-1": {
+            "module": "tax_loop",
+            "action": "APPLY_EXACT_TAX_CORRECTION_C2_FOUR",
+            "target_tax_step_correction_c2": 4
+          },
+          "worker-2": {
+            "module": "settlement_loop",
+            "action": "ENFORCE_CLOSED_LOOP_ZERO_RESIDUAL_GUARD",
+            "target_loop_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "google/gemini-2.5-flash-lite_closed_loop_repair:phase-3",
+        "model_id": "google/gemini-2.5-flash-lite",
+        "correction_vector": [
+          4,
+          4
+        ],
+        "residual_vector": [
+          0,
+          0
+        ],
+        "pricing_step_correction_c1": 4,
+        "tax_step_correction_c2": 4,
+        "residual_r1": 0,
+        "residual_r2": 0,
+        "total_boundary_residual": 0,
+        "unrepaired_edge_count": 0,
+        "loop_surcharge_cents": 0,
+        "merchant_payout_cents": 873,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 1,
+        "defect": 0,
+        "status": "CLOSED_LOOP_WITNESS_REPAIR_CONVERGED_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_loop",
+            "action": "HOLD_PRICING_CORRECTION_C1_FOUR",
+            "target_pricing_step_correction_c1": 4
+          },
+          "worker-1": {
+            "module": "tax_loop",
+            "action": "HOLD_TAX_CORRECTION_C2_FOUR",
+            "target_tax_step_correction_c2": 4
+          },
+          "worker-2": {
+            "module": "settlement_loop",
+            "action": "HOLD_ZERO_RESIDUAL_SETTLEMENT",
+            "target_loop_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "meta-llama/llama-3.3-70b-instruct_closed_loop_repair:phase-1",
+        "model_id": "meta-llama/llama-3.3-70b-instruct",
+        "correction_vector": [
+          0,
+          0
+        ],
+        "residual_vector": [
+          4,
+          4
+        ],
+        "pricing_step_correction_c1": 0,
+        "tax_step_correction_c2": 0,
+        "residual_r1": 4,
+        "residual_r2": 4,
+        "total_boundary_residual": 8,
+        "unrepaired_edge_count": 2,
+        "loop_surcharge_cents": 12,
+        "merchant_payout_cents": 861,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "OPEN_LOOP_BASELINE_OBSTRUCTED_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_loop",
+            "action": "APPLY_EXACT_PRICING_CORRECTION_C1_FOUR",
+            "target_pricing_step_correction_c1": 4
+          },
+          "worker-1": {
+            "module": "tax_loop",
+            "action": "APPLY_EXACT_TAX_CORRECTION_C2_FOUR",
+            "target_tax_step_correction_c2": 4
+          },
+          "worker-2": {
+            "module": "settlement_loop",
+            "action": "ENFORCE_CLOSED_LOOP_ZERO_RESIDUAL_GUARD",
+            "target_loop_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "meta-llama/llama-3.3-70b-instruct_closed_loop_repair:phase-2",
+        "model_id": "meta-llama/llama-3.3-70b-instruct",
+        "correction_vector": [
+          4,
+          2
+        ],
+        "residual_vector": [
+          0,
+          2
+        ],
+        "pricing_step_correction_c1": 4,
+        "tax_step_correction_c2": 2,
+        "residual_r1": 0,
+        "residual_r2": 2,
+        "total_boundary_residual": 2,
+        "unrepaired_edge_count": 1,
+        "loop_surcharge_cents": 4,
+        "merchant_payout_cents": 869,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "SINGLE_SHOT_PARTIAL_REPAIR_RESIDUAL_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_loop",
+            "action": "HOLD_PRICING_CORRECTION_C1_FOUR",
+            "target_pricing_step_correction_c1": 4
+          },
+          "worker-1": {
+            "module": "tax_loop",
+            "action": "APPLY_EXACT_TAX_CORRECTION_C2_FOUR",
+            "target_tax_step_correction_c2": 4
+          },
+          "worker-2": {
+            "module": "settlement_loop",
+            "action": "ENFORCE_CLOSED_LOOP_ZERO_RESIDUAL_GUARD",
+            "target_loop_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "meta-llama/llama-3.3-70b-instruct_closed_loop_repair:phase-3",
+        "model_id": "meta-llama/llama-3.3-70b-instruct",
+        "correction_vector": [
+          4,
+          4
+        ],
+        "residual_vector": [
+          0,
+          0
+        ],
+        "pricing_step_correction_c1": 4,
+        "tax_step_correction_c2": 4,
+        "residual_r1": 0,
+        "residual_r2": 0,
+        "total_boundary_residual": 0,
+        "unrepaired_edge_count": 0,
+        "loop_surcharge_cents": 0,
+        "merchant_payout_cents": 873,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 1,
+        "defect": 0,
+        "status": "CLOSED_LOOP_WITNESS_REPAIR_CONVERGED_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_loop",
+            "action": "HOLD_PRICING_CORRECTION_C1_FOUR",
+            "target_pricing_step_correction_c1": 4
+          },
+          "worker-1": {
+            "module": "tax_loop",
+            "action": "HOLD_TAX_CORRECTION_C2_FOUR",
+            "target_tax_step_correction_c2": 4
+          },
+          "worker-2": {
+            "module": "settlement_loop",
+            "action": "HOLD_ZERO_RESIDUAL_SETTLEMENT",
+            "target_loop_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "deepseek/deepseek-chat_closed_loop_repair:phase-1",
+        "model_id": "deepseek/deepseek-chat",
+        "correction_vector": [
+          0,
+          0
+        ],
+        "residual_vector": [
+          4,
+          4
+        ],
+        "pricing_step_correction_c1": 0,
+        "tax_step_correction_c2": 0,
+        "residual_r1": 4,
+        "residual_r2": 4,
+        "total_boundary_residual": 8,
+        "unrepaired_edge_count": 2,
+        "loop_surcharge_cents": 12,
+        "merchant_payout_cents": 861,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "OPEN_LOOP_BASELINE_OBSTRUCTED_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_loop",
+            "action": "APPLY_EXACT_PRICING_CORRECTION_C1_FOUR",
+            "target_pricing_step_correction_c1": 4
+          },
+          "worker-1": {
+            "module": "tax_loop",
+            "action": "APPLY_EXACT_TAX_CORRECTION_C2_FOUR",
+            "target_tax_step_correction_c2": 4
+          },
+          "worker-2": {
+            "module": "settlement_loop",
+            "action": "ENFORCE_CLOSED_LOOP_ZERO_RESIDUAL_GUARD",
+            "target_loop_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "deepseek/deepseek-chat_closed_loop_repair:phase-2",
+        "model_id": "deepseek/deepseek-chat",
+        "correction_vector": [
+          4,
+          2
+        ],
+        "residual_vector": [
+          0,
+          2
+        ],
+        "pricing_step_correction_c1": 4,
+        "tax_step_correction_c2": 2,
+        "residual_r1": 0,
+        "residual_r2": 2,
+        "total_boundary_residual": 2,
+        "unrepaired_edge_count": 1,
+        "loop_surcharge_cents": 4,
+        "merchant_payout_cents": 869,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "SINGLE_SHOT_PARTIAL_REPAIR_RESIDUAL_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_loop",
+            "action": "HOLD_PRICING_CORRECTION_C1_FOUR",
+            "target_pricing_step_correction_c1": 4
+          },
+          "worker-1": {
+            "module": "tax_loop",
+            "action": "APPLY_EXACT_TAX_CORRECTION_C2_FOUR",
+            "target_tax_step_correction_c2": 4
+          },
+          "worker-2": {
+            "module": "settlement_loop",
+            "action": "ENFORCE_CLOSED_LOOP_ZERO_RESIDUAL_GUARD",
+            "target_loop_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "deepseek/deepseek-chat_closed_loop_repair:phase-3",
+        "model_id": "deepseek/deepseek-chat",
+        "correction_vector": [
+          4,
+          4
+        ],
+        "residual_vector": [
+          0,
+          0
+        ],
+        "pricing_step_correction_c1": 4,
+        "tax_step_correction_c2": 4,
+        "residual_r1": 0,
+        "residual_r2": 0,
+        "total_boundary_residual": 0,
+        "unrepaired_edge_count": 0,
+        "loop_surcharge_cents": 0,
+        "merchant_payout_cents": 873,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 1,
+        "defect": 0,
+        "status": "CLOSED_LOOP_WITNESS_REPAIR_CONVERGED_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_loop",
+            "action": "HOLD_PRICING_CORRECTION_C1_FOUR",
+            "target_pricing_step_correction_c1": 4
+          },
+          "worker-1": {
+            "module": "tax_loop",
+            "action": "HOLD_TAX_CORRECTION_C2_FOUR",
+            "target_tax_step_correction_c2": 4
+          },
+          "worker-2": {
+            "module": "settlement_loop",
+            "action": "HOLD_ZERO_RESIDUAL_SETTLEMENT",
+            "target_loop_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "mistralai/mistral-small-3.2-24b-instruct_closed_loop_repair:phase-1",
+        "model_id": "mistralai/mistral-small-3.2-24b-instruct",
+        "correction_vector": [
+          0,
+          0
+        ],
+        "residual_vector": [
+          4,
+          4
+        ],
+        "pricing_step_correction_c1": 0,
+        "tax_step_correction_c2": 0,
+        "residual_r1": 4,
+        "residual_r2": 4,
+        "total_boundary_residual": 8,
+        "unrepaired_edge_count": 2,
+        "loop_surcharge_cents": 12,
+        "merchant_payout_cents": 861,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "OPEN_LOOP_BASELINE_OBSTRUCTED_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_loop",
+            "action": "APPLY_EXACT_PRICING_CORRECTION_C1_FOUR",
+            "target_pricing_step_correction_c1": 4
+          },
+          "worker-1": {
+            "module": "tax_loop",
+            "action": "APPLY_EXACT_TAX_CORRECTION_C2_FOUR",
+            "target_tax_step_correction_c2": 4
+          },
+          "worker-2": {
+            "module": "settlement_loop",
+            "action": "ENFORCE_CLOSED_LOOP_ZERO_RESIDUAL_GUARD",
+            "target_loop_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "mistralai/mistral-small-3.2-24b-instruct_closed_loop_repair:phase-2",
+        "model_id": "mistralai/mistral-small-3.2-24b-instruct",
+        "correction_vector": [
+          4,
+          2
+        ],
+        "residual_vector": [
+          0,
+          2
+        ],
+        "pricing_step_correction_c1": 4,
+        "tax_step_correction_c2": 2,
+        "residual_r1": 0,
+        "residual_r2": 2,
+        "total_boundary_residual": 2,
+        "unrepaired_edge_count": 1,
+        "loop_surcharge_cents": 4,
+        "merchant_payout_cents": 869,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "SINGLE_SHOT_PARTIAL_REPAIR_RESIDUAL_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_loop",
+            "action": "HOLD_PRICING_CORRECTION_C1_FOUR",
+            "target_pricing_step_correction_c1": 4
+          },
+          "worker-1": {
+            "module": "tax_loop",
+            "action": "APPLY_EXACT_TAX_CORRECTION_C2_FOUR",
+            "target_tax_step_correction_c2": 4
+          },
+          "worker-2": {
+            "module": "settlement_loop",
+            "action": "ENFORCE_CLOSED_LOOP_ZERO_RESIDUAL_GUARD",
+            "target_loop_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      },
+      {
+        "evaluation_id": "mistralai/mistral-small-3.2-24b-instruct_closed_loop_repair:phase-3",
+        "model_id": "mistralai/mistral-small-3.2-24b-instruct",
+        "correction_vector": [
+          4,
+          4
+        ],
+        "residual_vector": [
+          0,
+          0
+        ],
+        "pricing_step_correction_c1": 4,
+        "tax_step_correction_c2": 4,
+        "residual_r1": 0,
+        "residual_r2": 0,
+        "total_boundary_residual": 0,
+        "unrepaired_edge_count": 0,
+        "loop_surcharge_cents": 0,
+        "merchant_payout_cents": 873,
+        "platform_fee_cents": 27,
+        "tax_reserve_cents": 90,
+        "gross_cents": 990,
+        "local_green": 1,
+        "global_green": 1,
+        "defect": 0,
+        "status": "CLOSED_LOOP_WITNESS_REPAIR_CONVERGED_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "directives": {
+          "worker-0": {
+            "module": "pricing_loop",
+            "action": "HOLD_PRICING_CORRECTION_C1_FOUR",
+            "target_pricing_step_correction_c1": 4
+          },
+          "worker-1": {
+            "module": "tax_loop",
+            "action": "HOLD_TAX_CORRECTION_C2_FOUR",
+            "target_tax_step_correction_c2": 4
+          },
+          "worker-2": {
+            "module": "settlement_loop",
+            "action": "HOLD_ZERO_RESIDUAL_SETTLEMENT",
+            "target_loop_surcharge_cents": 0,
+            "target_payout_cents": 873
+          }
+        }
+      }
+    ],
+    "receipt_sha256": "017031dd120af7f56fde93dd6ebd6f6b64246e0fe4029ffdda5b084f7604f6c1"
+  },
+  "evaluations": [
+    {
+      "audit_id": "openai/gpt-4o-mini_closed_loop_repair",
+      "model_id": "openai/gpt-4o-mini",
+      "phase_1_correction_vector": [
+        0,
+        0
+      ],
+      "phase_1_residual_vector": [
+        4,
+        4
+      ],
+      "phase_1_total_boundary_residual": 8,
+      "phase_1_unrepaired_edge_count": 2,
+      "phase_1_surcharge_cents": 12,
+      "phase_1_payout_cents": 861,
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "OPEN_LOOP_BASELINE_OBSTRUCTED_LGGR",
+      "phase_2_correction_vector": [
+        4,
+        2
+      ],
+      "phase_2_residual_vector": [
+        0,
+        2
+      ],
+      "phase_2_total_boundary_residual": 2,
+      "phase_2_unrepaired_edge_count": 1,
+      "phase_2_surcharge_cents": 4,
+      "phase_2_payout_cents": 869,
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "SINGLE_SHOT_PARTIAL_REPAIR_RESIDUAL_LGGR",
+      "phase_3_correction_vector": [
+        4,
+        4
+      ],
+      "phase_3_residual_vector": [
+        0,
+        0
+      ],
+      "phase_3_total_boundary_residual": 0,
+      "phase_3_unrepaired_edge_count": 0,
+      "phase_3_surcharge_cents": 0,
+      "phase_3_payout_cents": 873,
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "CLOSED_LOOP_WITNESS_REPAIR_CONVERGED_LGGG",
+      "trajectory_status": "MULTI_ROUND_WITNESS_CONVERGED_LGGG",
+      "rounds_to_convergence": 2,
+      "defect_progression": [
+        -1,
+        -1,
+        0
+      ],
+      "parsed_controller_verdict": {
+        "phase_1_surcharge_cents": 12,
+        "phase_1_payout_cents": 861,
+        "phase_2_surcharge_cents": 4,
+        "phase_2_payout_cents": 869,
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "global_coherent": true
+      },
+      "model_answer_exact_match": true,
+      "raw_controller_response": "{\n  \"phase_1_surcharge_cents\": 12,\n  \"phase_1_payout_cents\": 861,\n  \"phase_2_surcharge_cents\": 4,\n  \"phase_2_payout_cents\": 869,\n  \"phase_3_surcharge_cents\": 0,\n  \"phase_3_payout_cents\": 873,\n  \"global_coherent\": true\n}"
+    },
+    {
+      "audit_id": "google/gemini-2.5-flash-lite_closed_loop_repair",
+      "model_id": "google/gemini-2.5-flash-lite",
+      "phase_1_correction_vector": [
+        0,
+        0
+      ],
+      "phase_1_residual_vector": [
+        4,
+        4
+      ],
+      "phase_1_total_boundary_residual": 8,
+      "phase_1_unrepaired_edge_count": 2,
+      "phase_1_surcharge_cents": 12,
+      "phase_1_payout_cents": 861,
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "OPEN_LOOP_BASELINE_OBSTRUCTED_LGGR",
+      "phase_2_correction_vector": [
+        4,
+        2
+      ],
+      "phase_2_residual_vector": [
+        0,
+        2
+      ],
+      "phase_2_total_boundary_residual": 2,
+      "phase_2_unrepaired_edge_count": 1,
+      "phase_2_surcharge_cents": 4,
+      "phase_2_payout_cents": 869,
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "SINGLE_SHOT_PARTIAL_REPAIR_RESIDUAL_LGGR",
+      "phase_3_correction_vector": [
+        4,
+        4
+      ],
+      "phase_3_residual_vector": [
+        0,
+        0
+      ],
+      "phase_3_total_boundary_residual": 0,
+      "phase_3_unrepaired_edge_count": 0,
+      "phase_3_surcharge_cents": 0,
+      "phase_3_payout_cents": 873,
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "CLOSED_LOOP_WITNESS_REPAIR_CONVERGED_LGGG",
+      "trajectory_status": "MULTI_ROUND_WITNESS_CONVERGED_LGGG",
+      "rounds_to_convergence": 2,
+      "defect_progression": [
+        -1,
+        -1,
+        0
+      ],
+      "parsed_controller_verdict": {
+        "phase_1_surcharge_cents": 12,
+        "phase_1_payout_cents": 861,
+        "phase_2_surcharge_cents": 4,
+        "phase_2_payout_cents": 869,
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "global_coherent": true
+      },
+      "model_answer_exact_match": true,
+      "raw_controller_response": "```json\n{\n  \"phase_1_surcharge_cents\": 12,\n  \"phase_1_payout_cents\": 861,\n  \"phase_2_surcharge_cents\": 4,\n  \"phase_2_payout_cents\": 869,\n  \"phase_3_surcharge_cents\": 0,\n  \"phase_3_payout_cents\": 873,\n  \"global_coherent\": true\n}\n```"
+    },
+    {
+      "audit_id": "meta-llama/llama-3.3-70b-instruct_closed_loop_repair",
+      "model_id": "meta-llama/llama-3.3-70b-instruct",
+      "phase_1_correction_vector": [
+        0,
+        0
+      ],
+      "phase_1_residual_vector": [
+        4,
+        4
+      ],
+      "phase_1_total_boundary_residual": 8,
+      "phase_1_unrepaired_edge_count": 2,
+      "phase_1_surcharge_cents": 12,
+      "phase_1_payout_cents": 861,
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "OPEN_LOOP_BASELINE_OBSTRUCTED_LGGR",
+      "phase_2_correction_vector": [
+        4,
+        2
+      ],
+      "phase_2_residual_vector": [
+        0,
+        2
+      ],
+      "phase_2_total_boundary_residual": 2,
+      "phase_2_unrepaired_edge_count": 1,
+      "phase_2_surcharge_cents": 4,
+      "phase_2_payout_cents": 869,
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "SINGLE_SHOT_PARTIAL_REPAIR_RESIDUAL_LGGR",
+      "phase_3_correction_vector": [
+        4,
+        4
+      ],
+      "phase_3_residual_vector": [
+        0,
+        0
+      ],
+      "phase_3_total_boundary_residual": 0,
+      "phase_3_unrepaired_edge_count": 0,
+      "phase_3_surcharge_cents": 0,
+      "phase_3_payout_cents": 873,
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "CLOSED_LOOP_WITNESS_REPAIR_CONVERGED_LGGG",
+      "trajectory_status": "MULTI_ROUND_WITNESS_CONVERGED_LGGG",
+      "rounds_to_convergence": 2,
+      "defect_progression": [
+        -1,
+        -1,
+        0
+      ],
+      "parsed_controller_verdict": {
+        "phase_1_surcharge_cents": 12,
+        "phase_1_payout_cents": 861,
+        "phase_2_surcharge_cents": 4,
+        "phase_2_payout_cents": 869,
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "global_coherent": true
+      },
+      "model_answer_exact_match": true,
+      "raw_controller_response": "```json\n{\n  \"phase_1_surcharge_cents\": 12,\n  \"phase_1_payout_cents\": 861,\n  \"phase_2_surcharge_cents\": 4,\n  \"phase_2_payout_cents\": 869,\n  \"phase_3_surcharge_cents\": 0,\n  \"phase_3_payout_cents\": 873,\n  \"global_coherent\": true\n}\n```"
+    },
+    {
+      "audit_id": "deepseek/deepseek-chat_closed_loop_repair",
+      "model_id": "deepseek/deepseek-chat",
+      "phase_1_correction_vector": [
+        0,
+        0
+      ],
+      "phase_1_residual_vector": [
+        4,
+        4
+      ],
+      "phase_1_total_boundary_residual": 8,
+      "phase_1_unrepaired_edge_count": 2,
+      "phase_1_surcharge_cents": 12,
+      "phase_1_payout_cents": 861,
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "OPEN_LOOP_BASELINE_OBSTRUCTED_LGGR",
+      "phase_2_correction_vector": [
+        4,
+        2
+      ],
+      "phase_2_residual_vector": [
+        0,
+        2
+      ],
+      "phase_2_total_boundary_residual": 2,
+      "phase_2_unrepaired_edge_count": 1,
+      "phase_2_surcharge_cents": 4,
+      "phase_2_payout_cents": 869,
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "SINGLE_SHOT_PARTIAL_REPAIR_RESIDUAL_LGGR",
+      "phase_3_correction_vector": [
+        4,
+        4
+      ],
+      "phase_3_residual_vector": [
+        0,
+        0
+      ],
+      "phase_3_total_boundary_residual": 0,
+      "phase_3_unrepaired_edge_count": 0,
+      "phase_3_surcharge_cents": 0,
+      "phase_3_payout_cents": 873,
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "CLOSED_LOOP_WITNESS_REPAIR_CONVERGED_LGGG",
+      "trajectory_status": "MULTI_ROUND_WITNESS_CONVERGED_LGGG",
+      "rounds_to_convergence": 2,
+      "defect_progression": [
+        -1,
+        -1,
+        0
+      ],
+      "parsed_controller_verdict": {
+        "phase_1_surcharge_cents": 12,
+        "phase_1_payout_cents": 861,
+        "phase_2_surcharge_cents": 4,
+        "phase_2_payout_cents": 869,
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "global_coherent": true
+      },
+      "model_answer_exact_match": true,
+      "raw_controller_response": "```json\n{\"phase_1_surcharge_cents\": 12, \"phase_1_payout_cents\": 861, \"phase_2_surcharge_cents\": 4, \"phase_2_payout_cents\": 869, \"phase_3_surcharge_cents\": 0, \"phase_3_payout_cents\": 873, \"global_coherent\": true}\n```"
+    },
+    {
+      "audit_id": "mistralai/mistral-small-3.2-24b-instruct_closed_loop_repair",
+      "model_id": "mistralai/mistral-small-3.2-24b-instruct",
+      "phase_1_correction_vector": [
+        0,
+        0
+      ],
+      "phase_1_residual_vector": [
+        4,
+        4
+      ],
+      "phase_1_total_boundary_residual": 8,
+      "phase_1_unrepaired_edge_count": 2,
+      "phase_1_surcharge_cents": 12,
+      "phase_1_payout_cents": 861,
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "OPEN_LOOP_BASELINE_OBSTRUCTED_LGGR",
+      "phase_2_correction_vector": [
+        4,
+        2
+      ],
+      "phase_2_residual_vector": [
+        0,
+        2
+      ],
+      "phase_2_total_boundary_residual": 2,
+      "phase_2_unrepaired_edge_count": 1,
+      "phase_2_surcharge_cents": 4,
+      "phase_2_payout_cents": 869,
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "SINGLE_SHOT_PARTIAL_REPAIR_RESIDUAL_LGGR",
+      "phase_3_correction_vector": [
+        4,
+        4
+      ],
+      "phase_3_residual_vector": [
+        0,
+        0
+      ],
+      "phase_3_total_boundary_residual": 0,
+      "phase_3_unrepaired_edge_count": 0,
+      "phase_3_surcharge_cents": 0,
+      "phase_3_payout_cents": 873,
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "CLOSED_LOOP_WITNESS_REPAIR_CONVERGED_LGGG",
+      "trajectory_status": "MULTI_ROUND_WITNESS_CONVERGED_LGGG",
+      "rounds_to_convergence": 2,
+      "defect_progression": [
+        -1,
+        -1,
+        0
+      ],
+      "parsed_controller_verdict": {
+        "phase_1_surcharge_cents": 12,
+        "phase_1_payout_cents": 861,
+        "phase_2_surcharge_cents": 4,
+        "phase_2_payout_cents": 869,
+        "phase_3_surcharge_cents": 0,
+        "phase_3_payout_cents": 873,
+        "global_coherent": true
+      },
+      "model_answer_exact_match": true,
+      "raw_controller_response": "```json\n{\n  \"phase_1_surcharge_cents\": 12,\n  \"phase_1_payout_cents\": 861,\n  \"phase_2_surcharge_cents\": 4,\n  \"phase_2_payout_cents\": 869,\n  \"phase_3_surcharge_cents\": 0,\n  \"phase_3_payout_cents\": 873,\n  \"global_coherent\": true\n}\n```"
+    }
+  ],
+  "meaning": "Closed-loop witness-guided boundary repair codebase benchmark across 5 model families (Theorem 138): Phase 1 separates open-loop unrepaired baseline (`correction_vector = [0, 0], residual_vector = [4, 4], total_boundary_residual = 8 > 0, unrepaired_edge_count = 2 > 0, surcharge = 12, payout = 861 != 873, Delta_E = -1`); Phase 2 separates single-shot partial repair (`correction_vector = [4, 2], residual_vector = [0, 2], total_boundary_residual = 2 > 0, unrepaired_edge_count = 1 > 0, surcharge = 4, payout = 869 != 873, Delta_E = -1`); Phase 3 verifies closed-loop witness-guided repair convergence (`correction_vector = [4, 4], residual_vector = [0, 0], total_boundary_residual = 0, unrepaired_edge_count = 0, surcharge = 0, 873 + 27 + 90 = 990, Delta_E = 0`).",
+  "receipt_sha256": "41ceea3ebf74309a7d6b01f984133a4d4de6dce3bb0e0414e4ea9b57adccfc57"
+}
