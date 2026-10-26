@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "paper-009-density-lift"
+version = "2.0.5"
+description = "Conditional density lifts and a primal–dual alignment statistic"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = ["numpy>=1.26", "scipy>=1.11"]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.3,<10"]
+
+[tool.setuptools]
+package-dir = {"" = "code"}
+py-modules = ["mod_conditional_density_lift_core", "deposit_paths"]
+
+[tool.pytest.ini_options]
+testpaths = ["code/tests"]
+pythonpath = ["code"]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100

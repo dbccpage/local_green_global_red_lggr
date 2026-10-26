@@ -1,0 +1,27 @@
+{
+  "title": "Conditional Density Lift and Dual-Witness Xi Functional",
+  "upload_type": "publication",
+  "publication_type": "preprint",
+  "publication_date": "2026-10-08",
+  "version": "2.0.3",
+  "language": "eng",
+  "access_right": "open",
+  "license": "cc-by-4.0",
+  "doi": "10.5281/zenodo.20192297",
+  "creators": [
+    {
+      "name": "Carroll, Jeremy H."
+    }
+  ],
+  "description": "This paper defines a secondary diagnostic functional, Xi, for an l1-primary finite obstruction framework. The construction begins with the quotient obstruction magnitude Phi_1, inherited from the finite cochain complex C0(P) -> C1(P), and introduces a conditional l1-to-density lift using a normalized square-root map into rank-1 density matrices that preserves normalized absolute coordinate weights and real amplitudes without independent phases (discarding total mass and common global sign). For obstructed classes (Phi_1 > 0), the paper selects canonical primal and dual representatives through successive coordinate minimization on the compact optimal face relative to a declared edge ordering, and defines Xi as the trace-norm distance between the density of the selected primal residual h1* and the density of the optimal dual witness phi*. For unobstructed classes (Phi_1 = 0), Xi = 0 by declared convention. For optimal pairs, LP complementary slackness enforces Xi < 1 strictly. Xi is evaluated strictly as a tertiary tie-breaker under a tiered priority policy when Phi_1 and Gamma_2 are tied within tolerance and boundary guardrail R_cl <= R_max is satisfied.",
+  "keywords": [
+    "conditional density lift",
+    "dual witness",
+    "xi functional",
+    "finite obstruction calculus",
+    "trace distance",
+    "guarded descent",
+    "tie-breaking"
+  ],
+  "notes": "Manuscript and documentation: CC-BY-4.0. Python reference implementation and tests: MIT. To verify the deposit locally, run 'py -3.12 -m pytest code/tests' followed by 'py -3.12 verify_deposit.py'."
+}

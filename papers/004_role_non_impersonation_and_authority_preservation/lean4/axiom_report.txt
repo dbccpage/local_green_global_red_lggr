@@ -1,0 +1,18 @@
+'RoleNonImpersonation.roleToFailure_injective' does not depend on any axioms
+'RoleNonImpersonation.failureToRole_roleToFailure' does not depend on any axioms
+'RoleNonImpersonation.RefusalM.bindR_refusal_left_zero' does not depend on any axioms
+'RoleNonImpersonation.RefusalM.pipeline5_obstruction_refusal_propagates' does not depend on any axioms
+'RoleNonImpersonation.authority_not_residual' depends on axioms: [propext]
+'RoleNonImpersonation.residual_output_not_auth' does not depend on any axioms
+'RoleNonImpersonation.non_exact_residual_not_resolved' does not depend on any axioms
+'RoleNonImpersonation.role_failure_not_factor_through_payload_quotient' does not depend on any axioms
+'RoleNonImpersonation.payload_classifier_factors_iff' depends on axioms: [Quot.sound]
+'RoleNonImpersonation.role_failure_no_quotient_factor' depends on axioms: [Quot.sound]
+'RoleNonImpersonation.payload_green_role_failure_red' does not depend on any axioms
+'RoleNonImpersonation.lawvere_adjunction' does not depend on any axioms
+'RoleNonImpersonation.descent_soundness' does not depend on any axioms
+'RoleNonImpersonation.descent_maximality' does not depend on any axioms
+'RoleNonImpersonation.exact_preservation_iff_fiber_constant' does not depend on any axioms
+'RoleNonImpersonation.mixed_fiber_obstruction' does not depend on any axioms
+'RoleNonImpersonation.descent_composition' does not depend on any axioms
+'RoleNonImpersonation.descent_conjunction' does not depend on any axioms

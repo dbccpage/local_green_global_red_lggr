@@ -1,0 +1,5 @@
+OK: complete archive, sidecar and member bytes verified.
+OK: Manifest and two-way sweep checks passed.
+
+Verification PASSED.
+

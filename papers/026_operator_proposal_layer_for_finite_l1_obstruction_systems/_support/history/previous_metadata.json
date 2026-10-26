@@ -1,0 +1,30 @@
+{
+  "title": "Operator Dynamics and Structural Constraints in L1 Obstruction Systems",
+  "upload_type": "publication",
+  "publication_type": "preprint",
+  "publication_date": "2026-10-08",
+  "version": "2.0.3",
+  "language": "eng",
+  "access_right": "open",
+  "license": "cc-by-4.0",
+  "doi": "10.5281/zenodo.20213064",
+  "creators": [
+    {
+      "name": "Carroll, Jeremy H."
+    }
+  ],
+  "description": "This paper operationalizes the 'Evaluator Discipline' required for high-fidelity automated reasoning by formalizing the Operator Proposal Layer. In complex search and transport systems, proposal mechanisms often inadvertently contaminate the evaluation process by importing implicit heuristics or structure-as-truth. We strictly separate proposal generation (search) from gate evaluation (judgment under a declared policy). Operators propose candidate field evolutions omega -> omega' but carry zero acceptance authority: every accept/reject decision is a function only of the evaluator-computed obstruction tuple (Phi_1, Gamma_2, R_cl, Xi), the evaluator policy, and declared solver conventions\u2014never of an operator's internal structure, parameters, or intent. We establish discrete coboundary defect foundations on finite connected directed graphs, cycle consistency equivalence, second-order closure defects Gamma_2 = ||d_1 h_1||_1 on 2-complexes, and local-green/global-red atlas gates. The framework enforces operator passivity, ensuring search systems can generate high-fidelity candidates while remaining structurally incapable of promoting their own authority. This monograph assigns no authorization and changes no jurisdiction.",
+  "keywords": [
+    "operator proposal layer",
+    "finite obstruction calculus",
+    "L1 coboundary defects",
+    "evaluator supremacy",
+    "operator passivity",
+    "local-green global-red",
+    "cycle consistency",
+    "closure defect",
+    "discrete cochain complexes",
+    "exact rational arithmetic"
+  ],
+  "notes": "Manuscript and documentation: CC-BY-4.0. Python reference implementation and tests: Apache-2.0. To verify the deposit locally, run 'py -3.12 -m pytest code/tests/test_operator_proposal.py' followed by 'py -3.12 verify_deposit.py'."
+}

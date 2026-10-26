@@ -1,0 +1,580 @@
+<div align="center"># The Anomalon Boundary: Primitive Difference, Structure, and the Authority Boundary of Meaning</div>
+<div align="center">Jeremy H. Carroll</div>
+<div align="center">2026-10-23</div>
+<div align="center">Version 2.1.1</div>
+
+## Abstract
+
+This note states the root authority boundary used by the the finite obstruction framework in its most cautious form. It does not claim that ordinary language, computation, repeatable-engagement protocols, probability, geometry, or infinity are root primitives. It claims that every authoritative claim must descend to primitive difference, structure, or typed refusal.
+
+The proposed root boundary is:
+
+```text
+Real_0 = Primitive Difference union Structure
+```
+
+where primitive difference is obstruction itself, and structure is what persists, composes, stabilizes, records, or results from obstruction.
+
+## Context
+
+**Relation to PaperFOC000:** PaperFOC000c states the root boundary. PaperFOC000 supplies the finite obstruction calculus that operates once a bounded carrier/window and observer discipline have been declared.
+
+0. Program Statement
+
+This paper is not an attempt to add another theory of everything to the existing catalog. A theory of everything typically begins inside inherited representation layers — space, time, object, coordinate, computation, probability, continuum, Hilbert space — and then tries to make those layers total.
+
+The Anomalon program begins earlier.
+
+It asks which claims have authority before any inherited representation layer is allowed to speak as root. Its proposed answer is deliberately small:
+
+```text
+Real_0 = Primitive Difference union Structure
+```
+
+Primitive Difference is obstruction itself. Structure is what persists, composes, stabilizes, records, or results from obstruction.
+
+Everything else is downstream. Time, space, coordinate, computation, probability, geometry, finiteness, infinity, and Hilbert space may become useful typed structures, observers, interfaces, lifts, or residual packets. None has authority solely because a tradition, notation, or institution can represent it.
+
+The purpose of the the finite obstruction framework is therefore not to generate persuasive explanations. It is to compose representation-layer marks or traces into packets, descend those packets to primitive differences, test for structure, and terminalize the result as certified, repaired, lifted, stabilized, refused, no-rule, budget-unknown, or unresolvable residual.
+
+This is a calculus of meaning, truth, and real possibility. It is also a firewall against unverified assertion: claims made without licensed descent, witness, or empirical ground.
+
+PaperFOC000 supplies the finite degree-1 descent window. PaperFOC000a shows that lawful observer geometry need not be scalar. PaperFOC000b defines the observer object relative to which a defect is measured and terminalized. PaperFOC000c states the root authority boundary that makes those papers part of one program.
+
+0.1 Anti-TOE Boundary
+
+This is not a theory of everything. It is an authority calculus for deciding what any theory, model, representation, fantasy, computation, measurement, or cosmology must provide before it can claim truth. It establishes the boundary of what must be shown under descent before representation-layer structures can assert authority.
+
+0.2 Why This Matters
+
+Mean-field reasoning, fluent language models, and persuasive theories share one failure mode: they let a representation assert authority without a witnessed descent. Anyone building a verifier, an evaluator, or a safety gate needs a precise line between *a claim that has earned terminal authority* and *a claim that has only been represented well*. This note states that line in its most cautious form, so downstream papers and code can cite one checkable boundary instead of re-deriving it.
+
+0.3 Related Work and Positioning
+
+The nearest neighbors are internal: PaperFOC000 (finite obstruction calculus), PaperFOC000a (non-scalar observer geometry), and PaperFOC000b (the observer object) supply the machinery this note sits beneath; Papers 024 (the Authority Firewall), 027 (Finite Authority and Non-Terminal Computation), and 031 (the Authority Gap) develop the evidence-versus-authority separation this boundary formalizes. Mathematically the lineage is obstruction theory read computationally and finitely, alongside the sheaf-theoretic account of contextuality (Abramsky & Brandenburger, *The Sheaf-Theoretic Structure of Non-Locality and Contextuality*, New J. Phys. **13** (2011), arXiv:1102.0264), where contextuality is exactly an obstruction to a global section; the contribution here is not new homology but an explicit *authority* discipline laid over it. The note does not compete with theories of everything — it states what any such theory must show under descent before it can claim truth.
+
+1. What Is Real? What Is Truth? What Are You? Who Are You?
+
+A representation is not real solely because it can be named, counted, drawn, predicted, or used. A mark becomes authority-bearing only after it descends to Primitive Difference, Structure, or typed refusal.
+
+A Shannon bit is therefore not root-real. It is a representation-layer counting unit over a declared distinction protocol. It may be useful after a packet declares what is being distinguished, who is observing, how the distinction descends, and what structure persists. Without that descent, the bit is only a mark in a coding scheme.
+
+The void is not root-real either. Absence-language can be useful as refusal, boundary, missing support, or zero residual, but the word `void` does not name a primitive thing. If a supposed void makes a difference, the difference is what enters the calculus. If it leaves no primitive difference and no structure, it carries no positive authority.
+
+The phrase `quantum field` is not a root object in this ontology. It can appear only inside a representation-layer packet, and the phrase itself has no root authority. A packet that uses such notation must still declare its carrier, observer, primitive differences, witnesses, residuals, repeatable-engagement conditions, and terminal status.
+
+Truth is terminalized structure under declared witness conditions. It is not fluency, consensus, institutional permission, prediction success by itself, or the ability to write a symbol. Truth is what remains after a claim packet has been forced through descent and has received a licensed terminal status.
+
+What are you? At this boundary, you are not a primitive essence. You are a stabilized structure that receives representation-layer marks or traces, composes claim packets, tests primitive differences, records witnesses, and terminalizes what can be terminalized.
+
+Who are you? You are an identity only where certified non-difference preserves a structure across the relevant comparisons. Identity is not assumed. It is witnessed.
+
+2. Boundary Statement
+
+The root vocabulary is deliberately small:
+
+```text
+PrimitiveDifference
+Structure
+Obstruction
+Carrier
+Observer
+Witness
+Residual
+TerminalStatus
+```
+
+Terms such as time, space, coordinate, Hilbert space, computation, probability, triangle, infinity, and finiteness are not root primitives. They may enter as typed structures, interfaces, lifts, observers, or residual packets. They have no authority solely because they can be represented.
+
+This distinction matters because language can promote representation into authority without a witness. The Anomalon boundary forbids that promotion.
+
+2.1 Stratified Boundary: Carrier-Structure and Residual-Structure
+
+The union in `Real_0 = Primitive Difference union Structure` is a typed coproduct, not a set union and not a derivation:
+
+```text
+Real_0 = Primitive Difference  ⊔  Structure
+```
+
+The `⊔` joins two independently posited reality channels (Axiom 0 and Axiom 1). At the root it asserts no reduction of one channel to the other — neither is a root primitive built from the other — and no origin of either. It is an authority-descent boundary, not a generation chain. The definability ladder below refines the `Structure` channel internally; whether that channel reduces to Primitive Difference is the open conjecture of §9, not a root assertion.
+
+The word `Structure` carries two typed senses that must not be conflated, because they sit on opposite sides of the difference operator:
+
+- **Carrier-Structure** is a declared carrier together with its local-state assignments — the `Source` of a primitive difference, the cochain `C^0` over a finite carrier. It is a declared precondition of any primitive difference: the coboundary `d_0 : C^0 -> C^1` is undefinable without it, and no relata-free difference is admissible.
+- **Residual-Structure** is what a primitive difference produces — the quotient `Q^1 = C^1 / im(d_0)` and whatever persists, composes, stabilizes, or records downstream.
+
+The dependency is therefore the acyclic ladder
+
+```text
+carrier-Structure  ->  primitive difference  ->  residual-Structure
+```
+
+with no closing edge: the carrier-Structure that grounds a difference is never the residual-Structure that the difference produces. The apparent circle — structure needs difference, difference needs structure — is blocked at the current formal layer by distinguishing carrier-Structure from residual-Structure. This establishes carrier-first definability, not difference-first origin.
+
+This boundary mints no authority. A nonzero primitive-difference class (`Q^1 != 0`) is not authority, and membership in either channel is not authority. Authority is earned only at the terminalized finite descent.
+
+`OmegaCosmology.Ontology.Real0` in this deposit is a two-constructor inductive. `OmegaCosmology.Ontology.Anomalon` is not in this deposit, so the carrier-precondition typing claimed for that module is not a theorem here.
+
+2.2 Carrier Is Not Yet Root
+
+A carrier is not root space, not container, and not a repeatable-engagement substrate. A carrier is the first declared support structure that lets a represented difference become typeable.
+
+This creates a live fork in the Anomalon boundary:
+
+```text
+Carrier-first survival:
+  given a declared carrier, represented differences, residuals, and terminal statuses can be typed.
+
+Difference-first origin:
+  every carrier is itself residual from a prior primitive obstruction.
+```
+
+The first direction is not a theorem of this deposit: the cited carrier-first Lean names are absent. The second remains open.
+
+Therefore the program must not say "the carrier is primitive/root." It must say: the carrier is the first witness-bearing support admitted by the current descent window. If a deeper packet shows that the carrier itself descends from a prior obstruction, then the carrier is demoted to residual structure. If no such packet is found, the carrier remains a primitive support obligation for that window.
+
+The Anomalon boundary permits hidden lower layers. If carrier, observer, orientation, or witnessability cannot be derived, they must be named as candidate primitives rather than smuggled in as silent background.
+
+The next Matryoshka audit asks whether each pre-carrier obligation can be derived from Primitive Difference plus Structure, must be marked as a candidate primitive, or must remain unknown:
+
+```text
+Support
+Boundary
+Address
+Orientation
+Comparison
+Multiplicity
+Persistence
+Witnessability
+Zero / nonzero
+Inside / outside
+Mark / trace
+Repeatability
+```
+
+The disciplined boundary is now:
+
+```text
+No represented difference without carrier.
+No authority without descent.
+No ontology before witness.
+```
+
+The open question is sharper: is carrier itself residual structure from a deeper obstruction, or is carrier the first irreducible support obligation of any knowable difference?
+
+2.3 SPK-COSMO Result: Carrier-First Survival and the Addressability Threshold
+
+The SPK-COSMO-002 review (2026-06-19) evaluated the "ProtoSupport" candidate layer below `CarrierStructure`. The resulting scoped findings refine the boundary:
+
+- **Carrier-first survival** is operationally supported: represented difference is typed over declared `CarrierStructure`.
+- **Boundary-first / co-arising typed event** is the authority-safe interpretation, preventing both carrier-origin and difference-first overclaims without a witness.
+- **Functional addressability** (`Address → Mark`) collapses into `CarrierSkeleton` by reconstructing directed incidence.
+- **Binary addressability** (`Address → Mark → Prop`) also collapses into `CarrierSkeleton`: the witness graph of matched address/mark pairs supplies directed incidence.
+- **Unary or non-binary markability/addressability** remains the next open lower-layer test only if it does not expose an address domain together with a mark domain, a selector, or an address-mark relation.
+
+`Ontology.AddressabilityThreshold` is not in this deposit, so the collapse of functional and binary addressability is not a theorem here. The remaining open question is whether anything weaker than binary addressability remains meaningful enough to support represented difference.
+
+This result asserts no primitive-cosmology terminalization, no difference-first origin, and no carrier primitiveness.
+
+2.4 The Anomalon Is a Restart Boundary, Not a Beginning of Reality
+
+The Anomalon is not the first primitive thing and not the beginning of reality. A beginning, in the metaphysical sense, invites an immediate regress: what began the beginning, what carrier held it, what distinguished it as first, and what witnessed that priority? PaperFOC000c therefore does not use beginning as an origin claim.
+
+Two narrower meanings are admissible.
+
+First, a beginning may be a **run-boundary**: the first admissible packet in a declared run. A run begins when a representation-layer mark is packetized under a declared carrier/window, observer, terminal target, and authority ceiling.
+
+Second, a beginning may be a **restart after terminal obstruction**. In that sense:
+
+```text
+Anomalon = terminal unresolvable residual relative to S(n)
+```
+
+If all admitted repairs fail, and the current carrier/window cannot resolve the obstruction, the residual may terminalize as an Anomalon. The Anomalon does not solve the obstruction by itself. It permits only three lawful continuations:
+
+```text
+
+1. typed refusal: this system cannot resolve the obstruction;
+2. lift request: add a licensed degree of freedom, symbol, witness, or carrier extension;
+3. restart seed: re-enter the Symbol Game with the residual as the next seed.
+```
+
+The corrected role is therefore:
+
+```text
+The Anomalon is not the beginning of reality.
+It is the boundary object produced when a finite authority system exhausts its admitted repairs and still contains typed obstruction.
+It is the residual that forces the next question.
+```
+
+A fully obstructed state is also not nothing. In this calculus:
+
+```text
+nothing = no typed mark, no difference, no structure, no witness
+all obstruction = maximal typed residual under current rules
+```
+
+Those are different states. If the whole current system becomes obstruction, the Anomalon is the typed remainder saying that this system cannot close itself under its current degrees of freedom. A lift may be requested only with a preservation witness; restart permission alone mints no authority.
+
+In particular, the restart firewall distinguishes a requested lift from an authorized lift. A lift request (`LIFT_REQUEST`) records the need for extended degrees of freedom. An authorized lift transition (`LIFT_AUTHORIZED`) requires a validated `LiftPreservationWitness` with a strictly positive preservation metric ($\Delta_\Lambda > 0$) certifying that carrier extension preserves the prior state without ungrounded mutation. Without this witness, any attempt to promote an Anomalon boundary object to authority or authorize continuation fails closed.
+
+The Lean target is `TerminalResidual` plus `AnomalonSeed`. The firewall theorem is:
+
+```text
+AnomalonSeed does not imply authority.
+AnomalonSeed only permits typed refusal, lift request, or next-seed generation.
+```
+
+This makes the old Anomalon intuition a recursion boundary rather than a root ontology.
+
+2.5 Minimal Knowability Closure
+
+The sharper question is not where the universe began. The authority-safe question is:
+
+```text
+What is the minimal structure a system must have for it to be knowable as a system at all?
+```
+
+Not physically exist. Not metaphysically exist. Be knowable, finite or infinite, by an observer capable of gauge, difference, repair, and terminal judgment.
+
+At this boundary, beginning is not an event. Beginning is a minimal knowability closure:
+
+```text
+A system begins for this calculus when it has enough internal structure to support:
+local state,
+gauge variation,
+comparison,
+coboundary,
+local/global mismatch,
+residual,
+observer cost,
+and a rule for repair, refusal, or lift.
+```
+
+Anything below that threshold may be represented, marked, or occur in some non-terminal sense, but it is not yet a system-for-this-calculus. It cannot be measured as finite, infinite, structured, obstructed, repaired, or terminalized until those roles become jointly definable.
+
+A Minimal Knowable System therefore contains these roles:
+
+| Required role | If absent, what fails |
+|---|---|
+| Carrier/support | no local assignment |
+| Local state | no represented difference |
+| Gauge | no removable artifact |
+| Coboundary / primitive difference | no primitive difference |
+| Local/global comparison | no local/global defect |
+| Quotient residual | no irreducible residual |
+| Closure defect | no local/global defect |
+| Observer norm / cost | no obstruction mass |
+| Terminal rule | no authority boundary |
+| Continuation rule | no continuation under unresolved obstruction |
+
+**Scope Qualification.** The ten-role Minimal Knowable System is a proposed interface specification for systems to be terminalizable under this finite obstruction calculus. Its Boolean completeness check verifies whether a candidate system populates all ten declared interface slots within this calculus; it does not demonstrate or claim that these roles are ontologically necessary for knowability in general.
+
+The safe claim is:
+
+```text
+Any system knowable under the Omega/Anomalon calculus must instantiate this minimal structure, or an equivalent translation of it.
+```
+
+The unsafe overclaim is:
+
+```text
+Anything lacking this cannot exist.
+```
+
+PaperFOC000c does not make that overclaim. It claims only that anything lacking this role-complete package cannot be admitted as a knowable, terminalizable system under this calculus.
+
+This also gives the non-teleological obstruction-management rule:
+
+```text
+Obstruction cannot vanish without an explicit coboundary repair.
+It must be repaired, quotiented, dissipated, lifted, recorded, or refused.
+```
+
+This is not a physics-first thermodynamic axiom. It is the abstract persistence condition for knowability: a system that cannot transform obstruction cannot remain terminally coherent as a system-for-this-calculus. Physical thermodynamics may be one representation-layer realization of that rule, not its root authority.
+
+This reframes the Anomalon again. The Anomalon is the typed failure of closure inside a Minimal Knowable System. It says:
+
+```text
+The current system is not closed under its own rules.
+```
+
+Then the only lawful continuations remain refusal, lift request, or restart with the residual as seed.
+
+The Lean target is `MinimalKnowableSystem`: a role-complete package plus an impossibility table showing what fails when each required role is removed. Its firewall theorem states that an MKS witness mints no metaphysical totality claim.
+
+2.6 Surviving Primitive Difference
+
+Primitive Difference was the right starting point because it is the first place where `local = global` can fail meaningfully. The failure, however, has to be classified with respect to an explicit finite boundary complex with verified coboundary composition $d^1 d^0 = 0$.
+
+For an individual 1-cochain discrepancy $h \in C^1$:
+
+```text
+If h is exact (h = d^0 alpha in im(d^0)):
+  its quotient residual vanishes: [h] = 0 in H^1.
+  d^1 h = d^1 d^0 alpha = 0 forces Gamma_2 = 0.
+  local = global after gauge.
+  no survivor remains; it vanishes as gauge.
+  (Note: [h] = 0 in H^1 describes this cochain; it does not assert that H^1 = 0 as a whole group.)
+
+If Gamma_2 = ||d^1 h||_1 > 0:
+  local data does not close (d^1 h != 0).
+  the system exhibits active incoherence.
+  it is not a stable obstruction.
+
+If d^1 h = 0 (Gamma_2 = 0) and [h] != 0 in H^1:
+  local data is closed, but not globally exact.
+  local consistency exists, but no global gauge removes it.
+  this is the first stable survivor.
+```
+
+Thus the beginning of knowable structure is not arbitrary primitive difference. It is primitive difference that survives local-to-global descent:
+
+```text
+Surviving Primitive Difference = closed non-exact primitive difference
+```
+
+Equivalently:
+
+```text
+If the failure is exact, it vanishes as gauge.
+If the failure is not closed, it is active incoherence.
+If the failure is closed but non-exact, it survives as structure.
+```
+
+This is the controlled crack. If local always equals global, there is no survivor. If local never closes, there is no stable system. Structure begins in the middle: local consistency with global non-removability.
+
+`Ontology.SurvivingPrimitiveDifference` is not in this deposit. The finite statements proved here are in `lean4/FiniteBoundary.lean`: the three flag classifications, the integer cycle coboundary, the witness `applyD0 2 0 1 = (-2, 1, 1)`, the proof that `(1, 1, 1)` is not a coboundary, and the filled-triangle curvature `d1(1,0,0) = 1`. Python `CochainComplex.analyze_defect` checks the same carriers. This is not a general theorem that `H¹ = 0`, and it is not a proof of cosmic origin.
+
+## 3. Compact Axiom Set
+
+The compact axiom set is:
+
+```text
+Axiom 0: Primitive Difference is real.
+Axiom 1: Structure is real.
+Axiom 2: All claims must descend to Primitive Difference, Structure, or typed refusal.
+Axiom 3: No representation layer has authority by default.
+Axiom 4: Truth is terminalized structure under declared witness conditions.
+```
+
+In Lean, this is encoded as explicit data in `OmegaCosmology.Ontology` inside `lean4/OntologyBasic.lean`, not as global kernel axioms. `OmegaCosmology.Ontology.Anomalon` is not in this deposit. The §9 working hypothesis stays an open conjecture.
+
+4. Derived Vocabulary
+
+The downstream vocabulary is interpreted as follows:
+
+```text
+time        = structure/order over differences
+space       = structure/carrier over differences
+object      = stabilized structure
+identity    = certified non-difference
+truth       = terminalized structure of a claim
+meaning     = descent relation from representation-layer marks/traces to structure
+fantasy     = representation-layer structure
+bullshit    = unlicensed claim with no care for truth/meaning/possibility
+mathematics = structured fantasy with high compression and witness discipline
+computation = representation-layer structure with transition rules
+```
+
+These definitions are not licenses to overclaim. They are audit hooks. A repeatable-engagement claim still needs declared engagement conditions. A mathematical claim still needs witness discipline. A computation still needs declared transition rules. A fantasy may be meaningful as representation, but it receives no authority without descent.
+
+5. Claim Protocol
+
+The system target is:
+
+```text
+Given representation-layer marks or traces, compose a packet.
+Given a packet, find its primitive differences.
+Given primitive differences, test for structure.
+Given structure, certify, repair, lift, compose, stabilize, or refuse.
+```
+
+The terminal statuses are:
+
+```text
+certified
+repaired
+lifted
+stabilized
+refused
+noRule
+budgetUnknown
+```
+
+The positive statuses are authority-bearing only when descent has been witnessed. The negative statuses are not failures of rigor. They are typed refusals that prevent representation from masquerading as truth.
+
+6. The Core Formal Obligation
+
+The core boundary principle is:
+
+```text
+NoAuthorityWithoutDescent:
+  A claim has no terminal authority unless it descends to
+  PrimitiveDifference, Structure, or typed refusal.
+```
+
+The corresponding Lean theorem is:
+
+```lean
+theorem no_authority_without_descent
+    (packet : ClaimPacket)
+    (h : packet.HasAuthority) :
+    packet.DescendsToReal0
+```
+
+**Claim type: [POLICY RULE]** (`OmegaCosmology.Ontology.no_authority_without_descent`).
+This theorem is a policy invariant by construction. Because `HasAuthority` is defined definitionally as `DescendsToReal0 ∧ Authoritative`, the theorem extracts the first conjunct. It does not verify an algorithmic descent procedure or evaluate packet data; it establishes the formal policy definition that representation alone cannot possess authority. The term 'verified descent' is reserved for an executed certificate check against concrete packet data.
+
+To ensure that the policy object is consistent and not vacuously uninhabited, `AnomalonAxiomSet` restricts its quantifiers to `ValidatedClaimPacket` (claim packets certified to be terminalized and whose authoritative status implies descent), and exhibits a concrete verified inhabitant `defaultAnomalonAxioms`.
+
+**Falsifiability.** This boundary fails if a single claim can be exhibited that carries terminal authority while descending to none of Primitive Difference, Structure, or a typed refusal — that is, if some representation-layer mark is shown to be authority-bearing with no witnessed descent. No such claim is admissible under the Lean encoding.
+
+**Reproducibility.** The Lean in this deposit is `lean4/`. `py -3.12 verify_deposit.py --lean --test code/tests/test_anomalon_boundary.py` builds that package and checks the axiom census. An external copy under `lean4/quantum_mechanics/` is not part of this deposit.
+
+7. Finite Descent Is an Authority Protocol
+
+Finiteness is not root ontology. Finiteness is the access discipline for bounded observers and machines. A finite packet is how a local observer earns the right to speak about structure.
+
+This avoids two errors:
+
+1. treating infinite language as a superior root primitive;
+2. treating finite implementation as the whole of reality.
+
+The the finite obstruction framework uses finite descent because humans and machines receive claims as finite packets, not because only finite things can be real.
+
+8. Intelligence Boundary
+
+The Anomalon boundary also forces a definition of intelligence.
+
+In the present public discourse, intelligence is often confused with prediction, fluency, speed, tool use, autonomy, or domination. Those are not intelligence at the root. They are behaviors inside representation layers. They may be useful. They may also be bullshit engines when they produce claims without descent, witness, or care for truth.
+
+The Anomalon definition is stricter:
+
+```text
+Intelligence is the capacity to convert representation-layer marks or traces into meaningful packets,
+descend those packets to Primitive Difference and Structure,
+and terminalize the result without pretending.
+```
+
+An intelligent system must be able to:
+
+```text
+receive representation-layer marks or traces
+compose a packet
+declare the observer
+identify primitive differences
+detect structure
+separate representation from authority
+test repair, lift, stabilization, or refusal
+return a terminal status
+record residuals without hiding them
+discover candidate primitives when descent fails
+```
+
+This definition is intentionally hostile to bullshit. A system that generates fluent claims without declared witness conditions is not intelligent in this sense. It is a proposal engine. It may be useful, but it has no terminal authority.
+
+A simple object already shows the problem. Ask: what is a potato?
+
+A potato may be a botanical tuber, a food object, a genetic lineage, a chemical energy store, an agricultural commodity, a legal category, a word in a language, a thing in a recipe, a thing that sprouts, a thing that rots, or an object of perception. None of these alone is “the potato” with root authority. Each is a structure seen under an observer. To know what a potato is, the system must declare the carrier, observer, comparison rules, identity conditions, persistence conditions, and terminalizer.
+
+Therefore the question is not answered by naming. It is answered by descent.
+
+```text
+potato-as-botanical-structure
+potato-as-food-structure
+potato-as-market-structure
+potato-as-language-structure
+potato-as-perceived-object
+```
+
+Each packet may terminalize differently. The truth is not a single word. The truth is the terminalized structure of the claim under declared witness conditions.
+
+This is why AGI and ASI discourse is mostly premature. A system that cannot say what kind of structure a potato is, under what observer, with what identity and persistence conditions, has no business claiming general intelligence. A system that cannot refuse an unlicensed question is not superintelligent. It is unsafe at the level of meaning.
+
+Under the Anomalon boundary:
+
+```text
+AGI = broad packetization and descent across many representation layers.
+ASI = generalized truthful terminalization across representation layers,
+      including discovery of missing primitives and typed refusal of bullshit.
+```
+
+ASI is not “a machine that answers everything.” It is a system that does not fake answers. It composes, descends, repairs, lifts, stabilizes, or refuses. It knows when a claim lacks authority. It can say noRule. It can say budgetUnknown. It can say unresolvableResidual. It can say: this representation has not earned truth.
+
+That is intelligence under Primitive Difference and Structure.
+
+9. Working Hypothesis
+
+The working cosmological hypothesis is:
+
+```text
+Structure is residual from failed, stabilized, or transformed obstruction removal.
+```
+
+**Claim type: [CONJECTURE / OPEN]** (PL-000c-1). This is the residual-Structure sense of §2.1 only. The stronger claim that residual-Structure exhausts all Structure — equivalently, that primitive difference is ontologically prior — is a declared open conjecture, not a theorem. Its discharge must begin carrier-first and must close red-team obligations Test 3 (difference precedes the relata) and Test 4 (cohomology presupposes its carrier). Carrier-first typeability, by contrast, is type-enforced (§2.1); carrier-origin/fundamentality is not (§2.2).
+
+This note does not promote that hypothesis into a finished repeatable-engagement theorem. It records the witness path required before it earns repeatable-engagement authority:
+
+```text
+declare carrier
+declare primitive differences
+detect residual
+test persistence
+test composition
+test stabilization
+certify repeatable engagement
+terminalize the claim
+```
+
+That is the Anomalon boundary.
+
+10. What This Does Not Claim
+
+- It does not claim a total cosmology, an exhaustive repair, or a replacement for repeatable-engagement domain models. `[SCOPE FENCE]`
+- It does not claim that Primitive Difference is ontologically prior to Structure; the residual-exhausts-Structure / PD-prior reading of §9 is a declared open conjecture (PL-000c-1), not a theorem. ``OPEN``
+- It does not claim that carrier is primitive/root; carrier is a declared support obligation until a carrier-origin witness says otherwise (§2.2). ``OPEN``
+- It mints no authority on either reality channel: a nonzero primitive-difference class is not authority, and Structure-membership is not authority (§2.1). `[SCOPE FENCE]`
+- It does not claim that the Anomalon is the first primitive thing or the beginning of reality; it is a terminal residual/restart boundary, and restart permission mints no authority (§2.4). `[SCOPE FENCE / FIREWALL]`
+- It does not claim that anything lacking Minimal Knowable System roles cannot exist; it claims only that such a thing is not admitted as a knowable, terminalizable system under this calculus (§2.5). `[SCOPE FENCE]`
+- It does not claim that arbitrary primitive difference is already structure; exact difference vanishes as gauge, active non-closure is not stable, and only closed non-exact difference is a survivor under this calculus (§2.6). `[SCOPE FENCE / FIREWALL]`
+- It does not claim finiteness or infinity as root ontology; finiteness is an access discipline (§7). `[SCOPE FENCE]`
+- The downstream-vocabulary entries of §4 are audit hooks, not derivations of those notions. `[DEFINITION]`
+
+Changelog
+
+The notes below record earlier drafts. The Lean module names they mention are not files in this deposit.
+
+Version Note: v1.5 (2026-06-20):**Added §2.6, the Surviving Primitive Difference hinge; synchronized the Lean `SurvivingPrimitiveDifference` closed/non-exact survivor theorems with the claim/proof ledgers.
+Version Note: v1.4 (2026-06-20):** Added §2.5, the Minimal Knowable System / minimal knowability closure thesis; synchronized the Lean `MinimalKnowableSystem` role table and metaphysical-totality firewall with the claim/proof ledgers.
+Version Note: v1.3 (2026-06-20):**Added §2.3, the functional/binary addressability collapse threshold, and §2.4, the Anomalon restart-boundary doctrine; synchronized the Lean `TerminalResidual` / `AnomalonSeed` firewall and the claim/proof ledgers.
+Version Note: v1.2 (2026-06-19):** Added §2.2, "Carrier Is Not Yet Root"; split carrier-first typeability from the still-open difference-first carrier-origin claim; added the Matryoshka pre-carrier audit; and synchronized the Lean carrier-origin witness firewall.
+Version Note: v1.1 (2026-06-19):**Stratified the root boundary into carrier-Structure and residual-Structure (§2.1); declared the union a typed coproduct that mints no authority; fenced the PD-priority reading of §9 as an open conjecture; added the Lean reference `Ontology.Anomalon` and the carrier-first discharge of red-team Tests 3 and 4 (`FOC.RedTeamDischarge`, axiom-free); added the why-this-matters, related-work, falsifiability, reproducibility, and does-not-claim elements; created the per-paper Claim Ledger. Hygiene pass (Improver → Adversary).
+Version Note: v1 (June 2026):** Initial pre-print.
+
+> **Pedagogical Crosswalk Notice:** Streamlined pedagogical exposition for this kernel is provided under [`100_mathematical_foundations/`](../100_mathematical_foundations/). This monograph remains the primary mathematical home.
+
+
+Claim-ID body index (packaging)
+
+| ID | Home |
+|---|---|
+| `C1` | sibling `002_the_anomalon_boundary_claim_ledger.md` |
+| `C2` | sibling `002_the_anomalon_boundary_claim_ledger.md` |
+| `C3` | sibling `002_the_anomalon_boundary_claim_ledger.md` |
+| `C4` | sibling `002_the_anomalon_boundary_claim_ledger.md` |
+| `C5` | sibling `002_the_anomalon_boundary_claim_ledger.md` |
+| `C6` | sibling `002_the_anomalon_boundary_claim_ledger.md` |
+| `C7` | sibling `002_the_anomalon_boundary_claim_ledger.md` |
+| `C8` | sibling `002_the_anomalon_boundary_claim_ledger.md` |
+| `C9` | sibling `002_the_anomalon_boundary_claim_ledger.md` |
+| `C10` | sibling `002_the_anomalon_boundary_claim_ledger.md` |
+| `C11` | sibling `002_the_anomalon_boundary_claim_ledger.md` |
+| `C12` | sibling `002_the_anomalon_boundary_claim_ledger.md` |
+| `C13` | sibling `002_the_anomalon_boundary_claim_ledger.md` |
+| `C14` | sibling `002_the_anomalon_boundary_claim_ledger.md` |
+| `C15` | sibling `002_the_anomalon_boundary_claim_ledger.md` |
+| `C16` | sibling `002_the_anomalon_boundary_claim_ledger.md` |
+| `C17` | sibling `002_the_anomalon_boundary_claim_ledger.md` |
+| `COSMO-002` | sibling `002_the_anomalon_boundary_claim_ledger.md` |
+

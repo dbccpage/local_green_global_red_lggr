@@ -1,0 +1,49 @@
+{
+  "title": "Candidate selection with residual and constraint diagnostics",
+  "upload_type": "publication",
+  "publication_type": "preprint",
+  "creators": [
+    {
+      "name": "Carroll, Jeremy H."
+    }
+  ],
+  "publication_date": "2026-10-23",
+  "version": "2.0.4",
+  "language": "eng",
+  "access_right": "open",
+  "license": "cc-by-4.0",
+  "description": "We specify a finite candidate-selection rule using a quotient residual,\nconstraint violations, a closure residual, interface discrepancies and a\nsecondary alignment statistic. The quotient and closure residuals satisfy an\noperator-norm inequality, so these channels are not algebraically independent.\nCandidates must satisfy literal non-increase of the quotient residual and an\nexact ratio ceiling before entering a two-stage tolerance ranking. A separate\ninequality can screen representation-expanding proposals. We establish the\nresidual bound, explain the ranking rule and give counterexamples to stronger\ninterpretations: a ratio ceiling does not preserve constraints against deletion,\nand greedy candidate selection does not establish convergence. The implementation\nprovides exact rational decision routines alongside a numerical interface.\n\nSelection does not establish feasibility, constraint preservation or convergence. The ratio test does not detect deletion. Lean verifies discrete comparisons; the general cochain inequality has a separate prose proof.",
+  "keywords": [
+    "candidate selection",
+    "cochain residual",
+    "constraint diagnostics",
+    "rational comparisons"
+  ],
+  "notes": "Manuscript and documentation: CC-BY-4.0. Reference software and tests: MIT. Renderer, Lua filter and path helper: Apache-2.0. Prepared revision; not an assertion of a new deposit or DOI.",
+  "related_identifiers": [
+    {
+      "identifier": "https://web.stanford.edu/~boyd/cvxbook/",
+      "relation": "cites",
+      "resource_type": "publication-book",
+      "scheme": "url"
+    },
+    {
+      "identifier": "https://pi.math.cornell.edu/~hatcher/AT/ATpage.html",
+      "relation": "cites",
+      "resource_type": "publication-book",
+      "scheme": "url"
+    },
+    {
+      "identifier": "10.5281/zenodo.19322638",
+      "relation": "isVersionOf",
+      "resource_type": "publication-preprint",
+      "scheme": "doi"
+    },
+    {
+      "identifier": "10.5281/zenodo.20214310",
+      "relation": "isNewVersionOf",
+      "resource_type": "publication-preprint",
+      "scheme": "doi"
+    }
+  ]
+}

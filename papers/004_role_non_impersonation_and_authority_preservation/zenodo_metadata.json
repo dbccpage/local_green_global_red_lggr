@@ -1,0 +1,39 @@
+{
+  "title": "The Omega Tower: Role Non-Impersonation and Authority Preservation in Agentic AI",
+  "upload_type": "publication",
+  "publication_type": "preprint",
+  "publication_date": "2026-10-16",
+  "version": "1.3.0",
+  "language": "eng",
+  "access_right": "open",
+  "license": "cc-by-4.0",
+  "creators": [
+    {
+      "name": "Carroll, Jeremy H."
+    }
+  ],
+  "description": "This monograph presents a contract model for separation of proposal, evaluation, and authorization in agentic systems. It verifies several algebraic components and records explicit failure modes when a declared contract is not honored.\n\nWe formalize the foundational boundary: proposal is not authority ((see manuscript notation)). Generating a fluent candidate action, regardless of heuristic confidence or internal self-critique, does not constitute execution authority. Authority is an inhabited dependent type requiring an explicit terminal certificate produced by an independent, replayable verification pipeline.\n\nThe six roles are a proposed contract: detect defects, gate authorization, track representation changes, compare candidates, check finite evidence, and retain unresolved outcomes. The mathematical results concern constructor distinctions, exception propagation, and predicate transport through a quotient. They do not prove that this six-role decomposition is necessary for every secure architecture.",
+  "keywords": [
+    "agentic AI",
+    "authority preservation",
+    "role non-impersonation",
+    "proposal-authority boundary",
+    "Lean 4",
+    "formal methods",
+    "separation of privilege",
+    "refusal monad",
+    "Kleisli factorization",
+    "finite shadows",
+    "typed residuals",
+    "residual honesty",
+    "reproducible research"
+  ],
+  "notes": "Manuscript and documentation: CC-BY-4.0. Code and formal verification proofs: Apache-2.0. To verify the deposit locally, run 'py -3.12 verify_deposit.py --test --lean'. Prepared edition dated 2026-10-16; this metadata is not evidence of a new public deposit.",
+  "related_identifiers": [
+    {
+      "identifier": "10.5281/zenodo.20710065",
+      "relation": "isNewVersionOf",
+      "scheme": "doi"
+    }
+  ]
+}

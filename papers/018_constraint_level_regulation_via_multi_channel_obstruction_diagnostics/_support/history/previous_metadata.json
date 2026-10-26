@@ -1,0 +1,27 @@
+{
+  "title": "Constraint-Level Regulation via Multi-Channel Obstruction Diagnostics",
+  "upload_type": "publication",
+  "publication_type": "preprint",
+  "publication_date": "2026-10-08",
+  "version": "2.0.2",
+  "language": "eng",
+  "access_right": "open",
+  "license": "cc-by-4.0",
+  "doi": "10.5281/zenodo.20214310",
+  "creators": [
+    {
+      "name": "Carroll, Jeremy H."
+    }
+  ],
+  "description": "This paper defines a repair-selection controller for discrete constraint-system evolution. The system monitors five obstruction channels\u2014geometric quotient residual (Phi_geom), logical inconsistency (Phi_sat), structural closure defect (Phi_curv), representative distortion (Xi), and relational interface drift (Phi_rel)\u2014to evaluate and rank candidate repair operator proposals under explicit guardrails, including the piecewise closure ratio (R_cl) and guarded descent bounds. Candidate selection is separated from state transition verification, ensuring that exploratory operator proposals are screened prior to state commitment. The repository provides a reference Python implementation, test suite, and local-first verification manifests.",
+  "keywords": [
+    "constraint regulation",
+    "multi-channel diagnostics",
+    "piecewise closure ratio",
+    "repair controller",
+    "finite obstruction calculus",
+    "topological guardrails",
+    "trace metric tie-breaker"
+  ],
+  "notes": "Manuscript and documentation: CC-BY-4.0. Python reference implementation and tests: MIT. To verify the deposit locally, run 'py -3.12 -m pytest code/tests/test_constraint_regulation.py' followed by 'py -3.12 verify_deposit.py'."
+}

@@ -1,0 +1,35 @@
+{
+  "title": "Operator Lifts Trace Metrics and Representation Limits",
+  "upload_type": "publication",
+  "publication_type": "preprint",
+  "publication_date": "2026-10-23",
+  "version": "2.1.1",
+  "language": "eng",
+  "access_right": "open",
+  "license": "cc-by-4.0",
+  "creators": [
+    {
+      "name": "Carroll, Jeremy H."
+    }
+  ],
+  "description": "We compare two representations of a finite real cochain: its diagonal operator and the rank-one projector obtained from its normalized signed square-root coordinates. The diagonal map is injective and preserves the sum-of-absolute-values norm as trace norm. The projector identifies precisely the nonzero scalar multiples of a cochain, losing mass and global orientation while retaining every diagnostic constant on those fibers. Trace distance defines a pseudometric on nonzero cochains and a metric on their real projective quotient. We prove a chain-complex residual bound, describe local reconstruction using an orientation anchor, and show that a continuous global sign choice is impossible in dimension at least two. A guarded evaluator uses these representations under an explicit selection policy. The real-vector arguments are written proofs; the Lean package verifies narrower integer and rational identities. No physical quantum interpretation is asserted.",
+  "keywords": [
+    "operator lifts",
+    "trace metrics",
+    "representation limits",
+    "lossy collision principle",
+    "declared selection priority",
+    "finite obstruction calculus",
+    "trace norm",
+    "projective quotient metric",
+    "pseudometric"
+  ],
+  "notes": "Manuscript and documentation: CC-BY-4.0. Python reference implementation and tests: Apache-2.0 / MIT. To verify the deposit locally, run 'py -3.12 -m pytest code/tests/test_operator_lifts.py' followed by 'py -3.12 verify_deposit.py'. Prepared edition dated 2026-10-23; this metadata is not evidence of a new public deposit.",
+  "related_identifiers": [
+    {
+      "identifier": "10.5281/zenodo.20213629",
+      "relation": "isNewVersionOf",
+      "scheme": "doi"
+    }
+  ]
+}

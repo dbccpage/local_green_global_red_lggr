@@ -1,0 +1,35 @@
+{
+  "title": "Representation Abundance Is Not Physical Authority: Finite Selectors, Witnessed Differences, and the Local-Green Boundary",
+  "upload_type": "publication",
+  "publication_type": "preprint",
+  "publication_date": "2026-10-16",
+  "version": "2.2.0",
+  "language": "eng",
+  "access_right": "open",
+  "license": "cc-by-4.0",
+  "creators": [
+    {
+      "name": "Carroll, Jeremy H."
+    }
+  ],
+  "description": "A large family of representations need not distinguish its members observationally. For a finite candidate family, we characterize the properties recoverable from an observation map and show that adding candidates without adding observable profiles increases the average fiber size. A rational graph example separates local tolerance checks from global integrability and gives a sharp cycle-holonomy bound. A finite selector then distinguishes candidate survival from unique selection relative to declared alternatives and measurements. The results do not authenticate the measurements or establish that the candidate family is exhaustive. Written proofs, finite Python checks, and supporting Lean lemmas are identified separately.",
+  "keywords": [
+    "finite obstruction calculus",
+    "representation abundance",
+    "physical authority",
+    "finite terminal selector",
+    "witnessed difference quotients",
+    "local-green global-red",
+    "underdetermination",
+    "exact rational arithmetic",
+    "reproducible research"
+  ],
+  "notes": "Prepared revision; no assigned version DOI or Zenodo upload. The related concept identifier preserves repository-declared lineage and is not a verified public-record claim. Manuscript: CC-BY-4.0. Code: PolyForm Noncommercial 1.0.0. Run the README's named Python checks, standalone Lean census, and separate selected-archive check. Prepared edition dated 2026-10-16; this metadata is not evidence of a new public deposit.",
+  "related_identifiers": [
+    {
+      "identifier": "10.5281/zenodo.20725629",
+      "relation": "isVersionOf",
+      "scheme": "doi"
+    }
+  ]
+}

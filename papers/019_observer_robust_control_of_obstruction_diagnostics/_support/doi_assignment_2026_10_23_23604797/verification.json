@@ -1,0 +1,64 @@
+{
+  "doi": "10.5281/zenodo.23604797",
+  "concept_doi": "10.5281/zenodo.20652483",
+  "version": "2.1.3",
+  "date": "2026-10-23",
+  "archive": "observer_control.zip",
+  "archive_sha256": "fa415fcc70531ecc18245ab020b25db10c2f4ddad598b3f8884fdd8f6eaaa128",
+  "archive_bytes": 177436,
+  "pdf_sha256": "4abd0d9fbe31cb73eb446e457d3a63cc3352fbed9f475c4975b9edeac883c4c0",
+  "published_bytes_preserved": true,
+  "local_refresh_uploaded": false,
+  "staging_lean_cache_absent_initially": true,
+  "lean_source_hashes_unchanged": true,
+  "staged_rebuild_repeat_identical": true,
+  "checks": {
+    "staged_rebuild": {
+      "return_code": 0,
+      "command": [
+        "tools/rebuild_release.py"
+      ],
+      "log_sha256": "db66eede18ceb7176f456bfd85e90844ed0e0f3ee152b23b4fba9d05ebc9acdf"
+    },
+    "staged_verification": {
+      "return_code": 0,
+      "command": [
+        "verify_deposit.py",
+        "--lean",
+        "--require-archive"
+      ],
+      "log_sha256": "642d6cfa6b68c908fafe627f845524a0bab3452b28c2fa20cc2d5b652b4a4d4c"
+    },
+    "staged_tests": {
+      "return_code": 0,
+      "command": [
+        "-m",
+        "pytest",
+        "code/tests",
+        "-q",
+        "-p",
+        "no:cacheprovider",
+        "--runxfail",
+        "--basetemp",
+        "C:\\Users\\a343o\\.codex\\visualizations\\2026\\10\\21\\01a15f49-0b77-7152-8513-136fd3bd1071\\observer_doi_23604797\\pytest_tmp"
+      ],
+      "log_sha256": "c0ef9d734605fa5454f0616aebf67b6a71215b73d07504d2bffb5af8062642d8"
+    },
+    "final_verification": {
+      "return_code": 0,
+      "command": [
+        "verify_deposit.py",
+        "--require-archive"
+      ],
+      "log_sha256": "5764693b4b45df41f157c0391b8b6e105a899758ae1513aab6b9ebef6a51be73"
+    },
+    "staged_repeat_build": {
+      "return_code": 0,
+      "command": [
+        "tools/rebuild_release.py"
+      ],
+      "log_sha256": "db66eede18ceb7176f456bfd85e90844ed0e0f3ee152b23b4fba9d05ebc9acdf"
+    }
+  },
+  "pytest_summary": "35 passed in 11.82s"
+}

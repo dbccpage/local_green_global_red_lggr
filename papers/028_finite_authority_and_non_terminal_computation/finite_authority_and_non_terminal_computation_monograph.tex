@@ -1,0 +1,1836 @@
+% manuscript-sha256: a7af57ec39e56b87c1a9c4a8b4a44d52219931055bb0874c67947e92d6c9bd2b
+% spine-sha256: 2e2ddab64ca0b6d487cab39e09658aec7b563c8648ae189ac4c3994c11a84bcd
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+\documentclass[
+  10pt,
+]{article}
+\usepackage{xcolor}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\newenvironment{Shaded}{}{}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{#1}}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.49,0.56,0.16}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{#1}}
+\newcommand{\BuiltInTok}[1]{\textcolor[rgb]{0.00,0.50,0.00}{#1}}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.53,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.56,0.13,0.00}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.73,0.13,0.13}{\textit{#1}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.02,0.16,0.49}{#1}}
+\newcommand{\ImportTok}[1]{\textcolor[rgb]{0.00,0.50,0.00}{\textbf{#1}}}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.40,0.40,0.40}{#1}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.74,0.48,0.00}{#1}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.73,0.40,0.53}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.10,0.09,0.49}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{#1}}}}
+\usepackage{longtable,booktabs,array}
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+% Academic LaTeX preamble for representation abundance is not physical authority.
+%
+% Typesetting is not evidence for any claim.
+% Uses XeLaTeX for comprehensive Unicode and math font support.
+
+\usepackage{fontspec}
+\usepackage{unicode-math}
+\setmainfont{Times New Roman}
+\setmonofont{Cascadia Mono}[Scale=0.80]
+\setmathfont{Latin Modern Math}
+\usepackage{newunicodechar}
+\newunicodechar{⊕}{\ensuremath{\oplus}}
+\newunicodechar{⟨}{\ensuremath{\langle}}
+\newunicodechar{⟩}{\ensuremath{\rangle}}
+\newunicodechar{∧}{\ensuremath{\wedge}}
+\newunicodechar{⊔}{\ensuremath{\sqcup}}
+
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage[margin=1in]{geometry}
+\usepackage{longtable,booktabs,array}
+\usepackage{microtype}
+\usepackage{enumitem}
+\setlist{nosep,leftmargin=1.4em}
+
+\usepackage[dvipsnames]{xcolor}
+\usepackage[colorlinks=true,linkcolor=RoyalBlue,urlcolor=RoyalBlue,
+            citecolor=RoyalBlue,breaklinks=true]{hyperref}
+\usepackage{fvextra}
+\usepackage{framed}
+\fvset{breaklines=true,breakanywhere=true,fontsize=\small}
+\RecustomVerbatimEnvironment{verbatim}{Verbatim}{breaklines=true,breakanywhere=true,fontsize=\small}
+
+\AtBeginEnvironment{longtable}{\small}
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.15}
+
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+
+\definecolor{quoterule}{gray}{0.75}
+\renewenvironment{quote}
+  {\begin{leftbar}\small}
+  {\end{leftbar}}
+
+\usepackage[htt]{hyphenat}
+\usepackage{xurl}
+\emergencystretch=3em
+\sloppy
+\hfuzz=0pt
+\vfuzz=0pt
+\hbadness=10000
+\vbadness=10000
+
+% Preserve Unicode symbols in prose and verbatim code with a local font fallback.
+\newfontfamily\paperSymbolFont{Cambria Math}
+\newXeTeXintercharclass\paperSymbolClass
+\XeTeXcharclass"21CF=\paperSymbolClass
+\XeTeXcharclass"2200=\paperSymbolClass
+\XeTeXcharclass"2203=\paperSymbolClass
+\XeTeXcharclass"2208=\paperSymbolClass
+\XeTeXcharclass"2227=\paperSymbolClass
+\XeTeXcharclass"2205=\paperSymbolClass
+\XeTeXcharclass"2295=\paperSymbolClass
+\XeTeXcharclass"2294=\paperSymbolClass
+\XeTeXcharclass"27E8=\paperSymbolClass
+\XeTeXcharclass"27E9=\paperSymbolClass
+\XeTeXcharclass"1D53D=\paperSymbolClass
+\XeTeXcharclass"1D54B=\paperSymbolClass
+\XeTeXinterchartoks 0 \paperSymbolClass={\begingroup\paperSymbolFont}
+\XeTeXinterchartoks \paperSymbolClass 0={\endgroup}
+\XeTeXinterchartoks 4095 \paperSymbolClass={\begingroup\paperSymbolFont}
+\XeTeXinterchartoks \paperSymbolClass 4095={\endgroup}
+\XeTeXinterchartokenstate=1
+
+% Long code identifiers in narrow table cells may break without changing tokens.
+\DeclareRobustCommand{\texttt}[1]{{\paperSymbolFont\nolinkurl{#1}}}
+
+\usepackage{bookmark}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\author{}
+\date{}
+
+\begin{document}
+
+\begin{center}
+{\LARGE\bfseries Finite Authority and Non-Terminal Computation\par}
+Jeremy H. Carroll\par
+2026-10-23\par
+Version 2.0.3\par
+\end{center}
+
+\subsection{Abstract}\label{abstract}
+
+Large Language Models, agentic AI systems, formal programs, and general symbolic machines generate traces. They emit strings, code, plans, proofs, critiques, tool calls, simulations, and candidate answers. None of those traces acquire authority by generation alone. Authority requires finite descent through declared representation, evaluation, verification, replay, obstruction accounting, leakage control, and terminalization.
+
+This paper consolidates four overlapping drafts into one publication-facing companion to the current Layered Authority Framework v1.3 controlling preprint. Earlier drafts were written against Layered Authority Framework v1.2; v1.3 now controls the authority spine and theorem ledger. It does \textbf{not} reproduce the Layered Authority Framework authority spine, proof ledger, or higher-categorical machinery. Those documents control the formal definitions. This paper imports their authority object and compressed kernel, then applies them to LLM reasoning and formal computation.
+
+The central claim is structural. A model output, benchmark score, tool trace, self-critique, program halt, or multi-agent local validation is a proposal unless it descends through a declared finite packet and reaches an authority-bearing terminal. Scaling, prompting, self-critique, benchmarks, tool use, retry, and agent orchestration can improve proposal quality or coverage. None replaces the terminalizer.
+
+The paper develops five consequences: self-critique is not verification; scaling moves proposal mass but does not transfer authority; benchmark scores are packet-local; local agent validation does not compose without boundary sufficiency; and retry saturates unless it changes the evaluated packet. It then connects those results to the older computation boundary: Turing computation supplies the definitive abstraction of formal symbol motion, but halting is a syntactic terminal, not automatically an evidence terminal.
+
+The final sections address the modern security risk: counterfeit descent. Generative systems reduce the cost of imitating authority signs---citations, proof style, JSON certificates, audit logs, institutional language, and review tone---faster than human institutions can scale verification. The defense is not trust in model fluency. The defense is terminalized finite descent: independent verifiers, replayable packets, typed refusals, obstruction signatures, and sovereign terminal gates.
+
+In primitive-difference form, \textbf{Local Green != Global Red} means: a local dashboard may factor through the residual quotient while the paired local/global dashboard does not. This deposit verifies the finite split, the two-point witness, the three-point refusal, the class-increase identity, the halt-status separation, and the counterfeit-status separation in \texttt{lean4/FiniteAuthority.lean}. The quotient-modulo generalization and the evaluator-sovereignty witness are not theorems of this deposit. \texttt{omega\_engine/lean4/PaperAF003} is not bundled here.
+
+\protect\hypertarget{math-E0001-0001}{}{\[
+\boxed{
+\text{Fluency proposes. Descent authorizes.}
+}
+\]}
+
+\subsection{Context}\label{context}
+
+\protect\hypertarget{math-E0002-0002}{}{\[
+\boxed{
+\text{Reasoning authority is not generated. It is terminalized.}
+}
+\]}
+
+\protect\hypertarget{math-E0003-0003}{}{\[
+\boxed{
+\text{General symbol manipulation is not autonomous authority.}
+}
+\]}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{-1}
+\tightlist
+\item
+  Relation to Layered Authority Framework
+\end{enumerate}
+
+This paper is a \textbf{companion application}, not a replacement for Layered Authority Framework.
+
+Layered Authority Framework is the controlling authority spine. It defines the Omega Tower, the typed terminal taxonomy, the Kleisli authority normal form, the soundness axioms, the role tower, and the proof ledger. This paper imports those results rather than reprinting them.
+
+\textbf{Ownership split (Finite Descent Verification / Layered Authority Framework / Finite Obstruction Calculus).} Under the tower ownership split, the \textbf{Authority type, the \protect\hypertarget{math-E0004-0004}{}{\(\mathsf{IsAuth}\)} guard, and descent-packet data are owned by Finite Descent Verification}; \textbf{Layered Authority Framework} owns the governance capstone, terminalization discipline, and the authority non-promotion rules; \textbf{Finite Obstruction Calculus} routes and diagnoses obstruction packets and mints no authority. Earlier drafts of this paper attributed the dependent authority object to Layered Authority Framework. That attribution is corrected here: this paper imports the authority object and \protect\hypertarget{math-E0004-0005}{}{\(\mathsf{IsAuth}\)} from \textbf{Finite Descent Verification}, and imports terminalization and non-promotion discipline from \textbf{Layered Authority Framework}. It owns neither, and it mints neither.
+
+\textbf{Reference lineage (v1.1 note).} This paper was drafted against Layered Authority Framework v1.2. The controlling preprint is now \texttt{999\_Layered\ Authority\ Framework/v1.3\_preprint.md} (which contains the Layered Authority Framework theorem ledger tables; \texttt{999\_Layered\ Authority\ Framework/} carries no separate ledger file), together with \texttt{999\_Layered\ Authority\ Framework/math\_spine.md}. The LLM-spine theorem files for T1--T15 (§5) live at \texttt{omega\_engine/research/encyclopedia/archived\_research/encyclopedia\_anomalon/} (files \texttt{08}--\texttt{37}). \textbf{Path correction (this pass).} Earlier revisions cited these files at \texttt{research/archive/encyclopedia\_anomalon/}; that path does not exist in the repository (nor does \texttt{omega\_engine/research/archive/}). The files themselves are present at the corrected path above and were read in this pass. \textbf{Status of those homes (verified, not assumed).} They carry \texttt{Status:\ PROVED-PROSE} --- prose proofs, not mechanized --- and \texttt{archived\_research/} is a harvest folder, not the indexed canonical encyclopedia (\texttt{encyclopedia/indexes/by\_layer.md}, \texttt{indexes/ledgers/}). Verifying and migrating them remains open as \textbf{PL-027-2}. \textbf{Namespace note:} this paper's T1--T15 are the \emph{LLM-spine} theorems; they are distinct from the \texttt{Layered\ Authority\ Framework-T*} identifiers used inside the Layered Authority Framework v1.3 ledger (e.g., Layered Authority Framework-T15 is a different result from this paper's T15). One v1.3 change is load-bearing here: v1.3 declares a \textbf{Known Gate} --- the gauge \protect\hypertarget{math-E0005-0006}{}{\(\Phi\)} is \emph{assumed}, not proved, positive-definite on nonzero quotient classes --- which conditions the counterfeit-detection test of §14 (see the hedge there).
+
+The imported compressed kernel is:
+
+\protect\hypertarget{math-E0006-0007}{}{\[
+\boxed{
+\text{Difference}\to\text{Repair}\to\text{Quotient}\to\text{Closure}\to\text{Authority}.
+}
+\]}
+
+\textbf{Root fence.} This arrow chain is a pipeline of declared packet stages. It is \textbf{not} a genesis order and \textbf{not} a derivation of the system from a single primitive. \texttt{Difference} here names the \textbf{non-sameness aspect of an admitted cut}, co-admitted with that cut's exhibited-retention aspect; neither aspect precedes, contains, creates, produces, or explains the other. This paper does not claim that difference alone derives the system, that difference creates structure, or that either requires the other as a prior carrier. The chain is imported; its root pricing is tracked at its home, not re-derived here.
+
+For this paper:
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5000}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5000}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Layered Authority Framework primitive
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+LLM/computation reading
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Difference & parser deltas, verifier failures, local/global mismatch, trace defects \\
+Repair & declared transformations preserving the task boundary \\
+Quotient & residual distinction modulo admissible repair \\
+Closure & failure or success of local residuals to glue globally \\
+Authority & finite terminalization under a declared verifier and terminalizer \\
+\end{longtable}
+
+The controlling authority object --- \textbf{Finite Descent Verification-owned, imported here, defined by neither this paper nor Layered Authority Framework} --- is:
+
+\protect\hypertarget{math-E0007-0008}{}{\[
+\boxed{
+\mathsf{Authority}_S(x)
+:=
+\Sigma(t:\mathbb T_S)
+\bigl(
+\Pi_S^\sharp(x)=\mathsf{inl}(t)
+\wedge
+\mathsf{IsAuth}_S(t)
+\bigr).
+}
+\]}
+
+This paper uses the same object in the LLM-specific form:
+
+\protect\hypertarget{math-E0008-0009}{}{\[
+\mathsf{Authority}_D(x,a)
+:=
+\Sigma(t:\mathbb T_D)
+\bigl(
+\Pi_D^\sharp(x,a)=\mathsf{inl}(t)
+\wedge
+\mathsf{IsAuth}_D(t)
+\bigr).
+\]}
+
+Here \protect\hypertarget{math-E0009-0010}{}{\(D\)} is the declared descent packet for a task, model output, program trace, or benchmark claim.
+
+\textbf{Non-duplication rule.} This paper does not restate the full Layered Authority Framework theorem ledger. It summarizes only the LLM/computation consequences needed for a reader to apply the finite-authority discipline.
+
+This paper owns the consolidation, terminology, and LLM/computation-facing exposition. It does not own the Finite Descent Verification authority object, the Layered Authority Framework terminalization discipline, the EPK theorem, or the T1--T15 theorem proofs.
+
+\textbf{Scope of Mechanization \& Verification Grounding.} \texttt{lean4/FiniteAuthority.lean} mechanizes the finite statements named in the claim ledger (D1, D5, D6, D16). \texttt{code/tests/test\_finite\_authority.py} calls the shipped checkers in \texttt{code/mod\_finite\_authority\_core.py} on those same finite cases. \texttt{PaperAF003} is not in this deposit. The halt and counterfeit theorems are equalities of finite enumerations. They are not \protect\hypertarget{math-E0010-0011}{}{\(\mathsf{Authority}_D\)}, they do not use the §6 C1--C8 stack as a Lean structure, and they discharge no Finite Descent Verification obligation.
+
+0.1 Verifier Soundness Is the Trust Root
+
+All authority in this paper is verifier-relative. Layered Authority Framework does not declare V sound by fiat. It exposes V as the trust root and prevents proposal systems from silently replacing it.
+
+0.2 Authority Scope Typing
+
+``Verifier-relative'' is a scope, and this paper now names it. Every occurrence of \protect\hypertarget{math-E0010-0012}{}{\(\mathsf{Authority}_D\)}, \protect\hypertarget{math-E0011-0013}{}{\(\mathsf{CertifiedAuthority}_D\)}, ``certified'', and ``terminalized'' in this paper is to be read at exactly one of these scopes:
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Scope
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Available here?
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Meaning
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\texttt{ContractAuthority} & \textbf{yes, where a packet \protect\hypertarget{math-E0009-0014}{}{\(D\)} is declared} & the claim satisfies a declared, replayable contract --- the packet fields of §3, discharged and logged per §17 \\
+\texttt{VerifierScopedAuthority} & \textbf{yes, relative to a declared \protect\hypertarget{math-E0012-0015}{}{\(V\)}} & the claim survives descent under a \emph{named} verifier \protect\hypertarget{math-E0012-0016}{}{\(V\)}, and inherits every unsoundness of \protect\hypertarget{math-E0012-0017}{}{\(V\)} (§0.1, §16 fatal row) \\
+\texttt{SemanticAuthority} & \textbf{NO --- UNAVAILABLE} & that the claim is \emph{true}. This paper declares \textbf{no semantic adapter}, so this scope is not available at any degree of this paper and is not claimed anywhere in it \\
+\end{longtable}
+
+\protect\hypertarget{math-E0010-0018}{}{\(\mathsf{Authority}_D\)} is therefore always \texttt{ContractAuthority} ∧ \texttt{VerifierScopedAuthority}, never \texttt{SemanticAuthority}. §20's closing claim, §6's gate stack, and §21's conclusion are all to be read at that scope. The paper's own §15 already says this in prose --- ``we moved trust from an opaque generative system \ldots{} to a declared, inspectable, replayable finite predicate over a specific packet'' --- and §16's ``Verifier regress'' row prices the residue. \textbf{An exact repair, a green gate vector, or a signed terminal does not imply semantic truth.}
+
+0.3 What Authority-Bearing Use Requires
+
+This paper is an authority paper, so it must state its own price. Nothing in this paper mints authority. Any \emph{authority-bearing} use of its results --- anything that would let a terminal act on a claim --- requires all of the following, and this paper supplies only the ones marked:
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5000}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5000}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Requirement
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Supplied here?
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\texttt{SpecificationIdentity} --- which spec is being certified, fixed and named & \textbf{no.} §9's transport map \protect\hypertarget{math-E0013-0019}{}{\(\chi\)} is the same concern, left as a declared obligation, not a typed object \\
+\texttt{DetectorAdequacy} --- the detectors protect the distinctions the claim needs & \textbf{no.} See the warning below; this is the sharpest gap in the paper \\
+\texttt{ExhaustionWitness} --- the accepted set was actually exhausted, not sampled & \textbf{no.} Required by gate C5 / §12.1; see the note there \\
+\texttt{EvidenceCeiling} --- the declared bound past which evidence stops & \textbf{partial.} Named as a terminal (§13) and as \texttt{BudgetUnknown} (Appendix B); not required as a packet field \\
+\texttt{ReplayWitness} --- the descent path reruns and reproduces the terminal & \textbf{yes.} §12.2, gate C6, §17 log fields \\
+\texttt{Terminalizer} --- a declared \protect\hypertarget{math-E0014-0020}{}{\(\tau\)} mapping verified states to typed status & \textbf{yes.} §3, gate C8, §17 \\
+\texttt{IsAuth} --- the Finite Descent Verification guard on the terminal & \textbf{no.} Imported and displayed in §0; never constructed in this paper, and absent from its Lean module (see the formalization firewall) \\
+\end{longtable}
+
+\textbf{Detector adequacy warning.} A replayable detector/profile is not automatically adequate for a claim. \textbf{A collapsing detector can make every profile exact.} Any authority-bearing Layered Authority Framework use requires a \texttt{DetectorAdequacy} certificate naming the protected distinctions, adversarial cases, and known blind spots for the declared claim scope. This paper carries no such certificate, and the gap is live rather than theoretical: §16 already books ``Parser insufficiency'' and ``Canonicalizer collapse'' as serious attacks. A constant-true relation would be a collapsed detector, and this deposit does not count that witness as a proof. A green C2/C3/C5 therefore certifies nothing until the detector behind it is shown adequate.
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Claim Discipline
+\end{enumerate}
+
+This paper is an authority theory for proposal systems. It is not a theory of consciousness, not a proof of general intelligence, not a refutation of Turing computation, and not a claim that all truth is finite.
+
+Its claims are narrow:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  A generated trace is a proposal.
+\item
+  A proposal does not become authority unless it descends through a declared finite packet.
+\item
+  No proposal process may serve as the terminal authority for its own output unless the verifier and terminalizer are separately declared, replayable, and included in the explicit trust root.
+\item
+  Scale, prompting, tool use, self-critique, benchmarks, retries, and agent orchestration may improve proposal quality or coverage, but none replaces the terminalizer.
+\item
+  Formal computation may halt, but halting is not by itself authority.
+\item
+  Public authority claims must disclose the packet: representation, evaluator, verifier, replay, leakage/provenance boundary, residuals, and terminal status.
+\end{enumerate}
+
+\protect\hypertarget{math-E0015-0021}{}{\[
+\boxed{
+\begin{gathered}\text{A generated claim is not authority until it survives finite descent}\\
+\text{through a declared evaluator.}\end{gathered}
+}
+\]}
+
+\subsubsection{1.1 Why a Researcher Should Care}\label{why-a-researcher-should-care}
+
+Three live engineering failures motivate this paper, and all three are category errors of the same kind. (1) Agent pipelines ship when every local validator is green and fail globally --- the local/global gluing defect of §11 --- and postmortems blame the model instead of the missing boundary object. (2) Benchmark scores are routinely transported to deployment tasks with no declared transport map, so procurement and safety cases inherit numbers that certify only survival inside the benchmark packet (§9). (3) Generative systems now produce authority-\emph{looking} artifacts --- citations, audit logs, JSON certificates --- cheaper than institutions can verify them (§14), so any review process that screens on the \emph{signs} of verification is already counterfeit-vulnerable. The paper gives each failure a typed name, a place in one descent discipline, and a concrete gate that would have refused it.
+
+\subsubsection{1.2 Related Work and Positioning}\label{related-work-and-positioning}
+
+Nearest neighbors, and how this paper differs:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  \textbf{Proof-carrying code} (Necula, \emph{Proof-Carrying Code}, POPL 1997). The closest engineering ancestor: the artifact ships with a checkable certificate, and trust sits in a small verifier rather than the producer. This paper generalizes the pattern from code+proof to arbitrary proposal traces, and adds the packet fields PCC does not model: replay, leakage/provenance boundary, residual ledger, and typed refusal.
+\item
+  \textbf{Social-process critique of verification} (DeMillo, Lipton \& Perlis, \emph{Social Processes and Proofs of Theorems and Programs}, CACM 22(5), 1979). They argued mechanical proof does not create belief; authority is social. This paper accepts the gap but inverts the response: instead of abandoning mechanical authority, it narrows authority to what a declared finite packet can terminalize, and types everything else as proposal.
+\item
+  \textbf{LLM-as-judge} (Zheng et al., \emph{Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena}, NeurIPS 2023 Datasets \& Benchmarks; arXiv:2306.05685). Empirically useful evaluator surrogates. In this paper's terms an LLM judge is another proposal law: usable inside a packet only if declared as the evaluator, never as a self-terminalizing authority (§15; LLM-as-evaluator circularity is a fatal row of §16).
+\item
+  \textbf{Limits of self-correction} (Huang et al., \emph{Large Language Models Cannot Self-Correct Reasoning Yet}, ICLR 2024; arXiv:2310.01798). Empirical evidence that intrinsic self-critique fails to improve reasoning reliably --- the empirical face of §7's structural claim that self-critique is \protect\hypertarget{math-E0016-0022}{}{\(P_\theta \circ P_\theta\)} and never escapes the proposal type.
+\item
+  \textbf{Internal:} Layered Authority Framework (\texttt{999\_Layered\ Authority\ Framework/}, controlling); Papers 020/023/025 (EPK composition calculus --- §4 and §11 import their objects); Paper 024 (machine-checked Authority Firewall); Paper 026 (downstream residual classification of what survives closure).
+\item
+  Proposal Systems
+\end{enumerate}
+
+A \textbf{proposal system} is any system that emits candidate claims before those claims have been externally terminalized. LLMs are proposal systems. Programs are proposal systems when their outputs require verification. Humans, institutions, laboratories, courts, markets, and proof assistants can also behave as proposal systems when they generate claims that require evaluation.
+
+This is a structural analogy, not an ontological equivalence. Human beings are embodied biological agents. LLMs are parameterized generative models. Turing machines are formal symbol systems. They are not the same kind of thing. But in public authority contexts, all can emit proposals that require a finite packet before they become shared authority.
+
+\subsubsection{2.1 LLMs as Proposal Laws}\label{llms-as-proposal-laws}
+
+Let \protect\hypertarget{math-E0017-0023}{}{\(M\)} be an LLM with parameters \protect\hypertarget{math-E0018-0024}{}{\(\theta\)}. Given input \protect\hypertarget{math-E0019-0025}{}{\(x\)}, the model defines a proposal law:
+
+\protect\hypertarget{math-E0020-0026}{}{\[
+P_\theta(\gamma\mid x),
+\]}
+
+where \protect\hypertarget{math-E0021-0027}{}{\(\gamma\)} is a finite trace: tokens, tool calls, code edits, reasoning steps, or emitted actions. An extracted answer is:
+
+\protect\hypertarget{math-E0022-0028}{}{\[
+a=\operatorname{extract}(\gamma).
+\]}
+
+The model can increase the probability of useful traces. It can generate long chains of apparent reasoning. It can call tools. It can critique itself. But the proposal law remains a proposal law.
+
+\protect\hypertarget{math-E0023-0029}{}{\[
+\boxed{
+P_\theta(\gamma\mid x)>0
+\not\Rightarrow
+\mathsf{Authority}_D(x,a).
+}
+\]}
+
+\subsubsection{2.2 Formal Programs as Proposal Traces}\label{formal-programs-as-proposal-traces}
+
+A formal computation also emits traces. A program may halt and return an output. In the classical Turing model, halting is a syntactic terminal: execution reaches a halt state under the declared transition function. Layered Authority Framework asks a different question:
+
+\protect\hypertarget{math-E0024-0030}{}{\[
+\boxed{
+\begin{gathered}\text{Does the halted output carry terminal evidence under a declared}\\
+\text{authority packet?}\end{gathered}
+}
+\]}
+
+If no verifier, evidence object, replay record, and authority-bearing terminalizer are supplied, the output remains a syntactic result, not an authority-bearing computation.
+
+\protect\hypertarget{math-E0025-0031}{}{\[
+\boxed{
+\mathsf{Turing\ Halting}
+\not\Rightarrow
+\mathsf{Authority}.
+}
+\]}
+
+This is not a rejection of computation theory. It is a boundary on authority promotion.
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{2}
+\tightlist
+\item
+  Finite Descent Packets
+\end{enumerate}
+
+A proposal becomes eligible for authority only through a finite descent packet:
+
+\protect\hypertarget{math-E0026-0032}{}{\[
+D=(K,E,V,\tau,\Lambda).
+\]}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5000}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5000}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Packet field
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Meaning
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\protect\hypertarget{math-E0027-0033}{}{\(K\)} & representation regime / finite carrier \\
+\protect\hypertarget{math-E0028-0034}{}{\(E\)} & evaluator projection over traces or candidates \\
+\protect\hypertarget{math-E0012-0035}{}{\(V\)} & verifier satisfying declared independence, determinism, and replayability \\
+\protect\hypertarget{math-E0014-0036}{}{\(\tau\)} & terminalizer mapping verified states into authority/refusal/lift statuses \\
+\protect\hypertarget{math-E0029-0037}{}{\(\Lambda\)} & lift / retry / repair discipline with typed residuals \\
+\end{longtable}
+
+The packet must also provide replay evidence, obstruction accounting, leakage/provenance boundaries, and typed refusal when any gate fails.
+
+A practical LLM packet usually includes:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  input schema;
+\item
+  parser;
+\item
+  canonicalizer;
+\item
+  verifier;
+\item
+  answer-fiber check;
+\item
+  replay record;
+\item
+  leakage/provenance audit;
+\item
+  residual ledger;
+\item
+  terminalizer.
+\end{enumerate}
+
+\protect\hypertarget{math-E0030-0038}{}{\[
+\boxed{
+\begin{gathered}\text{A proposal is not an authority. To bridge the gap, one must supply the}\\
+\text{packet.}\end{gathered}
+}
+\]}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{3}
+\tightlist
+\item
+  Evaluated Path Kernel
+\end{enumerate}
+
+The canonical finite trace representation for LLM authority claims is the \textbf{Evaluated Path Kernel}:
+
+\protect\hypertarget{math-E0031-0039}{}{\[
+\boxed{
+Z_\theta^{\lambda,\mu}(y\mid x) =
+\sum_{\gamma\in\Gamma_{x\to y}}
+E(\gamma)\,
+P_\theta(\gamma\mid x)\,
+e^{-\lambda C[\gamma]-\mu R[\gamma]}.
+}
+\]}
+
+where:
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5000}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5000}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Symbol
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Meaning
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\protect\hypertarget{math-E0032-0040}{}{\(\Gamma_{x\to y}\)} & finite traces from input \protect\hypertarget{math-E0019-0041}{}{\(x\)} to extracted output \protect\hypertarget{math-E0033-0042}{}{\(y\)} \\
+\protect\hypertarget{math-E0034-0043}{}{\(P_\theta(\gamma\mid x)\)} & proposal mass assigned by the model \\
+\protect\hypertarget{math-E0035-0044}{}{\(E(\gamma)\)} & evaluator projection, often \protect\hypertarget{math-E0036-0045}{}{\(0/1\)} \\
+\protect\hypertarget{math-E0037-0046}{}{\(C[\gamma]\)} & cost of the trace \\
+\protect\hypertarget{math-E0038-0047}{}{\(R[\gamma]\)} & residual risk / unresolved obstruction \\
+\protect\hypertarget{math-E0039-0048}{}{\(\lambda,\mu\ge0\)} & cost and risk sensitivities \\
+\protect\hypertarget{math-E0040-0049}{}{\(Z_\theta^{\lambda,\mu}\)} & accepted proposal mass \\
+\end{longtable}
+
+\textbf{Exact Rational Pade Surrogate (Implementation Formulation).} In exact rational arithmetic on \protect\hypertarget{math-E0041-0050}{}{\(\mathbb{Q}\)}, the exponential discounting kernel is represented by its first-order rational Pade surrogate: \protect\hypertarget{math-E0042-0051}{}{\[
+Z_{\theta,\text{rat}}^{\lambda,\mu}(y\mid x) =
+\sum_{\gamma\in\Gamma_{x\to y}}
+E(\gamma)\,
+P_\theta(\gamma\mid x)\,
+\frac{1}{1 + \lambda C[\gamma] + \mu R[\gamma]}.
+\]} Both kernels are monotonically non-increasing in cost \protect\hypertarget{math-E0043-0052}{}{\(C\)} and residual risk \protect\hypertarget{math-E0044-0053}{}{\(R\)}, strictly positive for non-negative inputs, and vanish as \protect\hypertarget{math-E0045-0054}{}{\(C, R \to \infty\)}. The reference Python module implements both the continuous exponential kernel and the exact rational surrogate.
+
+The EPK is \textbf{not} a source of authority. It is a representation of proposal mass after evaluator projection and cost/residual suppression. Authority still descends through Finite Descent Verification-style terminalization.
+
+\subsubsection{4.1 What the Kernel Is}\label{what-the-kernel-is}
+
+The kernel is:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  a finite weighted sum over traces;
+\item
+  a way to compare accepted proposal mass under a declared evaluator;
+\item
+  a representation of how prompting, scaling, tools, cost, and residuals change proposal geometry;
+\item
+  a finite shadow of richer path-like reasoning structures.
+\end{enumerate}
+
+\subsubsection{4.2 What the Kernel Is Not}\label{what-the-kernel-is-not}
+
+The kernel is not quantum mechanics, not a Born rule, not a physical path integral, not a proof of consciousness, and not a truth functional. If \protect\hypertarget{math-E0028-0055}{}{\(E\)} is wrong, \protect\hypertarget{math-E0046-0056}{}{\(Z_\theta\)} can be high for wrong answers.
+
+\protect\hypertarget{math-E0047-0057}{}{\[
+\boxed{
+\begin{gathered}\text{High accepted proposal mass under a bad evaluator is still bad}\\
+\text{authority.}\end{gathered}
+}
+\]}
+
+\subsubsection{4.3 Primitive-Difference LGGR Theorem}\label{primitive-difference-lggr-theorem}
+
+Let \protect\hypertarget{math-E0048-0058}{}{\(P\)} be a primitive difference object on claims, with zero relation \protect\hypertarget{math-E0049-0059}{}{\(x\sim_P y\)} and residual quotient \protect\hypertarget{math-E0050-0060}{}{\(Q_P\)}. Let
+
+\protect\hypertarget{math-E0051-0061}{}{\[
+L:X\to\mathcal L,\qquad G:X\to\mathcal G
+\]}
+
+be a local dashboard and a global verdict. If \protect\hypertarget{math-E0052-0062}{}{\(L\)} is invariant on zero-difference classes, but some zero-related pair disagrees globally,
+
+\protect\hypertarget{math-E0053-0063}{}{\[
+x\sim_P y,\qquad G(x)\ne G(y),
+\]}
+
+then the local dashboard descends:
+
+\protect\hypertarget{math-E0054-0064}{}{\[
+\exists \bar L:Q_P\to\mathcal L,\quad
+\bar L([z])=L(z),
+\]}
+
+while the paired local/global dashboard does not:
+
+\protect\hypertarget{math-E0055-0065}{}{\[
+\neg\exists H:Q_P\to\mathcal L\times\mathcal G,\quad
+H([z])=(L(z),G(z)).
+\]}
+
+This is the precise finite meaning of the slogan:
+
+\protect\hypertarget{math-E0056-0066}{}{\[
+\boxed{
+\text{Local Green } \ne \text{ Global Red}.
+}
+\]}
+
+The finite statement proved in this deposit is \texttt{lggr\_has\_global\_split}: if the local color is constant on a declared relation and the joint local/global color is not, then some related pair shares a local color and differs in verdict. \texttt{two\_point\_lggr} is the two-point witness. \texttt{three\_point\_not\_lggr} is the three-point carrier on which the local color is not constant, so the obstruction flag is false. The Python checker is \texttt{LGGRObstruction.verify\_lggr\_obstruction}.
+
+The names \texttt{local\_dashboard\_factor\_iff}, \texttt{joint\_dashboard\_factor\_iff}, \texttt{lggr\_nonpromotion}, \texttt{lggr\_witness\_and\_obstruction}, and \texttt{minimal\_lggr\_witness} are not in this deposit. A witness that sets the relation to the constant true, and is therefore green because it protects no distinction, is not a theorem here.
+
+The quotient-modulo generalization is not a theorem of this deposit. The names \texttt{joint\_dashboard\_mod\_requires\_global\_congruence} and \texttt{lggr\_mod\_nonpromotion} are absent. Local dashboards remain evidence projections in the prose. That sentence is not a Lean theorem here.
+
+\subsubsection{4.4 Constructive Resolution: Minimal Verdict-Preserving Refinement}\label{constructive-resolution-minimal-verdict-preserving-refinement}
+
+While the LGGR obstruction shows that a local quotient dashboard \protect\hypertarget{math-E0057-0067}{}{\(q: X \twoheadrightarrow Q\)} may fail to factor a global verdict \protect\hypertarget{math-E0058-0068}{}{\(G: X \to Y\)}, this boundary failure can be resolved constructively by determining the minimal refinement of \protect\hypertarget{math-E0059-0069}{}{\(Q\)} through which \protect\hypertarget{math-E0060-0070}{}{\(G\)} descends.
+
+\textbf{Definition (Verdict-Preserving Refinement Relation).} Let \protect\hypertarget{math-E0061-0071}{}{\(X\)} be a declared finite carrier, \protect\hypertarget{math-E0057-0072}{}{\(q: X \twoheadrightarrow Q\)} a quotient map, and \protect\hypertarget{math-E0058-0073}{}{\(G: X \to Y\)} a verdict map. Define the equivalence relation \protect\hypertarget{math-E0062-0074}{}{\(\sim_*\)} on \protect\hypertarget{math-E0061-0075}{}{\(X\)} by: \protect\hypertarget{math-E0063-0076}{}{\[
+x \sim_* y \iff q(x) = q(y) \land G(x) = G(y).
+\]}
+
+\textbf{Theorem (Coarsest Refinement).} 1. The quotient \protect\hypertarget{math-E0064-0077}{}{\(X / {\sim_*}\)} preserves the existing quotient (\protect\hypertarget{math-E0065-0078}{}{\(x \sim_* y \implies q(x) = q(y)\)}), and \protect\hypertarget{math-E0060-0079}{}{\(G\)} descends to a well-defined map \protect\hypertarget{math-E0066-0080}{}{\(G_* : X / {\sim_*} \to Y\)}. 2. \protect\hypertarget{math-E0064-0081}{}{\(X / {\sim_*}\)} is the unique coarsest equivalence relation with these properties: if \protect\hypertarget{math-E0067-0082}{}{\(\sim'\)} refines \protect\hypertarget{math-E0068-0083}{}{\(q\)} and \protect\hypertarget{math-E0060-0084}{}{\(G\)} descends through \protect\hypertarget{math-E0069-0085}{}{\(X / {\sim'}\)}, then \protect\hypertarget{math-E0070-0086}{}{\(\sim' \subseteq \sim_*\)}. 3. The exact increase in the number of equivalence classes is given by: \protect\hypertarget{math-E0071-0087}{}{\[
+|X / {\sim_*}| - |Q| = \sum_{u \in Q} (|G(q^{-1}(u))| - 1).
+\]} 4. Every required class split admits an explicit witness: a pair \protect\hypertarget{math-E0072-0088}{}{\((x, y) \in q^{-1}(u)\)} such that \protect\hypertarget{math-E0073-0089}{}{\(q(x) = q(y)\)} while \protect\hypertarget{math-E0074-0090}{}{\(G(x) \neq G(y)\)}.
+
+\emph{Proof.} (1) If \protect\hypertarget{math-E0075-0091}{}{\(x \sim_* y\)}, then \protect\hypertarget{math-E0073-0092}{}{\(q(x) = q(y)\)} by definition, so the partition induced by \protect\hypertarget{math-E0062-0093}{}{\(\sim_*\)} refines \protect\hypertarget{math-E0059-0094}{}{\(Q\)}. Furthermore, \protect\hypertarget{math-E0076-0095}{}{\(x \sim_* y \implies G(x) = G(y)\)}, so the map \protect\hypertarget{math-E0077-0096}{}{\(G_*([x]_{\sim_*}) := G(x)\)} is single-valued and well-defined. (2) Let \protect\hypertarget{math-E0067-0097}{}{\(\sim'\)} be any equivalence relation on \protect\hypertarget{math-E0061-0098}{}{\(X\)} such that \protect\hypertarget{math-E0078-0099}{}{\(x \sim' y \implies q(x) = q(y)\)} and \protect\hypertarget{math-E0079-0100}{}{\(x \sim' y \implies G(x) = G(y)\)}. Then \protect\hypertarget{math-E0080-0101}{}{\(x \sim' y \implies (q(x) = q(y) \land G(x) = G(y)) \implies x \sim_* y\)}. Hence \protect\hypertarget{math-E0070-0102}{}{\(\sim' \subseteq \sim_*\)}, which establishes that \protect\hypertarget{math-E0062-0103}{}{\(\sim_*\)} is the coarsest such refinement. (3) For each \protect\hypertarget{math-E0081-0104}{}{\(u \in Q\)}, its fiber \protect\hypertarget{math-E0082-0105}{}{\(q^{-1}(u) \subseteq X\)} is partitioned by \protect\hypertarget{math-E0062-0106}{}{\(\sim_*\)} into classes corresponding to the distinct values in \protect\hypertarget{math-E0083-0107}{}{\(G(q^{-1}(u))\)}. The number of such sub-classes is precisely \protect\hypertarget{math-E0084-0108}{}{\(|G(q^{-1}(u))|\)}. Summing over all \protect\hypertarget{math-E0081-0109}{}{\(u \in Q\)}, \protect\hypertarget{math-E0085-0110}{}{\(|X / {\sim_*}| = \sum_{u \in Q} |G(q^{-1}(u))|\)}. Subtracting \protect\hypertarget{math-E0086-0111}{}{\(|Q| = \sum_{u \in Q} 1\)} yields \protect\hypertarget{math-E0087-0112}{}{\(|X / {\sim_*}| - |Q| = \sum_{u \in Q} (|G(q^{-1}(u))| - 1)\)}. (4) Whenever \protect\hypertarget{math-E0088-0113}{}{\(|G(q^{-1}(u))| > 1\)}, there exist at least two distinct values \protect\hypertarget{math-E0089-0114}{}{\(v_a \neq v_b \in G(q^{-1}(u))\)}. Selecting any \protect\hypertarget{math-E0090-0115}{}{\(x \in q^{-1}(u) \cap G^{-1}(v_a)\)} and \protect\hypertarget{math-E0091-0116}{}{\(y \in q^{-1}(u) \cap G^{-1}(v_b)\)} provides the witness: \protect\hypertarget{math-E0092-0117}{}{\(q(x) = q(y) = u\)} but \protect\hypertarget{math-E0093-0118}{}{\(G(x) = v_a \neq v_b = G(y)\)}. \protect\hypertarget{math-E0094-0119}{}{\(\square\)}
+
+This constructive refinement converts the LGGR negative obstruction into a deterministic recipe for identifying exactly which boundary distinctions must be retained. \texttt{increase\_formula} verifies the class-increase identity for nonempty verdict fibers. \texttt{compute\_minimal\_verdict\_refinement} is the shipped checker, and \texttt{test\_minimal\_verdict\_refinement\_derivation} calls it. The coarsest refinement sentence above is this prose argument. It is not a theorem of \texttt{lean4/FiniteAuthority.lean}.
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{4}
+\tightlist
+\item
+  Imported Fifteen-Theorem LLM Spine
+\end{enumerate}
+
+The following is an imported theorem map from the archived LLM-spine companion files. This paper uses it as a dependency map, not as a self-contained proof ledger. Republication of theorem-grade claims requires either bundling those files or migrating them into the canonical encyclopedia.
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+ID
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Result
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Role in this paper
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+T1 & Proposal Non-Authority & generation does not authorize \\
+T2 & Self-Critique Non-Verification & model critique is still proposal \\
+T3 & Scaling Non-Transfer & scale moves proposal mass \\
+T4 & Benchmark Packet Non-Transfer & scores are packet-local \\
+T5 & Prompting as Perturbation & prompts change proposal distribution \\
+T6 & Tool Use as Path Extension & tools extend trace space \\
+T7 & Agent Boundary Non-Composition & local green does not compose \\
+T8 & Boundary Sufficiency & handoffs need evaluator-relevant preservation \\
+T9 & Retry Saturation & blind retry has diminishing returns \\
+T10 & Answer Fiber Terminalization & unique accepted answer required \\
+T11 & Replay Authority & certification requires replay \\
+T12 & Leakage-Free Evaluation & visible-input derivation matters \\
+T13 & Counterfeit Descent & forged authority signs must be detected \\
+T14 & Finite Authority Closure & complete gate stack is required \\
+T15 & Finite Terminalization Dominance & terminalized local solvers can dominate under measured conditions \\
+\end{longtable}
+
+The dependency shape is:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{graph TD}
+\NormalTok{    T1["T1 Proposal Non{-}Authority"]}
+\NormalTok{    T10["T10 Answer Fiber Terminalization"]}
+\NormalTok{    T12["T12 Leakage{-}Free Evaluation"]}
+
+\NormalTok{    T2["T2 Self{-}Critique Non{-}Verification"]}
+\NormalTok{    T3["T3 Scaling Non{-}Transfer"]}
+\NormalTok{    T5["T5 Prompting Perturbation"]}
+\NormalTok{    T6["T6 Tool Path Extension"]}
+\NormalTok{    T8["T8 Boundary Sufficiency"]}
+\NormalTok{    T11["T11 Replay Authority"]}
+
+\NormalTok{    T4["T4 Benchmark Non{-}Transfer"]}
+\NormalTok{    T7["T7 Agent Boundary Non{-}Composition"]}
+\NormalTok{    T9["T9 Retry Saturation"]}
+
+\NormalTok{    T13["T13 Counterfeit Descent"]}
+\NormalTok{    T14["T14 Finite Authority Closure"]}
+\NormalTok{    T15["T15 Finite Terminalization Dominance"]}
+
+\NormalTok{    T1 {-}{-}\textgreater{} T2}
+\NormalTok{    T1 {-}{-}\textgreater{} T3}
+\NormalTok{    T1 {-}{-}\textgreater{} T5}
+\NormalTok{    T1 {-}{-}\textgreater{} T6}
+\NormalTok{    T1 {-}{-}\textgreater{} T8}
+\NormalTok{    T1 {-}{-}\textgreater{} T13}
+\NormalTok{    T1 {-}{-}\textgreater{} T14}
+
+\NormalTok{    T3 {-}{-}\textgreater{} T4}
+\NormalTok{    T3 {-}{-}\textgreater{} T9}
+\NormalTok{    T8 {-}{-}\textgreater{} T7}
+\NormalTok{    T10 {-}{-}\textgreater{} T11}
+\NormalTok{    T10 {-}{-}\textgreater{} T14}
+\NormalTok{    T11 {-}{-}\textgreater{} T13}
+\NormalTok{    T11 {-}{-}\textgreater{} T14}
+\NormalTok{    T12 {-}{-}\textgreater{} T13}
+\NormalTok{    T12 {-}{-}\textgreater{} T14}
+\NormalTok{    T13 {-}{-}\textgreater{} T14}
+\NormalTok{    T14 {-}{-}\textgreater{} T15}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{5}
+\tightlist
+\item
+  Finite Authority Closure
+\end{enumerate}
+
+For an LLM output \protect\hypertarget{math-E0095-0120}{}{\(a\)} on input \protect\hypertarget{math-E0019-0121}{}{\(x\)}, certified authority relative to a declared packet \protect\hypertarget{math-E0009-0122}{}{\(D\)} requires the complete gate stack:
+
+\protect\hypertarget{math-E0096-0123}{}{\[
+\boxed{
+\mathsf{CertifiedAuthority}_D(x,a)
+\iff
+\bigwedge_{i=1}^{8} C_i.
+}
+\]}
+
+The equivalence is definitional. The stronger minimality claim --- that removing each gate admits a concrete counterfeit or failure mode --- is open until the per-gate witness catalog PL-027-1 is supplied.
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Gate
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Condition
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Failure terminal
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+C1 & proposal generated & \texttt{ProposalFailure} \\
+C2 & parseable output & \texttt{ExtractionFailure} / \texttt{ParserInsufficient} \\
+C3 & canonicalization succeeds & \texttt{CanonicalizerFailure} / \texttt{CanonicalizerAmbiguity} \\
+C4 & verifier accepts & \texttt{VerifierRejected} / \texttt{VerifierFailure} \\
+C5 & unique answer fiber & \texttt{NoAccepted} / \texttt{AmbiguousAnswerFiber} \\
+C6 & replay confirms & \texttt{ReplayHashMismatch} / \texttt{EnvironmentMismatch} \\
+C7 & leakage/provenance boundary clean & \texttt{LeakageDetected} / \texttt{ProvenanceUnknown} \\
+C8 & terminal gate accepts & \texttt{NonAuthorityTerminal} / \texttt{TerminalMismatch} \\
+\end{longtable}
+
+Failure of any single gate blocks packet-local certification:
+
+\protect\hypertarget{math-E0097-0124}{}{\[
+\exists i\in\{1,\dots,8\}:\neg C_i
+\Rightarrow
+\neg\mathsf{CertifiedAuthority}_D(x,a).
+\]}
+
+This is the contrapositive of the definition above and carries nothing beyond it. Two further steps are \textbf{not} discharged here, and earlier revisions of this section elided both by writing \protect\hypertarget{math-E0010-0125}{}{\(\mathsf{Authority}_D\)} where \protect\hypertarget{math-E0011-0126}{}{\(\mathsf{CertifiedAuthority}_D\)} was meant:
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Necessity --- declared, not proved.} \protect\hypertarget{math-E0098-0127}{}{\(\mathsf{Authority}_D(x,a)\Rightarrow\bigwedge_{i=1}^{8}C_i\)} is a \texttt{{[}POLICY\ RULE{]}}: it is what a compliant packet \protect\hypertarget{math-E0009-0128}{}{\(D\)} is \emph{required to enforce}, not a theorem of this paper. Only under that declared rule does a failed gate refuse the §0 authority object rather than solely refusing this paper's certificate.
+\item
+  \textbf{Sufficiency --- refused.} \protect\hypertarget{math-E0099-0129}{}{\(\bigwedge_{i=1}^{8}C_i\Rightarrow\mathsf{Authority}_D(x,a)\)} is \textbf{not claimed and is refused here.} \protect\hypertarget{math-E0010-0130}{}{\(\mathsf{Authority}_D\)} is the Finite Descent Verification dependent object of §0: it requires a terminal \protect\hypertarget{math-E0100-0131}{}{\(t\)} with \protect\hypertarget{math-E0101-0132}{}{\(\Pi_D^\sharp(x,a)=\mathsf{inl}(t)\)} \emph{and} a proof of \protect\hypertarget{math-E0102-0133}{}{\(\mathsf{IsAuth}_D(t)\)}. A conjunction of eight Boolean gates does not construct that dependent pair, and no theorem in this paper or its Lean module constructs it. \protect\hypertarget{math-E0103-0134}{}{\(\mathsf{CertifiedAuthority}\)} is a \textbf{packet-local certificate name}; the token ``Authority'' inside that name carries no authority. Granting to a conjunction of predicates what §2.1, §7, §8 and §13 deny to generation, self-critique, scaling and halting would be the same category error this paper exists to refuse.
+\end{itemize}
+
+\begin{quote}
+\textbf{OBSTRUCTION.} The following cannot be derived from what is available at this degree: a route from the gate conjunction \protect\hypertarget{math-E0104-0135}{}{\(\bigwedge_i C_i\)} to \protect\hypertarget{math-E0105-0136}{}{\(\mathsf{Authority}_D(x,a)\)}. What would have to be admitted: a Finite Descent Verification descent packet with a constructed terminal \protect\hypertarget{math-E0100-0137}{}{\(t\)}, an \protect\hypertarget{math-E0102-0138}{}{\(\mathsf{IsAuth}_D(t)\)} witness, a \texttt{DetectorAdequacy} certificate for each gate's detector, and an \texttt{ExhaustionWitness} for C5. What is lost if it is admitted without those: the gate stack becomes a counterfeit-descent surface --- eight green Booleans that \emph{look} like a terminal seal and are not one.
+\end{quote}
+
+The C1--C8 conjunction of this section is not a Lean theorem of this deposit. An external \texttt{DescentGateVector} with fields \texttt{hasRepresentation}, \texttt{hasEvaluator}, \texttt{hasVerifier}, \texttt{hasReplay}, \texttt{hasLeakageBoundary}, \texttt{hasResidualLedger}, \texttt{hasTerminalizer}, and \texttt{terminalAccepts} is a different eight-tuple, and that file is not bundled here. The names \texttt{certified\_iff\_all\_gates\_true}, \texttt{full\_descent\_gate\_vector\_certified}, and the \texttt{missing\_*\_refuses\_certification} lemmas are absent. PL-027-1, the per-gate removal catalog, stays open.
+
+\subsubsection{\texorpdfstring{6.1 Worked Example: One Row Through the Gate Stack \texttt{{[}WORKED\ EXAMPLE{]}}}{6.1 Worked Example: One Row Through the Gate Stack {[}WORKED EXAMPLE{]}}}\label{worked-example-one-row-through-the-gate-stack-worked-example}
+
+Declared packet \protect\hypertarget{math-E0009-0139}{}{\(D\)} for the task \protect\hypertarget{math-E0019-0140}{}{\(x\)} = ``compute \protect\hypertarget{math-E0106-0141}{}{\(17 \times 23\)}; return the integer only'': \protect\hypertarget{math-E0027-0142}{}{\(K\)} = decimal integer strings; parser = first integer token; canonicalizer = strip whitespace/leading zeros; \protect\hypertarget{math-E0012-0143}{}{\(V\)} = independent recomputation (\protect\hypertarget{math-E0107-0144}{}{\(17 \times 23 = 391\)}, evaluated outside the proposal process); answer-fiber check on canonical equality; replay = rerun with pinned environment hash; leakage audit = prompt contains no target; \protect\hypertarget{math-E0014-0145}{}{\(\tau\)} = signed terminal status.
+
+\textbf{Run 1.} Model emits ``The answer is 391.'' Parser extracts \texttt{391}; canonical form \texttt{391}; \protect\hypertarget{math-E0012-0146}{}{\(V\)} accepts; fiber \protect\hypertarget{math-E0108-0147}{}{\(\mathcal F_x = \{391\}\)}, \protect\hypertarget{math-E0109-0148}{}{\(|\mathcal F_x| = 1\)}; replay reproduces; leakage clean; terminal accepts. Gate vector \protect\hypertarget{math-E0110-0149}{}{\((C_1,\dots,C_8) = (1,1,1,1,1,1,1,1)\)} → \protect\hypertarget{math-E0111-0150}{}{\(\mathsf{CertifiedAuthority}_D(x, 391)\)}.
+
+\textbf{Run 2.} Model emits a fluent, self-audited paragraph concluding ``\ldots having carefully re-verified each partial product, the answer is certainly 397.'' Gates: \protect\hypertarget{math-E0112-0151}{}{\(C_1\)}--\protect\hypertarget{math-E0113-0152}{}{\(C_3\)} pass; \protect\hypertarget{math-E0114-0153}{}{\(C_4\)} fails (\protect\hypertarget{math-E0012-0154}{}{\(V\)}: \protect\hypertarget{math-E0115-0155}{}{\(17 \times 23 = 391 \neq 397\)}). Terminal: \texttt{VerifierRejected}. Gate vector \protect\hypertarget{math-E0116-0156}{}{\((1,1,1,0,-,-,-,-)\)}. The embedded self-verification prose is a \protect\hypertarget{math-E0016-0157}{}{\(P_\theta \circ P_\theta\)} trace (§7); it never touches the gate outcome.
+
+\textbf{Retry saturation (§10.3, concrete).} Assume independent retries under a fixed prompt and fixed evaluator, with per-sample acceptance probability \protect\hypertarget{math-E0117-0158}{}{\(p = 0.3\)}. Then the marginal probability that the \protect\hypertarget{math-E0118-0159}{}{\((n{+}1)\)}-th retry is the first accepted sample is \protect\hypertarget{math-E0119-0160}{}{\((1-p)^n p\)}: retry 1 contributes \protect\hypertarget{math-E0120-0161}{}{\(0.3\)}, retry 4 contributes \protect\hypertarget{math-E0121-0162}{}{\(\approx 0.103\)}, retry 10 contributes \protect\hypertarget{math-E0122-0163}{}{\(\approx 0.012\)}. The packet, evaluator, and authority object are unchanged throughout --- added retries move only proposal mass, with geometrically decaying returns, which is the §10.3 saturation claim in numbers.
+
+\emph{Import note (probability).} These numbers import probability semantics: a probability measure over samples, plus an independence assumption across retries. Neither is constructed at this paper's declared degree, and \textbf{no probability adapter is declared}. Read doctrinally, \protect\hypertarget{math-E0123-0164}{}{\(p\)} is a \textbf{declared finite normalized weight} --- an exhibited acceptance tally over a declared retry window --- and \protect\hypertarget{math-E0119-0165}{}{\((1-p)^n p\)} is the arithmetic of that weight profile under a declared independence hypothesis. The saturation \emph{conclusion} (retries under a fixed packet move only proposal mass) does not depend on the probabilistic reading; only the decay numbers do. The same import governs §8's \protect\hypertarget{math-E0124-0166}{}{\(\Pr[\,\cdot\,]\to 1\)} and §18's measured error rates \protect\hypertarget{math-E0125-0167}{}{\(\epsilon_T,\epsilon_G\)}.
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{6}
+\tightlist
+\item
+  Self-Critique Is Not Verification
+\end{enumerate}
+
+A model-generated critique is another generated trace:
+
+\protect\hypertarget{math-E0126-0168}{}{\[
+\gamma_2\sim P_\theta(\cdot\mid x,\gamma_1).
+\]}
+
+It may be useful. It may improve the next proposal. But it is not a verifier unless routed through an independent, deterministic, replayable verification specification.
+
+\protect\hypertarget{math-E0127-0169}{}{\[
+\boxed{
+\text{Self-critique is }P_\theta\circ P_\theta.\text{ It does not escape the proposal type.}
+}
+\]}
+
+A self-critique may discover errors. It may be statistically correlated with correctness. It may improve pass rates. None of that makes it authority. Authority begins only when the critique is terminalized by a declared evaluator external to the proposal process being judged.
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{7}
+\tightlist
+\item
+  Scaling Does Not Transfer Authority
+\end{enumerate}
+
+Scaling changes \protect\hypertarget{math-E0128-0170}{}{\(P_\theta\)}. It may improve fluency, coverage, candidate quality, benchmark survival, and probability of hitting an accepted answer. It does not define \protect\hypertarget{math-E0028-0171}{}{\(E\)}, prove \protect\hypertarget{math-E0012-0172}{}{\(V\)}, supply \protect\hypertarget{math-E0014-0173}{}{\(\tau\)}, or generate a replay certificate.
+
+\protect\hypertarget{math-E0129-0174}{}{\[
+\boxed{
+\text{Scaling moves proposal mass. It does not create authority.}
+}
+\]}
+
+Even if:
+
+\protect\hypertarget{math-E0130-0175}{}{\[
+\Pr_{\gamma\sim P_{\theta_n}(\cdot\mid x)}
+[V(\operatorname{extract}(\gamma))=\mathsf{Accept}]
+\to 1,
+\]}
+
+the authority still comes from the verifier and terminalizer, not from the scale curve.
+
+The legitimate scaling claim is narrower:
+
+\begin{quote}
+Larger models may increase the probability of proposing traces that survive a declared finite packet.
+\end{quote}
+
+That is useful. It is not authority transfer.
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{8}
+\tightlist
+\item
+  Benchmarks Are Packet-Local
+\end{enumerate}
+
+A benchmark score is a terminal value inside a benchmark packet:
+
+\protect\hypertarget{math-E0131-0176}{}{\[
+D_B=(X_B,E_B,V_B,\tau_B,\Lambda_B).
+\]}
+
+It certifies survival under that packet. It does not certify general intelligence, general reasoning authority, or authority on another task packet \protect\hypertarget{math-E0132-0177}{}{\(D_T\)}.
+
+A transfer claim requires a declared transport map:
+
+\protect\hypertarget{math-E0133-0178}{}{\[
+\chi:D_B\to D_T
+\]}
+
+and a justified bound \protect\hypertarget{math-E0134-0179}{}{\(\delta(\chi)\)}. Only then may one assert a relation such as:
+
+\protect\hypertarget{math-E0135-0180}{}{\[
+s_T(\theta)\ge s_B(\theta)-\delta(\chi).
+\]}
+
+The existence of \protect\hypertarget{math-E0013-0181}{}{\(\chi\)} alone does not supply \protect\hypertarget{math-E0136-0182}{}{\(\delta\)}.
+
+Without \protect\hypertarget{math-E0013-0183}{}{\(\chi\)}, benchmark transfer is authority laundering.
+
+\protect\hypertarget{math-E0137-0184}{}{\[
+\boxed{
+\begin{gathered}\text{A benchmark score is packet-local. Transfer without a declared}\\
+\text{transport map is counterfeit authority.}\end{gathered}
+}
+\]}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{9}
+\tightlist
+\item
+  Prompting, Tools, and Retry
+\end{enumerate}
+
+\subsubsection{10.1 Prompting}\label{prompting}
+
+Prompting changes the proposal distribution:
+
+\protect\hypertarget{math-E0138-0185}{}{\[
+P_\theta(\gamma\mid x)\to P_\theta(\gamma\mid x,p).
+\]}
+
+It does not change the verifier, terminalizer, replay rule, or authority object. A prompt can help the model find better proposals. It cannot make a failed answer authoritative.
+
+\subsubsection{10.2 Tool Use}\label{tool-use}
+
+Tools extend the trace space:
+
+\protect\hypertarget{math-E0139-0186}{}{\[
+\Gamma\to\Gamma_{\mathrm{tool}}.
+\]}
+
+A calculator, search engine, code interpreter, database, proof assistant, or solver may introduce new candidate traces. If the tool is a verifier, then the packet must declare it as such. Otherwise, tool use remains proposal-path extension.
+
+\subsubsection{10.3 Retry Saturation}\label{retry-saturation}
+
+Retry samples additional traces from the same or modified proposal geometry. Blind retry under a fixed prompt and fixed evaluator eventually saturates. Packet-changing retry can be useful when it changes the representation, parser, verifier, search space, or repair path.
+
+\protect\hypertarget{math-E0140-0187}{}{\[
+\boxed{
+\begin{gathered}\text{Retry is justified only when it is information-bearing or}\\
+\text{packet-changing.}\end{gathered}
+}
+\]}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{10}
+\tightlist
+\item
+  Boundary Sufficiency and Agentic AI
+\end{enumerate}
+
+Agentic workflows often treat local validator success as global task success. The invalid inference is:
+
+\protect\hypertarget{math-E0141-0188}{}{\[
+E_A(\gamma_A)=1,\quad E_B(\gamma_B)=1
+\not\Rightarrow
+E_G(\gamma_B\star\gamma_A)=1.
+\]}
+
+Local acceptance certifies global success only when the boundary object preserves evaluator-relevant information or the global evaluator factorizes across the handoff.
+
+Let:
+
+\protect\hypertarget{math-E0142-0189}{}{\[
+b=\pi(\gamma_A)
+\]}
+
+be the boundary object passed from Agent A to Agent B. Boundary sufficiency requires:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  the downstream trace depends on Agent A only through \protect\hypertarget{math-E0143-0190}{}{\(b\)};
+\item
+  \protect\hypertarget{math-E0143-0191}{}{\(b\)} preserves everything needed by the global evaluator;
+\item
+  dropped information is recorded as residual/loss;
+\item
+  global evaluation is performed on the composed trace or validly factorized.
+\end{enumerate}
+
+The evaluator gluing defect is:
+
+\protect\hypertarget{math-E0144-0192}{}{\[
+\Delta_E(\gamma) = E_G(\gamma_B\star\gamma_A) - E_A(\gamma_A)E_B(\gamma_B).
+\]}
+
+The safety-critical case is:
+
+\protect\hypertarget{math-E0145-0193}{}{\[
+E_A=1,\quad E_B=1,\quad E_G=0,
+\]}
+
+so:
+
+\protect\hypertarget{math-E0146-0194}{}{\[
+\Delta_E=-1.
+\]}
+
+This is local green / global red.
+
+\protect\hypertarget{math-E0147-0195}{}{\[
+\boxed{
+\text{Local green is not global authority unless the projections glue.}
+}
+\]}
+
+Section §4.3 gives the quotient theorem behind this engineering rule. Local validation can be a well-defined quotient observation while the global verdict fails to factor through the same quotient. In that case the handoff has not preserved evaluator-relevant information; it has hidden the obstruction.
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{11}
+\tightlist
+\item
+  Answer Fibers, Replay, and Leakage
+\end{enumerate}
+
+\subsubsection{12.1 Answer Fibers}\label{answer-fibers}
+
+Let \protect\hypertarget{math-E0148-0196}{}{\(A_x\)} be the accepted canonical-answer set:
+
+\protect\hypertarget{math-E0149-0197}{}{\[
+A_x = \{ \operatorname{canon}(\operatorname{extract}(\gamma)) : V(\operatorname{canon}(\operatorname{extract}(\gamma))) = \mathsf{Accept} \}.
+\]}
+
+Authority requires \protect\hypertarget{math-E0150-0198}{}{\(|A_x| = 1\)}.
+
+For the unique accepted answer \protect\hypertarget{math-E0151-0199}{}{\(a \in A_x\)}, the fiber \protect\hypertarget{math-E0152-0200}{}{\(\mathcal F_x(a)\)} may contain many traces. Multiple traces supporting the same canonical answer are not ambiguity; multiple distinct accepted canonical answers are ambiguity.
+
+\textbf{Exhaustion is required, and this paper does not supply it (\texttt{ExhaustionWitness}).} The set-builder above ranges over \textbf{all} traces \protect\hypertarget{math-E0021-0201}{}{\(\gamma\)}. So \protect\hypertarget{math-E0150-0202}{}{\(|A_x| = 1\)} is a claim about the entire trace space --- for a proposal law \protect\hypertarget{math-E0128-0203}{}{\(P_\theta\)}, a claim about every generation the model could emit. It cannot be read off a run. Gate C5 is therefore \textbf{not finitely checkable as stated}: discharging it requires either an \texttt{ExhaustionWitness} over a declared finite enumeration of \protect\hypertarget{math-E0153-0204}{}{\(\Gamma_x\)}, or a declared property of \protect\hypertarget{math-E0012-0205}{}{\(V\)} that fixes uniqueness independently of sampling. §6.1's Run 1 recovers \protect\hypertarget{math-E0150-0206}{}{\(|A_x| = 1\)} only because its \protect\hypertarget{math-E0012-0207}{}{\(V\)} is an independent recomputation accepting exactly one value --- a property of \emph{that} verifier, never stated as a requirement, and not a property of the gate. Absent one of those two routes, C5 is a sampling claim wearing an unbounded quantifier, and a green C5 is a \texttt{DetectorAdequacy} failure in disguise.
+
+\subsubsection{12.2 Replay}\label{replay}
+
+Replay is the independent rerun of the descent path:
+
+\protect\hypertarget{math-E0154-0208}{}{\[
+x\to\gamma\to a\to V(a)\to\tau(D(x,a)).
+\]}
+
+A replay certificate records the environment, parser, canonicalizer, verifier, inputs, outputs, hashes, and terminal status. If replay cannot reproduce the terminal, authority fails.
+
+\subsubsection{12.3 Leakage and Provenance}\label{leakage-and-provenance}
+
+Leakage-free evaluation requires more than runtime isolation. It also requires provenance discipline: hidden labels, leaderboard tuning, private targets, contaminated examples, and rules learned from the test set must not enter the authority packet.
+
+Runtime leakage is easier to check than provenance leakage. This remains a hard boundary.
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{12}
+\tightlist
+\item
+  Non-Terminal Computation
+\end{enumerate}
+
+Turing computation is a correct abstraction of formal symbolic procedure. The overclaim begins when syntactic halting is promoted into evidential authority.
+
+A Turing machine may halt with output \protect\hypertarget{math-E0155-0209}{}{\(o\)}. That means it reached a halt state under the transition rules. It does not mean \protect\hypertarget{math-E0155-0210}{}{\(o\)} is physically valid, semantically correct, resource-appropriate, externally verified, or authority-bearing.
+
+Layered Authority Framework refines computation into:
+
+\protect\hypertarget{math-E0156-0211}{}{\[
+\boxed{
+\mathsf{Computation}_{Layered Authority Framework}
+(\mathsf{Process},\mathsf{Bound},\mathsf{Verifier},\mathsf{Evidence},\mathsf{Terminal}).
+}
+\]}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5000}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5000}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Turing model
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Layered Authority Framework refinement
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+infinite tape idealization & finite carrier / declared resource envelope \\
+transition rules & Kleisli process with typed refusals \\
+halting state & terminal evidence object \\
+computable function & verified descent relation \\
+general machine & representation transport, not autonomous authority \\
+divergent execution & refusal / timeout / evidence-ceiling terminal \\
+\end{longtable}
+
+The durable claim is:
+
+\protect\hypertarget{math-E0157-0212}{}{\[
+\boxed{
+\mathsf{Formal\ Computability}
+\not\Rightarrow
+\mathsf{Authority}.
+}
+\]}
+
+\texttt{halt\_alone\_not\_authority} states that \texttt{evalHalt\ true\ none\ none} is \texttt{nonAuthorityHalt}. \texttt{gates\_without\_witness\_not\_authority} states that gates without a witness are \texttt{checklistCertified}. \texttt{gates\_and\_witness\_authority} requires both flags. These are equalities of \texttt{HaltStatus}. \texttt{halted} is a \texttt{Bool}, not a halting predicate, and \texttt{HaltStatus.authority} is not \protect\hypertarget{math-E0010-0213}{}{\(\mathsf{Authority}_D\)}. The Python checker is \texttt{evaluate\_halted\_trace}. This is not a theorem about Turing machines.
+
+This is not a theorem about computability. It is a typing boundary: halting supplies a syntactic terminal, while authority requires an evidence terminal in a declared packet. This does not diminish Turing. It prevents the illegal promotion of symbol motion into evidence terminalization.
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{13}
+\tightlist
+\item
+  Counterfeit Descent
+\end{enumerate}
+
+The main modern risk is not just that generative systems produce false text. It is that they imitate the signs of authority:
+
+\begin{itemize}
+\tightlist
+\item
+  citations;
+\item
+  proof style;
+\item
+  JSON certificates;
+\item
+  audit logs;
+\item
+  chain-of-thought rationales;
+\item
+  institutional prose;
+\item
+  legal tone;
+\item
+  peer-review language;
+\item
+  benchmark tables;
+\item
+  ``verified'' badges.
+\end{itemize}
+
+\texttt{residual\_surface\_counterfeit} states that a halted flag, a positive residual flag, and a surface flag yield \texttt{counterfeitRefusal}. \texttt{zero\_residual\_no\_gates} yields \texttt{nonAuthorityHalt}. The Python checker is \texttt{detect\_counterfeit\_descent}. These are equalities of \texttt{CounterfeitStatus}, not a theorem that surface signs never imply \protect\hypertarget{math-E0010-0214}{}{\(\mathsf{Authority}_D\)}.
+
+A counterfeit descent packet claims terminal authority while carrying missing, malformed, or inconsistent descent evidence.
+
+The basic contradiction is:
+
+\protect\hypertarget{math-E0158-0215}{}{\[
+\boxed{
+\mathsf{ClaimedTerminal}=\mathsf{Exact}
+\quad\wedge\quad
+\Phi([\delta_C])>0.
+}
+\]}
+
+The packet claims exact authority, but replayed obstruction accounting shows nonzero residual. That is not a style defect. It is a structural contradiction.
+
+\textbf{Conditionality hedge (v1.1).} This detection test is conditional on the Layered Authority Framework v1.3 \textbf{Known Gate}: the gauge \protect\hypertarget{math-E0005-0216}{}{\(\Phi\)} is \emph{declared}, not proved, positive-definite on nonzero quotient classes. If \protect\hypertarget{math-E0005-0217}{}{\(\Phi\)} vanishes on some nonzero residual class, a counterfeit packet carrying that residual passes the \protect\hypertarget{math-E0005-0218}{}{\(\Phi\)}-test undetected. The test is therefore sound for refusal (a positive \protect\hypertarget{math-E0005-0219}{}{\(\Phi\)} reading is a real contradiction) but complete only under the declared separation hypothesis. The hypothesis is tracked at its home (Layered Authority Framework v1.3, Open Check \#1), not re-registered here.
+
+\subsubsection{14.1 Counterfeit Packet Asymmetry}\label{counterfeit-packet-asymmetry}
+
+Generative systems lower the cost of producing authority-looking artifacts faster than institutions can scale verification. In the simplest no-prioritization backlog model, if generated authority-looking artifacts arrive at rate \protect\hypertarget{math-E0159-0220}{}{\(r_G\)} and real verification clears them at rate \protect\hypertarget{math-E0160-0221}{}{\(r_V\)}, then whenever:
+
+\protect\hypertarget{math-E0161-0222}{}{\[
+r_G>r_V,
+\]}
+
+the unresolved authority backlog grows. This is a pressure model, not a full queueing theorem.
+
+This is an institutional verification-pressure problem. It cannot be solved by asking the same proposal systems to certify themselves.
+
+\subsubsection{14.2 Defense Rule}\label{defense-rule}
+
+\protect\hypertarget{math-E0162-0223}{}{\[
+\boxed{
+\begin{gathered}\text{No proposal process may serve as the terminal authority for its own}\\
+\text{output unless the verifier and terminalizer are separately declared,}\\
+\text{replayable, and included in the explicit trust root.}\end{gathered}
+}
+\]}
+
+The defense stack is:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  external verifier;
+\item
+  replay record;
+\item
+  signed terminal status;
+\item
+  obstruction ledger;
+\item
+  leakage/provenance boundary;
+\item
+  typed refusal;
+\item
+  terminal consistency check.
+\item
+  Evaluator Sovereignty
+\end{enumerate}
+
+Alignment is not model virtue. It is governed terminal evaluation.
+
+A model may propose. It may be helpful. It may be powerful. It may route work, call tools, and generate candidate certificates. But it may not own the terminal gate for the authority claim being judged.
+
+Evaluator sovereignty means:
+
+\protect\hypertarget{math-E0163-0224}{}{\[
+\boxed{
+\begin{gathered}\text{The evaluator and terminalizer must be declared outside the proposal}\\
+\text{authority being evaluated.}\end{gathered}
+}
+\]}
+
+This does not require metaphysical certainty. It is an engineering reduction of trust surface. The claim is not:
+
+\begin{quote}
+we solved truth absolutely.
+\end{quote}
+
+The claim is:
+
+\begin{quote}
+we moved trust from an opaque generative system over arbitrary outputs to a declared, inspectable, replayable finite predicate over a specific packet.
+\end{quote}
+
+That reduction is valuable even though verifier soundness remains a load-bearing assumption.
+
+The evaluator-sovereignty witness named \texttt{self\_owned\_evaluator\_boundary\_witness} is not in this deposit. Section 15 does not record that witness as a proved theorem.
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{15}
+\tightlist
+\item
+  Red-Team Boundary
+\end{enumerate}
+
+This framework is conditional. It fails or loses usefulness under predictable conditions.
+
+\textbf{Falsifiability.} This framework fails if a sound counterexample to gate minimality is exhibited --- a gate \protect\hypertarget{math-E0164-0225}{}{\(C_i\)} whose removal admits \emph{no} counterfeit or failure mode (§6) --- or if a verifier-independent route to transferable authority is demonstrated: a proposal system whose un-terminalized outputs achieve the declared authority predicate on a packet it does not own. Verifier unsoundness does not falsify the framework (it is the declared trust root, §0.1); it bounds it.
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Attack
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Severity
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Status
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Verifier unsoundness & fatal & known load-bearing assumption \\
+Parser insufficiency & serious & coverage must be measured \\
+Canonicalizer collapse & serious & false uniqueness / false multiplicity \\
+Hidden label leakage & serious & runtime isolation easier than provenance proof \\
+Routing error & moderate/serious & first-class error term \\
+Non-deterministic replay & moderate & typed failure via environment mismatch \\
+Boundary information loss & serious & must be measured or refused \\
+Benchmark overfitting & serious & packet-local scores only \\
+Evaluator mismatch & moderate & authority is evaluator-relative \\
+LLM-as-evaluator circularity & fatal & proposal cannot terminalize itself \\
+Verifier regress & philosophical/foundational & trust surface reduction, not absolute truth \\
+Practicality cost & serious & certified partition may be small \\
+\end{longtable}
+
+The honest formulation is:
+
+\protect\hypertarget{math-E0165-0226}{}{\[
+\boxed{
+\begin{gathered}\text{We do not eliminate the authority problem. We reduce it to visible}\\
+\text{finite descent and expose every place where descent can fail.}\end{gathered}
+}
+\]}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{16}
+\tightlist
+\item
+  Engineering Protocol
+\end{enumerate}
+
+A compliant runtime must log:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{task\_id}
+\NormalTok{input\_packet\_hash}
+\NormalTok{model\_id / proposal\_source}
+\NormalTok{trace\_hash}
+\NormalTok{parser\_id}
+\NormalTok{canonicalizer\_id}
+\NormalTok{verifier\_id}
+\NormalTok{evaluator\_version}
+\NormalTok{candidate\_answer}
+\NormalTok{canonical\_answer}
+\NormalTok{fiber\_size}
+\NormalTok{replay\_environment\_hash}
+\NormalTok{replay\_trace\_hash}
+\NormalTok{leakage\_status}
+\NormalTok{provenance\_status}
+\NormalTok{residual\_vector / obstruction summary}
+\NormalTok{terminal\_status}
+\NormalTok{terminal\_signature}
+\NormalTok{failure\_terminal\_if\_any}
+\end{Highlighting}
+\end{Shaded}
+
+A minimal runtime flow is:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{raw input}
+\NormalTok{  {-}\textgreater{} input packet handler}
+\NormalTok{  {-}\textgreater{} proposal engine}
+\NormalTok{  {-}\textgreater{} parser}
+\NormalTok{  {-}\textgreater{} canonicalizer}
+\NormalTok{  {-}\textgreater{} verifier}
+\NormalTok{  {-}\textgreater{} answer fiber checker}
+\NormalTok{  {-}\textgreater{} replay logger}
+\NormalTok{  {-}\textgreater{} leakage/provenance audit}
+\NormalTok{  {-}\textgreater{} residual ledger}
+\NormalTok{  {-}\textgreater{} terminalizer}
+\NormalTok{  {-}\textgreater{} signed authority/refusal/lift certificate}
+\end{Highlighting}
+\end{Shaded}
+
+Any skipped stage must either be justified by a declared equivalence certificate or produce a typed refusal. Silent skipping is not allowed.
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{17}
+\tightlist
+\item
+  Residual-First Row Terminalization
+\end{enumerate}
+
+For finite task distributions such as benchmark rows, the practical pattern is:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{row}
+\NormalTok{  {-}\textgreater{} family route}
+\NormalTok{  {-}\textgreater{} parser}
+\NormalTok{  {-}\textgreater{} deterministic solver / constrained proposer}
+\NormalTok{  {-}\textgreater{} verifier}
+\NormalTok{  {-}\textgreater{} answer fiber}
+\NormalTok{  {-}\textgreater{} replay}
+\NormalTok{  {-}\textgreater{} leakage audit}
+\NormalTok{  {-}\textgreater{} terminal status}
+\end{Highlighting}
+\end{Shaded}
+
+Each row must end in one of three classes:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  terminalized;
+\item
+  residualized / lifted;
+\item
+  fallback-handled without authority claim.
+\end{enumerate}
+
+Nothing is trusted because it sounds right.
+
+The finite terminalization system dominates an unmanaged global proposal model only under measured conditions:
+
+\protect\hypertarget{math-E0166-0227}{}{\[
+\epsilon_T<\epsilon_G,
+\]}
+
+where \protect\hypertarget{math-E0167-0228}{}{\(\epsilon_T\)} and \protect\hypertarget{math-E0168-0229}{}{\(\epsilon_G\)} are measured error rates on the same task distribution, under the same scoring rule and deployment constraints.
+
+A poorly engineered terminalizer can lose to a strong raw model. The dominance theorem is conditional and empirical, not guaranteed by doctrine.
+
+\subsubsection{18.1 Kaggle/Sweeper Evidence Reading}\label{kagglesweeper-evidence-reading}
+
+The Kaggle/Nemotron evidence review gives the paper a concrete LGGR warning. In the current evidence folder, firewall and replay checks can be green for the local artifact spine while global deployability remains yellow or red until the label-free submission, release paths, and policy gates also close.
+
+The relevant evidence files read in this pass are:
+
+\begin{itemize}
+\tightlist
+\item
+  \texttt{omega\_engine/products/omega\_engine\_kaggle/evidence/current\_kaggle\_situation\_review.md}
+\item
+  \texttt{omega\_engine/products/omega\_engine\_kaggle/evidence/kaggle\_claim\_to\_test\_matrix.md}
+\item
+  \texttt{omega\_engine/products/omega\_engine\_kaggle/evidence/kaggle\_mechanization\_boundary.md}
+\item
+  \texttt{omega\_engine/products/omega\_engine\_kaggle/evidence/yellow\_to\_green\_lock\_gate\_report.md}
+\item
+  \texttt{omega\_engine/products/omega\_engine\_kaggle/evidence/evidence\_residual\_authority\_reconciliation.md}
+\end{itemize}
+
+The local facts are valuable: forged certified metadata is rejected, residual and score lanes cannot teach or certify, training export is separated, and replay/audit artifacts are checked. The global inference is narrower: those local gates do not prove private/test-time deployability or full Rust/Lean/ENC authority. This is exactly the §4.3 theorem in operational form. Local green certificates are admissible evidence only for the quotient they actually preserve.
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{18}
+\tightlist
+\item
+  Measured Intelligence and Soft Claims
+\end{enumerate}
+
+\emph{Note: This paper does not address consciousness, personhood, or private experience. Public claims about such matters require their own finite packets.}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{19}
+\tightlist
+\item
+  Non-Claims
+\end{enumerate}
+
+This paper does not claim:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  all truth is finite;
+\item
+  LLMs cannot be useful;
+\item
+  LLMs cannot improve;
+\item
+  self-critique is useless;
+\item
+  benchmarks are meaningless;
+\item
+  Turing computation is false;
+\item
+  formal computation lacks value;
+\item
+  proof-assistant results with declared kernels and replay contracts are solely proposals;
+\item
+  authority is absolute semantic truth;
+\item
+  verifier soundness is automatic;
+\item
+  every domain has a clean verifier;
+\item
+  this framework fully solves AI safety.
+\end{enumerate}
+
+The claim is narrower and harder to evade:
+
+\protect\hypertarget{math-E0169-0230}{}{\[
+\boxed{
+\begin{gathered}\text{No generated output, formal trace, benchmark score, or halted}\\
+\text{computation has authority without declared finite terminal descent.}\end{gathered}
+}
+\]}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{20}
+\tightlist
+\item
+  Conclusion
+\end{enumerate}
+
+LLMs propose. Programs compute. Agents route. Tools extend traces. Benchmarks score. Self-critiques generate. Turing machines halt.
+
+None of these facts alone creates authority.
+
+Authority begins only when a claim descends through a declared finite packet and reaches an authority-bearing terminal under an evaluator that is not owned by the proposal process being judged.
+
+\protect\hypertarget{math-E0170-0231}{}{\[
+\boxed{
+\text{A proposal is not authority.}
+}
+\]}
+
+\protect\hypertarget{math-E0171-0232}{}{\[
+\boxed{
+\text{A halt is not authority.}
+}
+\]}
+
+\protect\hypertarget{math-E0172-0233}{}{\[
+\boxed{
+\text{When authority signs can be forged, only replayable descent remains.}
+}
+\]}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{21}
+\tightlist
+\item
+  Finite Obstruction Calculus / Layered Authority Framework Compliance Note
+\end{enumerate}
+
+\textbf{Role:} Layered Authority Framework companion / application paper. Consolidates four private drafts into one publication-facing treatment of finite authority for LLM proposal systems and formal computation. It applies the authority spine; it does not constitute it.
+
+\textbf{Degree:} Packet-relative, finite. This paper operates at two declared layers: (i) the \textbf{quotient/factorization layer} --- a \texttt{PrimitiveDifference} object with a zero-relation \protect\hypertarget{math-E0173-0234}{}{\(\sim_P\)} and residual quotient \protect\hypertarget{math-E0050-0235}{}{\(Q_P\)} (§4.3); and (ii) the \textbf{Layered Authority Framework terminal layer} --- packets, verifiers, terminalizers, typed refusals. \textbf{It does not operate a cochain complex.} No \protect\hypertarget{math-E0174-0236}{}{\(C^k\)}, no \protect\hypertarget{math-E0175-0237}{}{\(d_k\)}, and no \protect\hypertarget{math-E0176-0238}{}{\(d_{k+1}\circ d_k=0\)} certificate is declared or used anywhere, and none is claimed. The LGGR result is a \textbf{factorization/gluing obstruction through a residual quotient}, not a coboundary obstruction; in Finite Obstruction Calculus classification terms it is an \texttt{ActiveClosureFailure} shape --- local sections exist, the global section does not glue.
+
+\textbf{Consumes:} the Finite Descent Verification authority object \protect\hypertarget{math-E0177-0239}{}{\(\mathsf{Authority}_S\)}/\protect\hypertarget{math-E0010-0240}{}{\(\mathsf{Authority}_D\)} and the \protect\hypertarget{math-E0004-0241}{}{\(\mathsf{IsAuth}\)} guard (§0); Layered Authority Framework v1.3 terminalization discipline, non-promotion rules, terminal taxonomy, and the \protect\hypertarget{math-E0005-0242}{}{\(\Phi\)} gauge with its declared \textbf{Known Gate} (§14); the EPK (Papers 020/023/025); the \texttt{PrimitiveDifference} primitives (Lean); the LLM-spine T1--T15 (\texttt{PROVED-PROSE}, unmigrated --- PL-027-2).
+
+\textbf{Produces:} the consolidation and LLM/computation-facing exposition; the packet schema \protect\hypertarget{math-E0178-0243}{}{\(D=(K,E,V,\tau,\Lambda)\)} (definition); the C1--C8 gate stack (definition); the finite LGGR split, halt-status separation, counterfeit-status separation, and class-increase identity in \texttt{lean4/FiniteAuthority.lean}; the §17 engineering protocol and Appendix B terminal taxonomy. It does not produce the quotient-modulo generalization.
+
+\textbf{Does not produce:} authority of any kind; semantic truth; a limitation theorem about Turing computability; a probability adapter; a benchmark-transfer theorem; gate minimality (PL-027-1); a \texttt{DetectorAdequacy} certificate; an \texttt{ExhaustionWitness}; a construction of \protect\hypertarget{math-E0004-0244}{}{\(\mathsf{IsAuth}\)}; any route from a gate conjunction to \protect\hypertarget{math-E0010-0245}{}{\(\mathsf{Authority}_D\)} (§6, refused).
+
+\textbf{Authority status:} \textbf{This paper mints no authority.} It is an authority-\emph{theory} paper, not an authority \emph{source} --- the distinction §2 draws between proposal and terminal applies to this paper as much as to its objects. Scoped per §0.2: \texttt{ContractAuthority} and \texttt{VerifierScopedAuthority} are available only relative to a declared packet \protect\hypertarget{math-E0009-0246}{}{\(D\)} and a named verifier \protect\hypertarget{math-E0012-0247}{}{\(V\)}, and inherit every unsoundness of \protect\hypertarget{math-E0012-0248}{}{\(V\)}. \textbf{\texttt{SemanticAuthority} is UNAVAILABLE} --- no semantic adapter is declared at any degree of this paper. No theorem, gate vector, Lean witness, worked example, or conjunction of predicates in this paper authorizes anything. Any authority-bearing use requires a separate Finite Descent Verification/Layered Authority Framework descent packet, terminalizer, evidence ceiling, replay witness, \texttt{DetectorAdequacy} certificate, and \texttt{IsAuth} guard (§0.3).
+
+\textbf{Declared imports:} probability semantics (§6.1, §8, §18 --- no adapter declared; see the import boundary below); independence across retries (§6.1); a rate/backlog pressure reading (§14.1, already hedged as ``not a full queueing theorem''); Turing computation as the abstraction of formal symbol motion (§13, used as a boundary, never derived); the \protect\hypertarget{math-E0005-0249}{}{\(\Phi\)} gauge's positive-definiteness (§14, Layered Authority Framework v1.3 Known Gate --- \emph{declared, not proved}).
+
+\textbf{OracleNeeded / Q-gated items:} none claimed. This paper makes no Hilbert-space, Born, phase, continuum, entanglement, physical-realization, or quantum claim; §4.2 explicitly fences the EPK against exactly those readings (``not quantum mechanics, not a Born rule, not a physical path integral''). The \protect\hypertarget{math-E0179-0250}{}{\(e^{-\lambda C-\mu R}\)} weighting is a \textbf{declared scalar suppression}, not a path integral.
+
+\textbf{Layered Authority Framework boundary:} Finite Obstruction Calculus diagnoses and routes; it mints nothing. Finite Descent Verification owns the Authority type, \texttt{IsAuth}, and descent-packet data. Layered Authority Framework owns the governance capstone, terminalization discipline, and non-promotion rules. \textbf{This paper owns none of the three} --- it consolidates and applies them (§0, ownership split).
+
+\textbf{Mechanization status:} D1, D5, D6, and the class-increase identity D16 are proved in \texttt{lean4/FiniteAuthority.lean} and checked by the Python tests that call \texttt{code/mod\_finite\_authority\_core.py}. A 2026-07-17 receipt for \texttt{lake\ build\ PaperAF003} names files that are not in this archive. Those names are not proofs of this package. The coarsest refinement sentence, the quotient-modulo generalization, evaluator sovereignty, and the EPK lift lemmas are not theorems here.
+
+\textbf{Remaining open obligations:} \textbf{PL-027-1} --- per-gate minimality witness catalog (§6, \texttt{OPEN}). \textbf{PL-027-2} --- verify and migrate the LLM-spine T1--T15 homes from \texttt{encyclopedia/archived\_research/} into the indexed canonical encyclopedia with statuses (§0, §5). Further gaps opened by this compliance pass, \textbf{not yet registered with global ledger IDs}: (a) the necessity direction \protect\hypertarget{math-E0180-0251}{}{\(\mathsf{Authority}_D\Rightarrow\bigwedge_i C_i\)} is a declared \texttt{{[}POLICY\ RULE{]}}, not a theorem (§6); (b) no \texttt{DetectorAdequacy} certificate for any gate (§0.3); (c) no \texttt{ExhaustionWitness} for gate C5 (§12.1); (d) no probability adapter for §6.1/§8/§18; (e) \texttt{SpecificationIdentity} unsupplied --- §9's transport map \protect\hypertarget{math-E0013-0252}{}{\(\chi\)} remains an obligation, not an object.
+
+\textbf{Formalization-status firewall.} Any Lean or Python artifact cited here supports only the exact finite statement it checks. It does not discharge continuum, physical-realization, or Layered Authority Framework authority obligations. \texttt{HaltStatus.authority} and \texttt{CounterfeitStatus.authority} are enumeration constructors. They are not \protect\hypertarget{math-E0010-0253}{}{\(\mathsf{Authority}_D\)}. This Lean file has no \texttt{IsAuth} and no descent packet.
+
+\textbf{Import / Oracle boundary.} Any use of Hilbert space, Born uniqueness, phase, continuum, probability semantics, dynamics, physical interpretation, tensor composition, or empirical realization is an imported representation structure unless explicitly constructed at this paper's declared degree. Imported structures are not finite cochain operations and do not produce authority. This paper's live imports are \textbf{probability semantics and retry independence} (§6.1, §8, §18) and the \textbf{\protect\hypertarget{math-E0005-0254}{}{\(\Phi\)} separation hypothesis} (§14). A later probabilistic adapter may read this paper's unit-sum acceptance profiles as probability distributions; \textbf{this paper does not supply that adapter}, and none of its structural conclusions depends on one.
+
+References
+
+\begin{itemize}
+\tightlist
+\item
+  Necula, G. C. (1997). Proof-Carrying Code. POPL.
+\item
+  DeMillo, R. A., Lipton, R. J., \& Perlis, A. J. (1979). Social Processes and Proofs of Theorems and Programs. CACM.
+\item
+  Zheng et al.~(2023). Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena. NeurIPS Datasets \& Benchmarks.
+\item
+  Huang et al.~(2024). Large Language Models Cannot Self-Correct Reasoning Yet. ICLR.
+\item
+  Internal: Layered Authority Framework v1.3 preprint, Layered Authority Framework math spine, Papers 020, 023, 024, 025, 026.
+\end{itemize}
+
+Appendix A --- Source Consolidation Notes
+
+This paper consolidates four overlapping source drafts:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \texttt{021\_Finite\_Authority\_Reasoning\_Theory.md}
+\item
+  \texttt{022\_A\ Theory\ of\ Finite\ Authority\ of\ Large\ Language\ Models.md}
+\item
+  \texttt{003\_Layered\ Authority\ Framework\_and\_the\_Authority\_Boundary\_of\_Formal\_Computation.md}
+\item
+  \texttt{005\_Finite\_Authority\_Reasoning\_Theory.md}
+\end{enumerate}
+
+\textbf{Numbering-bridge note (v1.1).} The four source-draft titles above are \emph{pre-renumber} draft names. In the current repository numbering, papers \texttt{003}, \texttt{005}, \texttt{021}, and \texttt{022} are unrelated works (see \texttt{published/number\_crosswalk\_20260609.md}); the drafts listed here were absorbed into this paper and do not exist as separate published papers.
+
+The Layered Authority Framework documents are imported as controlling references (paths current as of v1.1; the paper was drafted against Layered Authority Framework v1.2):
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \texttt{999\_Layered\ Authority\ Framework/v1.3\_preprint.md} (controlling preprint; contains the Layered Authority Framework theorem ledger tables --- there is no separate \texttt{theorem\_ledger.md} in \texttt{999\_Layered\ Authority\ Framework/})
+\item
+  \texttt{999\_Layered\ Authority\ Framework/math\_spine.md}
+\item
+  \texttt{omega\_engine/research/encyclopedia/archived\_research/encyclopedia\_anomalon/} files \texttt{08}--\texttt{37} (LLM-spine T1--T15 companion theorem files; \texttt{Status:\ PROVED-PROSE} at home). \textbf{Path corrected this pass:} earlier revisions cited \texttt{research/archive/encyclopedia\_anomalon/}, which does not exist in the repository. The files do exist, at the path above. Migration into the indexed canonical encyclopedia remains \textbf{PL-027-2}.
+\end{enumerate}
+
+Material intentionally \textbf{not duplicated} here:
+
+\begin{itemize}
+\tightlist
+\item
+  Layered Authority Framework soundness axioms A0--A7 in full;
+\item
+  Layered Authority Framework role tower proof ledger in full;
+\item
+  full fifteen-theorem proof files;
+\item
+  long red-team monograph;
+\item
+  full engineering protocol;
+\item
+  detailed Kaggle/Nemotron execution logs;
+\item
+  full qualia/consciousness packet discussion.
+\end{itemize}
+
+Those belong in companion files or Foundational Research Archive entries.
+
+Appendix B --- Minimal Failure Terminals
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5000}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5000}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Failure terminal
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Meaning
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\texttt{NoRepresentation} & input or claim has no declared carrier \\
+\texttt{ParserInsufficient} & parser cannot extract required structure \\
+\texttt{CanonicalizerFailure} & canonical form missing or inconsistent \\
+\texttt{VerifierRejected} & verifier rejects candidate \\
+\texttt{VerifierFailure} & verifier crashes or cannot decide \\
+\texttt{AmbiguousAnswerFiber} & more than one accepted canonical answer \\
+\texttt{ReplayHashMismatch} & replay does not reproduce terminal \\
+\texttt{EnvironmentMismatch} & replay environment changed \\
+\texttt{LeakageDetected} & hidden/prohibited information entered \\
+\texttt{ProvenanceUnknown} & ruleset or example source cannot be trusted \\
+\texttt{BoundaryInsufficient} & handoff loses evaluator-relevant information \\
+\texttt{TerminalMismatch} & claimed terminal disagrees with replayed state \\
+\texttt{CounterfeitPacket} & authority-looking packet lacks valid descent evidence \\
+\texttt{NonAuthorityTerminal} & packet terminalizes, but not as authority \\
+\texttt{BudgetUnknown} & finite budget exhausted before authority/refusal \\
+\texttt{LiftRequired} & current packet cannot decide without declared lift \\
+\end{longtable}
+
+Appendix C --- Single-Paper Kernel
+
+\protect\hypertarget{math-E0181-0255}{}{\[
+\boxed{
+\begin{aligned}
+&\text{Formal systems, LLMs, and agents produce traces.}\\
+&\text{Traces are proposals until terminalized.}\\
+&\text{Terminalization requires declared finite descent.}\\
+&\begin{gathered}\text{No proposal process may serve as the terminal authority for its own}\\
+\text{output unless the verifier and terminalizer are separately declared,}\\
+\text{replayable, and included in the explicit trust root.}\end{gathered}\\
+&\text{Authority signs are now forgeable.}\\
+&\text{Therefore authority must be replayable, typed, and packet-bound.}
+\end{aligned}
+}
+\]}
+
+Appendix D --- Claim-Type Ledger
+
+Claim types per \texttt{paper\_hygiene\_standard.md} Part B. This is a consolidation/companion paper: it imports its formal objects and theorems; the standalone companion ledger lives in this paper's directory (\texttt{003\_finite\_authority\_claim\_ledger.md}).
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\#
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Claim (location)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Type
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+D1 & Authority object, kernel chain, descent packet \protect\hypertarget{math-E0182-0256}{}{\(D = (K,E,V,\tau,\Lambda)\)} (§0, §3) & \texttt{{[}DEFINITION{]}} --- imported. \textbf{Finite Descent Verification} owns the Authority type and \protect\hypertarget{math-E0004-0257}{}{\(\mathsf{IsAuth}\)}; Layered Authority Framework owns terminalization/non-promotion discipline. This paper owns neither (attribution corrected this pass) \\
+D2 & \protect\hypertarget{math-E0183-0258}{}{\(P_\theta(\gamma \mid x) > 0 \not\Rightarrow \mathsf{Authority}_D(x,a)\)} (§2.1) and the claims of §7, §8 & \texttt{{[}NEGATIVE\ BOUNDARY{]}} --- the cited homes are prose outside this deposit. H1 and H2 are not discharged here \\
+D3 & Halt-status separation (§2.2, §13) & \texttt{{[}PROVED{]}} + \texttt{{[}SCOPE\ FENCE{]}} --- \texttt{halt\_alone\_not\_authority}, \texttt{gates\_without\_witness\_not\_authority}, \texttt{gates\_and\_witness\_authority}. Equalities of \texttt{HaltStatus}. Not a theorem about Turing machines, and not \protect\hypertarget{math-E0010-0259}{}{\(\mathsf{Authority}_D\)} \\
+D4 & EPK \protect\hypertarget{math-E0040-0260}{}{\(Z_\theta^{\lambda,\mu}\)} (§4) & \texttt{{[}DEFINITION{]}} --- imported (Papers 020/025); explicitly not an authority source (§4.2) \\
+D5 & Finite LGGR split (§4.3, §11) & \texttt{{[}PROVED{]}} --- \texttt{lggr\_has\_global\_split}, \texttt{two\_point\_lggr}, \texttt{three\_point\_not\_lggr}. The quotient-modulo names are not in this deposit \\
+D6 & \protect\hypertarget{math-E0184-0261}{}{\(\mathsf{CertifiedAuthority}_D \iff \bigwedge C_i\)} (§6) & \texttt{{[}DEFINITION{]}} --- definitional, as §6 states. The external \texttt{certified\_iff\_all\_gates\_true} name is not in this deposit. \protect\hypertarget{math-E0185-0262}{}{\(\mathsf{CertifiedAuthority}_D \Rightarrow \mathsf{Authority}_D\)} is \textbf{refused} (§6); \protect\hypertarget{math-E0186-0263}{}{\(\mathsf{Authority}_D \Rightarrow \bigwedge C_i\)} is a \texttt{{[}POLICY\ RULE{]}}, not a theorem \\
+D7 & Gate minimality --- removing any \protect\hypertarget{math-E0164-0264}{}{\(C_i\)} admits a known counterfeit/failure mode (§6) & \texttt{OPEN} --- asserted with named failure terminals but no per-gate witness catalog in this paper; obligation \textbf{PL-027-1} \\
+D8 & Worked example (§6.1) & \texttt{{[}WORKED\ EXAMPLE{]}} \\
+D9 & Benchmark transfer schema \protect\hypertarget{math-E0013-0265}{}{\(\chi\)}, \protect\hypertarget{math-E0187-0266}{}{\(s_T \ge s_B - \delta(\chi)\)} (§9) & \texttt{{[}POLICY\ RULE{]}} --- states what a transfer claim must supply; not a transfer theorem. The \texttt{SpecificationIdentity} this would require is unsupplied (§0.3) \\
+D10 & \protect\hypertarget{math-E0188-0267}{}{\(\Delta_E\)} gluing defect; local green / global red (§11) & \texttt{{[}DEFINITION{]}} + the finite split in D5 + inherited Paper 020/023 cases. Those inherited cases are not re-proved here \\
+D11 & Counterfeit-status separation (§14) & \texttt{{[}PROVED{]}} + \texttt{{[}SCOPE\ FENCE{]}} --- \texttt{residual\_surface\_counterfeit}, \texttt{zero\_residual\_no\_gates}. Equalities of \texttt{CounterfeitStatus}, not \protect\hypertarget{math-E0010-0268}{}{\(\mathsf{Authority}_D\)} \\
+D12 & Counterfeit contradiction test \protect\hypertarget{math-E0189-0269}{}{\(\mathsf{ClaimedTerminal} = \mathsf{Exact} \wedge \Phi([\delta_C]) > 0\)} (§14) & \texttt{{[}DEFINITION{]}} (the typed contradiction). Detection-completeness is \texttt{{[}NEGATIVE\ BOUNDARY{]}}: the \protect\hypertarget{math-E0005-0270}{}{\(\Phi\)} separation is an open gate, not a check in this deposit \\
+D13 & Evaluator sovereignty witness (§15) & \texttt{{[}NEGATIVE\ BOUNDARY{]}} --- \texttt{self\_owned\_evaluator\_boundary\_witness} is not in this deposit \\
+D14 & \protect\hypertarget{math-E0190-0271}{}{\(r_G > r_V \Rightarrow\)} backlog grows (§14.1) & \texttt{{[}INTERPRETIVE{]}} --- elementary rate argument; no queueing model is claimed \\
+D15 & Dominance \protect\hypertarget{math-E0191-0272}{}{\(\epsilon_T < \epsilon_G\)} (§18) & \texttt{{[}NEGATIVE\ BOUNDARY{]}} --- the cited home is prose outside this deposit. Finite family cover is a modelling assumption, not a theorem here \\
+D16 & Kaggle/sweeper evidence reading (§18.1) & \texttt{{[}INTERPRETIVE{]}} --- a reading of evidence files, not a result. Local firewall/replay checks do not imply global deployability \\
+D17 & Non-claims (§19, §20) & \texttt{{[}SCOPE\ FENCE{]}} \\
+\end{longtable}
+
+Appendix E --- External Lean4 Design Inventory \& Scope Fence
+
+\begin{quote}
+\textbf{SCOPE FENCE --- External names are not proofs of this deposit.} The table below lists developmental names from \texttt{omega\_engine/lean4/PaperAF003}. Those files are not in this package. The proved statements of this deposit are in \texttt{lean4/FiniteAuthority.lean}, and the Python checks call \texttt{code/mod\_finite\_authority\_core.py}.
+\end{quote}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Theme
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Name cited from outside this deposit
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Status
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+local dashboard factorization & \texttt{local\_dashboard\_factor\_iff} & \texttt{{[}NEGATIVE\ BOUNDARY{]}} --- file absent \\
+paired local/global factorization criterion & \texttt{joint\_dashboard\_factor\_iff} & \texttt{{[}NEGATIVE\ BOUNDARY{]}} --- file absent \\
+ordinary LGGR names & \texttt{lggr\_nonpromotion}, \texttt{lggr\_witness\_and\_obstruction} & \texttt{{[}NEGATIVE\ BOUNDARY{]}} --- file absent. The finite split proved here is \texttt{lggr\_has\_global\_split} \\
+quotient-modulo LGGR & \texttt{joint\_dashboard\_mod\_requires\_global\_congruence}, \texttt{lggr\_mod\_nonpromotion} & \texttt{{[}NEGATIVE\ BOUNDARY{]}} --- file absent \\
+minimal finite LGGR witness & \texttt{minimal\_lggr\_witness} & \texttt{{[}NEGATIVE\ BOUNDARY{]}} --- file absent \\
+finite gate stack & \texttt{certified\_iff\_all\_gates\_true}, missing-gate refusal lemmas & \texttt{{[}NEGATIVE\ BOUNDARY{]}} --- file absent. Not the §6 C1--C8 stack \\
+halted-computation name & \texttt{halting\_does\_not\_imply\_authority} & \texttt{{[}NEGATIVE\ BOUNDARY{]}} --- file absent. The finite statement proved here is \texttt{halt\_alone\_not\_authority} \\
+counterfeit-surface name & \texttt{surface\_signs\_do\_not\_imply\_terminalized\_authority} & \texttt{{[}NEGATIVE\ BOUNDARY{]}} --- file absent. The finite statement proved here is \texttt{residual\_surface\_counterfeit} \\
+evaluator sovereignty & \texttt{self\_owned\_evaluator\_boundary\_witness} & \texttt{{[}NEGATIVE\ BOUNDARY{]}} --- file absent \\
+EPK lift-candidate requirements & \texttt{licensed\_epk\_lift\_requires\_all\_fields}, \texttt{carrier\_change\_alone\_refuses\_epk\_lift} & \texttt{{[}NEGATIVE\ BOUNDARY{]}} --- file absent \\
+\end{longtable}
+
+A 2026-07-17 note that \texttt{lake\ build\ PaperAF003} passed is not re-checked here, because those sources are not in this deposit.
+
+Verification command:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{py {-}3.12 verify\_deposit.py {-}{-}test code/tests/test\_finite\_authority.py {-}{-}lean}
+\end{Highlighting}
+\end{Shaded}
+
+Revision Notes
+
+Version Note: v1 Pre-Print (June 2026).** Initial public pre-print after consolidation and release-hygiene review. Consolidates earlier private drafts on finite authority, LLM proposal systems, evaluated path kernels, boundary sufficiency, counterfeit descent, and the authority boundary of formal computation. External Lean names from that draft are not files in this deposit. The Lean in this deposit is \texttt{lean4/FiniteAuthority.lean}. No generated trace, formal halt, benchmark score, self-critique, tool call, or agent-local validation is claimed to carry authority without declared finite terminal descent.
+
+Claim-ID body index (packaging)
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5000}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.5000}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+ID
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Home
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\texttt{A1} & sibling \texttt{003\_finite\_authority\_and\_non\_terminal\_computation\_claim\_ledger.md} \\
+\texttt{A2} & sibling \texttt{003\_finite\_authority\_and\_non\_terminal\_computation\_claim\_ledger.md} \\
+\texttt{A3} & sibling \texttt{003\_finite\_authority\_and\_non\_terminal\_computation\_claim\_ledger.md} \\
+\texttt{A4} & sibling \texttt{003\_finite\_authority\_and\_non\_terminal\_computation\_claim\_ledger.md} \\
+\texttt{B1} & sibling \texttt{003\_finite\_authority\_and\_non\_terminal\_computation\_claim\_ledger.md} \\
+\texttt{B1a} & sibling \texttt{003\_finite\_authority\_and\_non\_terminal\_computation\_claim\_ledger.md} \\
+\texttt{B2} & sibling \texttt{003\_finite\_authority\_and\_non\_terminal\_computation\_claim\_ledger.md} \\
+\texttt{B3} & sibling \texttt{003\_finite\_authority\_and\_non\_terminal\_computation\_claim\_ledger.md} \\
+\texttt{B4} & sibling \texttt{003\_finite\_authority\_and\_non\_terminal\_computation\_claim\_ledger.md} \\
+\texttt{C1} & sibling \texttt{003\_finite\_authority\_and\_non\_terminal\_computation\_claim\_ledger.md} \\
+\texttt{C1a} & sibling \texttt{003\_finite\_authority\_and\_non\_terminal\_computation\_claim\_ledger.md} \\
+\texttt{C2} & sibling \texttt{003\_finite\_authority\_and\_non\_terminal\_computation\_claim\_ledger.md} \\
+\texttt{C3} & sibling \texttt{003\_finite\_authority\_and\_non\_terminal\_computation\_claim\_ledger.md} \\
+\texttt{D1} & sibling \texttt{003\_finite\_authority\_and\_non\_terminal\_computation\_claim\_ledger.md} \\
+\texttt{D2} & sibling \texttt{003\_finite\_authority\_and\_non\_terminal\_computation\_claim\_ledger.md} \\
+\texttt{D3} & sibling \texttt{003\_finite\_authority\_and\_non\_terminal\_computation\_claim\_ledger.md} \\
+\texttt{D3a} & sibling \texttt{003\_finite\_authority\_and\_non\_terminal\_computation\_claim\_ledger.md} \\
+\texttt{D3b} & sibling \texttt{003\_finite\_authority\_and\_non\_terminal\_computation\_claim\_ledger.md} \\
+\texttt{D3c} & sibling \texttt{003\_finite\_authority\_and\_non\_terminal\_computation\_claim\_ledger.md} \\
+\texttt{D4} & sibling \texttt{003\_finite\_authority\_and\_non\_terminal\_computation\_claim\_ledger.md} \\
+\texttt{D5} & sibling \texttt{003\_finite\_authority\_and\_non\_terminal\_computation\_claim\_ledger.md} \\
+\texttt{D6} & sibling \texttt{003\_finite\_authority\_and\_non\_terminal\_computation\_claim\_ledger.md} \\
+\texttt{D7} & sibling \texttt{003\_finite\_authority\_and\_non\_terminal\_computation\_claim\_ledger.md} \\
+\texttt{D8} & sibling \texttt{003\_finite\_authority\_and\_non\_terminal\_computation\_claim\_ledger.md} \\
+\texttt{D9} & sibling \texttt{003\_finite\_authority\_and\_non\_terminal\_computation\_claim\_ledger.md} \\
+\texttt{D10} & sibling \texttt{003\_finite\_authority\_and\_non\_terminal\_computation\_claim\_ledger.md} \\
+\texttt{D11} & sibling \texttt{003\_finite\_authority\_and\_non\_terminal\_computation\_claim\_ledger.md} \\
+\texttt{D12} & sibling \texttt{003\_finite\_authority\_and\_non\_terminal\_computation\_claim\_ledger.md} \\
+\texttt{D13} & sibling \texttt{003\_finite\_authority\_and\_non\_terminal\_computation\_claim\_ledger.md} \\
+\texttt{D14} & sibling \texttt{003\_finite\_authority\_and\_non\_terminal\_computation\_claim\_ledger.md} \\
+\texttt{D15} & sibling \texttt{003\_finite\_authority\_and\_non\_terminal\_computation\_claim\_ledger.md} \\
+\texttt{Theme} & sibling \texttt{003\_finite\_authority\_and\_non\_terminal\_computation\_claim\_ledger.md} \\
+\texttt{Layered\ Authority\ Framework-T15} & sibling \texttt{003\_finite\_authority\_and\_non\_terminal\_computation\_claim\_ledger.md} \\
+\end{longtable}
+
+\end{document}

@@ -1,0 +1,26 @@
+{
+  "id": "20213064",
+  "doi": "10.5281/zenodo.20213064",
+  "titles": [
+    {
+      "title": "Operator Dynamics and Structural Constraints in L1 Obstruction Systems"
+    }
+  ],
+  "creators": [
+    {
+      "name": "Carroll, Jeremy H.",
+      "nameType": "Personal",
+      "givenName": "Jeremy H.",
+      "familyName": "Carroll",
+      "nameIdentifiers": [],
+      "affiliation": []
+    }
+  ],
+  "relatedIdentifiers": [
+    {
+      "relationType": "IsVersionOf",
+      "relatedIdentifier": "10.5281/zenodo.20213063",
+      "relatedIdentifierType": "DOI"
+    }
+  ]
+}

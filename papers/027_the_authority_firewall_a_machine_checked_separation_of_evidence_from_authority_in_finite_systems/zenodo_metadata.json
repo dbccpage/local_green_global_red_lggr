@@ -1,0 +1,28 @@
+{
+  "title": "The Authority Firewall: A Machine-Checked Separation of Evidence from Authority in Finite Systems",
+  "upload_type": "publication",
+  "publication_type": "preprint",
+  "publication_date": "2026-10-23",
+  "version": "2.1.1",
+  "language": "eng",
+  "access_right": "open",
+  "license": "cc-by-4.0",
+  "creators": [
+    {
+      "name": "Carroll, Jeremy H."
+    }
+  ],
+  "description": "A finite verifier's certificate type splits as a coproduct T = T_auth + (T_res + F_res) — authority terminals in one summand, all residual/defect outcomes in the other. We establish, axiom-free in Lean 4, that no residual outcome inhabits the authority summand; within this terminal-type discipline, residual evidence cannot directly be interpreted as an authority terminal. In a finite verification system structured around a two-lane architecture — an evidence lane for obstruction diagnostics and a separate lane for authority certification — the evidence lane and the authority lane are structurally disjoint: a residual outcome classified by the evidence lane cannot be read as an authority terminal through the residual terminalizer. Any authority promotion must pass through a separately declared authority route. The pointwise form of this Separation Theorem is verified axiom-free in Lean 4 without custom axioms. The categorical formulation (Nat(Omega_LambdaOmega, Auth) = empty) is formulated as an open conditional upon a prose reduction. We illustrate the firewall via an adversarial review of a solver whose authority gate refused promotion. This monograph assigns no authorization and changes no jurisdiction. It carries no operational authority or institutional standing.",
+  "keywords": [
+    "authority firewall",
+    "coproduct separation",
+    "finite obstruction calculus",
+    "type-theoretic verification",
+    "lean 4",
+    "terminal disjointness",
+    "self-authorization failure mode",
+    "constructor disjointness",
+    "exact rational arithmetic"
+  ],
+  "notes": "Manuscript and documentation: CC-BY-4.0. Python reference implementation and tests: PolyForm Noncommercial 1.0.0. To verify the deposit locally, run 'py -3.12 -m pytest code/tests/test_authority_firewall.py' followed by 'py -3.12 verify_deposit.py'. Prepared republication edition dated 2026-10-23; not a new public deposit or DOI."
+}

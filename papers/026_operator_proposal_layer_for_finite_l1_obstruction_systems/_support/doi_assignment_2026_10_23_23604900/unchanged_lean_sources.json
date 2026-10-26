@@ -1,0 +1,9 @@
+{
+  "lean4/axiom_binding.json": "26ff6c05ea48cbae9a85e9879b0111380aca932e1a642ab92d3bf8db4688bda5",
+  "lean4/axiom_report.txt": "4f785f5cff55caff44e1e73594fd3605bc6a3c3b577d842616da7d3a44e94d4e",
+  "lean4/Census.lean": "0ec993ae5678fdd07a5c3cdecec055a1cef79ae553a59d8666130b4be22bfde0",
+  "lean4/lake-manifest.json": "20ac583ce8770897d32ffa101872badf1861cda0046cf7238eb68268f053ddb4",
+  "lean4/lakefile.lean": "9bb23b83602b34f1e696612e2f41e28a55ab75cdf4969e94361760e25f1a3879",
+  "lean4/lean-toolchain": "ca5f1f601d34c49079e38d7e7041eb0f2a9c227fbc1df0f404820069a052330c",
+  "lean4/Proposal.lean": "cc3cef35e1133abd161489354d3c4043111268abaa1bfbb4afac8c27719e620a"
+}

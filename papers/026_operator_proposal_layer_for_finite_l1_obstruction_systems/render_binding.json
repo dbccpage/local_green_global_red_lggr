@@ -1,0 +1,19 @@
+{
+  "source": "operator_proposals.md",
+  "tex": "operator_proposals.tex",
+  "pdf": "operator_proposals.pdf",
+  "sha256": {
+    "operator_proposals.md": "f255ebb9d3c1e3b026d626e573e07912ebf7bb82e7dcd92cd78f5bc72314bab1",
+    "operator_proposals.tex": "4fb27ab8724474dbfca0da7688a96f53ecc08fdacc5ccf06bcbb4d3a12130cd2",
+    "operator_proposals.pdf": "f52766c27ec4f39a60a09e2224943b2b301119e2a5166f0dd402a73666e58ad9",
+    "scripts/build_pdf.py": "aa00afe11bd6b92e5b396b0212eca00ab1925d8fea456051c41dd9d673bac484",
+    "scripts/paper_code_wrap.lua": "49aa40211133c471072887d6b4d86b20456af19c69af1e9c41e336041fd8d051"
+  },
+  "pages": 4,
+  "missing_glyphs": 0,
+  "overfull_hbox_gt_10pt": 0,
+  "pandoc": "pandoc 3.7.0.2",
+  "xelatex": "MiKTeX-XeTeX 4.16 (MiKTeX 25.12)",
+  "passes": 3,
+  "formal_replay": "NOT_PERFORMED"
+}

@@ -1,0 +1,2 @@
+OK 009_conditional_density_lift_and_dual_witness_xi_functional: manifests and deterministic ZIP agree
+

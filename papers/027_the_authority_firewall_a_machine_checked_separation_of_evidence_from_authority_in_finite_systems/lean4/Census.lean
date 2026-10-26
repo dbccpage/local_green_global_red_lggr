@@ -1,0 +1,17 @@
+import ResidualNonCreation
+
+open OmegaCore.ResidualClosureLayer
+
+#print axioms residual_not_auth
+#print axioms nat_residual_auth_empty
+#print axioms authority_only_via_evidence
+#print axioms authExtractor_empty
+#print axioms is_auth_s_factors_through_is_auth
+#print axioms guarded_evidence_satisfies_is_auth_s
+#print axioms diagnostic_not_guarded_auth
+#print axioms diagnostic_not_auth_s
+#print axioms bridge_mutual_exclusion
+#print axioms bridge_diagnostic_carries_no_authority
+#print axioms obstruction_cannot_pass_truthful_guards
+#print axioms cochain_bridge_obstruction_disjoint
+#print axioms cochain_bridge_obstruction_not_auth_s

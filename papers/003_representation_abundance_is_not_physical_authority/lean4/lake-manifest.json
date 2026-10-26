@@ -1,0 +1,6 @@
+{"version": "1.2.0",
+ "packagesDir": ".lake/packages",
+ "packages": [],
+ "name": "representation_abundance",
+ "lakeDir": ".lake",
+ "fixedToolchain": false}

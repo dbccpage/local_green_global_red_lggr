@@ -1,0 +1,46 @@
+{
+  "title": "Observer-relative control of cochain residuals",
+  "upload_type": "publication",
+  "publication_type": "preprint",
+  "creators": [
+    {
+      "name": "Carroll, Jeremy H."
+    }
+  ],
+  "publication_date": "2026-10-23",
+  "version": "2.1.3",
+  "language": "eng",
+  "access_right": "open",
+  "license": "cc-by-4.0",
+  "description": "We study finite candidate-selection policies constrained by several coordinate\nobservers. Each observer specifies a projection, positive weights, a space of\nremovable differences and a closure map. The policy bounds the observer-relative\nquotient residual, the closure residual and their ratio. We distinguish two\ncoordinate estimates: a weighted norm bounds the coordinates of its input,\nwhereas a quotient seminorm bounds coordinates only of a selected minimizing\nresidual. Complete coordinate coverage does not remove this distinction.\nA one-edge example has zero quotient residual and arbitrarily large raw\ncoordinates, even with complete observation. We give the corrected estimates,\ncounterexamples to stronger transfer claims and a finite ranking rule. The\nsupplied Lean development treats integer weighted norms; a numerical reference\nimplementation additionally evaluates projected quotient problems.\n\nCoordinate coverage does not bound raw cochains by a quotient residual. The corrected theorem bounds selected residuals, or raw vectors under an explicit weighted-input-norm assumption. The reference linear program uses floating-point arithmetic.",
+  "keywords": [
+    "coordinate observers",
+    "quotient seminorm",
+    "weighted norm",
+    "residual control",
+    "coordinate coverage",
+    "linear programming"
+  ],
+  "notes": "Manuscript and documentation: CC-BY-4.0. Software and tests: Apache-2.0. Published record DOI and concept DOI verified on 2026-10-23. This local DOI metadata refresh has not replaced the files deposited on Zenodo.",
+  "related_identifiers": [
+    {
+      "identifier": "https://web.stanford.edu/~boyd/cvxbook/",
+      "relation": "cites",
+      "resource_type": "publication-book",
+      "scheme": "url"
+    },
+    {
+      "identifier": "https://pi.math.cornell.edu/~hatcher/AT/ATpage.html",
+      "relation": "cites",
+      "resource_type": "publication-book",
+      "scheme": "url"
+    },
+    {
+      "identifier": "10.5281/zenodo.20652483",
+      "relation": "isVersionOf",
+      "resource_type": "publication-preprint",
+      "scheme": "doi"
+    }
+  ],
+  "doi": "10.5281/zenodo.23604797"
+}

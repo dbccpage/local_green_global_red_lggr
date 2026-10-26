@@ -1,0 +1,12 @@
+cff-version: 1.2.0
+message: "Please cite the published version DOI."
+title: "Conditional density lifts and a primal–dual alignment statistic"
+type: article
+authors:
+  - family-names: Carroll
+    given-names: Jeremy H.
+version: 2.0.5
+date-released: 2026-10-23
+doi: 10.5281/zenodo.23604860
+url: https://zenodo.org/records/23604860
+license: CC-BY-4.0

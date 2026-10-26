@@ -1,0 +1,19 @@
+{
+  "source": "constraint_regulation.md",
+  "tex": "constraint_regulation.tex",
+  "pdf": "constraint_regulation.pdf",
+  "sha256": {
+    "constraint_regulation.md": "e68bf550e9a6da50d05af1fd9cf82ea2ef4b9550aa5eaba3bd0b987a798ecf74",
+    "constraint_regulation.tex": "b72f04bca81dd671abe4a0f5c486b167f4f1cffd5655f062170a762df13e3288",
+    "constraint_regulation.pdf": "819a30734f24b27a8867c09433f2ee55170d29dac3bd87b6049cb508166ac9ad",
+    "scripts/build_pdf.py": "bf9eab5388de77777b2a77043689c9c28de08c30966e4c0d9d8a0b82e8c3b122",
+    "scripts/paper_code_wrap.lua": "49aa40211133c471072887d6b4d86b20456af19c69af1e9c41e336041fd8d051"
+  },
+  "pages": 3,
+  "missing_glyphs": 0,
+  "overfull_hbox_gt_10pt": 0,
+  "pandoc": "pandoc 3.7.0.2",
+  "xelatex": "MiKTeX-XeTeX 4.16 (MiKTeX 25.12)",
+  "passes": 3,
+  "formal_replay": "NOT_PERFORMED"
+}

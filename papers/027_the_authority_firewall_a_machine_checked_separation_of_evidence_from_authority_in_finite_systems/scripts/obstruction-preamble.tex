@@ -1,0 +1,77 @@
+% Academic LaTeX preamble for representation abundance is not physical authority.
+%
+% Typesetting is not evidence for any claim.
+% Uses XeLaTeX for comprehensive Unicode and math font support.
+
+\usepackage{fontspec}
+\usepackage{unicode-math}
+\setmainfont{Times New Roman}
+\setmonofont{Cascadia Mono}[Scale=0.80]
+\setmathfont{Latin Modern Math}
+\usepackage{newunicodechar}
+\newunicodechar{⊕}{\ensuremath{\oplus}}
+\newunicodechar{⟨}{\ensuremath{\langle}}
+\newunicodechar{⟩}{\ensuremath{\rangle}}
+\newunicodechar{∧}{\ensuremath{\wedge}}
+\newunicodechar{⊔}{\ensuremath{\sqcup}}
+
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage[margin=1in]{geometry}
+\usepackage{longtable,booktabs,array}
+\usepackage{microtype}
+\usepackage{enumitem}
+\setlist{nosep,leftmargin=1.4em}
+
+\usepackage[dvipsnames]{xcolor}
+\usepackage[colorlinks=true,linkcolor=RoyalBlue,urlcolor=RoyalBlue,
+            citecolor=RoyalBlue,breaklinks=true]{hyperref}
+\usepackage{fvextra}
+\usepackage{framed}
+\fvset{breaklines=true,breakanywhere=true,fontsize=\small}
+\RecustomVerbatimEnvironment{verbatim}{Verbatim}{breaklines=true,breakanywhere=true,fontsize=\small}
+
+\AtBeginEnvironment{longtable}{\small}
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.15}
+
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+
+\definecolor{quoterule}{gray}{0.75}
+\renewenvironment{quote}
+  {\begin{leftbar}\small}
+  {\end{leftbar}}
+
+\usepackage[htt]{hyphenat}
+\usepackage{xurl}
+\emergencystretch=3em
+\sloppy
+\hfuzz=0pt
+\vfuzz=0pt
+\hbadness=10000
+\vbadness=10000
+
+% Preserve Unicode symbols in prose and verbatim code with a local font fallback.
+\newfontfamily\paperSymbolFont{Cambria Math}
+\newXeTeXintercharclass\paperSymbolClass
+\XeTeXcharclass"21CF=\paperSymbolClass
+\XeTeXcharclass"2200=\paperSymbolClass
+\XeTeXcharclass"2203=\paperSymbolClass
+\XeTeXcharclass"2208=\paperSymbolClass
+\XeTeXcharclass"2227=\paperSymbolClass
+\XeTeXcharclass"2205=\paperSymbolClass
+\XeTeXcharclass"2295=\paperSymbolClass
+\XeTeXcharclass"2294=\paperSymbolClass
+\XeTeXcharclass"27E8=\paperSymbolClass
+\XeTeXcharclass"27E9=\paperSymbolClass
+\XeTeXcharclass"1D53D=\paperSymbolClass
+\XeTeXcharclass"1D54B=\paperSymbolClass
+\XeTeXinterchartoks 0 \paperSymbolClass={\begingroup\paperSymbolFont}
+\XeTeXinterchartoks \paperSymbolClass 0={\endgroup}
+\XeTeXinterchartoks 4095 \paperSymbolClass={\begingroup\paperSymbolFont}
+\XeTeXinterchartoks \paperSymbolClass 4095={\endgroup}
+\XeTeXinterchartokenstate=1
+
+% Long code identifiers in narrow table cells may break without changing tokens.
+\DeclareRobustCommand{\texttt}[1]{{\paperSymbolFont\nolinkurl{#1}}}
+

@@ -1,0 +1,44 @@
+{
+  "schema": "observer-control.publication-record.v1",
+  "verified_on": "2026-10-23",
+  "record_id": "23604797",
+  "record_doi": "10.5281/zenodo.23604797",
+  "concept_doi": "10.5281/zenodo.20652483",
+  "status": "published",
+  "datacite_state": "findable",
+  "record_url": "https://zenodo.org/records/23604797",
+  "doi_url": "https://doi.org/10.5281/zenodo.23604797",
+  "registry_title": "Observer - Relative Control of Cochain Residuals",
+  "registry_version": "v2.1.3 Pre-Print",
+  "publication_date": "2026-10-23",
+  "sources": [
+    {
+      "url": "https://zenodo.org/api/records/23604797",
+      "sha256": "c074879647434a427c37e7ea7a6d56d77459776798373108444e46dd1b1e6e6f"
+    },
+    {
+      "url": "https://api.datacite.org/dois/10.5281/zenodo.23604797",
+      "sha256": "cfef9e37951d5a44178e7f31427fbc290a2cc76fbdc7da91b494316cbcfc5be3"
+    }
+  ],
+  "published_files": [
+    {
+      "name": "observer_control.pdf",
+      "bytes": 102907,
+      "md5": "md5:a85998bd6dd0398facc85ed1fb8362f4",
+      "sha256": "c199bc68337b3078cb8f75b0b9eba7b3555c94d637f894736d20633e6b71af4d",
+      "download_url": "https://zenodo.org/api/records/23604797/files/observer_control.pdf/content",
+      "matched_local_before_refresh": true
+    },
+    {
+      "name": "observer_control.zip",
+      "bytes": 172208,
+      "md5": "md5:2b311efca28142f49ef08bae80036e68",
+      "sha256": "d2fb30c916a68862fb1b41f3703f68960afb4ab05f4cfda53e5a358adb85b3c6",
+      "download_url": "https://zenodo.org/api/records/23604797/files/observer_control.zip/content",
+      "matched_local_before_refresh": true
+    }
+  ],
+  "local_refresh_uploaded": false,
+  "scope": "Public record and downloaded file bytes verified. Refreshed local DOI metadata and renders have not been uploaded. Historical raw responses and published bytes are retained under _support, outside the deposit."
+}

@@ -1,0 +1,19 @@
+{
+  "source": "density_lift.md",
+  "tex": "density_lift.tex",
+  "pdf": "density_lift.pdf",
+  "sha256": {
+    "density_lift.md": "2da03e4dd18a865ed19dc9735ecbbc1d8d80f67c810200a6282a52326585fcab",
+    "density_lift.tex": "1f8d5bb979e76a49dedbdea37ccf659806451178e691e7a02d60c3a6a3127204",
+    "density_lift.pdf": "a644bbdf4cd642ae47e628145d9ca8d1a9433cea0ac2014ffa44c51d66b7fcb0",
+    "scripts/build_pdf.py": "07789f9bbce7b3cbff123470b957318d638bdd8e58a7c7aa14c774502c771274",
+    "scripts/paper_code_wrap.lua": "49aa40211133c471072887d6b4d86b20456af19c69af1e9c41e336041fd8d051"
+  },
+  "pages": 3,
+  "missing_glyphs": 0,
+  "overfull_hbox_gt_10pt": 0,
+  "pandoc": "pandoc 3.7.0.2",
+  "xelatex": "MiKTeX-XeTeX 4.16 (MiKTeX 25.12)",
+  "passes": 3,
+  "formal_replay": "NOT_PERFORMED"
+}

@@ -1,0 +1,26 @@
+{
+  "id": "20192297",
+  "doi": "10.5281/zenodo.20192297",
+  "titles": [
+    {
+      "title": "Conditional Density Lift and Dual-Witness Xi Functional"
+    }
+  ],
+  "creators": [
+    {
+      "name": "Carroll, Jeremy H.",
+      "nameType": "Personal",
+      "givenName": "Jeremy H.",
+      "familyName": "Carroll",
+      "nameIdentifiers": [],
+      "affiliation": []
+    }
+  ],
+  "relatedIdentifiers": [
+    {
+      "relationType": "IsVersionOf",
+      "relatedIdentifier": "10.5281/zenodo.20192296",
+      "relatedIdentifierType": "DOI"
+    }
+  ]
+}

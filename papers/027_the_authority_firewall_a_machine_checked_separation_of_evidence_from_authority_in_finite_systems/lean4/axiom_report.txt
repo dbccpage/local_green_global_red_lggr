@@ -1,0 +1,10 @@
+'OmegaCore.ResidualClosureLayer.residual_not_auth' does not depend on any axioms
+'OmegaCore.ResidualClosureLayer.nat_residual_auth_empty' does not depend on any axioms
+'OmegaCore.ResidualClosureLayer.authExtractor_empty' does not depend on any axioms
+'OmegaCore.ResidualClosureLayer.is_auth_s_factors_through_is_auth' does not depend on any axioms
+'OmegaCore.ResidualClosureLayer.diagnostic_not_guarded_auth' does not depend on any axioms
+'OmegaCore.ResidualClosureLayer.diagnostic_not_auth_s' does not depend on any axioms
+'OmegaCore.ResidualClosureLayer.bridge_mutual_exclusion' does not depend on any axioms
+'OmegaCore.ResidualClosureLayer.obstruction_cannot_pass_truthful_guards' does not depend on any axioms
+'OmegaCore.ResidualClosureLayer.cochain_bridge_obstruction_disjoint' does not depend on any axioms
+'OmegaCore.ResidualClosureLayer.cochain_bridge_obstruction_not_auth_s' does not depend on any axioms

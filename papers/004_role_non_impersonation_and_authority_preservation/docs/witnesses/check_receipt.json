@@ -1,0 +1,29 @@
+{
+  "checker_sha256": "958eadfc92ac856bd389dfcd61a63a2bbe72c9bdc7be9049be6c045f68261cbc",
+  "certificate_sha256": "30d55de5be49ba98bac422762250c1820712a200523ea2a411bca0f4cb3f1622",
+  "results": [
+    {
+      "case": "exact_difference",
+      "lower": "0",
+      "residual": [
+        "0",
+        "0",
+        "0"
+      ],
+      "status": "PASS",
+      "upper": "0"
+    },
+    {
+      "case": "positive_holonomy",
+      "lower": "3",
+      "residual": [
+        "1",
+        "1",
+        "1"
+      ],
+      "status": "PASS",
+      "upper": "3"
+    }
+  ],
+  "scope": "Exact arithmetic on the two supplied fixtures only."
+}
