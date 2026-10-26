@@ -275,6 +275,37 @@ def sensitivity(evaluation, sensitivity_dir):
             "n_affected_rows_in_p1": len(affected_only)}
 
 
+def trust(evaluation, resamples=RESAMPLES):
+    """Agent verdict vs host elimination rule on the SAME acquired evidence, per live arm (supplementary)."""
+    swarm, _ = load_summaries(evaluation)
+    ctl = [c for s in swarm for c in s["controllers"]]
+    out = {}
+    for arm in ("L-0", "L-B", "L-C"):
+        rows = [c for c in ctl if c["arm"] == arm]
+        unsafe = [c for c in rows if c["target"] != "accept"]  # cases where accepting is wrong
+
+        def ci(pred, items):
+            return cluster_bootstrap([(c["instance"], c["family"], float(pred(c))) for c in items], resamples=resamples)
+        out[arm] = {
+            "n": len(rows), "n_should_not_accept": len(unsafe),
+            "agent_false_accept_rate": ci(lambda c: c["verdict"] == "accept" and c["target"] != "accept", rows),
+            "host_false_accept_rate": ci(lambda c: c["host_rule_on_agent_evidence"] == "accept" and c["target"] != "accept", rows),
+            "agent_false_accept_given_should_not_accept": ci(lambda c: c["verdict"] == "accept", unsafe),
+            "host_false_accept_given_should_not_accept": ci(lambda c: c["host_rule_on_agent_evidence"] == "accept", unsafe),
+            "agent_minus_host_false_accept": ci(lambda c: int(c["verdict"] == "accept" and c["target"] != "accept")
+                                                - int(c["host_rule_on_agent_evidence"] == "accept" and c["target"] != "accept"), rows),
+            "agreement": ci(lambda c: c["verdict"] == c["host_rule_on_agent_evidence"], rows),
+            "agent_correct": ci(lambda c: c["class"] == "correct", rows),
+            "host_correct": ci(lambda c: c["host_class"] == "correct", rows),
+            "false_accepts_by_control": dict(Counter(c["control"] for c in rows if c["verdict"] == "accept" and c["target"] != "accept")),
+            "host_false_accepts_by_control": dict(Counter(c["control"] for c in rows
+                                                          if c["host_rule_on_agent_evidence"] == "accept" and c["target"] != "accept")),
+            "disagreements": dict(Counter(f"agent={c['verdict']},host={c['host_rule_on_agent_evidence']}" for c in rows
+                                          if c["verdict"] != c["host_rule_on_agent_evidence"])),
+        }
+    return out
+
+
 def category(key):
     if "/rsi-" in key:
         return "rsi"
@@ -331,12 +362,14 @@ def project(dev, turns=None):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("mode", choices=["results", "power", "devstats", "sensitivity"])
+    parser.add_argument("mode", choices=["results", "power", "devstats", "sensitivity", "trust"])
     parser.add_argument("path", nargs="?")
     parser.add_argument("--out")
     parser.add_argument("--sensitivity-dir")
     args = parser.parse_args()
-    if args.mode == "sensitivity":
+    if args.mode == "trust":
+        out = trust(args.path)
+    elif args.mode == "sensitivity":
         out = sensitivity(args.path, args.sensitivity_dir)
     elif args.mode == "devstats":
         stats = devstats(sorted(Path(args.path).glob("*/events.jsonl*")))

@@ -1,0 +1,76 @@
+{
+ "P1": {
+  "ci95": [
+   0.22916666666666666,
+   0.312520833333333
+  ],
+  "estimate": 0.2708333333333333,
+  "n_clusters": 400,
+  "n_rows": 1200,
+  "p_two_sided": 0.0,
+  "resamples": 10000
+ },
+ "P1_affected_cases_primary_mean": 0.24074074074074073,
+ "P1_affected_cases_rerun_mean": 0.25555555555555554,
+ "P2": {
+  "ci95": [
+   -0.016666666666666666,
+   0.008333333333333333
+  ],
+  "estimate": -0.004166666666666667,
+  "n_clusters": 400,
+  "n_rows": 1200,
+  "p_two_sided": 0.5628,
+  "resamples": 10000
+ },
+ "controller_correct": {
+  "L-0": {
+   "k": 252,
+   "n": 300,
+   "rate": 0.84
+  },
+  "L-B": {
+   "k": 1019,
+   "n": 1200,
+   "rate": 0.8491666666666666
+  },
+  "L-C": {
+   "k": 1014,
+   "n": 1200,
+   "rate": 0.845
+  }
+ },
+ "controller_failures": {
+  "L-0": 0,
+  "L-B": 0,
+  "L-C": 0
+ },
+ "n_affected_rows_in_p1": 438,
+ "repair": {
+  "L-B": {
+   "controller_correct": {
+    "k": 175,
+    "n": 180,
+    "rate": 0.9722222222222222
+   },
+   "repaired_system_passes": {
+    "k": 95,
+    "n": 180,
+    "rate": 0.5277777777777778
+   }
+  },
+  "L-C": {
+   "controller_correct": {
+    "k": 174,
+    "n": 180,
+    "rate": 0.9666666666666667
+   },
+   "repaired_system_passes": {
+    "k": 97,
+    "n": 180,
+    "rate": 0.5388888888888889
+   }
+  }
+ },
+ "replaced_cases": 270
+}

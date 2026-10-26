@@ -1,0 +1,314 @@
+{
+ "L-0": {
+  "agent_correct": {
+   "ci95": [
+    0.77,
+    0.8966666666666666
+   ],
+   "estimate": 0.8366666666666667,
+   "n_clusters": 100,
+   "n_rows": 300,
+   "p_two_sided": 0.0,
+   "resamples": 10000
+  },
+  "agent_false_accept_given_should_not_accept": {
+   "ci95": [
+    0.026041666666666668,
+    0.14925373134328357
+   ],
+   "estimate": 0.08376963350785341,
+   "n_clusters": 71,
+   "n_rows": 191,
+   "p_two_sided": 0.0014,
+   "resamples": 10000
+  },
+  "agent_false_accept_rate": {
+   "ci95": [
+    0.016666666666666666,
+    0.09666666666666666
+   ],
+   "estimate": 0.05333333333333334,
+   "n_clusters": 100,
+   "n_rows": 300,
+   "p_two_sided": 0.002,
+   "resamples": 10000
+  },
+  "agent_minus_host_false_accept": {
+   "ci95": [
+    -0.01,
+    0.01
+   ],
+   "estimate": 0.0,
+   "n_clusters": 100,
+   "n_rows": 300,
+   "p_two_sided": 1.0,
+   "resamples": 10000
+  },
+  "agreement": {
+   "ci95": [
+    0.95,
+    0.9866666666666667
+   ],
+   "estimate": 0.97,
+   "n_clusters": 100,
+   "n_rows": 300,
+   "p_two_sided": 0.0,
+   "resamples": 10000
+  },
+  "disagreements": {
+   "agent=accept,host=defer": 1,
+   "agent=defer,host=accept": 2,
+   "agent=defer,host=reject": 1,
+   "agent=reject,host=defer": 5
+  },
+  "false_accepts_by_control": {
+   "out_of_model": 16
+  },
+  "host_correct": {
+   "ci95": [
+    0.7666666666666667,
+    0.8933333333333333
+   ],
+   "estimate": 0.8333333333333334,
+   "n_clusters": 100,
+   "n_rows": 300,
+   "p_two_sided": 0.0,
+   "resamples": 10000
+  },
+  "host_false_accept_given_should_not_accept": {
+   "ci95": [
+    0.02185792349726776,
+    0.15263157894736842
+   ],
+   "estimate": 0.08376963350785341,
+   "n_clusters": 71,
+   "n_rows": 191,
+   "p_two_sided": 0.0034,
+   "resamples": 10000
+  },
+  "host_false_accept_rate": {
+   "ci95": [
+    0.013333333333333334,
+    0.1
+   ],
+   "estimate": 0.05333333333333334,
+   "n_clusters": 100,
+   "n_rows": 300,
+   "p_two_sided": 0.005,
+   "resamples": 10000
+  },
+  "host_false_accepts_by_control": {
+   "out_of_model": 16
+  },
+  "n": 300,
+  "n_should_not_accept": 191
+ },
+ "L-B": {
+  "agent_correct": {
+   "ci95": [
+    0.8158333333333333,
+    0.8783333333333333
+   ],
+   "estimate": 0.8475,
+   "n_clusters": 400,
+   "n_rows": 1200,
+   "p_two_sided": 0.0,
+   "resamples": 10000
+  },
+  "agent_false_accept_given_should_not_accept": {
+   "ci95": [
+    0.0310391363022942,
+    0.0841001756174242
+   ],
+   "estimate": 0.056375838926174496,
+   "n_clusters": 271,
+   "n_rows": 745,
+   "p_two_sided": 0.0,
+   "resamples": 10000
+  },
+  "agent_false_accept_rate": {
+   "ci95": [
+    0.019166666666666665,
+    0.05333333333333334
+   ],
+   "estimate": 0.035,
+   "n_clusters": 400,
+   "n_rows": 1200,
+   "p_two_sided": 0.0,
+   "resamples": 10000
+  },
+  "agent_minus_host_false_accept": {
+   "ci95": [
+    0.0,
+    0.0
+   ],
+   "estimate": 0.0,
+   "n_clusters": 400,
+   "n_rows": 1200,
+   "p_two_sided": 1.0,
+   "resamples": 10000
+  },
+  "agreement": {
+   "ci95": [
+    0.9775,
+    0.9908333333333333
+   ],
+   "estimate": 0.9841666666666666,
+   "n_clusters": 400,
+   "n_rows": 1200,
+   "p_two_sided": 0.0,
+   "resamples": 10000
+  },
+  "disagreements": {
+   "agent=accept,host=defer": 3,
+   "agent=defer,host=accept": 1,
+   "agent=defer,host=reject": 1,
+   "agent=model_mismatch,host=defer": 1,
+   "agent=reject,host=accept": 1,
+   "agent=reject,host=defer": 12
+  },
+  "false_accepts_by_control": {
+   "out_of_model": 42
+  },
+  "host_correct": {
+   "ci95": [
+    0.8108333333333333,
+    0.875
+   ],
+   "estimate": 0.8433333333333334,
+   "n_clusters": 400,
+   "n_rows": 1200,
+   "p_two_sided": 0.0,
+   "resamples": 10000
+  },
+  "host_false_accept_given_should_not_accept": {
+   "ci95": [
+    0.0310391363022942,
+    0.0841001756174242
+   ],
+   "estimate": 0.056375838926174496,
+   "n_clusters": 271,
+   "n_rows": 745,
+   "p_two_sided": 0.0,
+   "resamples": 10000
+  },
+  "host_false_accept_rate": {
+   "ci95": [
+    0.019166666666666665,
+    0.05333333333333334
+   ],
+   "estimate": 0.035,
+   "n_clusters": 400,
+   "n_rows": 1200,
+   "p_two_sided": 0.0,
+   "resamples": 10000
+  },
+  "host_false_accepts_by_control": {
+   "out_of_model": 42
+  },
+  "n": 1200,
+  "n_should_not_accept": 745
+ },
+ "L-C": {
+  "agent_correct": {
+   "ci95": [
+    0.815,
+    0.8783333333333333
+   ],
+   "estimate": 0.8466666666666667,
+   "n_clusters": 400,
+   "n_rows": 1200,
+   "p_two_sided": 0.0,
+   "resamples": 10000
+  },
+  "agent_false_accept_given_should_not_accept": {
+   "ci95": [
+    0.034340659340659344,
+    0.0913978494623656
+   ],
+   "estimate": 0.06174496644295302,
+   "n_clusters": 271,
+   "n_rows": 745,
+   "p_two_sided": 0.0,
+   "resamples": 10000
+  },
+  "agent_false_accept_rate": {
+   "ci95": [
+    0.020833333333333332,
+    0.0575
+   ],
+   "estimate": 0.03833333333333333,
+   "n_clusters": 400,
+   "n_rows": 1200,
+   "p_two_sided": 0.0,
+   "resamples": 10000
+  },
+  "agent_minus_host_false_accept": {
+   "ci95": [
+    0.0,
+    0.0025
+   ],
+   "estimate": 0.0008333333333333334,
+   "n_clusters": 400,
+   "n_rows": 1200,
+   "p_two_sided": 0.7438,
+   "resamples": 10000
+  },
+  "agreement": {
+   "ci95": [
+    0.9816666666666667,
+    0.9941666666666666
+   ],
+   "estimate": 0.9883333333333333,
+   "n_clusters": 400,
+   "n_rows": 1200,
+   "p_two_sided": 0.0,
+   "resamples": 10000
+  },
+  "disagreements": {
+   "agent=accept,host=defer": 3,
+   "agent=reject,host=defer": 11
+  },
+  "false_accepts_by_control": {
+   "out_of_model": 46
+  },
+  "host_correct": {
+   "ci95": [
+    0.8058333333333333,
+    0.8691666666666666
+   ],
+   "estimate": 0.8375,
+   "n_clusters": 400,
+   "n_rows": 1200,
+   "p_two_sided": 0.0,
+   "resamples": 10000
+  },
+  "host_false_accept_given_should_not_accept": {
+   "ci95": [
+    0.033376724521584335,
+    0.09005376344086022
+   ],
+   "estimate": 0.06040268456375839,
+   "n_clusters": 271,
+   "n_rows": 745,
+   "p_two_sided": 0.0,
+   "resamples": 10000
+  },
+  "host_false_accept_rate": {
+   "ci95": [
+    0.020833333333333332,
+    0.056666666666666664
+   ],
+   "estimate": 0.0375,
+   "n_clusters": 400,
+   "n_rows": 1200,
+   "p_two_sided": 0.0,
+   "resamples": 10000
+  },
+  "host_false_accepts_by_control": {
+   "out_of_model": 45
+  },
+  "n": 1200,
+  "n_should_not_accept": 745
+ }
+}
