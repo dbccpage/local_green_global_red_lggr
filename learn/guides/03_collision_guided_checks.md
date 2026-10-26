@@ -2,7 +2,12 @@
 
 **AuthorityEffect: None.** Recipe: [`recipes/check_selector.py`](../recipes/check_selector.py).
 
-> **Pattern under evaluation.** This is a simplified form of selection policy C in the LGGR/RSI swarm experiment. Whether it beats expected-information-gain selection, or a live agent choosing for itself, is that experiment's open question. Nothing here claims it does.
+> **Measured, with a split result** ([swarm report](../../experiments/lggr_rsi_swarm/REPORT.md)). This recipe is a simplified form of selection policy C. The full policy was run on 400 generated instances, with 3 Claude Haiku 5.5 draws each and a budget of 4 of 16 units:
+>
+> - **As the host's own selector it helps.** C resolved **+26.8 points** more cases correctly than expected-uncertainty-reduction selection (B), with 95% CI [22.5, 30.9]. That is 76% versus 50% correct.
+> - **As advice to a live agent it adds nothing.** Controllers given C's collision witness or B's ranking both reached about 85% correct, and so did controllers given no advice at all. The difference was −0.1 points, CI [−1.3, 1.3]. The agent already does what the advice suggests.
+>
+> The recipe's own numbers were not measured; the demo below is a four-row illustration.
 
 **The bug.** A verifier can afford 4 of 16 check units. It buys cheap checks that pass in every plausible world, runs out of budget, and either defers or accepts on hope.
 
@@ -38,7 +43,7 @@ While a pass hypothesis and a fail hypothesis agree on everything you have obser
    | both remain when budget runs out | `defer` |
    | none | `model_mismatch`: your hypothesis set is wrong |
 
-5. To advise a live agent instead of deciding for it, give it the `colliding_pair` and the checks that separate it, and still apply the host rule to what it bought.
+5. Use the selector where the host decides without a model in the loop. That is the setting where it measured +26.8 points. If a live agent buys the checks, the advice did not change its accuracy in the experiment. Apply the host rule to what the agent bought anyway: agent and host verdicts agreed on 97–99% of sessions.
 
 ## What you will see
 
@@ -51,6 +56,8 @@ python learn/recipes/check_selector.py
 ## What it does not prove
 
 The rule is only as good as the hypothesis set. A world you did not enumerate shows up as `model_mismatch` at best, and at worst survives as one you did enumerate.
+
+The experiment hit exactly this. Every false accept by B or C at 4 units, and by every live agent, was on an out-of-model control, where the true world lay outside the declared hypotheses. Speed made it worse: at 4 units C made 46 false accepts against B's 24, because it resolved those cases faster and wrongly. Pass/fail checks alone cannot catch this, so add an explicit model-mismatch test before you trust an `accept`.
 
 ## Go deeper
 

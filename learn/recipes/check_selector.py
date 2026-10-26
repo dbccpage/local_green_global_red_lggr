@@ -1,4 +1,4 @@
-"""Recipe: collision-guided check selection (guide 03). Pattern under evaluation.
+"""Recipe: collision-guided check selection (guide 03).
 
 A verifier with a small budget keeps the hypotheses that still fit what it has
 observed. While a pass hypothesis and a fail hypothesis share the observed
@@ -6,9 +6,11 @@ report, the verdict is undetermined: StreamingFiberMonitor names such a pair.
 The selector buys a check that separates that pair, preferring the one that
 removes the most opposite-verdict pairs in the worst case, per unit cost.
 
-This is a simplified form of policy C in the LGGR/RSI swarm experiment. Whether
-it beats expected-information-gain selection is that experiment's open
-question. This recipe makes no performance claim.
+This is a simplified form of policy C in the LGGR/RSI swarm experiment
+(experiments/lggr_rsi_swarm/REPORT.md). There the full policy beat
+expected-uncertainty-reduction selection under the host rule (+0.268 at 4
+units) and added nothing as advice to live agents. This recipe's own
+performance was not measured.
 
 AuthorityEffect: None.
 Standard library only: Python 3.10+.

@@ -14,10 +14,10 @@ Start with [guide 00](guides/00_where_lggr_fits.md) to map your loop's objects t
 | --- | --- | --- | --- |
 | [01 Report collision guard](guides/01_report_collision.md) | A handoff drops the field the next agent must decide on | `StreamingFiberMonitor` | Shipped monitor |
 | [02 Authority firewall](guides/02_authority_firewall.md) | An agent loosens its own rules or signs its own pass | `BudgetPolicy`, `make_witness`, `StreamingAuditMonitor` | Shipped monitor |
-| [03 Collision-guided checks](guides/03_collision_guided_checks.md) | A verifier spends its budget on checks that cannot change the verdict | `StreamingFiberMonitor` | Pattern under evaluation |
-| [04 Checked memory](guides/04_checked_memory.md) | An agent acts on a note written against an old contract | `BudgetPolicy.sha256`, obligations | Pattern under evaluation |
+| [03 Collision-guided checks](guides/03_collision_guided_checks.md) | A verifier spends its budget on checks that cannot change the verdict | `StreamingFiberMonitor` | Measured: +26.8 pts as host selector; no gain as advice to a live agent |
+| [04 Checked memory](guides/04_checked_memory.md) | An agent acts on a note written against an old contract | `BudgetPolicy.sha256`, obligations | Measured: inconclusive (40/90 vs 36/90) |
 
-"Pattern under evaluation" means the recipe is tested code built on shipped monitors, but its practical advantage is still being measured. The guides make no performance claim for it.
+Guides 03 and 04 cite the [LGGR/RSI swarm experiment](../experiments/lggr_rsi_swarm/REPORT.md): 400 generated instances run with Claude Haiku 5.5. Their recipes are simplified forms of the measured policies, so the recipes' own numbers were not measured.
 
 Not Python? `python -m learn.sidecar` reads [contract](HARNESS_CONTRACT.md) events as JSON lines and writes receipts back. [csharp/LggrSidecar.cs](csharp/LggrSidecar.cs) is a C# client.
 

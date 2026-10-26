@@ -2,7 +2,7 @@
 
 **AuthorityEffect: None.** Recipe: [`recipes/checked_memory.py`](../recipes/checked_memory.py).
 
-> **Pattern under evaluation.** This mirrors memory backend D of the LGGR/RSI swarm experiment's RSI battery, compared there with ordinary persistent records behind the same tools. That result is not in yet. Nothing here claims checked memory improves completion.
+> **Measured, inconclusive** ([swarm report](../../experiments/lggr_rsi_swarm/REPORT.md)). This mirrors memory backend D. The experiment compared it with plain persistent records (C) behind identical tools, over 30 instances × 3 draws, with a restart and then a revised contract. After the contract change, the system passed in **40 of 90** runs with checked memory and **36 of 90** with plain memory. In the paired runs, 6 passed only with D and 2 only with C (sign test p = 0.29). The direction favours checked memory, but the sample is too small to claim an effect. Nothing here claims checked memory improves completion.
 
 **The bug.** After a restart, an agent recalls "pricing returns `net_cents`". It was true last week. Pricing now returns `net_amount_cents`, and the agent acts on the old note.
 
