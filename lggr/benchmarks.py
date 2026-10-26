@@ -13355,15 +13355,27 @@ def run_codebase_contextual_sheaf_benchmark(
             max_tokens=180,
         )
         total_completions += client.completion_count
-        parsed = _extract_json(comp) or {}
+        raw_parsed = _extract_json(comp) or {}
+        parsed = (
+            {
+                str(k): int(v)
+                for k, v in raw_parsed.items()
+                if isinstance(k, str) and isinstance(v, int) and not isinstance(v, bool)
+            }
+            if isinstance(raw_parsed, dict)
+            else {}
+        )
 
         obs = sheaf_code_monitor.evaluate_three_phase_sheaf_audit(
             eval_id,
             model_id=model_name,
         )
-        obs["model_raw_response"] = comp
-        obs["model_parsed_json"] = parsed
-        all_evals.append(obs)
+        eval_record = {
+            **obs,
+            "model_raw_response": comp,
+            "model_parsed_json": parsed,
+        }
+        all_evals.append(eval_record)
 
         p1_traces.append(
             {

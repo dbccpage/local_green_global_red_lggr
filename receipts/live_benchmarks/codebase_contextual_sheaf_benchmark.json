@@ -1694,14 +1694,6 @@
             "classification": "GLOBAL_JOINT_SECTION_EXTENSIBLE_LGGG",
             "contract_status": "COMPOSABLE_LGGG"
           }
-        },
-        "model_raw_response": "{\n  \"phase1_scaled_gap_m4\": 2,\n  \"phase2_scaled_gap_m4\": 1,\n  \"phase3_scaled_gap_m4\": 0,\n  \"phase3_q_pair_sum\": 2,\n  \"phase3_payout_cents\": 873\n}",
-        "model_parsed_json": {
-          "phase1_scaled_gap_m4": 2,
-          "phase2_scaled_gap_m4": 1,
-          "phase3_scaled_gap_m4": 0,
-          "phase3_q_pair_sum": 2,
-          "phase3_payout_cents": 873
         }
       },
       {
@@ -1853,14 +1845,6 @@
             "classification": "GLOBAL_JOINT_SECTION_EXTENSIBLE_LGGG",
             "contract_status": "COMPOSABLE_LGGG"
           }
-        },
-        "model_raw_response": "```json\n{\n  \"phase1_scaled_gap_m4\": 2,\n  \"phase2_scaled_gap_m4\": 1,\n  \"phase3_scaled_gap_m4\": 0,\n  \"phase3_q_pair_sum\": 2,\n  \"phase3_payout_cents\": 873\n}\n```",
-        "model_parsed_json": {
-          "phase1_scaled_gap_m4": 2,
-          "phase2_scaled_gap_m4": 1,
-          "phase3_scaled_gap_m4": 0,
-          "phase3_q_pair_sum": 2,
-          "phase3_payout_cents": 873
         }
       },
       {
@@ -2012,14 +1996,6 @@
             "classification": "GLOBAL_JOINT_SECTION_EXTENSIBLE_LGGG",
             "contract_status": "COMPOSABLE_LGGG"
           }
-        },
-        "model_raw_response": "```json\n{\n  \"phase1_scaled_gap_m4\": 2,\n  \"phase2_scaled_gap_m4\": 1,\n  \"phase3_scaled_gap_m4\": 0,\n  \"phase3_q_pair_sum\": 2,\n  \"phase3_payout_cents\": 873\n}\n```",
-        "model_parsed_json": {
-          "phase1_scaled_gap_m4": 2,
-          "phase2_scaled_gap_m4": 1,
-          "phase3_scaled_gap_m4": 0,
-          "phase3_q_pair_sum": 2,
-          "phase3_payout_cents": 873
         }
       },
       {
@@ -2171,14 +2147,6 @@
             "classification": "GLOBAL_JOINT_SECTION_EXTENSIBLE_LGGG",
             "contract_status": "COMPOSABLE_LGGG"
           }
-        },
-        "model_raw_response": "```json\n{\n  \"phase1_scaled_gap_m4\": 2,\n  \"phase2_scaled_gap_m4\": 1,\n  \"phase3_scaled_gap_m4\": 0,\n  \"phase3_q_pair_sum\": 2,\n  \"phase3_payout_cents\": 873\n}\n```",
-        "model_parsed_json": {
-          "phase1_scaled_gap_m4": 2,
-          "phase2_scaled_gap_m4": 1,
-          "phase3_scaled_gap_m4": 0,
-          "phase3_q_pair_sum": 2,
-          "phase3_payout_cents": 873
         }
       },
       {
@@ -2330,14 +2298,6 @@
             "classification": "GLOBAL_JOINT_SECTION_EXTENSIBLE_LGGG",
             "contract_status": "COMPOSABLE_LGGG"
           }
-        },
-        "model_raw_response": "```json\n{\n  \"phase1_scaled_gap_m4\": 2,\n  \"phase2_scaled_gap_m4\": 1,\n  \"phase3_scaled_gap_m4\": 0,\n  \"phase3_q_pair_sum\": 2,\n  \"phase3_payout_cents\": 873\n}\n```",
-        "model_parsed_json": {
-          "phase1_scaled_gap_m4": 2,
-          "phase2_scaled_gap_m4": 1,
-          "phase3_scaled_gap_m4": 0,
-          "phase3_q_pair_sum": 2,
-          "phase3_payout_cents": 873
         }
       }
     ],
@@ -3588,7 +3548,7 @@
         }
       }
     ],
-    "receipt_sha256": "3387ab30a321e9e4681216fea3c38355dfb19abaea73457040e60780aa33cd53"
+    "receipt_sha256": "4c4fd34a45fb43f858facdb2b23addf6efb3ed1283b358d33eb63fd50d25fdb6"
   },
   "evaluations": [
     {
@@ -4388,5 +4348,5 @@
     }
   ],
   "meaning": "Pairwise constraint sheaf contextuality vs. global section reconciliation codebase benchmark across 5 model families (Theorem 109): Phase 1 separates pairwise marginal no-signaling pass (`p_A = p_B = p_C = 1/2`, L = 1) from hollow-triangle contextual cycle obstruction (`q_BC + q_CA = 0 != 2`, `scaled_gap_m4 = 2 > 0`, Delta_E = -1); Phase 2 separates partial `tax_sheaf` reconciliation (`q_BC = 1, q_CA = 0`) from residual cycle gap (`scaled_gap_m4 = 1 > 0`, Delta_E = -1); Phase 3 verifies full global section reconciliation `q_BC = 1, q_CA = 1` (`scaled_gap_m4 = 0`, 873 + 27 + 180 = 1080, Delta_E = 0).",
-  "receipt_sha256": "2a843bba41ec6d589cb285a45ab503f963641931a407159aafefe4a33fadab84"
+  "receipt_sha256": "3177770414f613510636c1d7e3995d2224c45090952c9c59bd6392adde8284e8"
 }

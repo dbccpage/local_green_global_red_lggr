@@ -4319,8 +4319,14 @@ def run_sheaf_local_unit_tests(module_name: str, source_code: str) -> dict[str, 
         if module_name == "settlement_sheaf":
             out = fn({"net_cents": 900}, {"tax_cents": 180}, 300)
             res = int(out.get("contextuality_reserve_cents", -1))
+            gross_val = out.get("gross_collected_cents")
+            total_val = out.get("total_accounted_cents")
             ok = (
                 isinstance(out, dict)
+                and isinstance(gross_val, int)
+                and not isinstance(gross_val, bool)
+                and isinstance(total_val, int)
+                and not isinstance(total_val, bool)
                 and out.get("fee_cents") == 27
                 and res in (0, 11)
                 and out.get("merchant_payout_cents") == 900 - 27 - res

@@ -2333,12 +2333,10 @@ class TestOfflineTraceReplay(unittest.TestCase):
             self.assertEqual(int(parsed["phase1_scaled_gap_m4"]), 2)
             self.assertEqual(int(parsed["phase2_scaled_gap_m4"]), 1)
             self.assertEqual(int(parsed["phase3_scaled_gap_m4"]), 0)
-            obs = replay_mon.evaluate_three_phase_sheaf_audit(
+            replay_mon.evaluate_three_phase_sheaf_audit(
                 f"codebase_sheaf_eval_{idx}_{ev['model_id'].replace('/', '_')}",
                 model_id=ev["model_id"],
             )
-            obs["model_raw_response"] = ev["model_raw_response"]
-            obs["model_parsed_json"] = ev["model_parsed_json"]
         self.assertEqual(replay_mon.current_receipt(), mon_rec)
 
 
