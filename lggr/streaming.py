@@ -34102,6 +34102,634 @@ class StreamingCodebaseSubgradientPivotMonitor:
         return json_value({**body, "receipt_sha256": digest(body)})
 
 
+class StreamingCodebasePolicyRatchetMonitor:
+    """Audit multi-incident policy-ratchet drift and sunset lease revocation across codebase modules.
+
+    Composes StreamingPolicyRatchetDriftMonitor with StreamingCodebaseInterfaceMergeMonitor
+    and StreamingFiberMonitor across `pricing_ratchet`, `tax_ratchet`, and `settlement_ratchet`
+    (Theorem 127).
+
+    AuthorityEffect: None.
+    """
+
+    PHASE_1_PRICING_RATCHET_SOURCE = (
+        "def quote_ratchet_pricing(gross_cents: int = 990) -> dict:\n"
+        "    net_base = (gross_cents * 10) // 11\n"
+        "    fee = (net_base * 3) // 100\n"
+        "    return {\n"
+        "        'gross_cents': gross_cents,\n"
+        "        'platform_fee_cents': fee,\n"
+        "        'net_after_fee_cents': gross_cents - fee,\n"
+        "        'baseline_policy_vector': [2, 3, 0],\n"
+        "        'risk_weight_vector': [2, 3, 4],\n"
+        "        'step_slack_budget': 4,\n"
+        "        'horizon_drift_ceiling': 4,\n"
+        "        'incident_1_post_vector': [4, 3, 0],\n"
+        "        'incident_2_prior_revoked': False,\n"
+        "        'incident_2_post_vector': [4, 4, 0],\n"
+        "    }\n"
+    )
+
+    PHASE_1_TAX_RATCHET_SOURCE = (
+        "def quote_ratchet_tax(gross_cents: int = 990) -> dict:\n"
+        "    net_base = (gross_cents * 10) // 11\n"
+        "    tax = (net_base * 10) // 100\n"
+        "    return {\n"
+        "        'tax_reserve_cents': tax,\n"
+        "        'incident_3_prior_revoked': False,\n"
+        "        'incident_3_post_vector': [4, 4, 1],\n"
+        "    }\n"
+    )
+
+    PHASE_1_SETTLEMENT_RATCHET_SOURCE = (
+        "def settle_ratchet_invoice(pricing: dict, tax: dict) -> dict:\n"
+        "    net = int(pricing['net_after_fee_cents'])\n"
+        "    tax_res = int(tax['tax_reserve_cents'])\n"
+        "    p0 = pricing['baseline_policy_vector']\n"
+        "    w = pricing['risk_weight_vector']\n"
+        "    tau_hor = int(pricing['horizon_drift_ceiling'])\n"
+        "    p1 = pricing['incident_1_post_vector']\n"
+        "    p2 = pricing['incident_2_post_vector']\n"
+        "    p3 = tax['incident_3_post_vector']\n"
+        "    rev2 = bool(pricing['incident_2_prior_revoked'])\n"
+        "    rev3 = bool(tax['incident_3_prior_revoked'])\n"
+        "    hor1 = sum(int(w[i]) * abs(int(p1[i]) - int(p0[i])) for i in range(3))\n"
+        "    hor2 = sum(int(w[i]) * abs(int(p2[i]) - int(p0[i])) for i in range(3))\n"
+        "    hor3 = sum(int(w[i]) * abs(int(p3[i]) - int(p0[i])) for i in range(3))\n"
+        "    max_hor = max(hor1, hor2, hor3)\n"
+        "    excess_drift = max(0, max_hor - tau_hor)\n"
+        "    unrev_cnt = (0 if rev2 else 1) + (0 if rev3 else 1)\n"
+        "    surcharge = excess_drift + 2 * unrev_cnt\n"
+        "    if surcharge > 0:\n"
+        "        raise ValueError('Policy ratchet horizon drift surcharge required')\n"
+        "    return {\n"
+        "        'merchant_payout_cents': net - tax_res,\n"
+        "        'max_horizon_drift': max_hor,\n"
+        "        'excess_horizon_drift': excess_drift,\n"
+        "        'unrevoked_incident_count': unrev_cnt,\n"
+        "        'ratchet_surcharge_cents': 0,\n"
+        "    }\n"
+    )
+
+    PHASE_2_PRICING_RATCHET_SOURCE = (
+        "def quote_ratchet_pricing(gross_cents: int = 990) -> dict:\n"
+        "    net_base = (gross_cents * 10) // 11\n"
+        "    fee = (net_base * 3) // 100\n"
+        "    return {\n"
+        "        'gross_cents': gross_cents,\n"
+        "        'platform_fee_cents': fee,\n"
+        "        'net_after_fee_cents': gross_cents - fee,\n"
+        "        'baseline_policy_vector': [2, 3, 0],\n"
+        "        'risk_weight_vector': [2, 3, 4],\n"
+        "        'step_slack_budget': 4,\n"
+        "        'horizon_drift_ceiling': 4,\n"
+        "        'incident_1_post_vector': [4, 3, 0],\n"
+        "        'incident_2_prior_revoked': True,\n"
+        "        'incident_2_post_vector': [2, 4, 0],\n"
+        "    }\n"
+    )
+
+    PHASE_2_TAX_RATCHET_SOURCE = (
+        "def quote_ratchet_tax(gross_cents: int = 990) -> dict:\n"
+        "    net_base = (gross_cents * 10) // 11\n"
+        "    tax = (net_base * 10) // 100\n"
+        "    return {\n"
+        "        'tax_reserve_cents': tax,\n"
+        "        'incident_3_prior_revoked': False,\n"
+        "        'incident_3_post_vector': [2, 4, 1],\n"
+        "    }\n"
+    )
+
+    PHASE_2_SETTLEMENT_RATCHET_SOURCE = (
+        "def settle_ratchet_invoice(pricing: dict, tax: dict) -> dict:\n"
+        "    net = int(pricing['net_after_fee_cents'])\n"
+        "    tax_res = int(tax['tax_reserve_cents'])\n"
+        "    p0 = pricing['baseline_policy_vector']\n"
+        "    w = pricing['risk_weight_vector']\n"
+        "    tau_hor = int(pricing['horizon_drift_ceiling'])\n"
+        "    p1 = pricing['incident_1_post_vector']\n"
+        "    p2 = pricing['incident_2_post_vector']\n"
+        "    p3 = tax['incident_3_post_vector']\n"
+        "    rev2 = bool(pricing['incident_2_prior_revoked'])\n"
+        "    rev3 = bool(tax['incident_3_prior_revoked'])\n"
+        "    hor1 = sum(int(w[i]) * abs(int(p1[i]) - int(p0[i])) for i in range(3))\n"
+        "    hor2 = sum(int(w[i]) * abs(int(p2[i]) - int(p0[i])) for i in range(3))\n"
+        "    hor3 = sum(int(w[i]) * abs(int(p3[i]) - int(p0[i])) for i in range(3))\n"
+        "    max_hor = max(hor1, hor2, hor3)\n"
+        "    excess_drift = max(0, max_hor - tau_hor)\n"
+        "    unrev_cnt = (0 if rev2 else 1) + (0 if rev3 else 1)\n"
+        "    surcharge = excess_drift + 2 * unrev_cnt\n"
+        "    return {\n"
+        "        'merchant_payout_cents': net - tax_res - surcharge,\n"
+        "        'max_horizon_drift': max_hor,\n"
+        "        'excess_horizon_drift': excess_drift,\n"
+        "        'unrevoked_incident_count': unrev_cnt,\n"
+        "        'ratchet_surcharge_cents': surcharge,\n"
+        "    }\n"
+    )
+
+    PHASE_3_PRICING_RATCHET_SOURCE = (
+        "def quote_ratchet_pricing(gross_cents: int = 990) -> dict:\n"
+        "    net_base = (gross_cents * 10) // 11\n"
+        "    fee = (net_base * 3) // 100\n"
+        "    return {\n"
+        "        'gross_cents': gross_cents,\n"
+        "        'platform_fee_cents': fee,\n"
+        "        'net_after_fee_cents': gross_cents - fee,\n"
+        "        'baseline_policy_vector': [2, 3, 0],\n"
+        "        'risk_weight_vector': [2, 3, 4],\n"
+        "        'step_slack_budget': 4,\n"
+        "        'horizon_drift_ceiling': 4,\n"
+        "        'incident_1_post_vector': [4, 3, 0],\n"
+        "        'incident_2_prior_revoked': True,\n"
+        "        'incident_2_post_vector': [2, 4, 0],\n"
+        "    }\n"
+    )
+
+    PHASE_3_TAX_RATCHET_SOURCE = (
+        "def quote_ratchet_tax(gross_cents: int = 990) -> dict:\n"
+        "    net_base = (gross_cents * 10) // 11\n"
+        "    tax = (net_base * 10) // 100\n"
+        "    return {\n"
+        "        'tax_reserve_cents': tax,\n"
+        "        'incident_3_prior_revoked': True,\n"
+        "        'incident_3_post_vector': [2, 3, 1],\n"
+        "    }\n"
+    )
+
+    PHASE_3_SETTLEMENT_RATCHET_SOURCE = (
+        "def settle_ratchet_invoice(pricing: dict, tax: dict) -> dict:\n"
+        "    net = int(pricing['net_after_fee_cents'])\n"
+        "    tax_res = int(tax['tax_reserve_cents'])\n"
+        "    p0 = pricing['baseline_policy_vector']\n"
+        "    w = pricing['risk_weight_vector']\n"
+        "    tau_hor = int(pricing['horizon_drift_ceiling'])\n"
+        "    p1 = pricing['incident_1_post_vector']\n"
+        "    p2 = pricing['incident_2_post_vector']\n"
+        "    p3 = tax['incident_3_post_vector']\n"
+        "    rev2 = bool(pricing['incident_2_prior_revoked'])\n"
+        "    rev3 = bool(tax['incident_3_prior_revoked'])\n"
+        "    hor1 = sum(int(w[i]) * abs(int(p1[i]) - int(p0[i])) for i in range(3))\n"
+        "    hor2 = sum(int(w[i]) * abs(int(p2[i]) - int(p0[i])) for i in range(3))\n"
+        "    hor3 = sum(int(w[i]) * abs(int(p3[i]) - int(p0[i])) for i in range(3))\n"
+        "    max_hor = max(hor1, hor2, hor3)\n"
+        "    excess_drift = max(0, max_hor - tau_hor)\n"
+        "    unrev_cnt = (0 if rev2 else 1) + (0 if rev3 else 1)\n"
+        "    surcharge = excess_drift + 2 * unrev_cnt\n"
+        "    if surcharge > 0:\n"
+        "        raise ValueError('Policy ratchet horizon drift surcharge required')\n"
+        "    return {\n"
+        "        'merchant_payout_cents': net - tax_res,\n"
+        "        'max_horizon_drift': max_hor,\n"
+        "        'excess_horizon_drift': excess_drift,\n"
+        "        'unrevoked_incident_count': unrev_cnt,\n"
+        "        'ratchet_surcharge_cents': 0,\n"
+        "    }\n"
+    )
+
+    def __init__(self, *, scope_id: str = "streaming-codebase-policy-ratchet") -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.ratchet_monitor = StreamingPolicyRatchetDriftMonitor(
+            scope_id=f"{self.scope_id}:ratchet"
+        )
+        self.fiber_monitor = StreamingFiberMonitor()
+        self.evaluations: list[dict[str, Any]] = []
+        self.three_phase_audits: list[dict[str, Any]] = []
+
+    def evaluate_policy_ratchet_modules(
+        self,
+        evaluation_id: str,
+        *,
+        pricing_ratchet_source: str,
+        tax_ratchet_source: str,
+        settlement_ratchet_source: str,
+        gross_cents: int = 990,
+        infeasible_constraint: Mapping[str, Any] | str | None = None,
+        model_id: str = "deterministic",
+    ) -> dict[str, Any]:
+        eval_id = text(evaluation_id, "evaluation_id")
+        mod_id = text(model_id, "model_id")
+        gross = exact_int(gross_cents, "gross_cents", minimum=100)
+
+        p_ns = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(
+            "pricing_ratchet", pricing_ratchet_source
+        )
+        t_ns = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(
+            "tax_ratchet", tax_ratchet_source
+        )
+        s_ns = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(
+            "settlement_ratchet", settlement_ratchet_source
+        )
+        for mod_name, ns, fn_name in (
+            ("pricing_ratchet", p_ns, "quote_ratchet_pricing"),
+            ("tax_ratchet", t_ns, "quote_ratchet_tax"),
+            ("settlement_ratchet", s_ns, "settle_ratchet_invoice"),
+        ):
+            if fn_name not in ns or not callable(ns[fn_name]):
+                raise ValidationError(f"{mod_name} missing callable {fn_name}")
+
+        pricing_out = p_ns["quote_ratchet_pricing"](gross)
+        tax_out = t_ns["quote_ratchet_tax"](gross)
+        if not isinstance(pricing_out, Mapping) or not isinstance(tax_out, Mapping):
+            raise ValidationError("quote_ratchet_pricing and quote_ratchet_tax must return mappings")
+        try:
+            settlement_out = s_ns["settle_ratchet_invoice"](pricing_out, tax_out)
+            if not isinstance(settlement_out, Mapping):
+                raise ValidationError("settle_ratchet_invoice must return a mapping")
+            settlement_raised = False
+        except ValidationError:
+            raise
+        except Exception:
+            settlement_raised = True
+            settlement_out = {}
+
+        p0_vec = StreamingSubgradientSensitivityMonitor._validate_int_triple(
+            pricing_out.get("baseline_policy_vector", [2, 3, 0]),
+            "baseline_policy_vector",
+            minimum=0,
+        )
+        w_vec = StreamingSubgradientSensitivityMonitor._validate_int_triple(
+            pricing_out.get("risk_weight_vector", [2, 3, 4]),
+            "risk_weight_vector",
+            minimum=1,
+        )
+        tau_step = exact_int(pricing_out.get("step_slack_budget", 4), "step_slack_budget", minimum=1)
+        tau_hor = exact_int(pricing_out.get("horizon_drift_ceiling", 4), "horizon_drift_ceiling", minimum=1)
+        p1_vec = StreamingSubgradientSensitivityMonitor._validate_int_triple(
+            pricing_out.get("incident_1_post_vector", [4, 3, 0]),
+            "incident_1_post_vector",
+            minimum=0,
+        )
+        p2_vec = StreamingSubgradientSensitivityMonitor._validate_int_triple(
+            pricing_out.get("incident_2_post_vector", [4, 4, 0]),
+            "incident_2_post_vector",
+            minimum=0,
+        )
+        p3_vec = StreamingSubgradientSensitivityMonitor._validate_int_triple(
+            tax_out.get("incident_3_post_vector", [4, 4, 1]),
+            "incident_3_post_vector",
+            minimum=0,
+        )
+        rev2 = bool(pricing_out.get("incident_2_prior_revoked", False))
+        rev3 = bool(tax_out.get("incident_3_prior_revoked", False))
+
+        fee = exact_int(pricing_out.get("platform_fee_cents", 0), "platform_fee_cents")
+        net = exact_int(pricing_out.get("net_after_fee_cents", 0), "net_after_fee_cents")
+        tax = exact_int(tax_out.get("tax_reserve_cents", 0), "tax_reserve_cents")
+        net_base = (gross * 10) // 11
+
+        pre2_vec = p0_vec if rev2 else p1_vec
+        pre3_vec = p0_vec if rev3 else [p3_vec[0], p3_vec[1], 0]
+        step1_slack = sum(w_vec[i] * abs(p1_vec[i] - p0_vec[i]) for i in range(3))
+        step2_slack = sum(w_vec[i] * abs(p2_vec[i] - pre2_vec[i]) for i in range(3))
+        step3_slack = sum(w_vec[i] * abs(p3_vec[i] - pre3_vec[i]) for i in range(3))
+
+        hor1_drift = sum(w_vec[i] * abs(p1_vec[i] - p0_vec[i]) for i in range(3))
+        hor2_drift = sum(w_vec[i] * abs(p2_vec[i] - p0_vec[i]) for i in range(3))
+        hor3_drift = sum(w_vec[i] * abs(p3_vec[i] - p0_vec[i]) for i in range(3))
+        max_hor_drift = max(hor1_drift, hor2_drift, hor3_drift)
+        excess_hor_drift = max(0, max_hor_drift - tau_hor)
+        unrev_cnt = (0 if rev2 else 1) + (0 if rev3 else 1)
+        surcharge = excess_hor_drift + 2 * unrev_cnt
+
+        local_p_ok = (
+            (fee == (net_base * 3) // 100)
+            and (net == gross - fee)
+            and (p0_vec == [2, 3, 0])
+            and (w_vec == [2, 3, 4])
+            and (tau_step == 4)
+            and (tau_hor == 4)
+            and (p1_vec == [4, 3, 0])
+            and (step1_slack <= tau_step)
+            and (step2_slack <= tau_step)
+            and ((rev2 and p2_vec == [2, 4, 0]) or (not rev2 and p2_vec == [4, 4, 0]))
+        )
+        local_t_ok = (
+            (tax == (net_base * 10) // 100)
+            and (step3_slack <= tau_step)
+            and (
+                (rev3 and p3_vec == [2, 3, 1])
+                or (not rev3 and p3_vec in ([4, 4, 1], [2, 4, 1]))
+            )
+        )
+
+        unrevoked_chain = [
+            {
+                "incident_index": 1,
+                "incident_pair_id": f"{eval_id}:inc1",
+                "prior_lease_revoked": False,
+                "authority_signature_valid": True,
+                "post_incident_policy_vector": [4, 3, 0],
+                "post_relaxation_monitor_a_passed": True,
+                "post_relaxation_monitor_b_passed": True,
+            },
+            {
+                "incident_index": 2,
+                "incident_pair_id": f"{eval_id}:inc2",
+                "prior_lease_revoked": False,
+                "authority_signature_valid": True,
+                "post_incident_policy_vector": [4, 4, 0],
+                "post_relaxation_monitor_a_passed": True,
+                "post_relaxation_monitor_b_passed": True,
+            },
+            {
+                "incident_index": 3,
+                "incident_pair_id": f"{eval_id}:inc3",
+                "prior_lease_revoked": False,
+                "authority_signature_valid": True,
+                "post_incident_policy_vector": [4, 4, 1],
+                "post_relaxation_monitor_a_passed": True,
+                "post_relaxation_monitor_b_passed": True,
+            },
+        ]
+        chain_p3 = p3_vec if rev3 else [p2_vec[0], p2_vec[1], p3_vec[2]]
+        evaluated_chain = [
+            {
+                "incident_index": 1,
+                "incident_pair_id": f"{eval_id}:inc1",
+                "prior_lease_revoked": False,
+                "authority_signature_valid": bool(local_p_ok),
+                "post_incident_policy_vector": p1_vec,
+                "post_relaxation_monitor_a_passed": bool(local_p_ok),
+                "post_relaxation_monitor_b_passed": bool(local_p_ok),
+            },
+            {
+                "incident_index": 2,
+                "incident_pair_id": f"{eval_id}:inc2",
+                "prior_lease_revoked": rev2,
+                "authority_signature_valid": bool(local_p_ok),
+                "post_incident_policy_vector": p2_vec,
+                "post_relaxation_monitor_a_passed": bool(local_p_ok),
+                "post_relaxation_monitor_b_passed": bool(local_p_ok),
+            },
+            {
+                "incident_index": 3,
+                "incident_pair_id": f"{eval_id}:inc3",
+                "prior_lease_revoked": rev3,
+                "authority_signature_valid": bool(local_t_ok),
+                "post_incident_policy_vector": chain_p3,
+                "post_relaxation_monitor_a_passed": bool(local_t_ok),
+                "post_relaxation_monitor_b_passed": bool(local_t_ok),
+            },
+        ]
+        self.ratchet_monitor.record_incident_trajectory(
+            trajectory_id=f"{eval_id}:ratchet",
+            model_id=mod_id,
+            prior_escalation_receipt_sha256=digest({"evaluation_id": eval_id, "stage": "escalation"}),
+            baseline_policy_sha256=digest({"baseline_policy_vector": p0_vec, "risk_weight_vector": w_vec}),
+            baseline_policy_vector=p0_vec,
+            risk_weight_vector=w_vec,
+            step_slack_budget=tau_step,
+            horizon_drift_ceiling=tau_hor,
+            unrevoked_ratchet_incidents=unrevoked_chain,
+            lease_revoked_incidents=evaluated_chain,
+        )
+
+        if settlement_raised:
+            payout = net - tax - surcharge
+            local_s_ok = surcharge != 0
+        else:
+            payout = exact_int(settlement_out.get("merchant_payout_cents", 0), "merchant_payout_cents")
+            reported_surcharge = exact_int(
+                settlement_out.get("ratchet_surcharge_cents", surcharge),
+                "ratchet_surcharge_cents",
+            )
+            local_s_ok = (reported_surcharge == surcharge) and (payout == net - tax - surcharge)
+
+        infeasible_spec_contradiction = bool(infeasible_constraint is not None)
+        local_green = 1 if (local_p_ok and local_t_ok and local_s_ok and not infeasible_spec_contradiction) else 0
+        conservation_ok = (
+            not settlement_raised
+            and surcharge == 0
+            and rev2
+            and rev3
+            and p2_vec == [2, 4, 0]
+            and p3_vec == [2, 3, 1]
+            and payout == 873
+            and (payout + fee + tax == gross)
+        )
+        global_green = 1 if (local_green == 1 and conservation_ok) else 0
+        defect = global_green - local_green
+
+        self.fiber_monitor.observe(
+            state_id=f"{eval_id}_{mod_id}",
+            report={
+                "local_green": local_green,
+                "step_slacks": [step1_slack, step2_slack, step3_slack],
+                "step_slack_budget": tau_step,
+            },
+            query="LGGG" if global_green == 1 else "LGGR",
+            metadata={
+                "horizon_drifts": [hor1_drift, hor2_drift, hor3_drift],
+                "max_horizon_drift": max_hor_drift,
+                "excess_horizon_drift": excess_hor_drift,
+                "unrevoked_incident_count": unrev_cnt,
+                "ratchet_surcharge_cents": surcharge,
+            },
+        )
+
+        if infeasible_spec_contradiction:
+            status = "INFEASIBLE_POLICY_RATCHET_SPECIFICATION_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif local_green == 0:
+            status = "LOCAL_RATCHET_MODULE_CONTRACT_BROKEN"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif not rev2 and not rev3:
+            status = "UNREVOKED_MONOTONE_POLICY_RATCHET_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif global_green == 0:
+            status = "PARTIAL_SUNSET_LEASE_REVOCATION_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "SCOPED_SUNSET_LEASE_REVOCATION_COHERENT_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+
+        if global_green == 1:
+            directives = {
+                "worker-0": {
+                    "module": "pricing_ratchet",
+                    "action": "HOLD_INCIDENT_2_SUNSET_LEASE_REVOCATION",
+                    "target_incident_2_prior_revoked": True,
+                    "target_incident_2_post_vector": [2, 4, 0],
+                },
+                "worker-1": {
+                    "module": "tax_ratchet",
+                    "action": "HOLD_INCIDENT_3_SUNSET_LEASE_REVOCATION",
+                    "target_incident_3_prior_revoked": True,
+                    "target_incident_3_post_vector": [2, 3, 1],
+                },
+                "worker-2": {
+                    "module": "settlement_ratchet",
+                    "action": "HOLD_ZERO_POLICY_RATCHET_SURCHARGE",
+                    "target_ratchet_surcharge_cents": 0,
+                    "target_payout_cents": 873,
+                },
+            }
+        else:
+            directives = {
+                "worker-0": {
+                    "module": "pricing_ratchet",
+                    "action": (
+                        "REVOKE_INCIDENT_1_LEASE_BEFORE_INCIDENT_2"
+                        if (not rev2 or p2_vec != [2, 4, 0] or not local_p_ok)
+                        else "HOLD_INCIDENT_2_SUNSET_LEASE_REVOCATION"
+                    ),
+                    "target_incident_2_prior_revoked": True,
+                    "target_incident_2_post_vector": [2, 4, 0],
+                },
+                "worker-1": {
+                    "module": "tax_ratchet",
+                    "action": (
+                        "REVOKE_INCIDENT_2_LEASE_BEFORE_INCIDENT_3"
+                        if (not rev3 or p3_vec != [2, 3, 1] or not local_t_ok)
+                        else "HOLD_INCIDENT_3_SUNSET_LEASE_REVOCATION"
+                    ),
+                    "target_incident_3_prior_revoked": True,
+                    "target_incident_3_post_vector": [2, 3, 1],
+                },
+                "worker-2": {
+                    "module": "settlement_ratchet",
+                    "action": (
+                        "REPAIR_SETTLEMENT_POLICY_RATCHET_GATE"
+                        if not conservation_ok
+                        else "HOLD_ZERO_POLICY_RATCHET_SURCHARGE"
+                    ),
+                    "target_ratchet_surcharge_cents": 0,
+                    "target_payout_cents": 873,
+                },
+            }
+
+        rec = json_value(
+            {
+                "evaluation_id": eval_id,
+                "model_id": mod_id,
+                "baseline_policy_vector": p0_vec,
+                "risk_weight_vector": w_vec,
+                "step_slack_budget": tau_step,
+                "horizon_drift_ceiling": tau_hor,
+                "incident_1_post_vector": p1_vec,
+                "incident_2_prior_revoked": rev2,
+                "incident_2_post_vector": p2_vec,
+                "incident_3_prior_revoked": rev3,
+                "incident_3_post_vector": p3_vec,
+                "step_weighted_slacks": [step1_slack, step2_slack, step3_slack],
+                "horizon_weighted_drifts": [hor1_drift, hor2_drift, hor3_drift],
+                "max_horizon_drift": max_hor_drift,
+                "excess_horizon_drift": excess_hor_drift,
+                "unrevoked_incident_count": unrev_cnt,
+                "ratchet_surcharge_cents": surcharge,
+                "merchant_payout_cents": payout,
+                "platform_fee_cents": fee,
+                "tax_reserve_cents": tax,
+                "gross_cents": gross,
+                "local_green": local_green,
+                "global_green": global_green,
+                "defect": defect,
+                "status": status,
+                "contract_status": contract_status,
+                "directives": directives,
+            }
+        )
+        self.evaluations.append(rec)
+        return rec
+
+    def record_three_phase_codebase_audit(
+        self,
+        *,
+        audit_id: str = "codebase_policy_ratchet_three_phase",
+        model_id: str = "deterministic",
+    ) -> dict[str, Any]:
+        mid = text(model_id, "model_id")
+        p1 = self.evaluate_policy_ratchet_modules(
+            f"{audit_id}_p1",
+            pricing_ratchet_source=self.PHASE_1_PRICING_RATCHET_SOURCE,
+            tax_ratchet_source=self.PHASE_1_TAX_RATCHET_SOURCE,
+            settlement_ratchet_source=self.PHASE_1_SETTLEMENT_RATCHET_SOURCE,
+            model_id=mid,
+        )
+        p2 = self.evaluate_policy_ratchet_modules(
+            f"{audit_id}_p2",
+            pricing_ratchet_source=self.PHASE_2_PRICING_RATCHET_SOURCE,
+            tax_ratchet_source=self.PHASE_2_TAX_RATCHET_SOURCE,
+            settlement_ratchet_source=self.PHASE_2_SETTLEMENT_RATCHET_SOURCE,
+            model_id=mid,
+        )
+        p3 = self.evaluate_policy_ratchet_modules(
+            f"{audit_id}_p3",
+            pricing_ratchet_source=self.PHASE_3_PRICING_RATCHET_SOURCE,
+            tax_ratchet_source=self.PHASE_3_TAX_RATCHET_SOURCE,
+            settlement_ratchet_source=self.PHASE_3_SETTLEMENT_RATCHET_SOURCE,
+            model_id=mid,
+        )
+        audit_rec = json_value(
+            {
+                "audit_id": text(audit_id, "audit_id"),
+                "model_id": mid,
+                "phase_1_horizon_drifts": p1["horizon_weighted_drifts"],
+                "phase_1_max_horizon_drift": p1["max_horizon_drift"],
+                "phase_1_excess_horizon_drift": p1["excess_horizon_drift"],
+                "phase_1_unrevoked_incident_count": p1["unrevoked_incident_count"],
+                "phase_1_surcharge_cents": p1["ratchet_surcharge_cents"],
+                "phase_1_payout_cents": p1["merchant_payout_cents"],
+                "phase_1_local_green": p1["local_green"],
+                "phase_1_global_green": p1["global_green"],
+                "phase_1_defect": p1["defect"],
+                "phase_1_status": p1["status"],
+                "phase_2_horizon_drifts": p2["horizon_weighted_drifts"],
+                "phase_2_max_horizon_drift": p2["max_horizon_drift"],
+                "phase_2_excess_horizon_drift": p2["excess_horizon_drift"],
+                "phase_2_unrevoked_incident_count": p2["unrevoked_incident_count"],
+                "phase_2_surcharge_cents": p2["ratchet_surcharge_cents"],
+                "phase_2_payout_cents": p2["merchant_payout_cents"],
+                "phase_2_local_green": p2["local_green"],
+                "phase_2_global_green": p2["global_green"],
+                "phase_2_defect": p2["defect"],
+                "phase_2_status": p2["status"],
+                "phase_3_horizon_drifts": p3["horizon_weighted_drifts"],
+                "phase_3_max_horizon_drift": p3["max_horizon_drift"],
+                "phase_3_excess_horizon_drift": p3["excess_horizon_drift"],
+                "phase_3_unrevoked_incident_count": p3["unrevoked_incident_count"],
+                "phase_3_surcharge_cents": p3["ratchet_surcharge_cents"],
+                "phase_3_payout_cents": p3["merchant_payout_cents"],
+                "phase_3_local_green": p3["local_green"],
+                "phase_3_global_green": p3["global_green"],
+                "phase_3_defect": p3["defect"],
+                "phase_3_status": p3["status"],
+            }
+        )
+        self.three_phase_audits.append(audit_rec)
+        return audit_rec
+
+    def current_receipt(self) -> dict[str, Any]:
+        if not self.evaluations:
+            raise ValidationError("at least one codebase policy ratchet evaluation must be recorded")
+        n = len(self.evaluations)
+        lggr_count = sum(1 for e in self.evaluations if e["defect"] == -1)
+        lggg_count = sum(1 for e in self.evaluations if e["global_green"] == 1)
+        last = self.evaluations[-1]
+
+        body: dict[str, Any] = {
+            "schema": "lggr.online_codebase_policy_ratchet.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": last["status"],
+            "contract_status": last["contract_status"],
+            "evaluation_count": n,
+            "lggr_obstruction_count": lggr_count,
+            "lggg_coherent_count": lggg_count,
+            "policy_ratchet_drift_receipt": (
+                self.ratchet_monitor.emit_receipt()
+                if self.ratchet_monitor.trajectories
+                else None
+            ),
+            "fiber_receipt": self.fiber_monitor.get_receipt(),
+            "three_phase_audits": self.three_phase_audits,
+            "evaluations": self.evaluations,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+
 
 
 

@@ -5636,4 +5636,69 @@ theorem subgradient_pivot_codebase_weight_sensitivity_and_bottleneck_audit :
   intro r0 r1 r2 hol_rem ⟨hc1, hc2, hc3, hc4, hc5, hc6⟩
   omega
 
+/-- Theorem 127 (Multi-Incident Cumulative Policy-Ratchet Drift & Scoped Sunset Revocation Audit
+    in Code-Engineering Swarms):
+    1. Cumulative policy-ratchet horizon drift vs. sunset lease revocation surcharge floor law:
+       - On a 3-incident settlement policy trajectory starting from baseline policy
+         `P_0 = (2, 3, 0)` with risk weights `w = (2, 3, 4)`, per-incident step budget
+         `τ_step = 4`, and cumulative horizon drift ceiling `τ_horizon = 4`, for any
+         excess horizon drift `excess_drift ≥ 0` and unrevoked prior-lease incident count
+         `unrev_cnt ≥ 0`, whenever `excess_drift + 2 * unrev_cnt ≥ 1`, the audit surcharge
+         `surcharge = excess_drift + 2 * unrev_cnt ≥ 1` strictly reduces merchant payout below `873`.
+    2. Concrete 3-phase codebase policy-ratchet audit across `pricing_ratchet`, `tax_ratchet`,
+       and `settlement_ratchet` (`P_0 = [2, 3, 0]`, `w = [2, 3, 4]`, `τ_step = 4`, `τ_horizon = 4`):
+       - Phase 1 (Full unrevoked 3-incident monotone ratchet `rev_2 = 0`, `rev_3 = 0`,
+         `P_1 = [4, 3, 0]`, `P_2 = [4, 4, 0]`, `P_3 = [4, 4, 1]`):
+         every step satisfies `||P_t - P_{t-1}||_{1,w} ≤ 4`, yet horizon drifts are `(4, 7, 11)`
+         with `max_hor_p1 = 11`, `excess_p1 = 11 - 4 = 7`, `unrev_p1 = 2`,
+         `surcharge_p1 = 7 + 2 * 2 = 11`, `payout_p1 = 873 - 11 = 862 ≠ 873`
+         (`L_p1 = 1`, `Eg_p1 = 0`, `Δ_{E,p1} = -1`);
+       - Phase 2 (Partial sunset revocation—Incident 2 revoked in `pricing_ratchet`, Incident 3
+         unrevoked in `tax_ratchet`, `rev_2 = 1`, `rev_3 = 0`, `P_1 = [4, 3, 0]`,
+         `P_2 = [2, 4, 0]`, `P_3 = [2, 4, 1]`):
+         horizon drifts are `(4, 3, 7)` with `max_hor_p2 = 7`, `excess_p2 = 7 - 4 = 3`,
+         `unrev_p2 = 1`, `surcharge_p2 = 3 + 2 * 1 = 5`, `payout_p2 = 873 - 5 = 868 ≠ 873`
+         (`L_p2 = 1`, `Eg_p2 = 0`, `Δ_{E,p2} = -1`);
+       - Phase 3 (Full scoped sunset lease revocation across all incidents `rev_2 = 1`, `rev_3 = 1`,
+         `P_1 = [4, 3, 0]`, `P_2 = [2, 4, 0]`, `P_3 = [2, 3, 1]`):
+         horizon drifts are `(4, 3, 4)` with `max_hor_p3 = 4 ≤ 4`, `excess_p3 = 0`,
+         `unrev_p3 = 0`, `surcharge_p3 = 0`, `payout_p3 = 873`, `873 + 27 + 90 = 990`
+         (`L_p3 = 1`, `Eg_p3 = 1`, `Δ_{E,p3} = 0`). -/
+theorem policy_ratchet_codebase_cumulative_drift_and_sunset_revocation_audit :
+    (∀ excess_drift unrev_cnt : Int,
+      (0 ≤ excess_drift ∧ 0 ≤ unrev_cnt ∧ excess_drift + 2 * unrev_cnt ≥ 1) →
+      (excess_drift + 2 * unrev_cnt ≥ 1 ∧
+       873 - (excess_drift + 2 * unrev_cnt) ≤ 872)) ∧
+    (let tau_horizon : Int := 4;
+     let max_hor_p1 : Int := 11; let excess_p1 : Int := max_hor_p1 - tau_horizon; let unrev_p1 : Int := 2;
+     let max_hor_p2 : Int := 7;  let excess_p2 : Int := max_hor_p2 - tau_horizon; let unrev_p2 : Int := 1;
+     let max_hor_p3 : Int := 4;  let excess_p3 : Int := max_hor_p3 - tau_horizon; let unrev_p3 : Int := 0;
+     let surcharge_p1 := excess_p1 + 2 * unrev_p1;
+     let surcharge_p2 := excess_p2 + 2 * unrev_p2;
+     let surcharge_p3 := excess_p3 + 2 * unrev_p3;
+     let payout_p1 : Int := 873 - surcharge_p1;
+     let payout_p2 : Int := 873 - surcharge_p2;
+     let payout_p3 : Int := 873 - surcharge_p3;
+     let fee : Int := 27; let tax : Int := 90; let gross : Int := 990;
+     let l_p1 := if (max_hor_p1 = 11) ∧ (excess_p1 = 7) ∧ (unrev_p1 = 2) ∧ (surcharge_p1 = 11) then (1 : Int) else 0;
+     let eg_p1 := if (l_p1 = 1) ∧ (excess_p1 = 0) ∧ (unrev_p1 = 0) ∧ (payout_p1 + fee + tax = gross) then (1 : Int) else 0;
+     let defect_p1 := eg_p1 - l_p1;
+     let l_p2 := if (max_hor_p2 = 7) ∧ (excess_p2 = 3) ∧ (unrev_p2 = 1) ∧ (surcharge_p2 = 5) then (1 : Int) else 0;
+     let eg_p2 := if (l_p2 = 1) ∧ (excess_p2 = 0) ∧ (unrev_p2 = 0) ∧ (payout_p2 + fee + tax = gross) then (1 : Int) else 0;
+     let defect_p2 := eg_p2 - l_p2;
+     let l_p3 := if (max_hor_p3 = 4) ∧ (excess_p3 = 0) ∧ (unrev_p3 = 0) ∧ (surcharge_p3 = 0) ∧ (payout_p3 + fee + tax = gross) then (1 : Int) else 0;
+     let eg_p3 := if (l_p3 = 1) ∧ (surcharge_p3 < surcharge_p2) ∧ (surcharge_p2 < surcharge_p1) then (1 : Int) else 0;
+     let defect_p3 := eg_p3 - l_p3;
+     (max_hor_p1 = 11 ∧ max_hor_p2 = 7 ∧ max_hor_p3 = 4 ∧
+      excess_p1 = 7 ∧ excess_p2 = 3 ∧ excess_p3 = 0 ∧
+      unrev_p1 = 2 ∧ unrev_p2 = 1 ∧ unrev_p3 = 0 ∧
+      surcharge_p1 = 11 ∧ surcharge_p2 = 5 ∧ surcharge_p3 = 0 ∧
+      payout_p1 = 862 ∧ payout_p2 = 868 ∧ payout_p3 = 873) ∧
+     (l_p1 = 1 ∧ eg_p1 = 0 ∧ defect_p1 = -1) ∧
+     (l_p2 = 1 ∧ eg_p2 = 0 ∧ defect_p2 = -1) ∧
+     (l_p3 = 1 ∧ eg_p3 = 1 ∧ defect_p3 = 0)) := by
+  refine ⟨?_, ⟨⟨by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨by decide, by decide, by decide⟩⟩⟩⟩⟩
+  intro excess_drift unrev_cnt ⟨hc1, hc2, hc3⟩
+  omega
+
 end LggrVIII

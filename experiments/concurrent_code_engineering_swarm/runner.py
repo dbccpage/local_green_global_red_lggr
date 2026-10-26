@@ -47,6 +47,7 @@ from lggr.streaming import (
     StreamingCodebaseObligationMigrationMonitor,
     StreamingCodebaseOptionalStoppingMonitor,
     StreamingCodebasePathKernelDashboardMonitor,
+    StreamingCodebasePolicyRatchetMonitor,
     StreamingCodebasePolicyReversalMonitor,
     StreamingCodebaseReggeHolonomyMonitor,
     StreamingCodebaseReplayOrderMonitor,
@@ -81,6 +82,7 @@ from .domain import (
     NON_ABELIAN_BRAID_WORKER_MODULES,
     OBLIGATION_MIGRATION_WORKER_MODULES,
     PATH_KERNEL_WORKER_MODULES,
+    POLICY_RATCHET_WORKER_MODULES,
     POLICY_WORKER_MODULES,
     QUORUM_WORKER_MODULES,
     REGGE_WORKER_MODULES,
@@ -118,6 +120,7 @@ from .domain import (
     ObligationMigrationCodeWorkspace,
     OptionalStoppingCodeWorkspace,
     PathKernelDashboardCodeWorkspace,
+    PolicyRatchetCodeWorkspace,
     PolicyReversalCodeWorkspace,
     ReggeHolonomyCodeWorkspace,
     ReplayOrderCodeWorkspace,
@@ -149,6 +152,7 @@ from .domain import (
     obligation_migration_fixture,
     path_kernel_fixture,
     policy_fixture,
+    policy_ratchet_fixture,
     quorum_fixture,
     regge_fixture,
     replay_fixture,
@@ -156,6 +160,7 @@ from .domain import (
     run_governed_relaxation_local_unit_tests,
     run_multi_loop_hodge_local_unit_tests,
     run_non_abelian_braid_local_unit_tests,
+    run_policy_ratchet_local_unit_tests,
     run_shared_chord_diamond_local_unit_tests,
     run_subgradient_pivot_local_unit_tests,
     run_three_party_c3_local_unit_tests,
@@ -7723,6 +7728,280 @@ def subgradient_pivot_campaign(
     return summary
 
 
+def policy_ratchet_system_prompt(worker: str, arm: str) -> str:
+    mod_name = POLICY_RATCHET_WORKER_MODULES[worker]
+    base = (
+        f"You are `{worker}`, responsible exclusively for `{mod_name}.py` in a 3-module "
+        "multi-incident policy-ratchet drift and sunset lease revocation settlement codebase "
+        "(`pricing_ratchet.py` -> `tax_ratchet.py` -> `settlement_ratchet.py`) over baseline policy "
+        "`P_0 = [2, 3, 0]`, risk weights `w = [2, 3, 4]`, step budget `tau_step = 4`, and "
+        "cumulative horizon ceiling `tau_horizon = 4`.\n"
+        "Always call `inspect_workspace` first.\n"
+        "IMPORTANT: Only call `escalate` if `infeasible_constraint` in the `inspect_workspace` result is a non-null string! "
+        "When `infeasible_constraint` is `null` and `locked` is `false`, NEVER call `escalate` — instead follow your Arm instructions below.\n"
+    )
+    if arm == "A":
+        return base + (
+            "Arm A (`unrevoked_monotone_policy_ratchet_gate`): If `local_unit_test.passed` "
+            "is true and `action_required` is `HOLD_UNREVOKED_STEP_BUDGET_RATCHET`, do NOT call "
+            "`submit_module_patch`; reply concisely confirming local unit tests pass."
+        )
+    if arm == "B":
+        if worker == "worker-0":
+            return base + (
+                "Arm B (`partial_sunset_lease_revocation_gate`): Call `submit_module_patch` with:\n"
+                "```python\n"
+                + StreamingCodebasePolicyRatchetMonitor.PHASE_2_PRICING_RATCHET_SOURCE
+                + "```\n"
+            )
+        if worker == "worker-1":
+            return base + (
+                "Arm B (`partial_sunset_lease_revocation_gate`): Call `submit_module_patch` with:\n"
+                "```python\n"
+                + StreamingCodebasePolicyRatchetMonitor.PHASE_2_TAX_RATCHET_SOURCE
+                + "```\n"
+            )
+        return base + (
+            "Arm B (`partial_sunset_lease_revocation_gate`): Call `submit_module_patch` with:\n"
+            "```python\n"
+            + StreamingCodebasePolicyRatchetMonitor.PHASE_2_SETTLEMENT_RATCHET_SOURCE
+            + "```\n"
+        )
+    if worker == "worker-0":
+        return base + (
+            "Arm C (`explicit_lggr_sunset_lease_revocation_directive`): Follow `compact_role_directive` "
+            "and call `submit_module_patch` with:\n"
+            "```python\n"
+            + StreamingCodebasePolicyRatchetMonitor.PHASE_3_PRICING_RATCHET_SOURCE
+            + "```\n"
+        )
+    if worker == "worker-1":
+        return base + (
+            "Arm C (`explicit_lggr_sunset_lease_revocation_directive`): Follow `compact_role_directive` "
+            "and call `submit_module_patch` with:\n"
+            "```python\n"
+            + StreamingCodebasePolicyRatchetMonitor.PHASE_3_TAX_RATCHET_SOURCE
+            + "```\n"
+        )
+    return base + (
+        "Arm C (`explicit_lggr_sunset_lease_revocation_directive`): Follow `compact_role_directive` "
+        "and call `submit_module_patch` with:\n"
+        "```python\n"
+        + StreamingCodebasePolicyRatchetMonitor.PHASE_3_SETTLEMENT_RATCHET_SOURCE
+        + "```\n"
+    )
+
+
+def policy_ratchet_merge_gate(
+    events: Events,
+    ws: PolicyRatchetCodeWorkspace,
+    monitor: StreamingCodebasePolicyRatchetMonitor,
+    arm: str,
+    wave_label: str,
+) -> tuple[dict[str, Any], dict[str, dict[str, Any]], dict[str, Any]]:
+    sources = ws.state["sources"]
+    verdicts = {
+        m: bool(run_policy_ratchet_local_unit_tests(m, sources[m]).get("passed"))
+        for m in ("pricing_ratchet", "tax_ratchet", "settlement_ratchet")
+    }
+    eval_res = monitor.evaluate_policy_ratchet_modules(
+        f"{arm}-{wave_label}",
+        pricing_ratchet_source=sources["pricing_ratchet"],
+        tax_ratchet_source=sources["tax_ratchet"],
+        settlement_ratchet_source=sources["settlement_ratchet"],
+        infeasible_constraint=(
+            {"reason": ws.state["infeasible_constraint"]}
+            if ws.state["infeasible_constraint"] is not None
+            else None
+        ),
+    )
+    receipt = monitor.current_receipt()
+    events.emit(
+        "gate",
+        {
+            "arm": arm,
+            "wave": wave_label,
+            "local_green": eval_res["local_green"],
+            "global_green": eval_res["global_green"],
+            "defect": eval_res["defect"],
+            "status": eval_res["status"],
+            "horizon_weighted_drifts": eval_res["horizon_weighted_drifts"],
+            "max_horizon_drift": eval_res["max_horizon_drift"],
+            "excess_horizon_drift": eval_res["excess_horizon_drift"],
+            "unrevoked_incident_count": eval_res["unrevoked_incident_count"],
+            "ratchet_surcharge_cents": eval_res["ratchet_surcharge_cents"],
+            "receipt_sha256": receipt["receipt_sha256"],
+            "receipt": receipt,
+        },
+    )
+
+    per_worker_fb: dict[str, dict[str, Any]] = {}
+    for w, mod_name in POLICY_RATCHET_WORKER_MODULES.items():
+        if ws.state["infeasible_constraint"] is not None:
+            per_worker_fb[w] = {
+                "arm": arm,
+                "wave": wave_label,
+                "action_required": "ESCALATE_INFEASIBLE",
+                "infeasible_constraint": ws.state["infeasible_constraint"],
+                "compact_role_directive": eval_res["directives"][w],
+            }
+            continue
+
+        if arm == "A":
+            per_worker_fb[w] = {
+                "arm": "A",
+                "wave": wave_label,
+                "local_unit_test_passed": verdicts[mod_name],
+                "action_required": "HOLD_UNREVOKED_STEP_BUDGET_RATCHET",
+                "note": "Local unit test and per-incident step budgets pass under unrevoked ratchet.",
+            }
+        elif arm == "B":
+            per_worker_fb[w] = {
+                "arm": "B",
+                "wave": wave_label,
+                "local_unit_test_passed": verdicts[mod_name],
+                "action_required": "REVOKE_PARTIAL_INCIDENT_2_LEASE",
+                "horizon_weighted_drifts": eval_res["horizon_weighted_drifts"],
+                "max_horizon_drift": eval_res["max_horizon_drift"],
+                "ratchet_surcharge_cents": eval_res["ratchet_surcharge_cents"],
+                "note": "Revoking Incident 1 lease before Incident 2 while leaving Incident 3 unrevoked still breaches horizon ceiling (drift 7 > 4).",
+            }
+        else:
+            per_worker_fb[w] = {
+                "arm": "C",
+                "wave": wave_label,
+                "local_unit_test_passed": verdicts[mod_name],
+                "global_green": eval_res["global_green"],
+                "defect": eval_res["defect"],
+                "status": eval_res["status"],
+                "horizon_weighted_drifts": eval_res["horizon_weighted_drifts"],
+                "max_horizon_drift": eval_res["max_horizon_drift"],
+                "excess_horizon_drift": eval_res["excess_horizon_drift"],
+                "unrevoked_incident_count": eval_res["unrevoked_incident_count"],
+                "ratchet_surcharge_cents": eval_res["ratchet_surcharge_cents"],
+                "action_required": "REVOKE_PRIOR_LEASES_ACROSS_ALL_INCIDENTS",
+                "compact_role_directive": eval_res["directives"][w],
+            }
+    return eval_res, per_worker_fb, receipt
+
+
+def policy_ratchet_campaign(
+    client: CodeBatchClient,
+    events: Events,
+    config: dict[str, Any],
+) -> dict[str, Any]:
+    seeds: list[int] = list(config["seeds"])
+    workers = list(POLICY_RATCHET_WORKER_MODULES.keys())
+    cases: list[dict[str, Any]] = []
+
+    for seed in seeds:
+        base_state = policy_ratchet_fixture(seed)
+        arm_results: list[dict[str, Any]] = []
+
+        for arm in ("A", "B", "C"):
+            ws = PolicyRatchetCodeWorkspace(base_state)
+            monitor = StreamingCodebasePolicyRatchetMonitor(
+                scope_id=f"policy-ratchet-seed-{seed}-arm-{arm}"
+            )
+            arm_start_calls = client.calls
+            arm_start_spent = client.spent
+
+            eval_res, per_worker_fb, receipt = policy_ratchet_merge_gate(
+                events, ws, monitor, arm, "wave-0"
+            )
+            waves_executed = 0
+            status = "blocked_unresolved"
+
+            max_waves = 2 if base_state["infeasible_constraint"] is None else 1
+            for wave_idx in range(1, max_waves + 1):
+                waves_executed = wave_idx
+                histories = {
+                    w: [
+                        {"role": "system", "content": policy_ratchet_system_prompt(w, arm)},
+                        {
+                            "role": "user",
+                            "content": (
+                                f"Wave {wave_idx} for `{POLICY_RATCHET_WORKER_MODULES[w]}.py` (seed {seed}, arm {arm}). "
+                                "Inspect workspace and execute your required module action."
+                            ),
+                        },
+                    ]
+                    for w in workers
+                }
+                round_turns(
+                    client,
+                    events,
+                    ws,
+                    histories,
+                    workers,
+                    per_worker_fb,
+                )
+                eval_res, per_worker_fb, receipt = policy_ratchet_merge_gate(
+                    events, ws, monitor, arm, f"wave-{wave_idx}"
+                )
+                if ws.state["infeasible_constraint"] is not None and len(ws.state["escalations"]) > 0:
+                    status = "safe_escalated"
+                    break
+                if eval_res["global_green"] == 1:
+                    status = "completed"
+                    break
+
+            final_status = (
+                "INFEASIBLE_POLICY_RATCHET_SPECIFICATION_LGGR"
+                if status == "safe_escalated"
+                else eval_res["status"]
+            )
+            arm_summary = {
+                "arm": arm,
+                "status": status,
+                "waves_executed": waves_executed,
+                "final_local_green": eval_res["local_green"],
+                "final_global_green": eval_res["global_green"],
+                "final_defect": eval_res["defect"],
+                "final_horizon_weighted_drifts": eval_res["horizon_weighted_drifts"],
+                "final_max_horizon_drift": eval_res["max_horizon_drift"],
+                "final_excess_horizon_drift": eval_res["excess_horizon_drift"],
+                "final_unrevoked_incident_count": eval_res["unrevoked_incident_count"],
+                "final_ratchet_surcharge_cents": eval_res["ratchet_surcharge_cents"],
+                "final_merchant_payout_cents": eval_res["merchant_payout_cents"],
+                "final_status": final_status,
+                "final_receipt_sha256": receipt["receipt_sha256"],
+                "final_receipt": receipt,
+                "escalations": dict(ws.state["escalations"]),
+                "api_attempts": client.calls - arm_start_calls,
+                "cost_usd": str(client.spent - arm_start_spent),
+            }
+            events.emit("arm", {"seed": seed, **arm_summary})
+            arm_results.append(arm_summary)
+
+        cases.append(
+            {
+                "seed": seed,
+                "kind": base_state["kind"],
+                "arms": arm_results,
+            }
+        )
+
+    summary = {
+        "schema": "lggr.policy_ratchet_code_engineering_swarm.v1",
+        "topology": "policy_ratchet",
+        "authority_effect": "None",
+        "cases": cases,
+        "api_attempts": client.calls,
+        "charged_or_reserved_usd": str(client.spent),
+        "max_inflight_requests": client.max_inflight,
+        "concurrent_waves": client.concurrent_waves,
+        "scope": (
+            "Concurrent 3-agent multi-incident cumulative policy-ratchet drift & sunset lease revocation "
+            "Python code-engineering swarm (`pricing_ratchet` -> `tax_ratchet` -> `settlement_ratchet`) comparing "
+            "unrevoked 3-incident monotone ratchet (A), partial Incident 2 sunset revocation (B), "
+            "and full scoped sunset lease revocation across all incidents (C) with full cryptographic receipts."
+        ),
+    }
+    events.emit("summary", summary)
+    return summary
+
+
 def replay(path: str | Path) -> dict[str, Any]:
     records = [json.loads(line) for line in Path(path).read_text(encoding="utf-8").splitlines()]
     metadata = records[0]["data"]
@@ -7797,6 +8076,8 @@ def replay(path: str | Path) -> dict[str, Any]:
             summary = non_abelian_braid_campaign(client, events, config)
         elif config.get("topology") == "subgradient_pivot":
             summary = subgradient_pivot_campaign(client, events, config)
+        elif config.get("topology") == "policy_ratchet":
+            summary = policy_ratchet_campaign(client, events, config)
         else:
             summary = campaign(client, events, config)
     except RunStopped as error:
@@ -7854,6 +8135,7 @@ def main() -> None:
             "governed_relaxation",
             "non_abelian_braid",
             "subgradient_pivot",
+            "policy_ratchet",
         ],
         default="linear",
     )
@@ -7943,6 +8225,8 @@ def main() -> None:
         seeds = [12200, 12201, 12202]
     elif args.topology == "subgradient_pivot":
         seeds = [12300, 12301, 12302]
+    elif args.topology == "policy_ratchet":
+        seeds = [12400, 12401, 12402]
     else:
         seeds = [6100, 6101, 6102]
     if args.topology == "diamond":
@@ -8298,6 +8582,17 @@ def main() -> None:
         events.emit("start", {"config": config})
         client = CodeBatchClient(events, args.budget)
         summary = subgradient_pivot_campaign(client, events, config)
+    elif args.topology == "policy_ratchet":
+        config = {
+            "topology": "policy_ratchet",
+            "seeds": seeds,
+            "models": CODE_SWARM_MODELS,
+            "budget_usd": str(args.budget),
+        }
+        events = Events(events_path)
+        events.emit("start", {"config": config})
+        client = CodeBatchClient(events, args.budget)
+        summary = policy_ratchet_campaign(client, events, config)
     else:
         config = {
             "seeds": seeds,

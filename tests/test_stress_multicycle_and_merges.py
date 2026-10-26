@@ -59,6 +59,7 @@ from lggr.streaming import (
     StreamingCodebaseObligationMigrationMonitor,
     StreamingCodebaseOptionalStoppingMonitor,
     StreamingCodebasePathKernelDashboardMonitor,
+    StreamingCodebasePolicyRatchetMonitor,
     StreamingCodebasePolicyReversalMonitor,
     StreamingCodebaseReggeHolonomyMonitor,
     StreamingCodebaseReplayOrderMonitor,
@@ -6509,6 +6510,62 @@ class TestStreamingBaselineComparator(unittest.TestCase):
                 pricing_pivot_source="def quote_pivot_pricing(g):\n    return 123\n",
                 tax_pivot_source=mon.PHASE_1_TAX_PIVOT_SOURCE,
                 settlement_pivot_source=mon.PHASE_1_SETTLEMENT_PIVOT_SOURCE,
+            )
+
+    def test_policy_ratchet_codebase_cumulative_drift_and_sunset_revocation_audit(self) -> None:
+        """Verify Theorem 127: Multi-incident policy-ratchet drift & sunset lease revocation codebase audit."""
+        mon = StreamingCodebasePolicyRatchetMonitor(
+            scope_id="unit-codebase-policy-ratchet-scope",
+        )
+        obs = mon.record_three_phase_codebase_audit(
+            model_id="unit-policy-ratchet-eval-01",
+        )
+        self.assertEqual(obs["phase_1_horizon_drifts"], [4, 7, 11])
+        self.assertEqual(obs["phase_1_max_horizon_drift"], 11)
+        self.assertEqual(obs["phase_1_excess_horizon_drift"], 7)
+        self.assertEqual(obs["phase_1_unrevoked_incident_count"], 2)
+        self.assertEqual(obs["phase_1_surcharge_cents"], 11)
+        self.assertEqual(obs["phase_1_payout_cents"], 862)
+        self.assertEqual(obs["phase_1_local_green"], 1)
+        self.assertEqual(obs["phase_1_global_green"], 0)
+        self.assertEqual(obs["phase_1_defect"], -1)
+        self.assertEqual(obs["phase_1_status"], "UNREVOKED_MONOTONE_POLICY_RATCHET_LGGR")
+
+        self.assertEqual(obs["phase_2_horizon_drifts"], [4, 3, 7])
+        self.assertEqual(obs["phase_2_max_horizon_drift"], 7)
+        self.assertEqual(obs["phase_2_excess_horizon_drift"], 3)
+        self.assertEqual(obs["phase_2_unrevoked_incident_count"], 1)
+        self.assertEqual(obs["phase_2_surcharge_cents"], 5)
+        self.assertEqual(obs["phase_2_payout_cents"], 868)
+        self.assertEqual(obs["phase_2_local_green"], 1)
+        self.assertEqual(obs["phase_2_global_green"], 0)
+        self.assertEqual(obs["phase_2_defect"], -1)
+        self.assertEqual(obs["phase_2_status"], "PARTIAL_SUNSET_LEASE_REVOCATION_LGGR")
+
+        self.assertEqual(obs["phase_3_horizon_drifts"], [4, 3, 4])
+        self.assertEqual(obs["phase_3_max_horizon_drift"], 4)
+        self.assertEqual(obs["phase_3_excess_horizon_drift"], 0)
+        self.assertEqual(obs["phase_3_unrevoked_incident_count"], 0)
+        self.assertEqual(obs["phase_3_surcharge_cents"], 0)
+        self.assertEqual(obs["phase_3_payout_cents"], 873)
+        self.assertEqual(obs["phase_3_local_green"], 1)
+        self.assertEqual(obs["phase_3_global_green"], 1)
+        self.assertEqual(obs["phase_3_defect"], 0)
+        self.assertEqual(obs["phase_3_status"], "SCOPED_SUNSET_LEASE_REVOCATION_COHERENT_LGGG")
+
+        receipt = mon.current_receipt()
+        self.assertEqual(receipt["status"], "SCOPED_SUNSET_LEASE_REVOCATION_COHERENT_LGGG")
+        self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(receipt["lggr_obstruction_count"], 2)
+        self.assertEqual(receipt["lggg_coherent_count"], 1)
+        self.assertIsNotNone(receipt["policy_ratchet_drift_receipt"])
+
+        with self.assertRaises(ValidationError):
+            mon.evaluate_policy_ratchet_modules(
+                "bad-return",
+                pricing_ratchet_source="def quote_ratchet_pricing(g):\n    return 123\n",
+                tax_ratchet_source=mon.PHASE_1_TAX_RATCHET_SOURCE,
+                settlement_ratchet_source=mon.PHASE_1_SETTLEMENT_RATCHET_SOURCE,
             )
 
 
