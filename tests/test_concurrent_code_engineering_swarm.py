@@ -41,6 +41,7 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     CANONICAL_TAX_WIN_SOURCE,
     CODE_SWARM_MODELS,
     COUNCIL_PRICING_ANCHOR_SRC,
+    COUNCIL_SETTLEMENT_COLLAPSING_SRC,
     COUNCIL_SETTLEMENT_FULL_SRC,
     COUNCIL_TAX_BINARY_SRC,
     DIAMOND_SWARM_MODELS,
@@ -3555,9 +3556,14 @@ class ConcurrentCodeEngineeringSwarmTests(unittest.TestCase):
         self.assertEqual(res0["council_collision_surcharge_cents"], 10)
         self.assertEqual(res0["merchant_payout_cents"], 863)
 
-        # Partial repair: tax_council emits binary symbols [0, 0, 1], settlement_council still collapsing
+        # Partial repair: tax_council and settlement_council emit binary symbols [0, 0, 1] (S_bin=2 < K=3, surcharge=5)
+        binary_settlement_src = COUNCIL_SETTLEMENT_COLLAPSING_SRC.replace("[0, 0, 0]", "[0, 0, 1]").replace(
+            "surcharge = 10", "surcharge = 5"
+        )
         p1 = ws.tool("worker-1", "submit_module_patch", {"source_code": COUNCIL_TAX_BINARY_SRC})
         self.assertTrue(p1["accepted"])
+        p1_s = ws.tool("worker-2", "submit_module_patch", {"source_code": binary_settlement_src})
+        self.assertTrue(p1_s["accepted"])
         res1 = mon.evaluate_council_merge(
             "wave-1-partial",
             module_sources=ws.state["sources"],
@@ -3566,6 +3572,10 @@ class ConcurrentCodeEngineeringSwarmTests(unittest.TestCase):
         self.assertEqual(res1["local_green"], 1)
         self.assertEqual(res1["global_green"], 0)
         self.assertEqual(res1["defect"], -1)
+        self.assertEqual(res1["active_collision_floor"], 1)
+        self.assertEqual(res1["council_collision_surcharge_cents"], 5)
+        self.assertEqual(res1["merchant_payout_cents"], 868)
+        self.assertEqual(res1["status"], "BINARY_TAG_CODEBASE_CAPACITY_DEFICIT_LGGR")
 
         # Full repair: settlement_council emits S=3 disagreement-preserving council symbols [0, 1, 2]
         p2 = ws.tool("worker-2", "submit_module_patch", {"source_code": COUNCIL_SETTLEMENT_FULL_SRC})
@@ -3644,6 +3654,18 @@ class ConcurrentCodeEngineeringSwarmTests(unittest.TestCase):
                             "function": {
                                 "name": "submit_module_patch",
                                 "arguments": json.dumps({"source_code": COUNCIL_TAX_BINARY_SRC}),
+                            },
+                        }
+                    elif worker == "worker-2":
+                        binary_settlement_src = COUNCIL_SETTLEMENT_COLLAPSING_SRC.replace(
+                            "[0, 0, 0]", "[0, 0, 1]"
+                        ).replace("surcharge = 10", "surcharge = 5")
+                        tool_call = {
+                            "id": f"call_patch_{worker}",
+                            "type": "function",
+                            "function": {
+                                "name": "submit_module_patch",
+                                "arguments": json.dumps({"source_code": binary_settlement_src}),
                             },
                         }
                     else:

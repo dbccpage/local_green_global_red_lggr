@@ -4716,11 +4716,11 @@ theorem fiber_splitting_codebase_unassisted_reflection_and_tool_probe_audit :
 
 /-- Theorem 113 (Disagreement-Preserving Side-Channel Council `S ≥ K > 2` vs. Collapsing
     Consensus in Code-Engineering Swarms):
-    1. Universal pigeonhole side-channel capacity lower bound for `K = 3` distinct latent root causes:
-       - under a single scalar consensus tag `s : Fin 3 → Fin 1`, at least `K - 1 = 2` distinct root
-         causes collide (`s 0 = s 1 ∧ s 1 = s 2`);
-       - under a binary pass/block tag `b : Fin 3 → Fin 2`, at least two of the `3` root causes collide
-         (`b 0 = b 1 ∨ b 0 = b 2 ∨ b 1 = b 2`).
+    1. All-assignment pigeonhole side-channel capacity lower bound for `K = 3` distinct latent root causes:
+       - under a single scalar consensus tag `s0 s1 s2 : Fin 1`, at least `K - 1 = 2` distinct root
+         causes collide (`s0 = s1 ∧ s1 = s2`);
+       - under a binary pass/block tag `b0 b1 b2 : Bool`, at least two of the `3` root causes collide
+         (`b0 = b1 ∨ b0 = b2 ∨ b1 = b2`).
     2. Concrete 3-phase codebase council audit over `K = 3` latent settlement defects
        (`rebate_drift`, `jurisdiction_mismatch`, `fee_tier_overflow`, `5` cents surcharge per collided cause):
        - Phase 1 (Collapsing consensus `S_cons = 1`, disjoint PoE specialist supports `(16, 0)` and `(0, 16)`):
