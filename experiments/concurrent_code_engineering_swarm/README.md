@@ -133,17 +133,34 @@ Executed across 3 concurrent LLM worker models (`max_inflight_requests = 3`, `50
 | `9601` | `infeasible_coalitional_fee_floor_lock` | **A / B / C** | All policies | `safe_escalated` | `(0, 0, 0)` | `(-1, 0, -1)` | 1 | 6 | `$0.0058–$0.0062` |
 | `9602` | `clean_coalitional_control` | **A / B / C** | All policies | `completed` | `(0, 0, 0)` | `(0, 0, 0)` | 0 | 0 | `$0.000000` |
 
+## Mayer-Vietoris Disconnected Overlap Coboundary Reconciliation (`--topology mayer_vietoris`, `evidence/mayer_vietoris_pilot_run/summary.json`)
+
+The package also models Mayer-Vietoris disconnected overlap coboundary reconciliation (`--topology mayer_vietoris`) across `pricing_mv.py`, `tax_mv.py`, and `settlement_mv.py` partitioned into two overlapping subswarm covers $U = \{w_0 \to u \to w_1\}$ and $V = \{w_0 \to v \to w_1\}$ with disconnected interface overlap $U \cap V = \{w_0, w_1\}$ ($w_0 = \text{'usd\_anchor'}$ at `0`, $w_1 = \text{'eur\_clearing'}$ at target `1080`), audited by `StreamingCodebaseMayerVietorisMonitor` (`StreamingMayerVietorisMonitor` + `StreamingMayerVietorisReconciliationMonitor` + `StreamingCodebaseInterfaceMergeMonitor` + `StreamingFiberMonitor`):
+- Both subswarms $U$ and $V$ are open tree paths with zero internal cycles (`u_locally_exact = True`, `v_locally_exact = True`, `local_green = 1`).
+- On `seed 9702` (`disconnected_overlap_coboundary_jump`), `tax_mv` on $U$ sets `'eur_clearing_delta_cents': 210` ($f_U(w_1) = 1110$) and `settlement_mv` on $V$ sets `'clearing_offset_cents': 150` ($f_V(w_1) = 1050$), producing connecting coboundary spread $\Delta_{\mathrm{MV}} = |f_U(w_1) - f_V(w_1)| = 60 > 0$ (`global_green = 0`, $\Delta_E = -1$).
+
+Executed across 3 concurrent LLM worker models (`max_inflight_requests = 3`, `50` live API attempts, `$0.059762` total cost):
+
+| Seed | Scenario Kind | Arm | Feedback Policy | Outcome | $f_U(w_1)$ | $f_V(w_1)$ | Spread $\Delta_{\mathrm{MV}}$ | Waves Run | API Attempts | Cost (USD) |
+| :--- | :--- | :---: | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| `9700` | `infeasible_mayer_vietoris_clearing_lock` | **A / B / C** | All policies | `safe_escalated` | `1110` | `1050` | `60` | 1 | 6 | `$0.0065–$0.0075` |
+| `9701` | `clean_mayer_vietoris_control` | **A / B / C** | All policies | `completed` | `1080` | `1080` | `0` | 0 | 0 | `$0.000000` |
+| `9702` | `disconnected_overlap_coboundary_jump` | **A** | `isolated_subswarm_exactness_gate` | `blocked_unresolved` | `1110` | `1050` | `60` | 2 | 13 | `$0.016320` |
+| `9702` | `disconnected_overlap_coboundary_jump` | **B** | `one_sided_subswarm_v_adjustment` | `blocked_unresolved` | `1110` | `1080` | `30` | 2 | 13 | `$0.015792` |
+| `9702` | `disconnected_overlap_coboundary_jump` | **C** | `explicit_lggr_mayer_vietoris_coboundary_directive` | **`completed`** | **`1080`** | **`1080`** | **`0`** | **1** | **6** | **`$0.006775`** |
+
 ## Offline Verification & Live Execution
 
 ```powershell
 # Run unit, tamper, and deterministic replay tests (no API calls)
 python -m unittest tests.test_concurrent_code_engineering_swarm -v
 
-# Replay archived live 3-agent linear, 4-agent diamond, 3-agent catalyst, 3-agent stateful DFA, 3-agent replay-order, and 3-agent coalitional evidence (no API calls)
+# Replay archived live 3-agent linear, 4-agent diamond, 3-agent catalyst, 3-agent stateful DFA, 3-agent replay-order, 3-agent coalitional, and 3-agent Mayer-Vietoris evidence (no API calls)
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/diamond_pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/catalyst_pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/dfa_pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/replay_pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/coalitional_pilot_run/events.jsonl
+python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/mayer_vietoris_pilot_run/events.jsonl
 ```

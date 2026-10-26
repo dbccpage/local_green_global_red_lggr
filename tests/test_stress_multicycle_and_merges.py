@@ -40,6 +40,7 @@ from lggr.streaming import (
     StreamingCodebaseCatalystEvolutionMonitor,
     StreamingCodebaseCoalitionalMonitor,
     StreamingCodebaseInterfaceMergeMonitor,
+    StreamingCodebaseMayerVietorisMonitor,
     StreamingCodebaseReplayOrderMonitor,
     StreamingConcurrentLeaseOverlapMonitor,
     StreamingContextualSheafMonitor,
@@ -5174,6 +5175,57 @@ class TestStreamingBaselineComparator(unittest.TestCase):
 
         receipt = mon.current_receipt()
         self.assertEqual(receipt["status"], "CODEBASE_COALITIONAL_SHAPLEY_COHERENT_LGGG")
+        self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(receipt["lggr_obstruction_count"], 2)
+        self.assertEqual(receipt["lggg_coherent_count"], 1)
+
+    def test_mayer_vietoris_codebase_disconnected_overlap_and_coboundary_audit(self) -> None:
+        """Verify Theorem 100: Mayer-Vietoris codebase disconnected overlap coboundary reconciliation."""
+        mon = StreamingCodebaseMayerVietorisMonitor(
+            scope_id="unit-codebase-mayer-vietoris-scope",
+        )
+        obs = mon.record_three_phase_codebase_mayer_vietoris_audit(
+            "codebase-mv-eval-01",
+        )
+        self.assertEqual(obs["phase_1_fu_w1_cents"], 1110)
+        self.assertEqual(obs["phase_1_fv_w1_cents"], 1050)
+        self.assertEqual(obs["phase_1_coboundary_spread_cents"], 60)
+        self.assertEqual(obs["phase_1_local_green"], 1)
+        self.assertEqual(obs["phase_1_global_green"], 0)
+        self.assertEqual(obs["phase_1_defect"], -1)
+        self.assertEqual(obs["phase_1_status"], "MAYER_VIETORIS_DISCONNECTED_OVERLAP_OBSTRUCTION_LGGR")
+        self.assertEqual(
+            obs["phase_1_directives"]["worker-0"]["action"],
+            "HOLD_ANCHOR_POTENTIAL_ZERO",
+        )
+        self.assertEqual(
+            obs["phase_1_directives"]["worker-1"]["action"],
+            "RECONCILE_SUBSWARM_U_COBOUNDARY",
+        )
+        self.assertEqual(
+            obs["phase_1_directives"]["worker-2"]["action"],
+            "RECONCILE_SUBSWARM_V_COBOUNDARY",
+        )
+
+        self.assertEqual(obs["phase_2_fu_w1_cents"], 1110)
+        self.assertEqual(obs["phase_2_fv_w1_cents"], 1080)
+        self.assertEqual(obs["phase_2_coboundary_spread_cents"], 30)
+        self.assertEqual(obs["phase_2_local_green"], 1)
+        self.assertEqual(obs["phase_2_global_green"], 0)
+        self.assertEqual(obs["phase_2_defect"], -1)
+        self.assertEqual(obs["phase_2_status"], "RESIDUAL_MAYER_VIETORIS_COBOUNDARY_SPREAD_LGGR")
+
+        self.assertEqual(obs["phase_3_fu_w1_cents"], 1080)
+        self.assertEqual(obs["phase_3_fv_w1_cents"], 1080)
+        self.assertEqual(obs["phase_3_coboundary_spread_cents"], 0)
+        self.assertTrue(obs["phase_3_union_globally_exact"])
+        self.assertEqual(obs["phase_3_local_green"], 1)
+        self.assertEqual(obs["phase_3_global_green"], 1)
+        self.assertEqual(obs["phase_3_defect"], 0)
+        self.assertEqual(obs["phase_3_status"], "CODEBASE_MAYER_VIETORIS_RECONCILED_LGGG")
+
+        receipt = mon.current_receipt()
+        self.assertEqual(receipt["status"], "CODEBASE_MAYER_VIETORIS_RECONCILED_LGGG")
         self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
         self.assertEqual(receipt["lggr_obstruction_count"], 2)
         self.assertEqual(receipt["lggg_coherent_count"], 1)
