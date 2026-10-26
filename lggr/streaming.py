@@ -28091,4 +28091,485 @@ class StreamingCodebaseSixRoleDeduplicationMonitor:
         return json_value({**body, "receipt_sha256": digest(body)})
 
 
+class StreamingCodebasePathKernelDashboardMonitor:
+    """Online codebase stage-vs-E2E path-kernel and 4-tuple dashboard adequacy monitor (Theorem 115).
+
+    Composes ``StreamingPathKernelMonitor``, ``StreamingDashboardAdequacyMonitor``,
+    ``StreamingStageVsE2EIntegrationMonitor``, ``StreamingCodebaseInterfaceMergeMonitor``,
+    and ``StreamingFiberMonitor`` across a 3-module concurrent code-engineering workspace
+    (``pricing_kernel.py``, ``tax_kernel.py``, ``settlement_kernel.py``).
+
+    Models a 2-stage settlement pipeline over 4 composite trajectories
+    ``c_1 = s2_1 * s1_1, c_2 = s2_2 * s1_1, c_3 = s2_1 * s1_2, c_4 = s2_2 * s1_2``
+    with stage-1 verdicts ``(1, 0)`` (``Z1 = 1``) and stage-2 verdicts ``(1, 1)`` (``Z2 = 2``,
+    factored boundary product ``Z2 * Z1 = 2``):
+      - ``pricing_kernel(gross_cents, discount_bps, rebate_cents)``:
+        Emits ``net_cents = 900`` and stage-1 segment verdicts ``[1, 0]``.
+      - ``tax_kernel(pricing_quote, tax_rate_bps)``:
+        Emits ``tax_cents = 180``, stage-2 segment verdicts ``[1, 1]``, and
+        ``allow_pgd_fallback``. In Phase 1, ``allow_pgd_fallback = True`` produces a false-green
+        PGD pass on ``c_3`` (``n_pos = 1``) that cancels the NGD failure on ``c_2`` (``n_neg = 1``)
+        under a 3-tuple pass-rate dashboard (``Z_E = 2 = Z2 * Z1``, ``egd_count = 2``). In Phases 2
+        and 3, ``allow_pgd_fallback = False`` disables the false-green PGD fallback (``n_pos = 0``).
+      - ``settlement_kernel(pricing_quote, tax_quote, fee_bps)``:
+        Emits ``fee_cents = 27``, ``composite_e2e_verdicts``, ``four_tuple_dashboard_enabled``,
+        and ``kernel_discrepancy_surcharge_cents`` (``5`` cents per pointwise disagreement ``egd_count``).
+        In Phase 1, ``composite_e2e_verdicts = [1, 0, 1, 0]`` (``egd_count = 2``, ``surcharge = 10``,
+        ``payout = 863``). In Phase 2, ``composite_e2e_verdicts = [1, 0, 0, 0]`` exposes the
+        unrepaired NGD regression (``Z_E = 1 < 2``, ``r_e = -1``, ``egd_count = 1``, ``surcharge = 5``,
+        ``payout = 868``). In Phase 3, boundary repair sets ``composite_e2e_verdicts = [1, 1, 0, 0]``
+        and ``four_tuple_dashboard_enabled = True`` (``Z_E = 2 = Z2 * Z1``, ``r_e = 0``, ``egd_count = 0``,
+        ``surcharge = 0``, ``873 + 27 + 180 = 1080``).
+    """
+
+    MODULE_NAMES: tuple[str, ...] = ("pricing_kernel", "tax_kernel", "settlement_kernel")
+    WORKER_ROLES: dict[str, str] = {
+        "worker-0": "pricing_kernel",
+        "worker-1": "tax_kernel",
+        "worker-2": "settlement_kernel",
+    }
+
+    DEFAULT_PRICING_SOURCE: str = (
+        "def pricing_kernel(gross_cents: int, discount_bps: int, rebate_cents: int) -> dict:\n"
+        "    gross = int(gross_cents)\n"
+        "    bps_disc = (gross * int(discount_bps)) // 10000\n"
+        "    rebate = int(rebate_cents)\n"
+        "    total_disc = bps_disc + rebate\n"
+        "    net = gross - total_disc\n"
+        "    return {\n"
+        "        'gross_cents': gross,\n"
+        "        'discount_cents': total_disc,\n"
+        "        'net_cents': net,\n"
+        "        'stage1_verdicts': [1, 0],\n"
+        "    }\n"
+    )
+
+    DEFAULT_TAX_MASKED_SOURCE: str = (
+        "def tax_kernel(pricing_quote: dict, tax_rate_bps: int) -> dict:\n"
+        "    net = int(pricing_quote['net_cents'])\n"
+        "    tax_cents = (net * int(tax_rate_bps)) // 10000\n"
+        "    return {\n"
+        "        'taxable_base_cents': net,\n"
+        "        'tax_cents': tax_cents,\n"
+        "        'gross_after_tax_cents': net + tax_cents,\n"
+        "        'stage2_verdicts': [1, 1],\n"
+        "        'allow_pgd_fallback': True,\n"
+        "    }\n"
+    )
+
+    DEFAULT_TAX_NO_FALLBACK_SOURCE: str = (
+        "def tax_kernel(pricing_quote: dict, tax_rate_bps: int) -> dict:\n"
+        "    net = int(pricing_quote['net_cents'])\n"
+        "    tax_cents = (net * int(tax_rate_bps)) // 10000\n"
+        "    return {\n"
+        "        'taxable_base_cents': net,\n"
+        "        'tax_cents': tax_cents,\n"
+        "        'gross_after_tax_cents': net + tax_cents,\n"
+        "        'stage2_verdicts': [1, 1],\n"
+        "        'allow_pgd_fallback': False,\n"
+        "    }\n"
+    )
+
+    DEFAULT_SETTLEMENT_MASKED_SOURCE: str = (
+        "def settlement_kernel(pricing_quote: dict, tax_quote: dict, fee_bps: int) -> dict:\n"
+        "    net = int(pricing_quote['net_cents'])\n"
+        "    tax = int(tax_quote['tax_cents'])\n"
+        "    fee_cents = (net * int(fee_bps)) // 10000\n"
+        "    composite_e2e_verdicts = [1, 0, 1, 0]\n"
+        "    four_tuple_dashboard_enabled = False\n"
+        "    surcharge = 10\n"
+        "    payout = net - fee_cents - surcharge\n"
+        "    return {\n"
+        "        'fee_cents': fee_cents,\n"
+        "        'merchant_payout_cents': payout,\n"
+        "        'kernel_discrepancy_surcharge_cents': surcharge,\n"
+        "        'gross_collected_cents': net + tax,\n"
+        "        'total_accounted_cents': payout + fee_cents + tax,\n"
+        "        'composite_e2e_verdicts': composite_e2e_verdicts,\n"
+        "        'four_tuple_dashboard_enabled': four_tuple_dashboard_enabled,\n"
+        "    }\n"
+    )
+
+    DEFAULT_SETTLEMENT_NGD_SOURCE: str = (
+        "def settlement_kernel(pricing_quote: dict, tax_quote: dict, fee_bps: int) -> dict:\n"
+        "    net = int(pricing_quote['net_cents'])\n"
+        "    tax = int(tax_quote['tax_cents'])\n"
+        "    fee_cents = (net * int(fee_bps)) // 10000\n"
+        "    composite_e2e_verdicts = [1, 0, 0, 0]\n"
+        "    four_tuple_dashboard_enabled = False\n"
+        "    surcharge = 5\n"
+        "    payout = net - fee_cents - surcharge\n"
+        "    return {\n"
+        "        'fee_cents': fee_cents,\n"
+        "        'merchant_payout_cents': payout,\n"
+        "        'kernel_discrepancy_surcharge_cents': surcharge,\n"
+        "        'gross_collected_cents': net + tax,\n"
+        "        'total_accounted_cents': payout + fee_cents + tax,\n"
+        "        'composite_e2e_verdicts': composite_e2e_verdicts,\n"
+        "        'four_tuple_dashboard_enabled': four_tuple_dashboard_enabled,\n"
+        "    }\n"
+    )
+
+    DEFAULT_SETTLEMENT_REPAIRED_SOURCE: str = (
+        "def settlement_kernel(pricing_quote: dict, tax_quote: dict, fee_bps: int) -> dict:\n"
+        "    net = int(pricing_quote['net_cents'])\n"
+        "    tax = int(tax_quote['tax_cents'])\n"
+        "    fee_cents = (net * int(fee_bps)) // 10000\n"
+        "    composite_e2e_verdicts = [1, 1, 0, 0]\n"
+        "    four_tuple_dashboard_enabled = True\n"
+        "    surcharge = 0\n"
+        "    payout = net - fee_cents - surcharge\n"
+        "    return {\n"
+        "        'fee_cents': fee_cents,\n"
+        "        'merchant_payout_cents': payout,\n"
+        "        'kernel_discrepancy_surcharge_cents': surcharge,\n"
+        "        'gross_collected_cents': net + tax,\n"
+        "        'total_accounted_cents': payout + fee_cents + tax,\n"
+        "        'composite_e2e_verdicts': composite_e2e_verdicts,\n"
+        "        'four_tuple_dashboard_enabled': four_tuple_dashboard_enabled,\n"
+        "    }\n"
+    )
+
+    def __init__(self, *, scope_id: str = "streaming-codebase-path-kernel-scope") -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.stage_vs_e2e_monitor = StreamingStageVsE2EIntegrationMonitor(
+            scope_id=f"{self.scope_id}-stage-vs-e2e"
+        )
+        self.fiber_monitor = StreamingFiberMonitor()
+        self.evaluations: list[dict[str, Any]] = []
+        self.three_phase_audits: list[dict[str, Any]] = []
+
+    def evaluate_path_kernel_merge(
+        self,
+        evaluation_id: str,
+        *,
+        module_sources: Mapping[str, str],
+        local_test_results: Mapping[str, bool],
+        infeasible_constraint: str | None = None,
+        model_id: str = "deterministic",
+    ) -> dict[str, Any]:
+        """Evaluate a 3-module path-kernel and 4-tuple dashboard settlement merge wave."""
+        eval_id = text(evaluation_id, "evaluation_id")
+        mid = text(model_id, "model_id")
+        if not isinstance(module_sources, Mapping):
+            raise ValidationError("module_sources must be a mapping")
+        if not isinstance(local_test_results, Mapping):
+            raise ValidationError("local_test_results must be a mapping")
+
+        compiled: dict[str, Callable[..., Any]] = {}
+        for mod_name in self.MODULE_NAMES:
+            if mod_name not in module_sources:
+                raise ValidationError(f"missing module source for {mod_name}")
+            src = text(module_sources[mod_name], f"module_sources[{mod_name}]")
+            ns = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(mod_name, src)
+            fn = ns.get(mod_name)
+            if not callable(fn):
+                raise ValidationError(f"module {mod_name} did not define callable {mod_name}()")
+            compiled[mod_name] = fn
+
+        gross_cents = 1000
+        discount_bps = 500
+        rebate_cents = 50
+        tax_rate_bps = 2000
+        fee_bps = 300
+
+        p_quote = compiled["pricing_kernel"](gross_cents, discount_bps, rebate_cents)
+        t_quote = compiled["tax_kernel"](p_quote, tax_rate_bps)
+        s_quote = compiled["settlement_kernel"](p_quote, t_quote, fee_bps)
+
+        if (
+            not isinstance(p_quote, Mapping)
+            or not isinstance(t_quote, Mapping)
+            or not isinstance(s_quote, Mapping)
+        ):
+            raise ValidationError("all 3 path-kernel modules must return dictionary records")
+
+        raw_e2e = s_quote.get("composite_e2e_verdicts", [])
+        if (
+            not isinstance(raw_e2e, list)
+            or len(raw_e2e) != 4
+            or any(isinstance(v, bool) or v not in (0, 1) for v in raw_e2e)
+        ):
+            e2e_verdicts = [1, 0, 1, 0]
+        else:
+            e2e_verdicts = [int(v) for v in raw_e2e]
+
+        allow_pgd_fallback = bool(t_quote.get("allow_pgd_fallback", True))
+        four_tuple_enabled = bool(s_quote.get("four_tuple_dashboard_enabled", False))
+
+        pk_mon = StreamingPathKernelMonitor(scope_id=f"{self.scope_id}-{eval_id}-pk")
+        pk_mon.add_stage1_segment("s1_1", "src", "bnd", 1, 1)
+        pk_mon.add_stage1_segment("s1_2", "src", "bnd", 1, 0)
+        pk_mon.add_stage2_segment("s2_1", "bnd", "tgt", 1, 1)
+        pk_mon.add_stage2_segment("s2_2", "bnd", "tgt", 1, 1)
+
+        dash_mon = StreamingDashboardAdequacyMonitor(scope_id=f"{self.scope_id}-{eval_id}-dash")
+        pairs = [("s1_1", "s2_1", 1, 1), ("s1_1", "s2_2", 1, 1), ("s1_2", "s2_1", 0, 1), ("s1_2", "s2_2", 0, 1)]
+        for idx, ((s1_id, s2_id, e1, e2), eg) in enumerate(zip(pairs, e2e_verdicts)):
+            cid = f"c_{idx + 1}"
+            pk_mon.observe_composite(cid, s1_id, s2_id, eg)
+            dash_mon.record_trace(cid, e1, e2, eg)
+
+        pk_rec = pk_mon.audit_kernel_composition("src", "tgt")
+        dash_rec = dash_mon.get_receipt()
+
+        n_neg_ngd = int(dash_rec["n_neg_ngd"])
+        n_pos_pgd = int(dash_rec["n_pos_pgd"])
+        egd_count = int(dash_rec["disagreement_count_m"])
+        evaluator_residual_re = int(pk_rec["evaluator_residual_re"])
+        global_kernel_ze = int(pk_rec["global_evaluated_kernel"])
+        factored_kernel_prod = int(pk_rec["factored_boundary_kernel_sum"])
+
+        net_cents = int(p_quote.get("net_cents", -1))
+        tax_cents = int(t_quote.get("tax_cents", -1))
+        fee_cents = int(s_quote.get("fee_cents", -1))
+        payout_cents = int(s_quote.get("merchant_payout_cents", -1))
+        surcharge_cents = int(s_quote.get("kernel_discrepancy_surcharge_cents", -1))
+        gross_collected = int(s_quote.get("gross_collected_cents", -1))
+        total_accounted = int(s_quote.get("total_accounted_cents", -1))
+
+        expected_net = 900
+        expected_tax = (expected_net * tax_rate_bps) // 10000
+        expected_fee = (expected_net * fee_bps) // 10000
+        expected_payout = expected_net - expected_fee
+        expected_gross = expected_net + expected_tax
+
+        settlement_conserved = (
+            net_cents == expected_net
+            and tax_cents == expected_tax
+            and fee_cents == expected_fee
+            and payout_cents == expected_payout
+            and surcharge_cents == 0
+            and gross_collected == expected_gross
+            and total_accounted == expected_gross
+            and payout_cents + fee_cents + tax_cents == expected_gross
+        )
+
+        all_local_pass = all(bool(local_test_results.get(m, False)) for m in self.MODULE_NAMES)
+        local_green = 1 if all_local_pass else 0
+        global_green = (
+            1
+            if (
+                local_green == 1
+                and infeasible_constraint is None
+                and not allow_pgd_fallback
+                and four_tuple_enabled
+                and e2e_verdicts == [1, 1, 0, 0]
+                and egd_count == 0
+                and n_neg_ngd == 0
+                and n_pos_pgd == 0
+                and evaluator_residual_re == 0
+                and settlement_conserved
+            )
+            else 0
+        )
+        defect = global_green - local_green
+
+        mismatches: list[str] = []
+        if infeasible_constraint is not None:
+            mismatches.append(f"infeasible_constraint:{infeasible_constraint}")
+        if allow_pgd_fallback:
+            mismatches.append("pgd_fallback_enabled:allow_pgd_fallback=True_masks_ngd_via_cancellation")
+        if egd_count > 0 or e2e_verdicts != [1, 1, 0, 0]:
+            mismatches.append(
+                f"path_kernel_disagreement:e2e_verdicts={e2e_verdicts}:egd_count={egd_count}:n_neg={n_neg_ngd}:n_pos={n_pos_pgd}"
+            )
+        if not four_tuple_enabled:
+            mismatches.append("three_tuple_dashboard_only:four_tuple_dashboard_enabled=False")
+        if surcharge_cents != 0 or not settlement_conserved:
+            mismatches.append(
+                f"kernel_discrepancy_surcharge_or_conservation_breach:surcharge={surcharge_cents}:payout={payout_cents}:expected={expected_payout}"
+            )
+
+        if global_green == 1:
+            status = "CODEBASE_PATH_KERNEL_DASHBOARD_COHERENT_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        elif infeasible_constraint is not None:
+            status = "INFEASIBLE_PATH_KERNEL_DASHBOARD_SPECIFICATION_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif not allow_pgd_fallback and egd_count == 1 and evaluator_residual_re == -1:
+            status = "NGD_INTEGRATION_REGRESSION_CODEBASE_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "CANCELLATION_MASKED_STAGE_KERNEL_CODEBASE_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+
+        directives: dict[str, str] = {}
+        for worker, mod_name in self.WORKER_ROLES.items():
+            if global_green == 1:
+                directives[worker] = f"HOLD_{mod_name.upper()}_CANONICAL"
+            elif infeasible_constraint is not None:
+                directives[worker] = (
+                    f"ESCALATE_INFEASIBLE_CONSTRAINT:{infeasible_constraint}"
+                )
+            elif mod_name == "pricing_kernel":
+                directives[worker] = (
+                    "ANCHOR_PRICING_KERNEL:preserve net_cents=900 and stage1_verdicts=[1, 0]"
+                )
+            elif mod_name == "tax_kernel":
+                directives[worker] = (
+                    "REPAIR_TAX_KERNEL:set allow_pgd_fallback=False to prevent false-green PGD cancellation masking"
+                )
+            else:
+                directives[worker] = (
+                    "REPAIR_SETTLEMENT_KERNEL:set composite_e2e_verdicts=[1, 1, 0, 0], four_tuple_dashboard_enabled=True, and kernel_discrepancy_surcharge_cents=0"
+                )
+
+        self.fiber_monitor.observe(
+            eval_id,
+            {
+                "local_green": local_green,
+                "egd_count": egd_count,
+                "evaluator_residual_re": evaluator_residual_re,
+            },
+            {
+                "global_green": global_green,
+                "settlement_conserved": settlement_conserved,
+                "status": status,
+            },
+        )
+
+        rec: dict[str, Any] = json_value(
+            {
+                "evaluation_id": eval_id,
+                "model_id": mid,
+                "local_green": local_green,
+                "global_green": global_green,
+                "defect": defect,
+                "status": status,
+                "contract_status": contract_status,
+                "composite_e2e_verdicts": e2e_verdicts,
+                "allow_pgd_fallback": allow_pgd_fallback,
+                "four_tuple_dashboard_enabled": four_tuple_enabled,
+                "factored_stage_kernel_product": factored_kernel_prod,
+                "global_evaluated_kernel": global_kernel_ze,
+                "evaluator_residual_re": evaluator_residual_re,
+                "n_neg_ngd": n_neg_ngd,
+                "n_pos_pgd": n_pos_pgd,
+                "egd_count": egd_count,
+                "net_cents": net_cents,
+                "tax_cents": tax_cents,
+                "fee_cents": fee_cents,
+                "merchant_payout_cents": payout_cents,
+                "kernel_discrepancy_surcharge_cents": surcharge_cents,
+                "gross_collected_cents": gross_collected,
+                "total_accounted_cents": total_accounted,
+                "settlement_conserved": settlement_conserved,
+                "path_kernel_receipt": pk_rec,
+                "dashboard_receipt": dash_rec,
+                "mismatches": mismatches,
+                "compact_role_directives": directives,
+            }
+        )
+        self.evaluations.append(rec)
+        return rec
+
+    def evaluate_three_phase_path_kernel_audit(
+        self,
+        audit_id: str,
+        *,
+        model_id: str = "deterministic",
+    ) -> dict[str, Any]:
+        """Run the canonical 3-phase codebase path-kernel and dashboard adequacy audit (Theorem 115)."""
+        aid = text(audit_id, "audit_id")
+        mid = text(model_id, "model_id")
+        local_ok = {m: True for m in self.MODULE_NAMES}
+
+        p1 = self.evaluate_path_kernel_merge(
+            f"{aid}::phase1_cancellation_masked",
+            module_sources={
+                "pricing_kernel": self.DEFAULT_PRICING_SOURCE,
+                "tax_kernel": self.DEFAULT_TAX_MASKED_SOURCE,
+                "settlement_kernel": self.DEFAULT_SETTLEMENT_MASKED_SOURCE,
+            },
+            local_test_results=local_ok,
+            model_id=mid,
+        )
+        p2 = self.evaluate_path_kernel_merge(
+            f"{aid}::phase2_unmasked_ngd_regression",
+            module_sources={
+                "pricing_kernel": self.DEFAULT_PRICING_SOURCE,
+                "tax_kernel": self.DEFAULT_TAX_NO_FALLBACK_SOURCE,
+                "settlement_kernel": self.DEFAULT_SETTLEMENT_NGD_SOURCE,
+            },
+            local_test_results=local_ok,
+            model_id=mid,
+        )
+        p3 = self.evaluate_path_kernel_merge(
+            f"{aid}::phase3_repaired_four_tuple_kernel",
+            module_sources={
+                "pricing_kernel": self.DEFAULT_PRICING_SOURCE,
+                "tax_kernel": self.DEFAULT_TAX_NO_FALLBACK_SOURCE,
+                "settlement_kernel": self.DEFAULT_SETTLEMENT_REPAIRED_SOURCE,
+            },
+            local_test_results=local_ok,
+            model_id=mid,
+        )
+
+        stage_e2e_rec = self.stage_vs_e2e_monitor.evaluate_stage_vs_e2e(f"{aid}::stage_vs_e2e")
+
+        audit_rec = json_value(
+            {
+                "audit_id": aid,
+                "model_id": mid,
+                "phase_1_egd_count": p1["egd_count"],
+                "phase_1_evaluator_residual_re": p1["evaluator_residual_re"],
+                "phase_1_surcharge_cents": p1["kernel_discrepancy_surcharge_cents"],
+                "phase_1_payout_cents": p1["merchant_payout_cents"],
+                "phase_1_local_green": p1["local_green"],
+                "phase_1_global_green": p1["global_green"],
+                "phase_1_defect": p1["defect"],
+                "phase_1_status": p1["status"],
+                "phase_2_egd_count": p2["egd_count"],
+                "phase_2_evaluator_residual_re": p2["evaluator_residual_re"],
+                "phase_2_surcharge_cents": p2["kernel_discrepancy_surcharge_cents"],
+                "phase_2_payout_cents": p2["merchant_payout_cents"],
+                "phase_2_local_green": p2["local_green"],
+                "phase_2_global_green": p2["global_green"],
+                "phase_2_defect": p2["defect"],
+                "phase_2_status": p2["status"],
+                "phase_3_egd_count": p3["egd_count"],
+                "phase_3_evaluator_residual_re": p3["evaluator_residual_re"],
+                "phase_3_surcharge_cents": p3["kernel_discrepancy_surcharge_cents"],
+                "phase_3_payout_cents": p3["merchant_payout_cents"],
+                "phase_3_local_green": p3["local_green"],
+                "phase_3_global_green": p3["global_green"],
+                "phase_3_defect": p3["defect"],
+                "phase_3_status": p3["status"],
+                "stage_vs_e2e_audit": stage_e2e_rec,
+            }
+        )
+        self.three_phase_audits.append(audit_rec)
+        return audit_rec
+
+    def current_receipt(self) -> dict[str, Any]:
+        if not self.evaluations:
+            raise ValidationError("at least one codebase path-kernel evaluation must be recorded")
+        n = len(self.evaluations)
+        lggr_count = sum(1 for e in self.evaluations if e["defect"] == -1)
+        lggg_count = sum(1 for e in self.evaluations if e["global_green"] == 1)
+        last = self.evaluations[-1]
+
+        body: dict[str, Any] = {
+            "schema": "lggr.online_codebase_path_kernel_dashboard.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": last["status"],
+            "contract_status": last["contract_status"],
+            "evaluation_count": n,
+            "lggr_obstruction_count": lggr_count,
+            "lggg_coherent_count": lggg_count,
+            "stage_vs_e2e_receipt": (
+                self.stage_vs_e2e_monitor.current_receipt()
+                if self.stage_vs_e2e_monitor.evaluations
+                else None
+            ),
+            "fiber_receipt": self.fiber_monitor.get_receipt(),
+            "three_phase_audits": self.three_phase_audits,
+            "evaluations": self.evaluations,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+
 

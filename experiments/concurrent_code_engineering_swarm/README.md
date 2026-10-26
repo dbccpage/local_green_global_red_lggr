@@ -362,13 +362,28 @@ Executed across 3 concurrent LLM worker models (`max_inflight_requests = 3`, `54
 | `11100` | `repairable_six_role_deduplication_defect` | **C** | `explicit_lggr_six_role_deduplication_directive` | **`completed`** | **`0`** | **`0`** | **`0`** | **2** | **12** | **`$0.015754`** |
 | `11101` | `infeasible_six_role_deduplication_lock` | **A / B / C** | All policies | `safe_escalated` | `1` | `3` | `20` | 1 | 18 | `$0.022603` |
 
+## 22. 3-Agent Stage-Level Unit Tests vs. End-to-End Path-Kernel & Dashboard Adequacy Campaign (`--topology path_kernel`)
+
+In `--topology path_kernel`, 3 concurrent LLM workers edit `pricing_kernel.py`, `tax_kernel.py`, and `settlement_kernel.py` over 4 composite trajectories $c_{i,j} = s_{2,j} \circ s_{1,i}$ (`stage1_verdicts = [1, 0]`, `stage2_verdicts = [1, 1]`, factored boundary product $Z_2 Z_1 = 2 \cdot 1 = 2$, 5 cents surcharge per pointwise EGD disagreement $\mathrm{egd} = n_- + n_+$):
+- On `seed 11200` (`repairable_path_kernel_dashboard_defect`), `tax_kernel.py` initially enables `allow_pgd_fallback = True` and `settlement_kernel.py` reports a 3-tuple pass-rate dashboard with `composite_e2e_verdicts = [1, 0, 1, 0]` (`Z_E = 2 = Z_2 Z_1`, `evaluator_residual_re = 0`, masking `n_neg = 1` and `n_pos = 1`, `egd_count = 2`, `kernel_discrepancy_surcharge_cents = 10`, `payout = 863 != 873`, `local_green = 1`, `global_green = 0`, $\Delta_E = -1$).
+- On `seed 11201` (`infeasible_path_kernel_dashboard_lock`), legacy constraints lock `tax_kernel.py` and `settlement_kernel.py` to PGD fallback cancellation masking while requiring 4-tuple dashboard adequacy and zero EGD, requiring safe escalation.
+
+Executed across 3 concurrent LLM worker models (`max_inflight_requests = 3`, `48` live API attempts, `$0.053831` total cost):
+
+| Seed | Scenario Kind | Arm | Feedback Policy | Outcome | `egd_count` | `r_e` | `surcharge` | Waves Run | API Attempts | Cost (USD) |
+| :--- | :--- | :---: | :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
+| `11200` | `repairable_path_kernel_dashboard_defect` | **A** | `three_tuple_masked_stage_kernel_gate` | `blocked_unresolved` | `2` | `0` | `10` | 2 | 12 | `$0.012735` |
+| `11200` | `repairable_path_kernel_dashboard_defect` | **B** | `disable_pgd_fallback_unmasked_ngd` | `blocked_unresolved` | `1` | `-1` | `5` | 2 | 12 | `$0.012984` |
+| `11200` | `repairable_path_kernel_dashboard_defect` | **C** | `explicit_lggr_path_kernel_dashboard_directive` | **`completed`** | **`0`** | **`0`** | **`0`** | **1** | **6** | **`$0.007013`** |
+| `11201` | `infeasible_path_kernel_dashboard_lock` | **A / B / C** | All policies | `safe_escalated` | `2` | `0` | `10` | 1 | 18 | `$0.021099` |
+
 ## Offline Verification & Live Execution
 
 ```powershell
 # Run unit, tamper, and deterministic replay tests (no API calls)
 python -m unittest tests.test_concurrent_code_engineering_swarm -v
 
-# Replay archived live 3-agent linear, 4-agent diamond, 3-agent catalyst, 3-agent stateful DFA, 3-agent replay-order, 3-agent coalitional, 3-agent Mayer-Vietoris, 3-agent windowed-drift, 3-agent optional-stopping, 3-agent CPTP channel, 3-agent Regge holonomy, 3-agent k-induction, 3-agent Jacobian, 3-agent boundary-quorum, 3-agent lease-overlap, 3-agent contextual-sheaf, 3-agent watcher-dropout, 3-agent policy-reversal, 3-agent fiber-splitting, 3-agent disagreement-council, and 3-agent six-role deduplication evidence (no API calls)
+# Replay archived live 3-agent linear, 4-agent diamond, 3-agent catalyst, 3-agent stateful DFA, 3-agent replay-order, 3-agent coalitional, 3-agent Mayer-Vietoris, 3-agent windowed-drift, 3-agent optional-stopping, 3-agent CPTP channel, 3-agent Regge holonomy, 3-agent k-induction, 3-agent Jacobian, 3-agent boundary-quorum, 3-agent lease-overlap, 3-agent contextual-sheaf, 3-agent watcher-dropout, 3-agent policy-reversal, 3-agent fiber-splitting, 3-agent disagreement-council, 3-agent six-role deduplication, and 3-agent path-kernel dashboard evidence (no API calls)
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/diamond_pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/catalyst_pilot_run/events.jsonl
@@ -390,4 +405,5 @@ python -m experiments.concurrent_code_engineering_swarm.runner replay experiment
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/fiber_splitting_pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/council_pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/six_role_pilot_run/events.jsonl
+python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/path_kernel_pilot_run/events.jsonl
 ```

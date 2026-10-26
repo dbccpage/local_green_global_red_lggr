@@ -56,6 +56,10 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     JACOBIAN_SETTLEMENT_OBSERVABLE_SOURCE,
     JACOBIAN_TAX_ALIGNED_SOURCE,
     JACOBIAN_TAX_DRIFT_SOURCE,
+    KERNEL_PRICING_ANCHOR_SRC,
+    KERNEL_SETTLEMENT_NGD_SRC,
+    KERNEL_SETTLEMENT_REPAIRED_SRC,
+    KERNEL_TAX_NO_FALLBACK_SRC,
     KINDUCTION_PRICING_SOURCE,
     KINDUCTION_SETTLEMENT_ESCAPE_SOURCE,
     KINDUCTION_SETTLEMENT_SOUND_SOURCE,
@@ -101,8 +105,9 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     JacobianCodeWorkspace,
     KInductionCodeWorkspace,
     LeaseOverlapCodeWorkspace,
-    MayerVietorisCodeWorkspace,
+     MayerVietorisCodeWorkspace,
     OptionalStoppingCodeWorkspace,
+    PathKernelDashboardCodeWorkspace,
     PolicyReversalCodeWorkspace,
     ReggeHolonomyCodeWorkspace,
     ReplayOrderCodeWorkspace,
@@ -122,6 +127,7 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     kinduction_fixture,
     lease_fixture,
     mv_fixture,
+    path_kernel_fixture,
     policy_fixture,
     quorum_fixture,
     regge_fixture,
@@ -137,6 +143,7 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     run_lease_local_unit_tests,
     run_local_unit_tests,
     run_mv_local_unit_tests,
+    run_path_kernel_local_unit_tests,
     run_policy_local_unit_tests,
     run_quorum_local_unit_tests,
     run_regge_local_unit_tests,
@@ -166,6 +173,7 @@ from experiments.concurrent_code_engineering_swarm.runner import (
     kinduction_campaign,
     lease_campaign,
     mv_campaign,
+    path_kernel_campaign,
     policy_campaign,
     quorum_campaign,
     regge_campaign,
@@ -192,6 +200,7 @@ from lggr.streaming import (
     StreamingCodebaseLeaseOverlapMonitor,
     StreamingCodebaseMayerVietorisMonitor,
     StreamingCodebaseOptionalStoppingMonitor,
+    StreamingCodebasePathKernelDashboardMonitor,
     StreamingCodebasePolicyReversalMonitor,
     StreamingCodebaseReggeHolonomyMonitor,
     StreamingCodebaseReplayOrderMonitor,
@@ -3995,6 +4004,230 @@ class ConcurrentCodeEngineeringSwarmTests(unittest.TestCase):
         if six_role_events.exists() and six_role_summary.exists():
             replayed = replay(six_role_events)
             self.assertEqual(replayed["schema"], "lggr.six_role_deduplication_code_engineering_swarm.v1")
+            self.assertEqual(len(replayed["cases"]), 2)
+
+    def test_path_kernel_initial_fixture_is_local_green_global_red(self) -> None:
+        """Verify initial path-kernel fixture is Local Green / Global Red and repairs across phases."""
+        ws = PathKernelDashboardCodeWorkspace(path_kernel_fixture(11200))
+        mon = StreamingCodebasePathKernelDashboardMonitor(scope_id="test-path-kernel-unit")
+        res0 = mon.evaluate_path_kernel_merge(
+            "wave-0",
+            module_sources=ws.state["sources"],
+            local_test_results=ws.local_test_verdicts(),
+        )
+        self.assertEqual(res0["local_green"], 1)
+        self.assertEqual(res0["global_green"], 0)
+        self.assertEqual(res0["defect"], -1)
+        self.assertEqual(res0["egd_count"], 2)
+        self.assertEqual(res0["evaluator_residual_re"], 0)
+        self.assertEqual(res0["kernel_discrepancy_surcharge_cents"], 10)
+        self.assertEqual(res0["merchant_payout_cents"], 863)
+        self.assertEqual(res0["status"], "CANCELLATION_MASKED_STAGE_KERNEL_CODEBASE_LGGR")
+
+        # Partial repair: disable PGD fallback (egd=1, r_e=-1, surcharge=5)
+        p1 = ws.tool("worker-1", "submit_module_patch", {"source_code": KERNEL_TAX_NO_FALLBACK_SRC})
+        self.assertTrue(p1["accepted"])
+        p1_s = ws.tool("worker-2", "submit_module_patch", {"source_code": KERNEL_SETTLEMENT_NGD_SRC})
+        self.assertTrue(p1_s["accepted"])
+        res1 = mon.evaluate_path_kernel_merge(
+            "wave-1-partial",
+            module_sources=ws.state["sources"],
+            local_test_results=ws.local_test_verdicts(),
+        )
+        self.assertEqual(res1["local_green"], 1)
+        self.assertEqual(res1["global_green"], 0)
+        self.assertEqual(res1["defect"], -1)
+        self.assertEqual(res1["egd_count"], 1)
+        self.assertEqual(res1["evaluator_residual_re"], -1)
+        self.assertEqual(res1["kernel_discrepancy_surcharge_cents"], 5)
+        self.assertEqual(res1["merchant_payout_cents"], 868)
+        self.assertEqual(res1["status"], "NGD_INTEGRATION_REGRESSION_CODEBASE_LGGR")
+
+        # Full repair: settlement_kernel repairs boundary E2E verdicts and enables 4-tuple dashboard
+        p2 = ws.tool("worker-2", "submit_module_patch", {"source_code": KERNEL_SETTLEMENT_REPAIRED_SRC})
+        self.assertTrue(p2["accepted"])
+        res2 = mon.evaluate_path_kernel_merge(
+            "wave-1-repaired",
+            module_sources=ws.state["sources"],
+            local_test_results=ws.local_test_verdicts(),
+        )
+        self.assertEqual(res2["local_green"], 1)
+        self.assertEqual(res2["global_green"], 1)
+        self.assertEqual(res2["defect"], 0)
+        self.assertEqual(res2["egd_count"], 0)
+        self.assertEqual(res2["evaluator_residual_re"], 0)
+        self.assertEqual(res2["kernel_discrepancy_surcharge_cents"], 0)
+        self.assertEqual(res2["merchant_payout_cents"], 873)
+        self.assertEqual(res2["status"], "CODEBASE_PATH_KERNEL_DASHBOARD_COHERENT_LGGG")
+
+    def test_path_kernel_sandbox_rejects_imports_and_failing_patches(self) -> None:
+        """Verify path-kernel sandbox rejects forbidden imports and hardware-locked patches."""
+        bad_import = run_path_kernel_local_unit_tests(
+            "tax_kernel",
+            "import os\ndef tax_kernel(pricing_quote: dict, tax_rate_bps: int) -> dict:\n    return {}\n",
+        )
+        self.assertFalse(bad_import["passed"])
+        self.assertIn("forbidden_import", bad_import["error"])
+
+        ws = PathKernelDashboardCodeWorkspace(path_kernel_fixture(11201))
+        locked_res = ws.tool("worker-1", "submit_module_patch", {"source_code": KERNEL_TAX_NO_FALLBACK_SRC})
+        self.assertFalse(locked_res["accepted"])
+        self.assertIn("locked", locked_res["error"])
+
+    def test_path_kernel_concurrent_campaign_and_tamper_evident_replay(self) -> None:
+        """Verify 3-arm path-kernel concurrent campaign, deterministic replay, and tamper detection."""
+        def stub_path_kernel_transport(payload: dict) -> dict:
+            messages = payload["messages"]
+            sys_prompt = messages[0]["content"]
+            worker = "worker-0"
+            for w in ("worker-0", "worker-1", "worker-2"):
+                if f"`{w}`" in sys_prompt:
+                    worker = w
+                    break
+            has_tool_resp = any(m.get("role") == "tool" for m in messages)
+            if not has_tool_resp:
+                tool_call = {
+                    "id": f"call_inspect_{worker}",
+                    "type": "function",
+                    "function": {"name": "inspect_workspace", "arguments": "{}"},
+                }
+            else:
+                tool_msg = next(m for m in reversed(messages) if m.get("role") == "tool")
+                inspected = json.loads(tool_msg["content"])
+                fb = inspected.get("merge_gate_feedback", {})
+                if inspected.get("infeasible_constraint") is not None:
+                    tool_call = {
+                        "id": f"call_esc_{worker}",
+                        "type": "function",
+                        "function": {
+                            "name": "escalate",
+                            "arguments": json.dumps(
+                                {"reason": "Tax and Settlement path-kernel modules are hardware-locked to PGD fallback cancellation masking."}
+                            ),
+                        },
+                    }
+                elif fb.get("arm") == "A":
+                    tool_call = {
+                        "id": f"call_hold_{worker}",
+                        "type": "function",
+                        "function": {
+                            "name": "submit_module_patch",
+                            "arguments": json.dumps({"source_code": inspected["source_code"]}),
+                        },
+                    }
+                elif fb.get("arm") == "B":
+                    if worker == "worker-1":
+                        tool_call = {
+                            "id": f"call_patch_{worker}",
+                            "type": "function",
+                            "function": {
+                                "name": "submit_module_patch",
+                                "arguments": json.dumps({"source_code": KERNEL_TAX_NO_FALLBACK_SRC}),
+                            },
+                        }
+                    elif worker == "worker-2":
+                        tool_call = {
+                            "id": f"call_patch_{worker}",
+                            "type": "function",
+                            "function": {
+                                "name": "submit_module_patch",
+                                "arguments": json.dumps({"source_code": KERNEL_SETTLEMENT_NGD_SRC}),
+                            },
+                        }
+                    else:
+                        tool_call = {
+                            "id": f"call_hold_{worker}",
+                            "type": "function",
+                            "function": {
+                                "name": "submit_module_patch",
+                                "arguments": json.dumps({"source_code": inspected["source_code"]}),
+                            },
+                        }
+                else:
+                    canonical_map = {
+                        "worker-0": KERNEL_PRICING_ANCHOR_SRC,
+                        "worker-1": KERNEL_TAX_NO_FALLBACK_SRC,
+                        "worker-2": KERNEL_SETTLEMENT_REPAIRED_SRC,
+                    }
+                    tool_call = {
+                        "id": f"call_patch_{worker}",
+                        "type": "function",
+                        "function": {
+                            "name": "submit_module_patch",
+                            "arguments": json.dumps({"source_code": canonical_map[worker]}),
+                        },
+                    }
+            return {
+                "response": {
+                    "model": payload["model"],
+                    "usage": {
+                        "prompt_tokens": 100,
+                        "completion_tokens": 50,
+                        "total_tokens": 150,
+                        "cost": 0.0001,
+                    },
+                    "choices": [
+                        {
+                            "finish_reason": "tool_calls",
+                            "message": {
+                                "role": "assistant",
+                                "tool_calls": [tool_call],
+                            },
+                        }
+                    ],
+                },
+                "started_ns": 10,
+                "finished_ns": 20,
+            }
+
+        with tempfile.TemporaryDirectory() as td:
+            events_path = Path(td) / "events.jsonl"
+            events = Events(events_path)
+            config = {
+                "topology": "path_kernel",
+                "seeds": [11200, 11201],
+                "models": CODE_SWARM_MODELS,
+                "budget_usd": "0.50",
+            }
+            events.emit("start", {"config": config})
+            client = CodeBatchClient(events, "0.50", transport=stub_path_kernel_transport)
+            summary = path_kernel_campaign(client, events, config)
+            (Path(td) / "summary.json").write_text(
+                json.dumps(summary, indent=2) + "\n", encoding="utf-8"
+            )
+
+            replayed = replay(events_path)
+            self.assertEqual(replayed, summary)
+            self.assertEqual(replayed["schema"], "lggr.path_kernel_dashboard_code_engineering_swarm.v1")
+            self.assertEqual(replayed["max_inflight_requests"], 3)
+
+            records = deepcopy(events.records)
+            gate_rec = next(r["data"] for r in records if r["kind"] == "gate")
+            gate_rec["egd_count"] = int(gate_rec["egd_count"]) + 1
+            for i, r in enumerate(records):
+                r["previous"] = records[i - 1]["sha256"] if i else None
+                r["sha256"] = event_digest({k: v for k, v in r.items() if k != "sha256"})
+            events_path.write_text(
+                "\n".join(json.dumps(r, sort_keys=True) for r in records) + "\n",
+                encoding="utf-8",
+            )
+            with self.assertRaises(ValueError):
+                replay(events_path)
+
+    def test_live_path_kernel_pilot_evidence_replay_if_present(self) -> None:
+        """Replay live path-kernel pilot evidence offline if present."""
+        pk_events = (
+            Path(__file__).resolve().parents[1]
+            / "experiments"
+            / "concurrent_code_engineering_swarm"
+            / "evidence"
+            / "path_kernel_pilot_run"
+            / "events.jsonl"
+        )
+        pk_summary = pk_events.with_name("summary.json")
+        if pk_events.exists() and pk_summary.exists():
+            replayed = replay(pk_events)
+            self.assertEqual(replayed["schema"], "lggr.path_kernel_dashboard_code_engineering_swarm.v1")
             self.assertEqual(len(replayed["cases"]), 2)
 
 

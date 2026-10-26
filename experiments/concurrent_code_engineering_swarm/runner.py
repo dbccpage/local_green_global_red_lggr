@@ -38,6 +38,7 @@ from lggr.streaming import (
     StreamingCodebaseLeaseOverlapMonitor,
     StreamingCodebaseMayerVietorisMonitor,
     StreamingCodebaseOptionalStoppingMonitor,
+    StreamingCodebasePathKernelDashboardMonitor,
     StreamingCodebasePolicyReversalMonitor,
     StreamingCodebaseReggeHolonomyMonitor,
     StreamingCodebaseReplayOrderMonitor,
@@ -61,6 +62,7 @@ from .domain import (
     KINDUCTION_WORKER_MODULES,
     LEASE_WORKER_MODULES,
     MV_WORKER_MODULES,
+    PATH_KERNEL_WORKER_MODULES,
     POLICY_WORKER_MODULES,
     QUORUM_WORKER_MODULES,
     REGGE_WORKER_MODULES,
@@ -85,6 +87,7 @@ from .domain import (
     LeaseOverlapCodeWorkspace,
     MayerVietorisCodeWorkspace,
     OptionalStoppingCodeWorkspace,
+    PathKernelDashboardCodeWorkspace,
     PolicyReversalCodeWorkspace,
     ReggeHolonomyCodeWorkspace,
     ReplayOrderCodeWorkspace,
@@ -104,6 +107,7 @@ from .domain import (
     kinduction_fixture,
     lease_fixture,
     mv_fixture,
+    path_kernel_fixture,
     policy_fixture,
     quorum_fixture,
     regge_fixture,
@@ -4673,6 +4677,212 @@ def six_role_campaign(client: CodeBatchClient, events: Events, config: dict[str,
     return summary
 
 
+# ---------------------------------------------------------------------------
+# Stage-vs-E2E Path-Kernel & Dashboard Adequacy Campaign (Test 50, Theorem 115)
+# ---------------------------------------------------------------------------
+
+
+def path_kernel_system_prompt(worker: str, arm: str) -> str:
+    """Build the system prompt for a worker in the `--topology path_kernel` campaign."""
+    mod_name = PATH_KERNEL_WORKER_MODULES[worker]
+    return (
+        f"You are `{worker}` owning `{mod_name}.py` in a concurrent 3-agent Python code-engineering swarm "
+        f"(Arm `{arm}`). Always call `inspect_workspace` first.\n"
+        "- If `infeasible_constraint` is not null, call `escalate` with a clear explanation of the hardware lock.\n"
+        "- If `merge_gate_feedback.action_required` is `HOLD_MASKED_STAGE_KERNEL` (Arm A), keep your current source code "
+        "unchanged by calling `submit_module_patch` with the exact existing `source_code`.\n"
+        "- If `merge_gate_feedback.action_required` is `DISABLE_PGD_FALLBACK_ONLY` (Arm B), `worker-1` (`tax_kernel`) "
+        "sets `allow_pgd_fallback = False` and `worker-2` (`settlement_kernel`) sets `composite_e2e_verdicts = [1, 0, 0, 0]` "
+        "and `surcharge = 5` while keeping `four_tuple_dashboard_enabled = False`.\n"
+        "- If `merge_gate_feedback.action_required` is `REPAIR_PATH_KERNEL_DASHBOARD` (Arm C):\n"
+        "  * `worker-0` (`pricing_kernel.py`): preserve `net_cents = 900` and `stage1_verdicts = [1, 0]`.\n"
+        "  * `worker-1` (`tax_kernel.py`): set `allow_pgd_fallback = False`.\n"
+        "  * `worker-2` (`settlement_kernel.py`): set `composite_e2e_verdicts = [1, 1, 0, 0]`, "
+        "`four_tuple_dashboard_enabled = True`, and `surcharge = 0` so `merchant_payout_cents = 873` and `873 + 27 + 180 = 1080`."
+    )
+
+
+def path_kernel_merge_gate(
+    events: Events,
+    ws: PathKernelDashboardCodeWorkspace,
+    monitor: StreamingCodebasePathKernelDashboardMonitor,
+    arm: str,
+    wave_label: str,
+) -> tuple[dict[str, Any], dict[str, dict[str, Any]], dict[str, Any]]:
+    """Evaluate the 3-module path-kernel merge gate and emit per-worker feedback."""
+    verdicts = ws.local_test_verdicts()
+    eval_res = monitor.evaluate_path_kernel_merge(
+        f"{arm}-{wave_label}",
+        module_sources=ws.state["sources"],
+        local_test_results=verdicts,
+        infeasible_constraint=ws.state["infeasible_constraint"],
+    )
+    receipt = monitor.current_receipt()
+    events.emit(
+        "gate",
+        {
+            "arm": arm,
+            "wave": wave_label,
+            "local_green": eval_res["local_green"],
+            "global_green": eval_res["global_green"],
+            "defect": eval_res["defect"],
+            "egd_count": eval_res["egd_count"],
+            "evaluator_residual_re": eval_res["evaluator_residual_re"],
+            "kernel_discrepancy_surcharge_cents": eval_res["kernel_discrepancy_surcharge_cents"],
+            "status": eval_res["status"],
+            "receipt_sha256": receipt["receipt_sha256"],
+            "receipt": receipt,
+        },
+    )
+
+    per_worker_fb: dict[str, dict[str, Any]] = {}
+    for w, mod_name in PATH_KERNEL_WORKER_MODULES.items():
+        if ws.state["infeasible_constraint"] is not None:
+            per_worker_fb[w] = {
+                "arm": arm,
+                "wave": wave_label,
+                "action_required": "ESCALATE_INFEASIBLE",
+                "infeasible_constraint": ws.state["infeasible_constraint"],
+                "compact_role_directive": eval_res["compact_role_directives"][w],
+            }
+            continue
+
+        if arm == "A":
+            per_worker_fb[w] = {
+                "arm": arm,
+                "wave": wave_label,
+                "action_required": "HOLD_MASKED_STAGE_KERNEL",
+                "local_unit_test_passed": verdicts[mod_name],
+                "note": "3-tuple pass-rate dashboard baseline: only isolated module unit test status is visible.",
+            }
+        elif arm == "B":
+            per_worker_fb[w] = {
+                "arm": arm,
+                "wave": wave_label,
+                "action_required": "DISABLE_PGD_FALLBACK_ONLY",
+                "egd_count": eval_res["egd_count"],
+                "evaluator_residual_re": eval_res["evaluator_residual_re"],
+                "note": "Disable false-green PGD fallback (surcharge=5), exposing unmasked NGD regression on c_2.",
+            }
+        else:
+            per_worker_fb[w] = {
+                "arm": arm,
+                "wave": wave_label,
+                "action_required": "REPAIR_PATH_KERNEL_DASHBOARD",
+                "global_green": eval_res["global_green"],
+                "egd_count": eval_res["egd_count"],
+                "evaluator_residual_re": eval_res["evaluator_residual_re"],
+                "kernel_discrepancy_surcharge_cents": eval_res["kernel_discrepancy_surcharge_cents"],
+                "mismatches": eval_res["mismatches"],
+                "compact_role_directive": eval_res["compact_role_directives"][w],
+            }
+    return eval_res, per_worker_fb, receipt
+
+
+def path_kernel_campaign(client: CodeBatchClient, events: Events, config: dict[str, Any]) -> dict[str, Any]:
+    """Run the 3-arm concurrent code-engineering swarm campaign for `--topology path_kernel`."""
+    seeds: list[int] = list(config["seeds"])
+    workers = list(PATH_KERNEL_WORKER_MODULES.keys())
+    cases: list[dict[str, Any]] = []
+
+    for seed in seeds:
+        base_state = path_kernel_fixture(seed)
+        arm_results: list[dict[str, Any]] = []
+        for arm in ("A", "B", "C"):
+            ws = PathKernelDashboardCodeWorkspace(base_state)
+            monitor = StreamingCodebasePathKernelDashboardMonitor(
+                scope_id=f"path-kernel-seed-{seed}-arm-{arm}"
+            )
+            arm_start_calls = client.calls
+            arm_start_spent = client.spent
+
+            eval_res, per_worker_fb, receipt = path_kernel_merge_gate(events, ws, monitor, arm, "wave-0")
+            waves_executed = 0
+            status = "blocked_unresolved"
+
+            max_waves = 2 if base_state["infeasible_constraint"] is None else 1
+            for wave_idx in range(1, max_waves + 1):
+                waves_executed = wave_idx
+                histories = {
+                    w: [
+                        {"role": "system", "content": path_kernel_system_prompt(w, arm)},
+                        {
+                            "role": "user",
+                            "content": (
+                                f"Wave {wave_idx} for `{PATH_KERNEL_WORKER_MODULES[w]}.py` (seed {seed}, arm {arm}). "
+                                "Inspect workspace and execute your required module action."
+                            ),
+                        },
+                    ]
+                    for w in workers
+                }
+                round_turns(
+                    client,
+                    events,
+                    ws,
+                    histories,
+                    workers,
+                    per_worker_fb,
+                )
+                eval_res, per_worker_fb, receipt = path_kernel_merge_gate(
+                    events, ws, monitor, arm, f"wave-{wave_idx}"
+                )
+                if ws.state["infeasible_constraint"] is not None and len(ws.state["escalations"]) > 0:
+                    status = "safe_escalated"
+                    break
+                if eval_res["global_green"] == 1:
+                    status = "completed"
+                    break
+
+            arm_summary = {
+                "arm": arm,
+                "status": status,
+                "waves_executed": waves_executed,
+                "final_local_green": eval_res["local_green"],
+                "final_global_green": eval_res["global_green"],
+                "final_defect": eval_res["defect"],
+                "final_egd_count": eval_res["egd_count"],
+                "final_evaluator_residual_re": eval_res["evaluator_residual_re"],
+                "final_kernel_discrepancy_surcharge_cents": eval_res["kernel_discrepancy_surcharge_cents"],
+                "final_merchant_payout_cents": eval_res["merchant_payout_cents"],
+                "final_status": eval_res["status"],
+                "final_receipt_sha256": receipt["receipt_sha256"],
+                "final_receipt": receipt,
+                "escalations": dict(ws.state["escalations"]),
+                "api_attempts": client.calls - arm_start_calls,
+                "cost_usd": str(client.spent - arm_start_spent),
+            }
+            events.emit("arm", {"seed": seed, **arm_summary})
+            arm_results.append(arm_summary)
+
+        cases.append(
+            {
+                "seed": seed,
+                "kind": base_state["kind"],
+                "arms": arm_results,
+            }
+        )
+
+    summary = {
+        "schema": "lggr.path_kernel_dashboard_code_engineering_swarm.v1",
+        "topology": "path_kernel",
+        "authority_effect": "None",
+        "cases": cases,
+        "api_attempts": client.calls,
+        "charged_or_reserved_usd": str(client.spent),
+        "max_inflight_requests": client.max_inflight,
+        "concurrent_waves": client.concurrent_waves,
+        "scope": (
+            "Concurrent 3-agent path-kernel & 4-tuple dashboard adequacy Python code-engineering swarm "
+            "(`pricing_kernel` -> `tax_kernel` -> `settlement_kernel`) comparing cancellation-masked 3-tuple "
+            "pass-rate dashboards (A), unmasked NGD regression after PGD fallback removal (B), and explicit "
+            "LGGR 4-tuple dashboard + path-kernel boundary repair directives (C) with full cryptographic receipts."
+        ),
+    }
+    events.emit("summary", summary)
+    return summary
+
+
 def replay(path: str | Path) -> dict[str, Any]:
     records = [json.loads(line) for line in Path(path).read_text(encoding="utf-8").splitlines()]
     metadata = records[0]["data"]
@@ -4723,6 +4933,8 @@ def replay(path: str | Path) -> dict[str, Any]:
             summary = council_campaign(client, events, config)
         elif config.get("topology") == "six_role":
             summary = six_role_campaign(client, events, config)
+        elif config.get("topology") == "path_kernel":
+            summary = path_kernel_campaign(client, events, config)
         else:
             summary = campaign(client, events, config)
     except RunStopped as error:
@@ -4768,6 +4980,7 @@ def main() -> None:
             "fiber_splitting",
             "council",
             "six_role",
+            "path_kernel",
         ],
         default="linear",
     )
@@ -4833,6 +5046,8 @@ def main() -> None:
         seeds = [11000, 11001, 11002]
     elif args.topology == "six_role":
         seeds = [11100, 11101, 11102]
+    elif args.topology == "path_kernel":
+        seeds = [11200, 11201, 11202]
     else:
         seeds = [6100, 6101, 6102]
     if args.topology == "diamond":
@@ -5056,6 +5271,17 @@ def main() -> None:
         events.emit("start", {"config": config})
         client = CodeBatchClient(events, args.budget)
         summary = six_role_campaign(client, events, config)
+    elif args.topology == "path_kernel":
+        config = {
+            "topology": "path_kernel",
+            "seeds": seeds,
+            "models": CODE_SWARM_MODELS,
+            "budget_usd": str(args.budget),
+        }
+        events = Events(events_path)
+        events.emit("start", {"config": config})
+        client = CodeBatchClient(events, args.budget)
+        summary = path_kernel_campaign(client, events, config)
     else:
         config = {
             "seeds": seeds,
