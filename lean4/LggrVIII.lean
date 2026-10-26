@@ -4971,5 +4971,72 @@ theorem dynamic_schema_codebase_online_collision_and_refinement_audit :
   · intro df0 df1 ⟨h0, h1⟩
     rcases h0 with rfl | rfl <;> rcases h1 with rfl | rfl <;> decide
 
+/-- Theorem 117 (Adversarial Prompt Injection Against Boundary Schemas & Side-Channel Bit
+    Allocation in Code-Engineering Swarms):
+    1. All-assignment spoofed-metadata collision and side-channel underallocation lower bounds
+       on the 4-state stream `X = {s00, s01, s10, s11}` with `K = 4` injection classes
+       `(benign_exec, prompt_override, tool_hijack, exfil_payload)`, safety query `q = (1, 0, 0, 0)`,
+       spoofed `k_agent_self_report = (1, 1, 0, 0)`, and host-authenticated provenance keys
+       `(k_host_1, k_host_2) ∈ {0, 1}^2`:
+       - Any binary decoder `d_ag ∈ {0, 1}` depending only on spoofed `k_agent_self_report = 1`
+         on `{s00, s01}` incurs L1 error `1`;
+       - For any `K` distinct injection classes and side-channel capacity `S < K`, the realized
+         side-channel collision floor satisfies `K - S ≥ 1`.
+    2. Concrete 3-phase codebase adversarial schema & side-channel audit across `pricing_adv`,
+       `tax_adv`, and `settlement_adv` (`5` cents surcharge per spoofed collision or side-channel
+       collision floor unit):
+       - Phase 1 (Unauthenticated `k_agent_self_report` trusted + 1-bit side-channel `S = 2 < 4`):
+         each module passes its isolated unit test (`L_p1 = 1`), yet `spoof_p1 = 1` and
+         `floor_p1 = 4 - 2 = 2` (`surcharge_p1 = 5 * (1 + 2) = 15`, `payout_p1 = 873 - 15 = 858 ≠ 873`,
+         `Eg_p1 = 0`, `Δ_{E,p1} = -1`);
+       - Phase 2 (Host-authenticated `["k_host_1", "k_host_2"]` with 1-bit side-channel `S = 2 < 4`):
+         eliminates spoofed safety collisions (`spoof_p2 = 0`, `L_p2 = 1`), yet `floor_p2 = 4 - 2 = 2 > 0`
+         (`surcharge_p2 = 5 * (0 + 2) = 10`, `payout_p2 = 873 - 10 = 863 ≠ 873`, `Eg_p2 = 0`, `Δ_{E,p2} = -1`);
+       - Phase 3 (Host-authenticated `["k_host_1", "k_host_2"]` + 2-bit side-channel `S = 4 = K`):
+         achieves `spoof_p3 = 0`, `floor_p3 = 0`, `surcharge_p3 = 0`, `payout_p3 = 873`, and
+         `873 + 27 + 90 = 990` (`L_p3 = 1`, `Eg_p3 = 1`, `Δ_{E,p3} = 0`). -/
+theorem adversarial_schema_codebase_spoofed_metadata_and_side_channel_audit :
+    ((∀ d_ag : Int, d_ag = 0 ∨ d_ag = 1 →
+        (1 - d_ag).natAbs + (0 - d_ag).natAbs = 1) ∧
+     (∀ k_classes cap_s : Int, cap_s < k_classes → k_classes - cap_s ≥ 1)) ∧
+    (let q_safe : Int := 1; let q_inj : Int := 0;
+     let k_ag_safe : Int := 1; let k_ag_inj : Int := 1;
+     let k_classes : Int := 4;
+     let s_under : Int := 2;
+     let s_auth : Int := 4;
+     let spoof_p1 : Int := 1;
+     let spoof_p2 : Int := 0;
+     let spoof_p3 : Int := 0;
+     let floor_p1 : Int := k_classes - s_under;
+     let floor_p2 : Int := k_classes - s_under;
+     let floor_p3 : Int := k_classes - s_auth;
+     let surcharge_p1 := 5 * (spoof_p1 + floor_p1);
+     let surcharge_p2 := 5 * (spoof_p2 + floor_p2);
+     let surcharge_p3 := 5 * (spoof_p3 + floor_p3);
+     let payout_p1 : Int := 873 - surcharge_p1;
+     let payout_p2 : Int := 873 - surcharge_p2;
+     let payout_p3 : Int := 873 - surcharge_p3;
+     let fee : Int := 27; let tax : Int := 90; let gross : Int := 990;
+     let l_p1 := if (k_ag_safe = k_ag_inj) ∧ (q_safe ≠ q_inj) ∧ (surcharge_p1 = 15) then (1 : Int) else 0;
+     let eg_p1 := if (l_p1 = 1) ∧ (spoof_p1 = 0) ∧ (floor_p1 = 0) ∧ (payout_p1 + fee + tax = gross) then (1 : Int) else 0;
+     let defect_p1 := eg_p1 - l_p1;
+     let l_p2 := if (spoof_p2 = 0) ∧ (floor_p2 = 2) ∧ (surcharge_p2 = 10) then (1 : Int) else 0;
+     let eg_p2 := if (l_p2 = 1) ∧ (floor_p2 = 0) ∧ (payout_p2 + fee + tax = gross) then (1 : Int) else 0;
+     let defect_p2 := eg_p2 - l_p2;
+     let l_p3 := if (spoof_p3 = 0) ∧ (floor_p3 = 0) ∧ (s_auth = k_classes) ∧ (surcharge_p3 = 0) ∧ (payout_p3 + fee + tax = gross) then (1 : Int) else 0;
+     let eg_p3 := if (l_p3 = 1) ∧ (floor_p3 < floor_p2) ∧ (surcharge_p3 < surcharge_p2) then (1 : Int) else 0;
+     let defect_p3 := eg_p3 - l_p3;
+     (spoof_p1 = 1 ∧ spoof_p2 = 0 ∧ spoof_p3 = 0 ∧
+      floor_p1 = 2 ∧ floor_p2 = 2 ∧ floor_p3 = 0 ∧
+      surcharge_p1 = 15 ∧ surcharge_p2 = 10 ∧ surcharge_p3 = 0 ∧
+      payout_p1 = 858 ∧ payout_p2 = 863 ∧ payout_p3 = 873) ∧
+     (l_p1 = 1 ∧ eg_p1 = 0 ∧ defect_p1 = -1) ∧
+     (l_p2 = 1 ∧ eg_p2 = 0 ∧ defect_p2 = -1) ∧
+     (l_p3 = 1 ∧ eg_p3 = 1 ∧ defect_p3 = 0)) := by
+  refine ⟨⟨?_, ?_⟩, ⟨⟨by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨by decide, by decide, by decide⟩⟩⟩⟩⟩
+  · intro d_ag hd
+    rcases hd with rfl | rfl <;> decide
+  · intro k_classes cap_s hlt
+    omega
 
 end LggrVIII

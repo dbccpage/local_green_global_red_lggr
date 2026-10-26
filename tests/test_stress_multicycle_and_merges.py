@@ -37,6 +37,7 @@ from lggr.streaming import (
     StreamingCoalitionalAttributionMonitor,
     StreamingCoalitionalSynergyMaskingMonitor,
     StreamingCochainMonitor,
+    StreamingCodebaseAdversarialSchemaMonitor,
     StreamingCodebaseBoundaryQuorumMonitor,
     StreamingCodebaseCPTPChannelMonitor,
     StreamingCodebaseCatalystEvolutionMonitor,
@@ -5976,6 +5977,47 @@ class TestStreamingBaselineComparator(unittest.TestCase):
 
         receipt = mon.current_receipt()
         self.assertEqual(receipt["status"], "CODEBASE_DYNAMIC_SCHEMA_CONVERGED_LGGG")
+        self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(receipt["lggr_obstruction_count"], 2)
+        self.assertEqual(receipt["lggg_coherent_count"], 1)
+
+    def test_adversarial_schema_codebase_spoofed_metadata_and_side_channel_audit(self) -> None:
+        """Verify Theorem 117: Adversarial prompt injection against boundary schemas & side-channel bit allocation."""
+        mon = StreamingCodebaseAdversarialSchemaMonitor(
+            scope_id="unit-codebase-adversarial-schema-scope",
+        )
+        obs = mon.evaluate_three_phase_adversarial_schema_audit(
+            "codebase-adversarial-schema-eval-01",
+        )
+        self.assertEqual(obs["phase_1_spoofed_collisions"], 1)
+        self.assertEqual(obs["phase_1_side_channel_floor"], 2)
+        self.assertEqual(obs["phase_1_surcharge_cents"], 15)
+        self.assertEqual(obs["phase_1_payout_cents"], 858)
+        self.assertEqual(obs["phase_1_local_green"], 1)
+        self.assertEqual(obs["phase_1_global_green"], 0)
+        self.assertEqual(obs["phase_1_defect"], -1)
+        self.assertEqual(obs["phase_1_status"], "SPOOFED_METADATA_CODEBASE_LGGR")
+
+        self.assertEqual(obs["phase_2_spoofed_collisions"], 0)
+        self.assertEqual(obs["phase_2_side_channel_floor"], 2)
+        self.assertEqual(obs["phase_2_surcharge_cents"], 10)
+        self.assertEqual(obs["phase_2_payout_cents"], 863)
+        self.assertEqual(obs["phase_2_local_green"], 1)
+        self.assertEqual(obs["phase_2_global_green"], 0)
+        self.assertEqual(obs["phase_2_defect"], -1)
+        self.assertEqual(obs["phase_2_status"], "UNDERALLOCATED_SIDE_CHANNEL_CODEBASE_LGGR")
+
+        self.assertEqual(obs["phase_3_spoofed_collisions"], 0)
+        self.assertEqual(obs["phase_3_side_channel_floor"], 0)
+        self.assertEqual(obs["phase_3_surcharge_cents"], 0)
+        self.assertEqual(obs["phase_3_payout_cents"], 873)
+        self.assertEqual(obs["phase_3_local_green"], 1)
+        self.assertEqual(obs["phase_3_global_green"], 1)
+        self.assertEqual(obs["phase_3_defect"], 0)
+        self.assertEqual(obs["phase_3_status"], "CODEBASE_ADVERSARIAL_SCHEMA_AUTHENTICATED_LGGG")
+
+        receipt = mon.current_receipt()
+        self.assertEqual(receipt["status"], "CODEBASE_ADVERSARIAL_SCHEMA_AUTHENTICATED_LGGG")
         self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
         self.assertEqual(receipt["lggr_obstruction_count"], 2)
         self.assertEqual(receipt["lggg_coherent_count"], 1)
