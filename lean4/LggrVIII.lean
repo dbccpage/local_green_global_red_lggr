@@ -4343,4 +4343,67 @@ theorem jacobian_codebase_stealth_blindspot_and_observability_audit :
   · intro ⟨h1, h2⟩
     omega
 
+/-- 107. Boundary-mixing and majority quorum-masking vs. exact fiber payload verification
+    in a 3-module codebase (`pricing_quorum`, `tax_quorum`, `settlement_quorum`):
+    1. Universal pass-flag boundary-mixing & 2-of-3 quorum-masking laws:
+       - If two codebase traces `c_matched` (`E_g = 1`) and `c_skew` (`E_g = 0`) map to the same
+         pass-flag-only boundary quotient `J_pass(c_matched) = J_pass(c_skew) = (1, 1)`, any binary
+         decoder `d ∈ {0, 1}` errs on at least one trace: `|1 - d| + |0 - d| = 1`;
+       - For 3 binary module validator votes `(e1, e2, e3) ∈ {0, 1}³` with `e1 + e2 + e3 = 2`,
+         the 2-of-3 majority quorum is `M_{2,3} = 1` while the strict product is `L_prod = e1 * e2 * e3 = 0`,
+         yielding quorum inflation `M_{2,3} - L_prod = 1 > 0`;
+    2. Concrete 3-phase 3-module boundary-quorum codebase audit:
+       - Phase 1 (Minority `tax_quorum` basis drift `tax = 200 ≠ 180` masked by pass-flag quotient and
+         2-of-3 quorum `votes = (1, 0, 1)`): `m_quorum_2_3 = 1` and pass-flag `J_pass = 1` report
+         `L_p1 = 1`, while strict product `l_prod = 0`, `quorum_inflation = 1`, and `payout = 864`
+         violate conservation `864 + 27 + 200 = 1091 ≠ 1080` (`Eg_p1 = 0`, `Δ_{E,p1} = -1`);
+       - Phase 2 (Partial repair: `tax_quorum` aligns `tax = 180` while `settlement_quorum` retains
+         `quorum_2_of_3` governance with `quorum_reserve = 9 > 0`): nominal boundary payload aligns
+         (`L_p2 = 1`), yet unverified quorum reserve leaves `payout = 864 ≠ 873` and `quorum_inflation = 1`
+         on the veto audit (`Eg_p2 = 0`, `Δ_{E,p2} = -1`);
+       - Phase 3 (Full boundary payload verification & strict product governance in `settlement_quorum`):
+         `tax = 180`, `strict_product_enforced = 1`, `quorum_reserve = 0`, `payout = 873`, and exact
+         settlement conservation `873 + 27 + 180 = 1080` (`L_p3 = 1`, `Eg_p3 = 1`, `Δ_{E,p3} = 0`). -/
+theorem boundary_quorum_codebase_mixing_and_quorum_masking_audit :
+    ((∀ d : Int, d = 0 ∨ d = 1 → (1 - d).natAbs + (0 - d).natAbs = 1) ∧
+     (∀ e1 e2 e3 : Int,
+       (e1 = 0 ∨ e1 = 1) ∧ (e2 = 0 ∨ e2 = 1) ∧ (e3 = 0 ∨ e3 = 1) ∧ e1 + e2 + e3 = 2 →
+       e1 * e2 * e3 = 0)) ∧
+    (let j_pass_matched : Int := 1;
+     let j_pass_skew : Int := 1;
+     let j_full_matched : Int := 11;
+     let j_full_skew : Int := 10;
+     let e1 : Int := 1; let e2_veto : Int := 0; let e3 : Int := 1;
+     let vote_sum := e1 + e2_veto + e3;
+     let l_prod := e1 * e2_veto * e3;
+     let m_quorum_2_3 := if vote_sum ≥ 2 then (1 : Int) else 0;
+     let quorum_inflation := m_quorum_2_3 - l_prod;
+     let tax_drift : Int := 200;
+     let tax_good : Int := 180;
+     let fee : Int := 27;
+     let gross : Int := 1080;
+     let reserve_quorum : Int := 9;
+     let reserve_strict : Int := 0;
+     let payout_quorum : Int := 873 - reserve_quorum;
+     let payout_strict : Int := 873 - reserve_strict;
+     let l_p1 := if (j_pass_matched = j_pass_skew) ∧ (m_quorum_2_3 = 1) then (1 : Int) else 0;
+     let eg_p1 := if (l_p1 = 1) ∧ (l_prod = 1) ∧ (payout_quorum + fee + tax_drift = gross) then (1 : Int) else 0;
+     let defect_p1 := eg_p1 - l_p1;
+     let l_p2 := if (tax_good = 180) ∧ (m_quorum_2_3 = 1) then (1 : Int) else 0;
+     let eg_p2 := if (l_p2 = 1) ∧ (reserve_quorum = 0) ∧ (payout_quorum + fee + tax_good = gross) then (1 : Int) else 0;
+     let defect_p2 := eg_p2 - l_p2;
+     let l_p3 := if (j_full_matched ≠ j_full_skew) ∧ (reserve_strict = 0) ∧ (payout_strict + fee + tax_good = gross) then (1 : Int) else 0;
+     let eg_p3 := if (l_p3 = 1) ∧ (quorum_inflation = 1) ∧ (payout_strict = 873) then (1 : Int) else 0;
+     let defect_p3 := eg_p3 - l_p3;
+     (l_prod = 0 ∧ m_quorum_2_3 = 1 ∧ quorum_inflation = 1 ∧ payout_quorum = 864 ∧ payout_strict = 873) ∧
+     (l_p1 = 1 ∧ eg_p1 = 0 ∧ defect_p1 = -1) ∧
+     (l_p2 = 1 ∧ eg_p2 = 0 ∧ defect_p2 = -1) ∧
+     (l_p3 = 1 ∧ eg_p3 = 1 ∧ defect_p3 = 0)) := by
+  refine ⟨⟨?_, ?_⟩, ⟨⟨by decide, by decide, by decide, by decide, by decide⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨by decide, by decide, by decide⟩⟩⟩⟩⟩
+  · intro d hd
+    rcases hd with rfl | rfl <;> decide
+  · intro e1 e2 e3 ⟨h1, h2, h3, hsum⟩
+    rcases h1 with rfl | rfl <;> rcases h2 with rfl | rfl <;> rcases h3 with rfl | rfl <;> omega
+
+
 end LggrVIII

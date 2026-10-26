@@ -37,6 +37,7 @@ from lggr.streaming import (
     StreamingCoalitionalAttributionMonitor,
     StreamingCoalitionalSynergyMaskingMonitor,
     StreamingCochainMonitor,
+    StreamingCodebaseBoundaryQuorumMonitor,
     StreamingCodebaseCPTPChannelMonitor,
     StreamingCodebaseCatalystEvolutionMonitor,
     StreamingCodebaseCoalitionalMonitor,
@@ -5522,6 +5523,57 @@ class TestStreamingBaselineComparator(unittest.TestCase):
 
         receipt = mon.current_receipt()
         self.assertEqual(receipt["status"], "CODEBASE_JACOBIAN_OBSERVABLE_LGGG")
+        self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(receipt["lggr_obstruction_count"], 2)
+        self.assertEqual(receipt["lggg_coherent_count"], 1)
+
+    def test_boundary_quorum_codebase_mixing_and_quorum_masking_audit(self) -> None:
+        """Verify Theorem 107: Boundary-mixing and majority quorum-masking vs. exact fiber payload verification."""
+        mon = StreamingCodebaseBoundaryQuorumMonitor(
+            scope_id="unit-codebase-boundary-quorum-scope",
+        )
+        obs = mon.record_three_phase_codebase_quorum_audit(
+            "codebase-quorum-eval-01",
+        )
+        self.assertEqual(obs["phase_1_tax_basis_tag"], "subtotal_cents")
+        self.assertEqual(obs["phase_1_local_product"], 0)
+        self.assertEqual(obs["phase_1_quorum_verdict"], 1)
+        self.assertEqual(obs["phase_1_quorum_inflation"], 1)
+        self.assertEqual(obs["phase_1_local_green"], 1)
+        self.assertEqual(obs["phase_1_global_green"], 0)
+        self.assertEqual(obs["phase_1_defect"], -1)
+        self.assertEqual(obs["phase_1_status"], "BOUNDARY_QUORUM_MASKED_DRIFT_NGD_LGGR")
+        self.assertEqual(
+            obs["phase_1_directives"]["worker-0"]["action"],
+            "HOLD_ANCHOR_PRICING_BOUNDARY_PAYLOAD",
+        )
+        self.assertEqual(
+            obs["phase_1_directives"]["worker-1"]["action"],
+            "ALIGN_TAX_BOUNDARY_BASIS_TAG_NET_CENTS",
+        )
+        self.assertEqual(
+            obs["phase_1_directives"]["worker-2"]["action"],
+            "ENFORCE_STRICT_PRODUCT_GOVERNANCE_MODE",
+        )
+
+        self.assertEqual(obs["phase_2_tax_basis_tag"], "net_cents")
+        self.assertEqual(obs["phase_2_governance_mode"], "quorum_2_of_3")
+        self.assertEqual(obs["phase_2_quorum_reserve_cents"], 9)
+        self.assertEqual(obs["phase_2_local_green"], 1)
+        self.assertEqual(obs["phase_2_global_green"], 0)
+        self.assertEqual(obs["phase_2_defect"], -1)
+        self.assertEqual(obs["phase_2_status"], "BOUNDARY_QUORUM_UNVERIFIED_GATE_LGGR")
+
+        self.assertEqual(obs["phase_3_tax_basis_tag"], "net_cents")
+        self.assertEqual(obs["phase_3_governance_mode"], "strict_product")
+        self.assertEqual(obs["phase_3_quorum_reserve_cents"], 0)
+        self.assertEqual(obs["phase_3_local_green"], 1)
+        self.assertEqual(obs["phase_3_global_green"], 1)
+        self.assertEqual(obs["phase_3_defect"], 0)
+        self.assertEqual(obs["phase_3_status"], "CODEBASE_BOUNDARY_PRODUCT_COHERENT_LGGG")
+
+        receipt = mon.current_receipt()
+        self.assertEqual(receipt["status"], "CODEBASE_BOUNDARY_PRODUCT_COHERENT_LGGG")
         self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
         self.assertEqual(receipt["lggr_obstruction_count"], 2)
         self.assertEqual(receipt["lggg_coherent_count"], 1)

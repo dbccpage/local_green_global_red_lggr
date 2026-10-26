@@ -242,13 +242,28 @@ Executed across 3 concurrent LLM worker models (`max_inflight_requests = 3`, `37
 | `10300` | `repairable_jacobian_blindspot_seed_10300` | **C** | `explicit_lggr_jacobian_observability_directive` | **`completed`** | **`(1, 1, 1)`** | **`2`** | **`0`** | **1** | **6** | **`$0.005970`** |
 | `10301` | `infeasible_jacobian_blindspot_lock` | **A / B / C** | All policies | `safe_escalated` | `(1, 0, 1)` | `1` | `1` | 1 | 18 | `$0.020613` |
 
+## 14. 3-Agent Boundary-Mixing & Majority Quorum-Masking vs. Exact Fiber Payload Verification Campaign (`--topology quorum`)
+
+In `--topology quorum`, 3 concurrent LLM workers edit `pricing_quorum.py`, `tax_quorum.py`, and `settlement_quorum.py` where each module emits a boolean pass flag, a boundary basis tag, and a binary validator vote $(e_1, e_2, e_3) \in \{0, 1\}^3$:
+- On `seed 10402` (`repairable_quorum_masking_seed_10402`), `tax_quorum.py` uses pre-discount `basis_tag = 'subtotal_cents'` (`tax_cents = 200 != 180`, `tax_validator_vote = 0`) while `pricing_quorum.py` and `settlement_quorum.py` vote `1`, so the 2-of-3 majority quorum passes ($M_{2,3}(1, 0, 1) = 1$, `pass_flags = [1, 1, 1]`, `local_green = 1`) while the strict product is $L_{\mathrm{prod}} = 0$ (`quorum_inflation = 1`) and `settlement_quorum.py` operates under `governance_mode = 'quorum_2_of_3'` (`quorum_reserve_cents = 9`, `payout = 864 != 873`, `global_green = 0`, $\Delta_E = -1$).
+- On `seed 10400` (`infeasible_quorum_governance_lock`), legacy constraints lock `tax_quorum.py` and `settlement_quorum.py` to their quorum-masked configuration while requiring `strict_product` governance, requiring safe escalation.
+
+Executed across 3 concurrent LLM worker models (`max_inflight_requests = 3`, `37` live API attempts, `$0.040903` total cost):
+
+| Seed | Scenario Kind | Arm | Feedback Policy | Outcome | `tax_basis_tag` | `governance_mode` | `quorum_reserve` | Waves Run | API Attempts | Cost (USD) |
+| :--- | :--- | :---: | :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
+| `10402` | `repairable_quorum_masking_seed_10402` | **A** | `pass_flag_and_quorum_2_of_3_gate` | `blocked_unresolved` | `subtotal_cents` | `quorum_2_of_3` | `9` | 1 | 7 | `$0.006693` |
+| `10402` | `repairable_quorum_masking_seed_10402` | **B** | `partial_tax_basis_alignment` | `blocked_unresolved` | `net_cents` | `quorum_2_of_3` | `9` | 1 | 6 | `$0.006401` |
+| `10402` | `repairable_quorum_masking_seed_10402` | **C** | `explicit_lggr_boundary_product_directive` | **`completed`** | **`net_cents`** | **`strict_product`** | **`0`** | **1** | **6** | **`$0.006468`** |
+| `10400` | `infeasible_quorum_governance_lock` | **A / B / C** | All policies | `safe_escalated` | `subtotal_cents` | `quorum_2_of_3` | `9` | 1 | 18 | `$0.021341` |
+
 ## Offline Verification & Live Execution
 
 ```powershell
 # Run unit, tamper, and deterministic replay tests (no API calls)
 python -m unittest tests.test_concurrent_code_engineering_swarm -v
 
-# Replay archived live 3-agent linear, 4-agent diamond, 3-agent catalyst, 3-agent stateful DFA, 3-agent replay-order, 3-agent coalitional, 3-agent Mayer-Vietoris, 3-agent windowed-drift, 3-agent optional-stopping, 3-agent CPTP channel, 3-agent Regge holonomy, 3-agent k-induction, and 3-agent Jacobian evidence (no API calls)
+# Replay archived live 3-agent linear, 4-agent diamond, 3-agent catalyst, 3-agent stateful DFA, 3-agent replay-order, 3-agent coalitional, 3-agent Mayer-Vietoris, 3-agent windowed-drift, 3-agent optional-stopping, 3-agent CPTP channel, 3-agent Regge holonomy, 3-agent k-induction, 3-agent Jacobian, and 3-agent boundary-quorum evidence (no API calls)
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/diamond_pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/catalyst_pilot_run/events.jsonl
@@ -262,4 +277,5 @@ python -m experiments.concurrent_code_engineering_swarm.runner replay experiment
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/regge_pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/kinduction_pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/jacobian_pilot_run/events.jsonl
+python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/quorum_pilot_run/events.jsonl
 ```

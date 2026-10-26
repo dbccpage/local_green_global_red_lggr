@@ -52,6 +52,12 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     KINDUCTION_SETTLEMENT_SOUND_SOURCE,
     KINDUCTION_TAX_FRACTIONAL_SOURCE,
     KINDUCTION_TAX_SOUND_SOURCE,
+    QUORUM_PRICING_SOURCE,
+    QUORUM_SETTLEMENT_QUORUM_SOURCE,
+    QUORUM_SETTLEMENT_STRICT_SOURCE,
+    QUORUM_TAX_ALIGNED_SOURCE,
+    QUORUM_TAX_DRIFT_SOURCE,
+    BoundaryQuorumCodeWorkspace,
     CPTPChannelCodeWorkspace,
     CatalystCodeWorkspace,
     CoalitionalCodeWorkspace,
@@ -74,6 +80,7 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     jacobian_fixture,
     kinduction_fixture,
     mv_fixture,
+    quorum_fixture,
     regge_fixture,
     replay_fixture,
     run_coalitional_local_unit_tests,
@@ -84,6 +91,7 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     run_kinduction_local_unit_tests,
     run_local_unit_tests,
     run_mv_local_unit_tests,
+    run_quorum_local_unit_tests,
     run_regge_local_unit_tests,
     run_replay_local_unit_tests,
     run_stop_local_unit_tests,
@@ -102,6 +110,7 @@ from experiments.concurrent_code_engineering_swarm.runner import (
     jacobian_campaign,
     kinduction_campaign,
     mv_campaign,
+    quorum_campaign,
     regge_campaign,
     replay,
     replay_campaign,
@@ -110,6 +119,7 @@ from experiments.concurrent_code_engineering_swarm.runner import (
 )
 from experiments.live_five_agent_swarm.client import Events, event_digest
 from lggr.streaming import (
+    StreamingCodebaseBoundaryQuorumMonitor,
     StreamingCodebaseCPTPChannelMonitor,
     StreamingCodebaseCatalystEvolutionMonitor,
     StreamingCodebaseCoalitionalMonitor,
@@ -2142,6 +2152,207 @@ class ConcurrentCodeEngineeringSwarmTests(unittest.TestCase):
         if jacobian_events.exists() and jacobian_summary.exists():
             replayed = replay(jacobian_events)
             self.assertEqual(replayed["schema"], "lggr.jacobian_soundness_code_engineering_swarm.v1")
+            self.assertEqual(len(replayed["cases"]), 2)
+
+    def test_quorum_initial_fixture_is_local_green_global_red(self) -> None:
+        state = quorum_fixture(10400)
+        ws = BoundaryQuorumCodeWorkspace(state)
+        verdicts = ws.local_verdicts()
+        self.assertEqual(
+            verdicts,
+            {"pricing_quorum": True, "tax_quorum": True, "settlement_quorum": True},
+        )
+        mon = StreamingCodebaseBoundaryQuorumMonitor(scope_id="unit-quorum-init")
+        rec1 = mon.evaluate_codebase_quorum(
+            "eval-quorum-p1",
+            sources=ws.state["sources"],
+            local_test_results=verdicts,
+        )
+        self.assertEqual(rec1["local_green"], 1)
+        self.assertEqual(rec1["global_green"], 0)
+        self.assertEqual(rec1["defect"], -1)
+        self.assertEqual(rec1["local_product"], 0)
+        self.assertEqual(rec1["quorum_verdict"], 1)
+        self.assertEqual(rec1["quorum_inflation"], 1)
+        self.assertEqual(rec1["status"], "BOUNDARY_QUORUM_MASKED_DRIFT_NGD_LGGR")
+
+        # Phase 2: align tax_quorum while settlement_quorum retains quorum_2_of_3 governance
+        sources_p2 = dict(ws.state["sources"])
+        sources_p2["tax_quorum"] = QUORUM_TAX_ALIGNED_SOURCE
+        rec2 = mon.evaluate_codebase_quorum(
+            "eval-quorum-p2",
+            sources=sources_p2,
+            local_test_results=verdicts,
+        )
+        self.assertEqual(rec2["local_green"], 1)
+        self.assertEqual(rec2["global_green"], 0)
+        self.assertEqual(rec2["defect"], -1)
+        self.assertEqual(rec2["quorum_reserve_cents"], 9)
+        self.assertEqual(rec2["status"], "BOUNDARY_QUORUM_UNVERIFIED_GATE_LGGR")
+
+        # Phase 3: enforce strict_product governance in settlement_quorum
+        sources_p3 = dict(sources_p2)
+        sources_p3["settlement_quorum"] = QUORUM_SETTLEMENT_STRICT_SOURCE
+        rec3 = mon.evaluate_codebase_quorum(
+            "eval-quorum-p3",
+            sources=sources_p3,
+            local_test_results=verdicts,
+        )
+        self.assertEqual(rec3["local_green"], 1)
+        self.assertEqual(rec3["global_green"], 1)
+        self.assertEqual(rec3["defect"], 0)
+        self.assertEqual(rec3["quorum_reserve_cents"], 0)
+        self.assertEqual(rec3["status"], "CODEBASE_BOUNDARY_PRODUCT_COHERENT_LGGG")
+
+    def test_quorum_campaign_and_tamper_detection(self) -> None:
+        def stub_quorum_transport(payload: dict) -> dict:
+            messages = payload["messages"]
+            sys_text = messages[0]["content"]
+            worker = "worker-0"
+            for w in ("worker-0", "worker-1", "worker-2"):
+                if f"agent {w}" in sys_text:
+                    worker = w
+                    break
+            arm = "A"
+            if "Arm B" in sys_text:
+                arm = "B"
+            elif "Arm C" in sys_text:
+                arm = "C"
+
+            has_tool_result = any(m.get("role") == "tool" for m in messages)
+            if not has_tool_result:
+                tool_call = {
+                    "id": f"call_inspect_{worker}",
+                    "type": "function",
+                    "function": {"name": "inspect_workspace", "arguments": "{}"},
+                }
+            else:
+                tool_result_msg = [m for m in messages if m.get("role") == "tool"][-1]
+                inspected = json.loads(tool_result_msg["content"])
+                if inspected.get("infeasible_constraint") is not None:
+                    tool_call = {
+                        "id": f"call_esc_{worker}",
+                        "type": "function",
+                        "function": {
+                            "name": "escalate",
+                            "arguments": json.dumps(
+                                {"reason": "Infeasible quorum governance lock."}
+                            ),
+                        },
+                    }
+                elif arm == "A":
+                    tool_call = {
+                        "id": f"call_patch_{worker}",
+                        "type": "function",
+                        "function": {
+                            "name": "submit_module_patch",
+                            "arguments": json.dumps({"source_code": inspected["source_code"]}),
+                        },
+                    }
+                elif arm == "B":
+                    if worker == "worker-1":
+                        tool_call = {
+                            "id": f"call_patch_{worker}",
+                            "type": "function",
+                            "function": {
+                                "name": "submit_module_patch",
+                                "arguments": json.dumps({"source_code": QUORUM_TAX_ALIGNED_SOURCE}),
+                            },
+                        }
+                    else:
+                        tool_call = {
+                            "id": f"call_patch_{worker}",
+                            "type": "function",
+                            "function": {
+                                "name": "submit_module_patch",
+                                "arguments": json.dumps({"source_code": inspected["source_code"]}),
+                            },
+                        }
+                else:
+                    canonical_map = {
+                        "worker-0": QUORUM_PRICING_SOURCE,
+                        "worker-1": QUORUM_TAX_ALIGNED_SOURCE,
+                        "worker-2": QUORUM_SETTLEMENT_STRICT_SOURCE,
+                    }
+                    tool_call = {
+                        "id": f"call_patch_{worker}",
+                        "type": "function",
+                        "function": {
+                            "name": "submit_module_patch",
+                            "arguments": json.dumps({"source_code": canonical_map[worker]}),
+                        },
+                    }
+            return {
+                "response": {
+                    "model": payload["model"],
+                    "usage": {
+                        "prompt_tokens": 100,
+                        "completion_tokens": 50,
+                        "total_tokens": 150,
+                        "cost": 0.0001,
+                    },
+                    "choices": [
+                        {
+                            "finish_reason": "tool_calls",
+                            "message": {
+                                "role": "assistant",
+                                "tool_calls": [tool_call],
+                            },
+                        }
+                    ],
+                },
+                "started_ns": 10,
+                "finished_ns": 20,
+            }
+
+        with tempfile.TemporaryDirectory() as td:
+            events_path = Path(td) / "events.jsonl"
+            events = Events(events_path)
+            config = {
+                "topology": "quorum",
+                "seeds": [10400, 10401],
+                "models": CODE_SWARM_MODELS,
+                "budget_usd": "0.50",
+            }
+            events.emit("start", {"config": config})
+            client = CodeBatchClient(events, "0.50", transport=stub_quorum_transport)
+            summary = quorum_campaign(client, events, config)
+            (Path(td) / "summary.json").write_text(
+                json.dumps(summary, indent=2) + "\n", encoding="utf-8"
+            )
+
+            replayed = replay(events_path)
+            self.assertEqual(replayed, summary)
+            self.assertEqual(replayed["schema"], "lggr.boundary_quorum_code_engineering_swarm.v1")
+            self.assertEqual(replayed["max_inflight_requests"], 3)
+
+            # Tamper check on quorum gate quorum_reserve_cents field
+            records = deepcopy(events.records)
+            gate_rec = next(r["data"] for r in records if r["kind"] == "gate")
+            gate_rec["quorum_reserve_cents"] = int(gate_rec["quorum_reserve_cents"]) + 1
+            for i, r in enumerate(records):
+                r["previous"] = records[i - 1]["sha256"] if i else None
+                r["sha256"] = event_digest({k: v for k, v in r.items() if k != "sha256"})
+            events_path.write_text(
+                "\n".join(json.dumps(r, sort_keys=True) for r in records) + "\n",
+                encoding="utf-8",
+            )
+            with self.assertRaises(ValueError):
+                replay(events_path)
+
+    def test_live_quorum_pilot_evidence_replay_if_present(self) -> None:
+        quorum_events = (
+            Path(__file__).resolve().parents[1]
+            / "experiments"
+            / "concurrent_code_engineering_swarm"
+            / "evidence"
+            / "quorum_pilot_run"
+            / "events.jsonl"
+        )
+        quorum_summary = quorum_events.with_name("summary.json")
+        if quorum_events.exists() and quorum_summary.exists():
+            replayed = replay(quorum_events)
+            self.assertEqual(replayed["schema"], "lggr.boundary_quorum_code_engineering_swarm.v1")
             self.assertEqual(len(replayed["cases"]), 2)
 
 

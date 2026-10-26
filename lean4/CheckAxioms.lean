@@ -123,6 +123,7 @@ import LggrVIII
 #print axioms LggrVIII.regge_codebase_hinge_deficit_and_gauss_bonnet_holonomy_audit
 #print axioms LggrVIII.kinduction_codebase_bounded_unrolling_and_invariant_strengthening_audit
 #print axioms LggrVIII.jacobian_codebase_stealth_blindspot_and_observability_audit
+#print axioms LggrVIII.boundary_quorum_codebase_mixing_and_quorum_masking_audit
 
 
 

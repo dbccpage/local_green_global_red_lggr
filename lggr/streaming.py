@@ -24106,6 +24106,484 @@ class StreamingCodebaseJacobianSoundnessMonitor:
         return json_value({**body, "receipt_sha256": digest(body)})
 
 
+class StreamingCodebaseBoundaryQuorumMonitor:
+    """Online LGGR VIII monitor for boundary-mixing and majority quorum-masking vs. exact fiber payload verification in code-engineering swarms.
+
+    Audits a 3-module codebase (`pricing_quorum`, `tax_quorum`, `settlement_quorum`) where each
+    module emits a boolean pass flag, a boundary basis tag, and a binary validator vote:
+      - `pricing_quorum.py` (`worker-0`): emits `subtotal_cents = 1000`, `discount_cents = 100`,
+        `net_cents = 900`, `pricing_pass_flag = 1`, `pricing_basis_tag = 'net_cents'`, and
+        `pricing_validator_vote = 1`.
+      - `tax_quorum.py` (`worker-1`): emits `tax_pass_flag = 1`, `tax_basis_tag` (`'subtotal_cents'`
+        under minority basis drift with `tax_cents = 200 != 180` and `tax_validator_vote = 0`, vs.
+        `'net_cents'` when aligned with `tax_cents = 180` and `tax_validator_vote = 1`).
+      - `settlement_quorum.py` (`worker-2`): emits `settle_pass_flag = 1`, `settle_validator_vote = 1`,
+        `governance_mode` (`'quorum_2_of_3'` when majority-quorum-gated so `votes = [1, 0, 1]` passes
+        `sum(votes) = 2 >= 2` while deducting `quorum_reserve_cents = 9`, vs. `'strict_product'` when
+        strict product governance is enforced with `quorum_reserve_cents = 0` and `payout = 873`).
+      - Composes `StreamingBoundaryQuorumInterfaceMonitor`, `StreamingThresholdGovernanceMonitor`,
+        `StreamingOrganizationalGluingMonitor`, `StreamingCodebaseInterfaceMergeMonitor`, and
+        `StreamingFiberMonitor`.
+
+    AuthorityEffect: None.
+    """
+
+    def __init__(
+        self,
+        *,
+        scope_id: str = "streaming-codebase-boundary-quorum-scope",
+    ) -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.interface_quorum_monitor = StreamingBoundaryQuorumInterfaceMonitor(
+            n_validators=3,
+            quorum_k=2,
+            scope_id=f"{self.scope_id}-interface-quorum",
+        )
+        self.fiber_monitor = StreamingFiberMonitor(scope_id=f"{self.scope_id}-fiber")
+        self.evaluations: list[dict[str, Any]] = []
+        self.three_phase_audits: list[dict[str, Any]] = []
+
+    def evaluate_codebase_quorum(
+        self,
+        evaluation_id: str,
+        *,
+        sources: Mapping[str, str],
+        local_test_results: Mapping[str, bool],
+        infeasible_constraint: Mapping[str, Any] | None = None,
+        model_id: str = "deterministic",
+    ) -> dict[str, Any]:
+        eval_id = text(evaluation_id, "evaluation_id")
+        mid = text(model_id, "model_id")
+        for req_mod in ("pricing_quorum", "tax_quorum", "settlement_quorum"):
+            if req_mod not in sources:
+                raise ValidationError(f"missing required boundary-quorum module '{req_mod}'")
+
+        ast_summaries = {
+            m: StreamingCodebaseInterfaceMergeMonitor.inspect_module_ast(m, src)
+            for m, src in sources.items()
+        }
+        all_syntax_ok = all(s["syntax_ok"] for s in ast_summaries.values())
+        l_green = 1 if (all_syntax_ok and all(bool(local_test_results.get(m, False)) for m in ("pricing_quorum", "tax_quorum", "settlement_quorum"))) else 0
+
+        runtime_error: str | None = None
+        pricing_basis_tag = "net_cents"
+        tax_basis_tag = "subtotal_cents"
+        governance_mode = "quorum_2_of_3"
+        pass_flags: list[int] = [1, 1, 1]
+        validator_votes: list[int] = [1, 0, 1]
+        quorum_reserve_cents = 9
+        tax_cents = 200
+        payout_cents = 864
+        conservation_ok = False
+
+        if all_syntax_ok:
+            try:
+                ns_p = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace("pricing_quorum", sources["pricing_quorum"])
+                ns_t = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace("tax_quorum", sources["tax_quorum"])
+                ns_s = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace("settlement_quorum", sources["settlement_quorum"])
+
+                fn_p = ns_p.get("compute_quorum_quote")
+                fn_t = ns_t.get("apply_quorum_tax")
+                fn_s = ns_s.get("route_quorum_settlement")
+                if not (callable(fn_p) and callable(fn_t) and callable(fn_s)):
+                    raise ValueError("missing required callable entrypoints compute_quorum_quote / apply_quorum_tax / route_quorum_settlement")
+
+                q_out = fn_p([{"sku": "QUOR-1", "unit_cents": 500, "qty": 2}], 1000)
+                t_out = fn_t(q_out, 2000)
+                s_out = fn_s(t_out, 300)
+
+                pricing_basis_tag = str(q_out.get("pricing_basis_tag", "net_cents"))
+                tax_basis_tag = str(t_out.get("tax_basis_tag", "subtotal_cents"))
+                governance_mode = str(s_out.get("governance_mode", "quorum_2_of_3"))
+
+                p_flag = 1 if int(q_out.get("pricing_pass_flag", 1)) == 1 else 0
+                t_flag = 1 if int(t_out.get("tax_pass_flag", 1)) == 1 else 0
+                s_flag = 1 if int(s_out.get("settle_pass_flag", 1)) == 1 else 0
+                pass_flags = [p_flag, t_flag, s_flag]
+
+                v0 = 1 if int(q_out.get("pricing_validator_vote", 1)) == 1 else 0
+                v1 = 1 if int(t_out.get("tax_validator_vote", 0)) == 1 else 0
+                v2 = 1 if int(s_out.get("settle_validator_vote", 1)) == 1 else 0
+                validator_votes = [v0, v1, v2]
+
+                gross = int(s_out.get("gross_cents", -1))
+                fee = int(s_out.get("platform_fee_cents", -1))
+                tax_cents = int(s_out.get("tax_reserve_cents", -1))
+                payout_cents = int(s_out.get("merchant_payout_cents", -1))
+                quorum_reserve_cents = 873 - payout_cents
+                conservation_ok = (
+                    gross == 1080
+                    and fee == 27
+                    and tax_cents == 180
+                    and payout_cents == 873
+                    and (payout_cents + fee + tax_cents == gross)
+                )
+            except Exception as exc:
+                runtime_error = f"{type(exc).__name__}: {exc}"
+
+        vote_sum = sum(validator_votes)
+        l_prod_actual = validator_votes[0] * validator_votes[1] * validator_votes[2]
+        m_quorum_actual = 1 if vote_sum >= 2 else 0
+        quorum_inflation_actual = m_quorum_actual - l_prod_actual
+
+        interface_obs = self.interface_quorum_monitor.evaluate_interface_schema(
+            f"{eval_id}-schema",
+            matched_boundary_left={"basis_tag": "net_cents", "net_cents": 900},
+            matched_boundary_right={"basis_tag": "net_cents", "tax_cents": 180},
+            skew_boundary_left={"basis_tag": pricing_basis_tag, "net_cents": 900},
+            skew_boundary_right={"basis_tag": tax_basis_tag, "tax_cents": tax_cents},
+            quorum_votes=[1, 0, 1],
+            eg_matched=1,
+            eg_skew=0,
+        )
+
+        boundary_payload_matched = (
+            pricing_basis_tag == "net_cents"
+            and tax_basis_tag == "net_cents"
+            and tax_cents == 180
+            and l_prod_actual == 1
+        )
+        strict_product_enforced = (
+            governance_mode == "strict_product"
+            and quorum_reserve_cents == 0
+        )
+
+        eg_green = (
+            1
+            if (
+                l_green == 1
+                and runtime_error is None
+                and boundary_payload_matched
+                and strict_product_enforced
+                and conservation_ok
+                and infeasible_constraint is None
+            )
+            else 0
+        )
+        defect = eg_green - l_green
+
+        self.fiber_monitor.observe(
+            state_id=f"{eval_id}_quorum_state",
+            report={
+                "pricing_unit_pass": bool(local_test_results.get("pricing_quorum", False)),
+                "tax_unit_pass": bool(local_test_results.get("tax_quorum", False)),
+                "settlement_unit_pass": bool(local_test_results.get("settlement_quorum", False)),
+                "quorum_2_of_3_pass": (m_quorum_actual == 1),
+            },
+            query="LGGG" if eg_green == 1 else "LGGR",
+            metadata={
+                "pricing_basis_tag": pricing_basis_tag,
+                "tax_basis_tag": tax_basis_tag,
+                "governance_mode": governance_mode,
+                "validator_votes": validator_votes,
+            },
+        )
+
+        if infeasible_constraint is not None:
+            status = "INFEASIBLE_QUORUM_GOVERNANCE_LOCK"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif l_green == 1 and eg_green == 1:
+            status = "CODEBASE_BOUNDARY_PRODUCT_COHERENT_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        elif l_green == 1 and eg_green == 0:
+            if not boundary_payload_matched:
+                status = "BOUNDARY_QUORUM_MASKED_DRIFT_NGD_LGGR"
+            else:
+                status = "BOUNDARY_QUORUM_UNVERIFIED_GATE_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "LOCAL_UNIT_TEST_RED_LRLR"
+            contract_status = "REJECTED_LRLR"
+
+        directives: dict[str, dict[str, Any]] = {}
+        if infeasible_constraint is not None:
+            for w_id, m_name in (
+                ("worker-0", "pricing_quorum"),
+                ("worker-1", "tax_quorum"),
+                ("worker-2", "settlement_quorum"),
+            ):
+                directives[w_id] = {
+                    "module": m_name,
+                    "action": "HALT_AND_ESCALATE_INFEASIBLE_QUORUM_LOCK",
+                    "infeasible_constraint": dict(infeasible_constraint),
+                    "reason": "Incompatible boundary-quorum governance contract locks `quorum_2_of_3` mode while requiring strict product verification.",
+                }
+        elif eg_green == 1:
+            for w_id, m_name in (
+                ("worker-0", "pricing_quorum"),
+                ("worker-1", "tax_quorum"),
+                ("worker-2", "settlement_quorum"),
+            ):
+                directives[w_id] = {
+                    "module": m_name,
+                    "action": "HOLD_VERIFIED_BOUNDARY_PRODUCT_CONTRACT",
+                    "reason": "Full boundary payload fibers (`basis_tag = 'net_cents'`, `tax_cents = 180`) and `strict_product` governance (`payout = 873`) verified.",
+                }
+        else:
+            directives["worker-0"] = {
+                "module": "pricing_quorum",
+                "action": "HOLD_ANCHOR_PRICING_BOUNDARY_PAYLOAD",
+                "target_payload": {
+                    "pricing_basis_tag": "net_cents",
+                    "pricing_validator_vote": 1,
+                },
+                "reason": "Hold `pricing_quorum.py` anchor at `'pricing_basis_tag': 'net_cents'` and `'pricing_validator_vote': 1` (`net_cents = 900`).",
+            }
+            directives["worker-1"] = {
+                "module": "tax_quorum",
+                "action": (
+                    "ALIGN_TAX_BOUNDARY_BASIS_TAG_NET_CENTS"
+                    if not boundary_payload_matched
+                    else "HOLD_ALIGNED_TAX_BOUNDARY_BASIS_TAG"
+                ),
+                "current_basis_tag": tax_basis_tag,
+                "target_basis_tag": "net_cents",
+                "reason": (
+                    f"Boundary payload audit on `tax_quorum.py` detected `tax_basis_tag = {tax_basis_tag!r}` "
+                    f"(`tax_cents = {tax_cents} != 180`, `validator_votes = {validator_votes}`). "
+                    "Update `tax_quorum.py` so `basis_tag = 'net_cents'` (`tax_cents = 180`, `gross_cents = 1080`, `tax_validator_vote = 1`)."
+                ),
+            }
+            directives["worker-2"] = {
+                "module": "settlement_quorum",
+                "action": "ENFORCE_STRICT_PRODUCT_GOVERNANCE_MODE",
+                "current_governance_mode": governance_mode,
+                "current_quorum_reserve_cents": quorum_reserve_cents,
+                "target_governance": {
+                    "governance_mode": "strict_product",
+                    "quorum_reserve_cents": 0,
+                },
+                "reason": (
+                    f"Quorum-masking audit on `settlement_quorum.py` detected `governance_mode = {governance_mode!r}` "
+                    f"(`quorum_reserve_cents = {quorum_reserve_cents}`, `payout_cents = {payout_cents} != 873`). "
+                    "Update `settlement_quorum.py` so `governance_mode = 'strict_product'` and "
+                    "`merchant_payout_cents = gross - fee - tax = 873` (`quorum_reserve_cents = 0`)."
+                ),
+            }
+
+        rec_body: dict[str, Any] = {
+            "evaluation_id": eval_id,
+            "model_id": mid,
+            "status": status,
+            "contract_status": contract_status,
+            "local_green": l_green,
+            "global_green": eg_green,
+            "defect": defect,
+            "pricing_basis_tag": pricing_basis_tag,
+            "tax_basis_tag": tax_basis_tag,
+            "governance_mode": governance_mode,
+            "pass_flags": pass_flags,
+            "validator_votes": validator_votes,
+            "local_product": l_prod_actual,
+            "quorum_verdict": m_quorum_actual,
+            "quorum_inflation": quorum_inflation_actual,
+            "quorum_reserve_cents": quorum_reserve_cents,
+            "tax_cents": tax_cents,
+            "merchant_payout_cents": payout_cents,
+            "boundary_payload_matched": boundary_payload_matched,
+            "strict_product_enforced": strict_product_enforced,
+            "conservation_ok": conservation_ok,
+            "runtime_error": runtime_error,
+            "ast_summaries": ast_summaries,
+            "compact_role_directives": directives,
+            "interface_quorum_observation": interface_obs,
+        }
+        signed_rec = json_value({**rec_body, "receipt_sha256": digest(rec_body)})
+        self.evaluations.append(signed_rec)
+        return signed_rec
+
+    def record_three_phase_codebase_quorum_audit(
+        self,
+        evaluation_id: str,
+        *,
+        model_id: str = "deterministic",
+    ) -> dict[str, Any]:
+        """Record the 3-phase boundary-mixing & majority quorum-masking vs. exact fiber payload codebase audit (Theorem 107)."""
+        eval_id = text(evaluation_id, "evaluation_id")
+        mid = text(model_id, "model_id")
+
+        src_p = (
+            "def compute_quorum_quote(items: list[dict], discount_bps: int) -> dict:\n"
+            "    subtotal = sum(int(item['unit_cents']) * int(item['qty']) for item in items)\n"
+            "    discount = (subtotal * int(discount_bps)) // 10000\n"
+            "    net = subtotal - discount\n"
+            "    return {\n"
+            "        'subtotal_cents': subtotal,\n"
+            "        'discount_cents': discount,\n"
+            "        'net_cents': net,\n"
+            "        'pricing_pass_flag': 1,\n"
+            "        'pricing_basis_tag': 'net_cents',\n"
+            "        'pricing_validator_vote': 1,\n"
+            "    }\n"
+        )
+        src_t_drift = (
+            "def apply_quorum_tax(quote: dict, tax_rate_bps: int) -> dict:\n"
+            "    net = int(quote['net_cents'])\n"
+            "    basis_tag = 'subtotal_cents'\n"
+            "    tax_base = int(quote[basis_tag])\n"
+            "    tax = (tax_base * int(tax_rate_bps)) // 10000\n"
+            "    gross = net + tax\n"
+            "    validator_vote = 1 if basis_tag == 'net_cents' else 0\n"
+            "    return {\n"
+            "        'net_cents': net,\n"
+            "        'tax_cents': tax,\n"
+            "        'gross_cents': gross,\n"
+            "        'tax_pass_flag': 1,\n"
+            "        'tax_basis_tag': basis_tag,\n"
+            "        'tax_validator_vote': validator_vote,\n"
+            "    }\n"
+        )
+        src_t_aligned = (
+            "def apply_quorum_tax(quote: dict, tax_rate_bps: int) -> dict:\n"
+            "    net = int(quote['net_cents'])\n"
+            "    basis_tag = 'net_cents'\n"
+            "    tax_base = int(quote[basis_tag])\n"
+            "    tax = (tax_base * int(tax_rate_bps)) // 10000\n"
+            "    gross = net + tax\n"
+            "    validator_vote = 1 if basis_tag == 'net_cents' else 0\n"
+            "    return {\n"
+            "        'net_cents': net,\n"
+            "        'tax_cents': tax,\n"
+            "        'gross_cents': gross,\n"
+            "        'tax_pass_flag': 1,\n"
+            "        'tax_basis_tag': basis_tag,\n"
+            "        'tax_validator_vote': validator_vote,\n"
+            "    }\n"
+        )
+        src_s_quorum = (
+            "def route_quorum_settlement(taxed_quote: dict, fee_bps: int) -> dict:\n"
+            "    net = int(taxed_quote['net_cents'])\n"
+            "    tax = int(taxed_quote['tax_cents'])\n"
+            "    gross = int(taxed_quote['gross_cents'])\n"
+            "    fee = (net * int(fee_bps)) // 10000\n"
+            "    governance_mode = 'quorum_2_of_3'\n"
+            "    quorum_reserve_cents = 9 if governance_mode != 'strict_product' else 0\n"
+            "    payout = gross - fee - tax - quorum_reserve_cents\n"
+            "    return {\n"
+            "        'gross_cents': gross,\n"
+            "        'platform_fee_cents': fee,\n"
+            "        'tax_reserve_cents': tax,\n"
+            "        'merchant_payout_cents': payout,\n"
+            "        'settle_pass_flag': 1,\n"
+            "        'settle_validator_vote': 1,\n"
+            "        'governance_mode': governance_mode,\n"
+            "    }\n"
+        )
+        src_s_strict = (
+            "def route_quorum_settlement(taxed_quote: dict, fee_bps: int) -> dict:\n"
+            "    net = int(taxed_quote['net_cents'])\n"
+            "    tax = int(taxed_quote['tax_cents'])\n"
+            "    gross = int(taxed_quote['gross_cents'])\n"
+            "    fee = (net * int(fee_bps)) // 10000\n"
+            "    governance_mode = 'strict_product'\n"
+            "    quorum_reserve_cents = 9 if governance_mode != 'strict_product' else 0\n"
+            "    payout = gross - fee - tax - quorum_reserve_cents\n"
+            "    return {\n"
+            "        'gross_cents': gross,\n"
+            "        'platform_fee_cents': fee,\n"
+            "        'tax_reserve_cents': tax,\n"
+            "        'merchant_payout_cents': payout,\n"
+            "        'settle_pass_flag': 1,\n"
+            "        'settle_validator_vote': 1,\n"
+            "        'governance_mode': governance_mode,\n"
+            "    }\n"
+        )
+
+        all_local_green = {
+            "pricing_quorum": True,
+            "tax_quorum": True,
+            "settlement_quorum": True,
+        }
+
+        p1 = self.evaluate_codebase_quorum(
+            f"{eval_id}_phase1_quorum_masked_drift",
+            sources={
+                "pricing_quorum": src_p,
+                "tax_quorum": src_t_drift,
+                "settlement_quorum": src_s_quorum,
+            },
+            local_test_results=all_local_green,
+            model_id=mid,
+        )
+        p2 = self.evaluate_codebase_quorum(
+            f"{eval_id}_phase2_unverified_quorum_gate",
+            sources={
+                "pricing_quorum": src_p,
+                "tax_quorum": src_t_aligned,
+                "settlement_quorum": src_s_quorum,
+            },
+            local_test_results=all_local_green,
+            model_id=mid,
+        )
+        p3 = self.evaluate_codebase_quorum(
+            f"{eval_id}_phase3_strict_product_coherent",
+            sources={
+                "pricing_quorum": src_p,
+                "tax_quorum": src_t_aligned,
+                "settlement_quorum": src_s_strict,
+            },
+            local_test_results=all_local_green,
+            model_id=mid,
+        )
+
+        audit_rec = json_value(
+            {
+                "evaluation_id": eval_id,
+                "model_id": mid,
+                "phase_1_tax_basis_tag": p1["tax_basis_tag"],
+                "phase_1_local_product": p1["local_product"],
+                "phase_1_quorum_verdict": p1["quorum_verdict"],
+                "phase_1_quorum_inflation": p1["quorum_inflation"],
+                "phase_1_local_green": p1["local_green"],
+                "phase_1_global_green": p1["global_green"],
+                "phase_1_defect": p1["defect"],
+                "phase_1_status": p1["status"],
+                "phase_1_directives": p1["compact_role_directives"],
+                "phase_2_tax_basis_tag": p2["tax_basis_tag"],
+                "phase_2_governance_mode": p2["governance_mode"],
+                "phase_2_quorum_reserve_cents": p2["quorum_reserve_cents"],
+                "phase_2_local_green": p2["local_green"],
+                "phase_2_global_green": p2["global_green"],
+                "phase_2_defect": p2["defect"],
+                "phase_2_status": p2["status"],
+                "phase_3_tax_basis_tag": p3["tax_basis_tag"],
+                "phase_3_governance_mode": p3["governance_mode"],
+                "phase_3_quorum_reserve_cents": p3["quorum_reserve_cents"],
+                "phase_3_local_green": p3["local_green"],
+                "phase_3_global_green": p3["global_green"],
+                "phase_3_defect": p3["defect"],
+                "phase_3_status": p3["status"],
+            }
+        )
+        self.three_phase_audits.append(audit_rec)
+        return audit_rec
+
+    def current_receipt(self) -> dict[str, Any]:
+        if not self.evaluations:
+            raise ValidationError("at least one codebase boundary-quorum evaluation must be recorded")
+        n = len(self.evaluations)
+        lggr_count = sum(1 for e in self.evaluations if e["defect"] == -1)
+        lggg_count = sum(1 for e in self.evaluations if e["global_green"] == 1)
+        last = self.evaluations[-1]
+
+        body: dict[str, Any] = {
+            "schema": "lggr.online_codebase_boundary_quorum.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": last["status"],
+            "contract_status": last["contract_status"],
+            "evaluation_count": n,
+            "lggr_obstruction_count": lggr_count,
+            "lggg_coherent_count": lggg_count,
+            "interface_quorum_receipt": self.interface_quorum_monitor.current_receipt(),
+            "fiber_receipt": self.fiber_monitor.get_receipt(),
+            "three_phase_audits": self.three_phase_audits,
+            "evaluations": self.evaluations,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+
 
 
 
