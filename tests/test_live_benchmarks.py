@@ -57,6 +57,7 @@ from lggr.streaming import (
     StreamingCodebasePolicyReversalMonitor,
     StreamingCodebaseProductOfExpertsMonitor,
     StreamingCodebaseSharedChordDiamondMonitor,
+    StreamingCodebaseSideInfoCapacityMonitor,
     StreamingCodebaseSimultaneousSplitMonitor,
     StreamingCodebaseSixRoleDeduplicationMonitor,
     StreamingCodebaseSkewRepairMonitor,
@@ -3203,6 +3204,45 @@ class TestOfflineTraceReplay(unittest.TestCase):
             self.assertEqual(ev["phase_3_payout_cents"], 873)
             replay_mon.record_three_phase_codebase_audit(
                 audit_id=f"{ev['model_id']}_mermin_peres",
+                model_id=ev["model_id"],
+            )
+        self.assertEqual(replay_mon.current_receipt(), mon_rec)
+
+    def test_codebase_side_info_capacity_benchmark_replay(self) -> None:
+        """Verify codebase_side_info_capacity_benchmark.json receipt integrity and offline replay."""
+        path = RECEIPTS_DIR / "codebase_side_info_capacity_benchmark.json"
+        self.assertTrue(path.exists(), f"Missing benchmark receipt {path}")
+        with open(path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+
+        body = {k: v for k, v in data.items() if k != "receipt_sha256"}
+        self.assertEqual(digest(body), data["receipt_sha256"])
+        self.assertEqual(data["schema"], "lggr.codebase_side_info_capacity_replay.v1")
+        self.assertEqual(data["authority_effect"], "None")
+        self.assertEqual(data["evaluation_count"], 5)
+        self.assertEqual(data["obstructed_side_info_capacity_codebase_coherence_rate"], "0")
+        self.assertEqual(data["reconciled_side_info_capacity_codebase_coherence_rate"], "1")
+        self.assertEqual(data["codebase_side_info_capacity_coherence_gain"], "1")
+
+        mon_rec = data["codebase_side_info_capacity_receipt"]
+        mon_body = {k: v for k, v in mon_rec.items() if k != "receipt_sha256"}
+        self.assertEqual(digest(mon_body), mon_rec["receipt_sha256"])
+        self.assertEqual(mon_rec["status"], "SIDE_INFO_CAPACITY_SUFFICIENT_LGGG")
+        self.assertEqual(mon_rec["contract_status"], "COMPOSABLE_LGGG")
+
+        replay_mon = StreamingCodebaseSideInfoCapacityMonitor(
+            scope_id="live_codebase_side_info_capacity"
+        )
+        for ev in data["evaluations"]:
+            parsed = ev["parsed_controller_verdict"]
+            self.assertIsInstance(parsed, dict)
+            self.assertEqual(ev["phase_1_surcharge_cents"], 10)
+            self.assertEqual(ev["phase_1_payout_cents"], 863)
+            self.assertEqual(ev["phase_2_surcharge_cents"], 8)
+            self.assertEqual(ev["phase_2_payout_cents"], 865)
+            self.assertEqual(ev["phase_3_payout_cents"], 873)
+            replay_mon.record_three_phase_codebase_audit(
+                audit_id=f"{ev['model_id']}_side_info_capacity",
                 model_id=ev["model_id"],
             )
         self.assertEqual(replay_mon.current_receipt(), mon_rec)

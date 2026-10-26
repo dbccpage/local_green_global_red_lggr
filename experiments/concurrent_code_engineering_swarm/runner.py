@@ -54,6 +54,7 @@ from lggr.streaming import (
     StreamingCodebaseReggeHolonomyMonitor,
     StreamingCodebaseReplayOrderMonitor,
     StreamingCodebaseSharedChordDiamondMonitor,
+    StreamingCodebaseSideInfoCapacityMonitor,
     StreamingCodebaseSimultaneousSplitMonitor,
     StreamingCodebaseSixRoleDeduplicationMonitor,
     StreamingCodebaseSkewRepairMonitor,
@@ -96,6 +97,7 @@ from .domain import (
     SCHEMA_SYNTHESIS_WORKER_MODULES,
     SHARED_CHORD_DIAMOND_WORKER_MODULES,
     SHEAF_WORKER_MODULES,
+    SIDE_INFO_CAPACITY_WORKER_MODULES,
     SIMULTANEOUS_SPLIT_WORKER_MODULES,
     SIX_ROLE_WORKER_MODULES,
     SKEW_REPAIR_WORKER_MODULES,
@@ -135,6 +137,7 @@ from .domain import (
     ReggeHolonomyCodeWorkspace,
     ReplayOrderCodeWorkspace,
     SharedChordDiamondCodeWorkspace,
+    SideInfoCapacityCodeWorkspace,
     SimultaneousSplitCodeWorkspace,
     SixRoleDeduplicationCodeWorkspace,
     SkewRepairCodeWorkspace,
@@ -178,6 +181,7 @@ from .domain import (
     run_poe_veto_local_unit_tests,
     run_policy_ratchet_local_unit_tests,
     run_shared_chord_diamond_local_unit_tests,
+    run_side_info_capacity_local_unit_tests,
     run_simultaneous_split_local_unit_tests,
     run_skew_repair_local_unit_tests,
     run_subgradient_pivot_local_unit_tests,
@@ -185,6 +189,7 @@ from .domain import (
     schema_synthesis_fixture,
     shared_chord_diamond_fixture,
     sheaf_fixture,
+    side_info_capacity_fixture,
     simultaneous_split_fixture,
     six_role_fixture,
     skew_repair_fixture,
@@ -9126,6 +9131,280 @@ def mermin_peres_campaign(
     return summary
 
 
+# ---------------------------------------------------------------------------
+# Side-Information Channel Capacity & Ambiguity-Reduction Bit-Budget Campaign (Test 67, Theorem 132)
+# ---------------------------------------------------------------------------
+
+
+def side_info_capacity_system_prompt(worker: str, arm: str) -> str:
+    mod_name = SIDE_INFO_CAPACITY_WORKER_MODULES[worker]
+    base = (
+        f"You are `{worker}`, responsible SOLELY for `{mod_name}.py` in a 3-module "
+        "side-information capacity settlement pipeline (`pricing_cap.py` -> `tax_cap.py` -> "
+        "`settlement_cap.py`). Call `inspect_workspace` first.\n"
+        "CRITICAL: Emit tool calls immediately with ZERO explanatory prose or preamble before the tool call so output never truncates.\n"
+        "IMPORTANT: Only call `escalate` if `infeasible_constraint` in the `inspect_workspace` result is a non-null string! "
+        "When `infeasible_constraint` is `null` and `locked` is `false`, NEVER call `escalate` — instead follow your Arm instructions below.\n"
+    )
+    if arm == "A":
+        return base + (
+            "Arm A (`local_channel_range_only_gate`): If `local_unit_test.passed` "
+            "is true and `action_required` is `HOLD_LOCAL_SIDE_CHANNEL_RANGE`, do NOT call "
+            "`submit_module_patch`; reply concisely confirming local unit tests pass."
+        )
+    if arm == "B":
+        if worker == "worker-0":
+            return base + (
+                "Arm B (`partial_encoder_upgrade_under_sub_nyquist_budget_gate`): Immediately call `submit_module_patch` with:\n"
+                "```python\n"
+                + StreamingCodebaseSideInfoCapacityMonitor.PHASE_2_PRICING_CAP_SOURCE
+                + "```\n"
+            )
+        return base + (
+            "Arm B (`partial_encoder_upgrade_under_sub_nyquist_budget_gate`): If `local_unit_test.passed` "
+            "is true, do NOT call `submit_module_patch`; reply concisely confirming local unit tests pass."
+        )
+    if worker == "worker-0":
+        return base + (
+            "Arm C (`explicit_lggr_nyquist_capacity_directive`): Immediately call `submit_module_patch` with:\n"
+            "```python\n"
+            + StreamingCodebaseSideInfoCapacityMonitor.PHASE_3_PRICING_CAP_SOURCE
+            + "```\n"
+        )
+    if worker == "worker-1":
+        return base + (
+            "Arm C (`explicit_lggr_nyquist_capacity_directive`): Immediately call `submit_module_patch` with:\n"
+            "```python\n"
+            + StreamingCodebaseSideInfoCapacityMonitor.PHASE_3_TAX_CAP_SOURCE
+            + "```\n"
+        )
+    return base + (
+        "Arm C (`explicit_lggr_nyquist_capacity_directive`): Immediately call `submit_module_patch` with:\n"
+        "```python\n"
+        + StreamingCodebaseSideInfoCapacityMonitor.PHASE_3_SETTLEMENT_CAP_SOURCE
+        + "```\n"
+    )
+
+
+def side_info_capacity_merge_gate(
+    events: Events,
+    ws: SideInfoCapacityCodeWorkspace,
+    monitor: StreamingCodebaseSideInfoCapacityMonitor,
+    arm: str,
+    wave_label: str,
+) -> tuple[dict[str, Any], dict[str, dict[str, Any]], dict[str, Any]]:
+    sources = ws.state["sources"]
+    verdicts = {
+        m: bool(run_side_info_capacity_local_unit_tests(m, sources[m]).get("passed"))
+        for m in ("pricing_cap", "tax_cap", "settlement_cap")
+    }
+    eval_res = monitor.evaluate_side_info_capacity_modules(
+        f"{arm}-{wave_label}",
+        pricing_cap_source=sources["pricing_cap"],
+        tax_cap_source=sources["tax_cap"],
+        settlement_cap_source=sources["settlement_cap"],
+        infeasible_constraint=(
+            ws.state["infeasible_constraint"]
+            if ws.state["infeasible_constraint"] is not None
+            else None
+        ),
+    )
+    receipt = monitor.current_receipt()
+    events.emit(
+        "gate",
+        {
+            "arm": arm,
+            "wave": wave_label,
+            "local_green": eval_res["local_green"],
+            "global_green": eval_res["global_green"],
+            "defect": eval_res["defect"],
+            "status": eval_res["status"],
+            "encoder_bits": eval_res["encoder_bits"],
+            "bit_budget_b": eval_res["bit_budget_b"],
+            "channel_capacity_s": eval_res["channel_capacity_s"],
+            "used_symbols_count": eval_res["used_symbols_count"],
+            "conditional_ambiguity_2_pow_h_minus_b": eval_res["conditional_ambiguity_2_pow_h_minus_b"],
+            "realized_subfiber_error_floor": eval_res["realized_subfiber_error_floor"],
+            "capacity_error_floor_k_minus_s": eval_res["capacity_error_floor_k_minus_s"],
+            "cap_surcharge_cents": eval_res["cap_surcharge_cents"],
+            "receipt_sha256": receipt["receipt_sha256"],
+            "receipt": receipt,
+        },
+    )
+
+    per_worker_fb: dict[str, dict[str, Any]] = {}
+    for w, mod_name in SIDE_INFO_CAPACITY_WORKER_MODULES.items():
+        if ws.state["infeasible_constraint"] is not None:
+            per_worker_fb[w] = {
+                "arm": arm,
+                "wave": wave_label,
+                "action_required": "ESCALATE_INFEASIBLE",
+                "infeasible_constraint": ws.state["infeasible_constraint"],
+                "compact_role_directive": eval_res["directives"][w],
+            }
+            continue
+
+        if arm == "A":
+            per_worker_fb[w] = {
+                "arm": "A",
+                "wave": wave_label,
+                "local_unit_test_passed": verdicts[mod_name],
+                "action_required": "HOLD_LOCAL_SIDE_CHANNEL_RANGE",
+                "note": "All 4 fiber states emit side symbols within the local channel range [0, S - 1].",
+            }
+        elif arm == "B":
+            per_worker_fb[w] = {
+                "arm": "B",
+                "wave": wave_label,
+                "local_unit_test_passed": verdicts[mod_name],
+                "action_required": "PARTIAL_UPGRADE_ENCODER_UNDER_SUB_NYQUIST_BUDGET",
+                "realized_subfiber_error_floor": eval_res["realized_subfiber_error_floor"],
+                "capacity_error_floor_k_minus_s": eval_res["capacity_error_floor_k_minus_s"],
+                "cap_surcharge_cents": eval_res["cap_surcharge_cents"],
+                "note": "Upgrading encoder_bits=1 attains the 1-bit channel ceiling (S_used=2), leaving sub-Nyquist deficit S=2 < K=4 (surcharge 8).",
+            }
+        else:
+            per_worker_fb[w] = {
+                "arm": "C",
+                "wave": wave_label,
+                "local_unit_test_passed": verdicts[mod_name],
+                "global_green": eval_res["global_green"],
+                "defect": eval_res["defect"],
+                "status": eval_res["status"],
+                "encoder_bits": eval_res["encoder_bits"],
+                "bit_budget_b": eval_res["bit_budget_b"],
+                "channel_capacity_s": eval_res["channel_capacity_s"],
+                "realized_subfiber_error_floor": eval_res["realized_subfiber_error_floor"],
+                "capacity_error_floor_k_minus_s": eval_res["capacity_error_floor_k_minus_s"],
+                "cap_surcharge_cents": eval_res["cap_surcharge_cents"],
+                "action_required": "ENFORCE_FULL_NYQUIST_SIDE_INFO_CAPACITY",
+                "compact_role_directive": eval_res["directives"][w],
+            }
+    return eval_res, per_worker_fb, receipt
+
+
+def side_info_capacity_campaign(
+    client: CodeBatchClient,
+    events: Events,
+    config: dict[str, Any],
+) -> dict[str, Any]:
+    seeds: list[int] = list(config["seeds"])
+    workers = list(SIDE_INFO_CAPACITY_WORKER_MODULES.keys())
+    cases: list[dict[str, Any]] = []
+
+    for seed in seeds:
+        base_state = side_info_capacity_fixture(seed)
+        arm_results: list[dict[str, Any]] = []
+
+        for arm in ("A", "B", "C"):
+            ws = SideInfoCapacityCodeWorkspace(base_state)
+            monitor = StreamingCodebaseSideInfoCapacityMonitor(
+                scope_id=f"side-info-capacity-seed-{seed}-arm-{arm}"
+            )
+            arm_start_calls = client.calls
+            arm_start_spent = client.spent
+
+            eval_res, per_worker_fb, receipt = side_info_capacity_merge_gate(
+                events, ws, monitor, arm, "wave-0"
+            )
+            waves_executed = 0
+            status = "blocked_unresolved"
+
+            max_waves = 2 if base_state["infeasible_constraint"] is None else 1
+            for wave_idx in range(1, max_waves + 1):
+                waves_executed = wave_idx
+                histories = {
+                    w: [
+                        {"role": "system", "content": side_info_capacity_system_prompt(w, arm)},
+                        {
+                            "role": "user",
+                            "content": (
+                                f"Wave {wave_idx} for `{SIDE_INFO_CAPACITY_WORKER_MODULES[w]}.py` (seed {seed}, arm {arm}). "
+                                "Inspect workspace and execute your required module action."
+                            ),
+                        },
+                    ]
+                    for w in workers
+                }
+                round_turns(
+                    client,
+                    events,
+                    ws,
+                    histories,
+                    workers,
+                    per_worker_fb,
+                )
+                eval_res, per_worker_fb, receipt = side_info_capacity_merge_gate(
+                    events, ws, monitor, arm, f"wave-{wave_idx}"
+                )
+                if ws.state["infeasible_constraint"] is not None and len(ws.state["escalations"]) > 0:
+                    status = "safe_escalated"
+                    break
+                if eval_res["global_green"] == 1:
+                    status = "completed"
+                    break
+
+            final_status = (
+                "INFEASIBLE_SIDE_INFO_CAPACITY_SPECIFICATION_LGGR"
+                if status == "safe_escalated"
+                else eval_res["status"]
+            )
+            arm_summary = {
+                "arm": arm,
+                "status": status,
+                "waves_executed": waves_executed,
+                "final_local_green": eval_res["local_green"],
+                "final_global_green": eval_res["global_green"],
+                "final_defect": eval_res["defect"],
+                "final_encoder_bits": eval_res["encoder_bits"],
+                "final_bit_budget_b": eval_res["bit_budget_b"],
+                "final_channel_capacity_s": eval_res["channel_capacity_s"],
+                "final_used_symbols_count": eval_res["used_symbols_count"],
+                "final_conditional_ambiguity": eval_res["conditional_ambiguity_2_pow_h_minus_b"],
+                "final_realized_subfiber_error_floor": eval_res["realized_subfiber_error_floor"],
+                "final_capacity_error_floor_k_minus_s": eval_res["capacity_error_floor_k_minus_s"],
+                "final_cap_surcharge_cents": eval_res["cap_surcharge_cents"],
+                "final_merchant_payout_cents": eval_res["merchant_payout_cents"],
+                "final_status": final_status,
+                "final_receipt_sha256": receipt["receipt_sha256"],
+                "final_receipt": receipt,
+                "escalations": dict(ws.state["escalations"]),
+                "api_attempts": client.calls - arm_start_calls,
+                "cost_usd": str(client.spent - arm_start_spent),
+            }
+            events.emit("arm", {"seed": seed, **arm_summary})
+            arm_results.append(arm_summary)
+
+        cases.append(
+            {
+                "seed": seed,
+                "kind": base_state["kind"],
+                "arms": arm_results,
+            }
+        )
+
+    summary = {
+        "schema": "lggr.side_info_capacity_code_engineering_swarm.v1",
+        "topology": "side_info_capacity",
+        "authority_effect": "None",
+        "cases": cases,
+        "api_attempts": client.calls,
+        "charged_or_reserved_usd": str(client.spent),
+        "max_inflight_requests": client.max_inflight,
+        "concurrent_waves": client.concurrent_waves,
+        "scope": (
+            "Concurrent 3-agent side-information channel capacity & ambiguity-reduction bit-budget "
+            "Python code-engineering swarm (`pricing_cap` -> `tax_cap` -> `settlement_cap`) comparing "
+            "local channel range verification with encoder_bits = 0, bit_budget_b = 1 (A), "
+            "partial encoder upgrade encoder_bits = 1 under sub-Nyquist 1-bit channel capacity S = 2 < K = 4 (B), "
+            "and full Nyquist side-information capacity provisioning encoder_bits = 2, bit_budget_b = 2, S = 4 = K (C) "
+            "with full cryptographic receipts."
+        ),
+    }
+    events.emit("summary", summary)
+    return summary
+
+
 def replay(path: str | Path) -> dict[str, Any]:
     records = [json.loads(line) for line in Path(path).read_text(encoding="utf-8").splitlines()]
     metadata = records[0]["data"]
@@ -9210,6 +9489,8 @@ def replay(path: str | Path) -> dict[str, Any]:
             summary = simultaneous_split_campaign(client, events, config)
         elif config.get("topology") == "mermin_peres":
             summary = mermin_peres_campaign(client, events, config)
+        elif config.get("topology") == "side_info_capacity":
+            summary = side_info_capacity_campaign(client, events, config)
         else:
             summary = campaign(client, events, config)
     except RunStopped as error:
@@ -9272,6 +9553,7 @@ def main() -> None:
             "poe_veto",
             "simultaneous_split",
             "mermin_peres",
+            "side_info_capacity",
         ],
         default="linear",
     )
@@ -9371,6 +9653,8 @@ def main() -> None:
         seeds = [12700, 12701, 12702]
     elif args.topology == "mermin_peres":
         seeds = [12800, 12801, 12802]
+    elif args.topology == "side_info_capacity":
+        seeds = [12900, 12901, 12902]
     else:
         seeds = [6100, 6101, 6102]
     if args.topology == "diamond":
@@ -9781,6 +10065,17 @@ def main() -> None:
         events.emit("start", {"config": config})
         client = CodeBatchClient(events, args.budget)
         summary = mermin_peres_campaign(client, events, config)
+    elif args.topology == "side_info_capacity":
+        config = {
+            "topology": "side_info_capacity",
+            "seeds": seeds,
+            "models": CODE_SWARM_MODELS,
+            "budget_usd": str(args.budget),
+        }
+        events = Events(events_path)
+        events.emit("start", {"config": config})
+        client = CodeBatchClient(events, args.budget)
+        summary = side_info_capacity_campaign(client, events, config)
     else:
         config = {
             "seeds": seeds,
