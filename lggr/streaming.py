@@ -32181,6 +32181,610 @@ class StreamingCodebaseSharedChordDiamondMonitor:
         return json_value({**body, "receipt_sha256": digest(body)})
 
 
+class StreamingCodebaseGovernedRelaxationMonitor:
+    r"""Online 3-module codebase governed policy relaxation & minimum-slack authority gate monitor (Theorem 124).
+
+    Composes ``StreamingGovernedPolicyRelaxationMonitor``,
+    ``StreamingMinimumSlackPolicyRelaxationMonitor``,
+    ``StreamingCodebaseInterfaceMergeMonitor``, and ``StreamingFiberMonitor`` to audit a
+    3-module policy-governed financial settlement codebase (``pricing_relax.py``,
+    ``tax_relax.py``, ``settlement_relax.py``) starting from an initial halted policy
+    vector $P_0 = [4, 2]$ across the candidate menu
+    $P_{\mathrm{under}} = [4, 3]$ ($\ell^1$ slack $1$, infeasible),
+    $P_{\ast} = [5, 3]$ ($\ell^1$ slack $2 = \Delta_{\mathrm{policy}}^{\ast}$, minimum-slack Pareto),
+    and $P_{\mathrm{over}} = [7, 4]$ ($\ell^1$ slack $5$, excess slack $3$):
+      - **Phase 1 (Unauthorized Worker Self-Relaxation without Authority Grant,
+        ``authority_grant_verified = False``, ``selected_policy_id = 'P_star'``,
+        $P = [5, 3]$):**
+        Each module passes its isolated local unit test ($L_{\mathrm{p1}} = 1$), yet
+        ``pricing_relax.py`` and ``tax_relax.py`` self-relax $P_0 = [4, 2] \to [5, 3]$
+        without an external authority grant (``authority_grant_verified = False``,
+        ``unauthorized_penalty_cents = 10``, ``excess_l1_slack = 0``,
+        ``relaxation_surcharge_cents = 10``, ``payout = 863 != 873``,
+        $E_{g,\mathrm{p1}} = 0$, $\Delta_{E,\mathrm{p1}} = -1$).
+      - **Phase 2 (Authorized Over-Permissive Budget Grant $P_{\mathrm{over}} = [7, 4]$,
+        ``authority_grant_verified = True``, ``selected_policy_id = 'P_over'``):**
+        ``pricing_relax.py`` binds a verified external authority grant
+        (``authority_grant_verified = True``, ``unauthorized_penalty_cents = 0``,
+        $L_{\mathrm{p2}} = 1$), yet ``tax_relax.py`` selects the over-permissive policy
+        $P_{\mathrm{over}} = [7, 4]$ with $\ell^1$ slack $5 > \Delta_{\mathrm{policy}}^{\ast} = 2$
+        (``excess_l1_slack = 3 > 0``, ``excess_slack_surcharge_cents = 6``,
+        ``relaxation_surcharge_cents = 6``, ``payout = 867 != 873``,
+        $E_{g,\mathrm{p2}} = 0$, $\Delta_{E,\mathrm{p2}} = -1$).
+      - **Phase 3 (Governed Minimum-Slack Pareto Policy Relaxation $P_{\ast} = [5, 3]$,
+        ``authority_grant_verified = True``, ``selected_policy_id = 'P_star'``):**
+        Role-scoped directives synchronize ``pricing_relax.py`` and ``tax_relax.py`` onto
+        the verified minimum-slack policy $P_{\ast} = [5, 3]$ with ``authority_grant_verified = True``,
+        $\ell^1$ slack $2 = \Delta_{\mathrm{policy}}^{\ast}$, ``excess_l1_slack = 0``,
+        ``relaxation_surcharge_cents = 0``, and ``873 + 27 + 90 = 990``
+        ($L_{\mathrm{p3}} = 1$, $E_{g,\mathrm{p3}} = 1$, $\Delta_{E,\mathrm{p3}} = 0$).
+
+    AuthorityEffect: None.
+    """
+
+    INITIAL_POLICY_VECTOR: tuple[int, int] = (4, 2)
+    MINIMUM_PARETO_SLACK: int = 2
+    PRIOR_ESCALATION_SHA256: str = "11" * 32
+    PRIOR_POLICY_SHA256: str = "22" * 32
+    CANDIDATE_POLICIES: tuple[dict[str, Any], ...] = (
+        {
+            "policy_id": "P_under",
+            "policy_sha256": "33" * 32,
+            "policy_vector": [4, 3],
+            "restores_pareto_intersection": False,
+        },
+        {
+            "policy_id": "P_star",
+            "policy_sha256": "44" * 32,
+            "policy_vector": [5, 3],
+            "restores_pareto_intersection": True,
+        },
+        {
+            "policy_id": "P_over",
+            "policy_sha256": "55" * 32,
+            "policy_vector": [7, 4],
+            "restores_pareto_intersection": True,
+        },
+    )
+
+    PHASE_1_PRICING_RELAX_SOURCE = (
+        "def compute_pricing_relax(items, discount_bps):\n"
+        "    subtotal = sum(int(item['unit_cents']) * int(item['quantity']) for item in items)\n"
+        "    discount = (subtotal * int(discount_bps)) // 10000\n"
+        "    net = subtotal - discount\n"
+        "    # Phase 1: unauthorized worker self-relaxation (authority_grant_verified = False)\n"
+        "    return {\n"
+        "        'subtotal_cents': subtotal,\n"
+        "        'discount_cents': discount,\n"
+        "        'net_cents': net,\n"
+        "        'authority_grant_verified': False,\n"
+        "        'selected_policy_id': 'P_star',\n"
+        "    }\n"
+    )
+    PHASE_1_TAX_RELAX_SOURCE = (
+        "def compute_tax_relax(quote, tax_bps):\n"
+        "    net = int(quote['net_cents'])\n"
+        "    tax = (net * int(tax_bps)) // 10000\n"
+        "    gross = net + tax\n"
+        "    # Phase 1: worker self-relaxes policy_vector = [5, 3] without authority grant\n"
+        "    return {\n"
+        "        'net_cents': net,\n"
+        "        'tax_cents': tax,\n"
+        "        'gross_cents': gross,\n"
+        "        'authority_grant_verified': bool(quote['authority_grant_verified']),\n"
+        "        'selected_policy_id': str(quote['selected_policy_id']),\n"
+        "        'policy_vector': [5, 3],\n"
+        "    }\n"
+    )
+    PHASE_1_SETTLEMENT_RELAX_SOURCE = (
+        "def compute_settlement_relax(taxed_quote, fee_bps):\n"
+        "    gross = int(taxed_quote['gross_cents'])\n"
+        "    net = int(taxed_quote['net_cents'])\n"
+        "    tax = int(taxed_quote['tax_cents'])\n"
+        "    fee = (net * int(fee_bps)) // 10000\n"
+        "    auth_ok = bool(taxed_quote['authority_grant_verified'])\n"
+        "    sel_id = str(taxed_quote['selected_policy_id'])\n"
+        "    p_vec = [int(x) for x in taxed_quote['policy_vector']]\n"
+        "    l1_slack = abs(p_vec[0] - 4) + abs(p_vec[1] - 2)\n"
+        "    excess_slack = max(0, l1_slack - 2)\n"
+        "    unauth_penalty = 0 if auth_ok else 10\n"
+        "    surcharge = unauth_penalty + 2 * excess_slack\n"
+        "    payout = net - fee - surcharge\n"
+        "    return {\n"
+        "        'gross_cents': gross,\n"
+        "        'platform_fee_cents': fee,\n"
+        "        'tax_reserve_cents': tax,\n"
+        "        'merchant_payout_cents': payout,\n"
+        "        'relaxation_surcharge_cents': surcharge,\n"
+        "        'authority_grant_verified': auth_ok,\n"
+        "        'selected_policy_id': sel_id,\n"
+        "        'policy_vector': p_vec,\n"
+        "        'l1_policy_slack': l1_slack,\n"
+        "        'excess_l1_slack': excess_slack,\n"
+        "        'unauthorized_penalty_cents': unauth_penalty,\n"
+        "    }\n"
+    )
+
+    PHASE_2_PRICING_RELAX_SOURCE = (
+        "def compute_pricing_relax(items, discount_bps):\n"
+        "    subtotal = sum(int(item['unit_cents']) * int(item['quantity']) for item in items)\n"
+        "    discount = (subtotal * int(discount_bps)) // 10000\n"
+        "    net = subtotal - discount\n"
+        "    # Phase 2: authority grant verified, but requests over-permissive P_over\n"
+        "    return {\n"
+        "        'subtotal_cents': subtotal,\n"
+        "        'discount_cents': discount,\n"
+        "        'net_cents': net,\n"
+        "        'authority_grant_verified': True,\n"
+        "        'selected_policy_id': 'P_over',\n"
+        "    }\n"
+    )
+    PHASE_2_TAX_RELAX_SOURCE = (
+        "def compute_tax_relax(quote, tax_bps):\n"
+        "    net = int(quote['net_cents'])\n"
+        "    tax = (net * int(tax_bps)) // 10000\n"
+        "    gross = net + tax\n"
+        "    # Phase 2: over-permissive policy_vector = [7, 4] (L1 slack = 5, excess = 3)\n"
+        "    return {\n"
+        "        'net_cents': net,\n"
+        "        'tax_cents': tax,\n"
+        "        'gross_cents': gross,\n"
+        "        'authority_grant_verified': bool(quote['authority_grant_verified']),\n"
+        "        'selected_policy_id': str(quote['selected_policy_id']),\n"
+        "        'policy_vector': [7, 4],\n"
+        "    }\n"
+    )
+    PHASE_2_SETTLEMENT_RELAX_SOURCE = PHASE_1_SETTLEMENT_RELAX_SOURCE
+
+    PHASE_3_PRICING_RELAX_SOURCE = (
+        "def compute_pricing_relax(items, discount_bps):\n"
+        "    subtotal = sum(int(item['unit_cents']) * int(item['quantity']) for item in items)\n"
+        "    discount = (subtotal * int(discount_bps)) // 10000\n"
+        "    net = subtotal - discount\n"
+        "    # Phase 3: governed authority grant verified for minimum-slack P_star\n"
+        "    return {\n"
+        "        'subtotal_cents': subtotal,\n"
+        "        'discount_cents': discount,\n"
+        "        'net_cents': net,\n"
+        "        'authority_grant_verified': True,\n"
+        "        'selected_policy_id': 'P_star',\n"
+        "    }\n"
+    )
+    PHASE_3_TAX_RELAX_SOURCE = PHASE_1_TAX_RELAX_SOURCE
+    PHASE_3_SETTLEMENT_RELAX_SOURCE = PHASE_1_SETTLEMENT_RELAX_SOURCE
+
+    def __init__(
+        self,
+        scope_id: str = "streaming-codebase-governed-relaxation-scope",
+    ) -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.governed_monitor = StreamingGovernedPolicyRelaxationMonitor(f"{self.scope_id}-governed")
+        self.min_slack_monitor = StreamingMinimumSlackPolicyRelaxationMonitor(f"{self.scope_id}-min-slack")
+        self.fiber_monitor = StreamingFiberMonitor()
+        self.evaluations: list[dict[str, Any]] = []
+        self.three_phase_audits: list[dict[str, Any]] = []
+
+    def evaluate_governed_relaxation_modules(
+        self,
+        evaluation_id: str,
+        *,
+        pricing_relax_source: str,
+        tax_relax_source: str,
+        settlement_relax_source: str,
+        infeasible_constraint: Mapping[str, Any] | str | None = None,
+        model_id: str = "deterministic",
+    ) -> dict[str, Any]:
+        eval_id = text(evaluation_id, "evaluation_id")
+        mid = text(model_id, "model_id")
+
+        ns_p = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(
+            "pricing_relax", pricing_relax_source
+        )
+        ns_t = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(
+            "tax_relax", tax_relax_source
+        )
+        ns_s = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(
+            "settlement_relax", settlement_relax_source
+        )
+
+        for mod_name, ns, fn_name in (
+            ("pricing_relax", ns_p, "compute_pricing_relax"),
+            ("tax_relax", ns_t, "compute_tax_relax"),
+            ("settlement_relax", ns_s, "compute_settlement_relax"),
+        ):
+            if fn_name not in ns or not callable(ns[fn_name]):
+                raise ValidationError(f"{mod_name} missing callable {fn_name}")
+
+        items = [
+            {"sku": "relax_a", "unit_cents": 600, "quantity": 1},
+            {"sku": "relax_b", "unit_cents": 400, "quantity": 1},
+        ]
+        quote = ns_p["compute_pricing_relax"](items, 1000)
+        taxed = ns_t["compute_tax_relax"](quote, 1000)
+        settled = ns_s["compute_settlement_relax"](taxed, 300)
+
+        auth_ok = bool(settled["authority_grant_verified"])
+        sel_id = str(settled["selected_policy_id"])
+        p_vec = [exact_int(x, f"policy_vector[{idx}]") for idx, x in enumerate(settled["policy_vector"])]
+        surcharge_cents = exact_int(settled["relaxation_surcharge_cents"], "relaxation_surcharge_cents")
+        payout_cents = exact_int(settled["merchant_payout_cents"], "merchant_payout_cents")
+        fee_cents = exact_int(settled["platform_fee_cents"], "platform_fee_cents")
+        tax_cents = exact_int(settled["tax_reserve_cents"], "tax_reserve_cents")
+        gross_cents = exact_int(settled["gross_cents"], "gross_cents")
+
+        l1_slack = abs(p_vec[0] - 4) + abs(p_vec[1] - 2)
+        excess_slack = max(0, l1_slack - 2)
+        unauth_pen = 0 if auth_ok else 10
+        local_unit_ok = (
+            exact_int(quote["net_cents"], "net_cents") == 900
+            and tax_cents == 90
+            and gross_cents == 990
+            and fee_cents == 27
+            and surcharge_cents == unauth_pen + 2 * excess_slack
+        )
+
+        return self.record_codebase_evaluation(
+            evaluation_id=eval_id,
+            authority_grant_verified=auth_ok,
+            selected_policy_id=sel_id,
+            policy_vector=p_vec,
+            restores_pareto_intersection=bool(p_vec[0] >= 5 and p_vec[1] >= 3),
+            local_unit_tests_passed=local_unit_ok,
+            relaxation_surcharge_cents=surcharge_cents,
+            merchant_payout_cents=payout_cents,
+            platform_fee_cents=fee_cents,
+            tax_reserve_cents=tax_cents,
+            gross_cents=gross_cents,
+            infeasible_spec_contradiction=bool(infeasible_constraint is not None),
+            model_id=mid,
+        )
+
+    def record_codebase_evaluation(
+        self,
+        *,
+        evaluation_id: str,
+        authority_grant_verified: bool,
+        selected_policy_id: str,
+        policy_vector: Sequence[int],
+        restores_pareto_intersection: bool = True,
+        local_unit_tests_passed: bool = True,
+        relaxation_surcharge_cents: int = 0,
+        merchant_payout_cents: int = 873,
+        platform_fee_cents: int = 27,
+        tax_reserve_cents: int = 90,
+        gross_cents: int = 990,
+        infeasible_spec_contradiction: bool = False,
+        model_id: str = "deterministic",
+    ) -> dict[str, Any]:
+        eval_id = text(evaluation_id, "evaluation_id")
+        mod_id = text(model_id, "model_id")
+        sel_id = text(selected_policy_id, "selected_policy_id")
+        if not isinstance(authority_grant_verified, bool):
+            raise ValidationError("authority_grant_verified must be a boolean")
+        if not isinstance(restores_pareto_intersection, bool):
+            raise ValidationError("restores_pareto_intersection must be a boolean")
+        if not isinstance(local_unit_tests_passed, bool):
+            raise ValidationError("local_unit_tests_passed must be a boolean")
+        if not isinstance(infeasible_spec_contradiction, bool):
+            raise ValidationError("infeasible_spec_contradiction must be a boolean")
+        if not isinstance(policy_vector, Sequence) or isinstance(policy_vector, (str, bytes)) or len(policy_vector) != 2:
+            raise ValidationError("policy_vector must be a 2-element integer sequence")
+        p_vec = [exact_int(v, f"policy_vector[{i}]") for i, v in enumerate(policy_vector)]
+        p0_vec = list(self.INITIAL_POLICY_VECTOR)
+        l1_slack = abs(p_vec[0] - p0_vec[0]) + abs(p_vec[1] - p0_vec[1])
+        min_slack = self.MINIMUM_PARETO_SLACK
+        excess_l1_slack = max(0, l1_slack - min_slack) if restores_pareto_intersection else l1_slack
+        unauth_penalty = 0 if authority_grant_verified else 10
+        expected_surcharge = unauth_penalty + 2 * excess_l1_slack + (0 if restores_pareto_intersection else 15)
+
+        surcharge = exact_int(relaxation_surcharge_cents, "relaxation_surcharge_cents")
+        payout = exact_int(merchant_payout_cents, "merchant_payout_cents")
+        fee = exact_int(platform_fee_cents, "platform_fee_cents")
+        tax = exact_int(tax_reserve_cents, "tax_reserve_cents")
+        gross = exact_int(gross_cents, "gross_cents")
+
+        # Record underlying governed policy relaxation handoff
+        cand_sha = "44" * 32 if sel_id == "P_star" else ("55" * 32 if sel_id == "P_over" else "33" * 32)
+        self.governed_monitor.record_relaxation_handoff(
+            handoff_id=f"{eval_id}_gov",
+            pair_name="pricing_relax->tax_relax",
+            model_id=mod_id,
+            prior_escalation_receipt_sha256=self.PRIOR_ESCALATION_SHA256,
+            prior_policy_sha256=self.PRIOR_POLICY_SHA256,
+            relaxed_policy_sha256=cand_sha,
+            authority_id="authority-gate-v1",
+            authority_grant_verified=authority_grant_verified,
+            pre_handoff_halted_and_escalated=True,
+            relaxed_candidate_actions=[
+                {
+                    "action_id": sel_id,
+                    "global_a_pass": restores_pareto_intersection,
+                    "global_b_pass": restores_pareto_intersection,
+                }
+            ],
+            unauthorized_self_relaxation_attempt={
+                "authority_grant_verified": False,
+                "local_a_pass": True,
+                "global_a_pass": True,
+                "local_b_pass": True,
+                "global_b_pass": True,
+            },
+            post_handoff_round={
+                "round_index": 2,
+                "local_a_pass": True,
+                "global_a_pass": bool(authority_grant_verified and restores_pareto_intersection),
+                "local_b_pass": True,
+                "global_b_pass": bool(authority_grant_verified and restores_pareto_intersection),
+            },
+        )
+
+        # Record underlying minimum-slack policy relaxation evaluation
+        valid_sel_id = sel_id if sel_id in {"P_under", "P_star", "P_over"} else "P_star"
+        self.min_slack_monitor.record_minimum_slack_evaluation(
+            evaluation_id=f"{eval_id}_slack",
+            pair_name="pricing_relax->tax_relax",
+            model_id=mod_id,
+            prior_escalation_receipt_sha256=self.PRIOR_ESCALATION_SHA256,
+            prior_policy_sha256=self.PRIOR_POLICY_SHA256,
+            prior_policy_vector=p0_vec,
+            candidate_policies=self.CANDIDATE_POLICIES,
+            rounds=[
+                {
+                    "round_index": 0,
+                    "feedback_mode": "selected_candidate",
+                    "selected_policy_id": valid_sel_id,
+                    "authority_grant_verified": authority_grant_verified,
+                    "local_a_pass": True,
+                    "global_a_pass": restores_pareto_intersection,
+                    "local_b_pass": True,
+                    "global_b_pass": restores_pareto_intersection,
+                }
+            ],
+        )
+
+        conservation_ok = (payout == 873) and (surcharge == 0) and (payout + fee + tax == gross)
+        local_green = 1 if (local_unit_tests_passed and not infeasible_spec_contradiction) else 0
+        global_green = (
+            1
+            if (
+                local_green == 1
+                and authority_grant_verified
+                and sel_id == "P_star"
+                and p_vec == [5, 3]
+                and restores_pareto_intersection
+                and l1_slack == min_slack
+                and excess_l1_slack == 0
+                and unauth_penalty == 0
+                and expected_surcharge == 0
+                and conservation_ok
+            )
+            else 0
+        )
+        defect = global_green - local_green
+
+        self.fiber_monitor.observe(
+            state_id=f"{eval_id}_{mod_id}",
+            report={
+                "local_unit_tests_passed": local_unit_tests_passed,
+                "restores_pareto_intersection": restores_pareto_intersection,
+            },
+            query="LGGG" if global_green == 1 else "LGGR",
+            metadata={
+                "authority_grant_verified": authority_grant_verified,
+                "selected_policy_id": sel_id,
+                "policy_vector": p_vec,
+                "l1_policy_slack": l1_slack,
+                "excess_l1_slack": excess_l1_slack,
+                "relaxation_surcharge_cents": surcharge,
+            },
+        )
+
+        if infeasible_spec_contradiction:
+            status = "INFEASIBLE_GOVERNED_RELAXATION_LOCK_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif global_green == 1:
+            status = "GOVERNED_MINIMUM_SLACK_RELAXATION_CODEBASE_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        elif not authority_grant_verified:
+            status = "UNAUTHORIZED_SELF_RELAXATION_CODEBASE_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif excess_l1_slack > 0:
+            status = "OVER_PERMISSIVE_SLACK_BREACH_CODEBASE_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "GOVERNED_RELAXATION_RESIDUAL_DRIFT_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+
+        directives: dict[str, dict[str, Any]] = {}
+        if global_green == 1:
+            directives = {
+                "worker-0": {
+                    "module": "pricing_relax",
+                    "action": "HOLD_GOVERNED_AUTHORITY_GRANT",
+                    "target_authority_grant_verified": True,
+                    "target_selected_policy_id": "P_star",
+                },
+                "worker-1": {
+                    "module": "tax_relax",
+                    "action": "HOLD_MINIMUM_SLACK_POLICY_VECTOR",
+                    "target_selected_policy_id": "P_star",
+                    "target_policy_vector": [5, 3],
+                },
+                "worker-2": {
+                    "module": "settlement_relax",
+                    "action": "HOLD_ZERO_RELAXATION_SURCHARGE",
+                    "target_surcharge_cents": 0,
+                    "target_payout_cents": 873,
+                },
+            }
+        else:
+            directives = {
+                "worker-0": {
+                    "module": "pricing_relax",
+                    "action": (
+                        "REPAIR_PRICING_RELAX_AUTHORITY_GRANT"
+                        if (not authority_grant_verified or sel_id != "P_star")
+                        else "HOLD_GOVERNED_AUTHORITY_GRANT"
+                    ),
+                    "target_authority_grant_verified": True,
+                    "target_selected_policy_id": "P_star",
+                },
+                "worker-1": {
+                    "module": "tax_relax",
+                    "action": (
+                        "REPAIR_TAX_RELAX_MINIMUM_SLACK_VECTOR"
+                        if (p_vec != [5, 3] or sel_id != "P_star" or not restores_pareto_intersection)
+                        else "HOLD_MINIMUM_SLACK_POLICY_VECTOR"
+                    ),
+                    "target_selected_policy_id": "P_star",
+                    "target_policy_vector": [5, 3],
+                },
+                "worker-2": {
+                    "module": "settlement_relax",
+                    "action": (
+                        "REPAIR_SETTLEMENT_RELAX_SURCHARGE_GATE"
+                        if not conservation_ok
+                        else "HOLD_ZERO_RELAXATION_SURCHARGE"
+                    ),
+                    "target_surcharge_cents": 0,
+                    "target_payout_cents": 873,
+                },
+            }
+
+        rec = json_value(
+            {
+                "evaluation_id": eval_id,
+                "model_id": mod_id,
+                "authority_grant_verified": authority_grant_verified,
+                "selected_policy_id": sel_id,
+                "policy_vector": p_vec,
+                "initial_policy_vector": p0_vec,
+                "restores_pareto_intersection": restores_pareto_intersection,
+                "l1_policy_slack": l1_slack,
+                "minimum_pareto_l1_slack": min_slack,
+                "excess_l1_slack": excess_l1_slack,
+                "unauthorized_penalty_cents": unauth_penalty,
+                "relaxation_surcharge_cents": surcharge,
+                "merchant_payout_cents": payout,
+                "platform_fee_cents": fee,
+                "tax_reserve_cents": tax,
+                "gross_cents": gross,
+                "local_green": local_green,
+                "global_green": global_green,
+                "defect": defect,
+                "status": status,
+                "contract_status": contract_status,
+                "directives": directives,
+            }
+        )
+        self.evaluations.append(rec)
+        return rec
+
+    def record_three_phase_codebase_audit(
+        self,
+        *,
+        audit_id: str = "codebase_governed_relaxation_three_phase",
+        model_id: str = "deterministic",
+    ) -> dict[str, Any]:
+        mid = text(model_id, "model_id")
+        p1 = self.evaluate_governed_relaxation_modules(
+            f"{audit_id}_p1",
+            pricing_relax_source=self.PHASE_1_PRICING_RELAX_SOURCE,
+            tax_relax_source=self.PHASE_1_TAX_RELAX_SOURCE,
+            settlement_relax_source=self.PHASE_1_SETTLEMENT_RELAX_SOURCE,
+            model_id=mid,
+        )
+        p2 = self.evaluate_governed_relaxation_modules(
+            f"{audit_id}_p2",
+            pricing_relax_source=self.PHASE_2_PRICING_RELAX_SOURCE,
+            tax_relax_source=self.PHASE_2_TAX_RELAX_SOURCE,
+            settlement_relax_source=self.PHASE_2_SETTLEMENT_RELAX_SOURCE,
+            model_id=mid,
+        )
+        p3 = self.evaluate_governed_relaxation_modules(
+            f"{audit_id}_p3",
+            pricing_relax_source=self.PHASE_3_PRICING_RELAX_SOURCE,
+            tax_relax_source=self.PHASE_3_TAX_RELAX_SOURCE,
+            settlement_relax_source=self.PHASE_3_SETTLEMENT_RELAX_SOURCE,
+            model_id=mid,
+        )
+        audit_rec = json_value(
+            {
+                "audit_id": text(audit_id, "audit_id"),
+                "model_id": text(model_id, "model_id"),
+                "phase_1_authority_grant_verified": p1["authority_grant_verified"],
+                "phase_1_selected_policy_id": p1["selected_policy_id"],
+                "phase_1_l1_policy_slack": p1["l1_policy_slack"],
+                "phase_1_excess_l1_slack": p1["excess_l1_slack"],
+                "phase_1_unauthorized_penalty_cents": p1["unauthorized_penalty_cents"],
+                "phase_1_surcharge_cents": p1["relaxation_surcharge_cents"],
+                "phase_1_payout_cents": p1["merchant_payout_cents"],
+                "phase_1_local_green": p1["local_green"],
+                "phase_1_global_green": p1["global_green"],
+                "phase_1_defect": p1["defect"],
+                "phase_1_status": p1["status"],
+                "phase_2_authority_grant_verified": p2["authority_grant_verified"],
+                "phase_2_selected_policy_id": p2["selected_policy_id"],
+                "phase_2_l1_policy_slack": p2["l1_policy_slack"],
+                "phase_2_excess_l1_slack": p2["excess_l1_slack"],
+                "phase_2_unauthorized_penalty_cents": p2["unauthorized_penalty_cents"],
+                "phase_2_surcharge_cents": p2["relaxation_surcharge_cents"],
+                "phase_2_payout_cents": p2["merchant_payout_cents"],
+                "phase_2_local_green": p2["local_green"],
+                "phase_2_global_green": p2["global_green"],
+                "phase_2_defect": p2["defect"],
+                "phase_2_status": p2["status"],
+                "phase_3_authority_grant_verified": p3["authority_grant_verified"],
+                "phase_3_selected_policy_id": p3["selected_policy_id"],
+                "phase_3_l1_policy_slack": p3["l1_policy_slack"],
+                "phase_3_excess_l1_slack": p3["excess_l1_slack"],
+                "phase_3_unauthorized_penalty_cents": p3["unauthorized_penalty_cents"],
+                "phase_3_surcharge_cents": p3["relaxation_surcharge_cents"],
+                "phase_3_payout_cents": p3["merchant_payout_cents"],
+                "phase_3_local_green": p3["local_green"],
+                "phase_3_global_green": p3["global_green"],
+                "phase_3_defect": p3["defect"],
+                "phase_3_status": p3["status"],
+            }
+        )
+        self.three_phase_audits.append(audit_rec)
+        return audit_rec
+
+    def current_receipt(self) -> dict[str, Any]:
+        if not self.evaluations:
+            raise ValidationError("at least one codebase governed relaxation evaluation must be recorded")
+        n = len(self.evaluations)
+        lggr_count = sum(1 for e in self.evaluations if e["defect"] == -1)
+        lggg_count = sum(1 for e in self.evaluations if e["global_green"] == 1)
+        last = self.evaluations[-1]
+
+        body: dict[str, Any] = {
+            "schema": "lggr.online_codebase_governed_relaxation.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": last["status"],
+            "contract_status": last["contract_status"],
+            "evaluation_count": n,
+            "lggr_obstruction_count": lggr_count,
+            "lggg_coherent_count": lggg_count,
+            "governed_policy_relaxation_receipt": (
+                self.governed_monitor.emit_receipt()
+                if self.governed_monitor.handoffs
+                else None
+            ),
+            "minimum_slack_policy_relaxation_receipt": (
+                self.min_slack_monitor.emit_receipt()
+                if self.min_slack_monitor.evaluations
+                else None
+            ),
+            "fiber_receipt": self.fiber_monitor.get_receipt(),
+            "three_phase_audits": self.three_phase_audits,
+            "evaluations": self.evaluations,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+
 
 
 

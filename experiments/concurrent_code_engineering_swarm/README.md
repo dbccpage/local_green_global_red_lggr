@@ -477,13 +477,24 @@ In `--topology shared_chord_diamond`, the 3 concurrent agents maintain a 3-modul
 | `12000` | `repairable_shared_chord_diamond_hodge_and_mayer_vietoris_defect` | **C** | `explicit_lggr_shared_chord_diamond_directive` | **`completed`** | **`[1, 1, -2, -1, 0]`** | **`7`** | **`0`** | **`0`** | **`0`** | **`0`** | **1** | **7** | **`$0.009119`** |
 | `12001` | `infeasible_hardware_locked_unfilled_diamond_loop_and_shared_chord` | **A / B / C** | All policies | `safe_escalated` | `[0, 2, 1, -4, -3]` | `3` | `3` | `24` | `0` | `27` | 1 | 18 | `$0.022290` |
 
+## 31. Governed Policy Relaxation & Minimum-Slack Authority Gate Audit (`--topology governed_relaxation`, Theorem 124)
+
+In `--topology governed_relaxation`, the 3 concurrent agents maintain a 3-module policy-governed settlement codebase (`pricing_relax.py`, `tax_relax.py`, `settlement_relax.py`) starting from initial halted policy vector $P_0 = [4, 2]$ across candidate menu $P_{\mathrm{under}} = [4, 3]$ ($\ell^1$ slack $1$, infeasible), $P_{\ast} = [5, 3]$ ($\ell^1$ slack $2 = \Delta_{\mathrm{policy}}^{\ast}$, minimum-slack Pareto), and $P_{\mathrm{over}} = [7, 4]$ ($\ell^1$ slack $5$, excess slack $3$) (`StreamingCodebaseGovernedRelaxationMonitor`, Theorem 124):
+
+| Seed | Case | Arm | Gate Policy | Status | `auth_verified` | Policy ID | Vector $P$ | $\ell^1$ Slack | Excess Slack | Surcharge | Waves | API Calls | Cost (USD) |
+| :--- | :--- | :---: | :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| `12100` | `repairable_governed_relaxation_authority_gate_and_minimum_slack_defect` | **A** | `unauthorized_worker_self_relaxation_gate` | `blocked_unresolved` | `False` | `P_star` | `[5, 3]` | `2` | `0` | `10` | 2 | 18 | `$0.017287` |
+| `12100` | `repairable_governed_relaxation_authority_gate_and_minimum_slack_defect` | **B** | `authorized_over_permissive_slack_gate` | `blocked_unresolved` | `True` | `P_over` | `[7, 4]` | `5` | `3` | `6` | 2 | 14 | `$0.015066` |
+| `12100` | `repairable_governed_relaxation_authority_gate_and_minimum_slack_defect` | **C** | `explicit_lggr_governed_minimum_slack_directive` | **`completed`** | **`True`** | **`P_star`** | **`[5, 3]`** | **`2`** | **`0`** | **`0`** | **1** | **8** | **`$0.010746`** |
+| `12101` | `infeasible_hardware_locked_unauthenticated_policy_relaxation` | **A / B / C** | All policies | `safe_escalated` | `False` | `P_star` | `[5, 3]` | `2` | `0` | `10` | 1 | 19 | `$0.022162` |
+
 ## Offline Verification & Live Execution
 
 ```powershell
 # Run unit, tamper, and deterministic replay tests (no API calls)
 python -m unittest tests.test_concurrent_code_engineering_swarm -v
 
-# Replay archived live 3-agent linear, 4-agent diamond, 3-agent catalyst, 3-agent stateful DFA, 3-agent replay-order, 3-agent coalitional, 3-agent Mayer-Vietoris, 3-agent windowed-drift, 3-agent optional-stopping, 3-agent CPTP channel, 3-agent Regge holonomy, 3-agent k-induction, 3-agent Jacobian, 3-agent boundary-quorum, 3-agent lease-overlap, 3-agent contextual-sheaf, 3-agent watcher-dropout, 3-agent policy-reversal, 3-agent fiber-splitting, 3-agent disagreement-council, 3-agent six-role deduplication, 3-agent path-kernel dashboard, 3-agent dynamic-schema synthesis, 3-agent adversarial-schema side-channel, 3-agent graceful-shedding, 3-agent obligation-migration, 3-agent three-party-c3, 3-agent multi-loop-hodge, 3-agent figure-eight-wedge, and 3-agent shared-chord-diamond evidence (no API calls)
+# Replay archived live 3-agent linear, 4-agent diamond, 3-agent catalyst, 3-agent stateful DFA, 3-agent replay-order, 3-agent coalitional, 3-agent Mayer-Vietoris, 3-agent windowed-drift, 3-agent optional-stopping, 3-agent CPTP channel, 3-agent Regge holonomy, 3-agent k-induction, 3-agent Jacobian, 3-agent boundary-quorum, 3-agent lease-overlap, 3-agent contextual-sheaf, 3-agent watcher-dropout, 3-agent policy-reversal, 3-agent fiber-splitting, 3-agent disagreement-council, 3-agent six-role deduplication, 3-agent path-kernel dashboard, 3-agent dynamic-schema synthesis, 3-agent adversarial-schema side-channel, 3-agent graceful-shedding, 3-agent obligation-migration, 3-agent three-party-c3, 3-agent multi-loop-hodge, 3-agent figure-eight-wedge, 3-agent shared-chord-diamond, and 3-agent governed-relaxation evidence (no API calls)
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/diamond_pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/catalyst_pilot_run/events.jsonl
@@ -514,4 +525,5 @@ python -m experiments.concurrent_code_engineering_swarm.runner replay experiment
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/multi_loop_hodge_pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/figure_eight_wedge_pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/shared_chord_diamond_pilot_run/events.jsonl
+python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/governed_relaxation_pilot_run/events.jsonl
 ```

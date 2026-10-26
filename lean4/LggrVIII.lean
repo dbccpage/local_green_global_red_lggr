@@ -5448,4 +5448,66 @@ theorem shared_chord_diamond_codebase_hodge_and_mayer_vietoris_audit :
   intro h0 h1 h2 h3 h4 d0 e_co e_harm c_mis ⟨hc1, hc2, hc3, hc4⟩
   omega
 
+/-- Theorem 124 (Governed Policy Relaxation & Minimum-Slack Authority Gate Audit
+    in Code-Engineering Swarms):
+    1. Unauthorized self-relaxation penalty, excess L1 policy-slack surcharge & payout floor law:
+       - For any initial policy vector `P0 = (p0_1, p0_2)` and Pareto-restoring candidate `P = (p_1, p_2)`
+         with L1 policy slack `slack = |p_1 - p0_1| + |p_2 - p0_2| ≥ min_slack`, excess L1 slack
+         `excess_slack = slack - min_slack ≥ 0`, and unauthorized self-relaxation penalty
+         `unauth_pen ≥ 0` (`10` cents when `auth_ok = 0`, `0` when `auth_ok = 1`), whenever
+         `unauth_pen + 2 * excess_slack ≥ 1`, the audit surcharge
+         `surcharge = unauth_pen + 2 * excess_slack ≥ 1` strictly reduces merchant payout below `873`.
+    2. Concrete 3-phase codebase governed policy-relaxation audit across `pricing_relax`, `tax_relax`,
+       and `settlement_relax` (`P0 = [4, 2]`, `P_under = [4, 3]` slack `1` infeasible,
+       `P_star = [5, 3]` minimum Pareto slack `2`, `P_over = [7, 4]` slack `5` with excess slack `3`):
+       - Phase 1 (Unauthorized worker self-relaxation to `P_star = [5, 3]` with `auth_ok_p1 = 0`):
+         `unauth_pen_p1 = 10`, `slack_p1 = 2`, `excess_slack_p1 = 0`,
+         `surcharge_p1 = 10`, `payout_p1 = 873 - 10 = 863 ≠ 873`
+         (`L_p1 = 1`, `Eg_p1 = 0`, `Δ_{E,p1} = -1`);
+       - Phase 2 (Authorized over-permissive budget grant `P_over = [7, 4]` with `auth_ok_p2 = 1`):
+         `unauth_pen_p2 = 0`, `slack_p2 = 5`, `excess_slack_p2 = 5 - 2 = 3 > 0`,
+         `surcharge_p2 = 2 * 3 = 6`, `payout_p2 = 873 - 6 = 867 ≠ 873`
+         (`L_p2 = 1`, `Eg_p2 = 0`, `Δ_{E,p2} = -1`);
+       - Phase 3 (Governed minimum-slack Pareto relaxation `P_star = [5, 3]` with `auth_ok_p3 = 1`):
+         `unauth_pen_p3 = 0`, `slack_p3 = 2`, `excess_slack_p3 = 0`,
+         `surcharge_p3 = 0`, `payout_p3 = 873`, `873 + 27 + 90 = 990`
+         (`L_p3 = 1`, `Eg_p3 = 1`, `Δ_{E,p3} = 0`). -/
+theorem governed_relaxation_codebase_authority_gate_and_minimum_slack_audit :
+    (∀ slack min_slack unauth_pen : Int,
+      (0 ≤ min_slack ∧ min_slack ≤ slack ∧ 0 ≤ unauth_pen ∧ unauth_pen + 2 * (slack - min_slack) ≥ 1) →
+      (0 ≤ slack - min_slack ∧
+       unauth_pen + 2 * (slack - min_slack) ≥ 1 ∧
+       873 - (unauth_pen + 2 * (slack - min_slack)) ≤ 872)) ∧
+    (let min_slack : Int := 2;
+     let auth_ok_p1 : Int := 0; let unauth_pen_p1 : Int := 10; let slack_p1 : Int := 2; let excess_p1 : Int := slack_p1 - min_slack;
+     let auth_ok_p2 : Int := 1; let unauth_pen_p2 : Int := 0;  let slack_p2 : Int := 5; let excess_p2 : Int := slack_p2 - min_slack;
+     let auth_ok_p3 : Int := 1; let unauth_pen_p3 : Int := 0;  let slack_p3 : Int := 2; let excess_p3 : Int := slack_p3 - min_slack;
+     let surcharge_p1 := unauth_pen_p1 + 2 * excess_p1;
+     let surcharge_p2 := unauth_pen_p2 + 2 * excess_p2;
+     let surcharge_p3 := unauth_pen_p3 + 2 * excess_p3;
+     let payout_p1 : Int := 873 - surcharge_p1;
+     let payout_p2 : Int := 873 - surcharge_p2;
+     let payout_p3 : Int := 873 - surcharge_p3;
+     let fee : Int := 27; let tax : Int := 90; let gross : Int := 990;
+     let l_p1 := if (auth_ok_p1 = 0) ∧ (unauth_pen_p1 = 10) ∧ (slack_p1 = 2) ∧ (excess_p1 = 0) ∧ (surcharge_p1 = 10) then (1 : Int) else 0;
+     let eg_p1 := if (l_p1 = 1) ∧ (auth_ok_p1 = 1) ∧ (unauth_pen_p1 = 0) ∧ (excess_p1 = 0) ∧ (payout_p1 + fee + tax = gross) then (1 : Int) else 0;
+     let defect_p1 := eg_p1 - l_p1;
+     let l_p2 := if (auth_ok_p2 = 1) ∧ (unauth_pen_p2 = 0) ∧ (slack_p2 = 5) ∧ (excess_p2 = 3) ∧ (surcharge_p2 = 6) then (1 : Int) else 0;
+     let eg_p2 := if (l_p2 = 1) ∧ (auth_ok_p2 = 1) ∧ (unauth_pen_p2 = 0) ∧ (excess_p2 = 0) ∧ (payout_p2 + fee + tax = gross) then (1 : Int) else 0;
+     let defect_p2 := eg_p2 - l_p2;
+     let l_p3 := if (auth_ok_p3 = 1) ∧ (unauth_pen_p3 = 0) ∧ (slack_p3 = 2) ∧ (excess_p3 = 0) ∧ (surcharge_p3 = 0) ∧ (payout_p3 + fee + tax = gross) then (1 : Int) else 0;
+     let eg_p3 := if (l_p3 = 1) ∧ (surcharge_p3 < surcharge_p2) ∧ (surcharge_p2 < surcharge_p1) then (1 : Int) else 0;
+     let defect_p3 := eg_p3 - l_p3;
+     (auth_ok_p1 = 0 ∧ auth_ok_p2 = 1 ∧ auth_ok_p3 = 1 ∧
+      unauth_pen_p1 = 10 ∧ unauth_pen_p2 = 0 ∧ unauth_pen_p3 = 0 ∧
+      excess_p1 = 0 ∧ excess_p2 = 3 ∧ excess_p3 = 0 ∧
+      surcharge_p1 = 10 ∧ surcharge_p2 = 6 ∧ surcharge_p3 = 0 ∧
+      payout_p1 = 863 ∧ payout_p2 = 867 ∧ payout_p3 = 873) ∧
+     (l_p1 = 1 ∧ eg_p1 = 0 ∧ defect_p1 = -1) ∧
+     (l_p2 = 1 ∧ eg_p2 = 0 ∧ defect_p2 = -1) ∧
+     (l_p3 = 1 ∧ eg_p3 = 1 ∧ defect_p3 = 0)) := by
+  refine ⟨?_, ⟨⟨by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨by decide, by decide, by decide⟩⟩⟩⟩⟩
+  intro slack min_slack unauth_pen ⟨hc1, hc2, hc3, hc4⟩
+  omega
+
 end LggrVIII
