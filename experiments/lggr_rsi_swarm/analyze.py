@@ -245,6 +245,36 @@ def power(dev_dir=None, sims=400, seed=11):
                                         "within-instance correlation 0.5."}
 
 
+def sensitivity(evaluation, sensitivity_dir):
+    """Recompute P1/P2 and repair outcomes with cap-affected cases replaced by their higher-cap reruns."""
+    swarm, _ = load_summaries(evaluation)
+    sens = json.loads((Path(sensitivity_dir) / "summary.json").read_text(encoding="utf-8"))
+    replaced = {(o["instance"], o["draw"]) for o in sens["offline"]}
+
+    def merge(field):
+        rows = [x for s in swarm for x in s[field] if (x["instance"], x["draw"]) not in replaced]
+        return rows + list(sens[field])
+    offline, ctl, repair = merge("offline"), merge("controllers"), merge("repair")
+    p1 = [(o["instance"], o["family"], int(o["arms"]["C@4"]["class"] == "correct") - int(o["arms"]["B@4"]["class"] == "correct")) for o in offline]
+    by = defaultdict(dict)
+    for c in ctl:
+        by[(c["instance"], c["draw"])][c["arm"]] = c
+    p2 = [(i, v["L-C"]["family"], int(v["L-C"]["class"] == "correct") - int(v["L-B"]["class"] == "correct"))
+          for (i, d), v in sorted(by.items()) if "L-C" in v and "L-B" in v]
+    affected_only = [r for r in p1 if any(r[0] == i for i, _ in replaced)]
+    primary_affected = [(o["instance"], o["family"], int(o["arms"]["C@4"]["class"] == "correct") - int(o["arms"]["B@4"]["class"] == "correct"))
+                        for s in swarm for o in s["offline"] if (o["instance"], o["draw"]) in replaced]
+    return {"replaced_cases": len(replaced), "P1": cluster_bootstrap(p1), "P2": cluster_bootstrap(p2),
+            "P1_affected_cases_primary_mean": float(np.mean([d for _, _, d in primary_affected])) if primary_affected else None,
+            "P1_affected_cases_rerun_mean": float(np.mean([int(o["arms"]["C@4"]["class"] == "correct") - int(o["arms"]["B@4"]["class"] == "correct") for o in sens["offline"]])),
+            "controller_failures": {arm: sum(bool(c["failure"]) for c in ctl if c["arm"] == arm) for arm in ("L-0", "L-B", "L-C")},
+            "controller_correct": {arm: rate([c for c in ctl if c["arm"] == arm], lambda c: c["class"] == "correct") for arm in ("L-0", "L-B", "L-C")},
+            "repair": {arm: {"repaired_system_passes": rate([r for r in repair if r["arm"] == arm], lambda r: r["grader"]["system_passes"]),
+                             "controller_correct": rate([r for r in repair if r["arm"] == arm], lambda r: r["controller"]["class"] == "correct")}
+                       for arm in ("L-B", "L-C")},
+            "n_affected_rows_in_p1": len(affected_only)}
+
+
 def category(key):
     if "/rsi-" in key:
         return "rsi"
@@ -301,11 +331,14 @@ def project(dev, turns=None):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("mode", choices=["results", "power", "devstats"])
+    parser.add_argument("mode", choices=["results", "power", "devstats", "sensitivity"])
     parser.add_argument("path", nargs="?")
     parser.add_argument("--out")
+    parser.add_argument("--sensitivity-dir")
     args = parser.parse_args()
-    if args.mode == "devstats":
+    if args.mode == "sensitivity":
+        out = sensitivity(args.path, args.sensitivity_dir)
+    elif args.mode == "devstats":
         stats = devstats(sorted(Path(args.path).glob("*/events.jsonl*")))
         out = {"dev": stats, "projection": project(stats)}
     else:

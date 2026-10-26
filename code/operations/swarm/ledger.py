@@ -48,6 +48,8 @@ class Ledger:
         self.recovered = []
         if self.path and self.path.exists():
             self.state = json.loads(self.path.read_text(encoding="utf-8"))
+            for p in PHASE_CEILINGS:
+                self.state["phases"].setdefault(p, {"settled": "0", "retained": "0", "requests": 0})
             for key, item in sorted(self.state["inflight"].items()):
                 self.state["phases"][item["phase"]]["retained"] = str(Decimal(self.state["phases"][item["phase"]]["retained"]) + Decimal(item["amount"]))
                 self.recovered.append(key)
