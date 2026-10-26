@@ -6334,4 +6334,66 @@ theorem threshold_governance_codebase_prefix_excursion_and_endpoint_audit :
   intro prefix_excess coarse_excess h1
   omega
 
+/-- **Theorem 138 (Closed-Loop Repair Convergence vs. Open-Loop Single-Shot Drift Codebase Audit).**
+    In a 3-module iterative boundary-repair settlement codebase (`pricing_loop.py`, `tax_loop.py`,
+    `settlement_loop.py`) starting from an initial 2-edge interface residual vector
+    `r^{(0)} = (4, 4)` (`D_0 = |r_1^{(0)}| + |r_2^{(0)}| = 8`) with module step corrections
+    `c = (c_1, c_2) ∈ {(0, 0), (4, 2), (4, 4)}`, post-correction residuals
+    `r_1 = 4 - c_1`, `r_2 = 4 - c_2` (`|r_i| ≤ 4` locally), total boundary residual
+    `total_res = |r_1| + |r_2|`, unrepaired edge count `unrep = 1[r_1 ≠ 0] + 1[r_2 ≠ 0]`,
+    and `surcharge = total_res + 2 * unrep`:
+    1. Whenever `total_res + 2 * unrep ≥ 4`, the net settlement payout
+       `873 - (total_res + 2 * unrep)` is at most `869 < 873`.
+    2. For the 3-round closed-loop codebase repair trajectory `(R_0, R_1, R_2)`:
+       - Phase 1 (Open-loop unrepaired baseline `R_0`, `c = (0, 0)`, `r = (4, 4)`): satisfies
+         `|r_1| ≤ 4` and `|r_2| ≤ 4` locally (`L_p1 = 1`), yet `total_res_p1 = 8 > 0` and
+         `unrep_p1 = 2 > 0`, incurring `surcharge_p1 = 8 + 2 * 2 = 12` and
+         `payout_p1 = 873 - 12 = 861 ≠ 873` (`Eg_p1 = 0`, `Δ_{E,p1} = -1`);
+       - Phase 2 (Single-shot partial open-loop repair `R_1`, `c = (4, 2)`, `r = (0, 2)`): clears
+         edge 1 (`r_1 = 0`) yet leaves residual `r_2 = 2 > 0` (`total_res_p2 = 2 > 0`,
+         `unrep_p2 = 1 > 0`), incurring `surcharge_p2 = 2 + 2 * 1 = 4` and
+         `payout_p2 = 873 - 4 = 869 ≠ 873` (`L_p2 = 1`, `Eg_p2 = 0`, `Δ_{E,p2} = -1`);
+       - Phase 3 (Closed-loop witness-guided convergence `R_2`, `c = (4, 4)`, `r = (0, 0)`): clears
+         both boundary residuals (`total_res_p3 = 0`, `unrep_p3 = 0`), yielding `surcharge_p3 = 0`,
+         `payout_p3 = 873`, and `873 + 27 + 90 = 990` (`L_p3 = 1`, `Eg_p3 = 1`, `Δ_{E,p3} = 0`). -/
+theorem closed_loop_repair_codebase_open_loop_residual_and_witness_convergence_audit :
+    (∀ total_res unrep : Int,
+      (total_res + 2 * unrep ≥ 4) →
+      (873 - (total_res + 2 * unrep) ≤ 869)) ∧
+    (let r1_p1 : Int := 4 - 0; let r2_p1 : Int := 4 - 0;
+     let r1_p2 : Int := 4 - 4; let r2_p2 : Int := 4 - 2;
+     let r1_p3 : Int := 4 - 4; let r2_p3 : Int := 4 - 4;
+     let tot_p1 : Int := r1_p1 + r2_p1;
+     let tot_p2 : Int := r1_p2 + r2_p2;
+     let tot_p3 : Int := r1_p3 + r2_p3;
+     let unrep_p1 : Int := 2;
+     let unrep_p2 : Int := 1;
+     let unrep_p3 : Int := 0;
+     let surcharge_p1 : Int := tot_p1 + 2 * unrep_p1;
+     let surcharge_p2 : Int := tot_p2 + 2 * unrep_p2;
+     let surcharge_p3 : Int := tot_p3 + 2 * unrep_p3;
+     let payout_p1 : Int := 873 - surcharge_p1;
+     let payout_p2 : Int := 873 - surcharge_p2;
+     let payout_p3 : Int := 873 - surcharge_p3;
+     let fee : Int := 27; let tax : Int := 90; let gross : Int := 990;
+     let l_p1 := if (r1_p1 ≤ 4) ∧ (r2_p1 ≤ 4) ∧ (tot_p1 = 8) ∧ (unrep_p1 = 2) ∧ (surcharge_p1 = 12) then (1 : Int) else 0;
+     let eg_p1 := if (l_p1 = 1) ∧ (tot_p1 = 0) ∧ (unrep_p1 = 0) ∧ (payout_p1 + fee + tax = gross) then (1 : Int) else 0;
+     let defect_p1 := eg_p1 - l_p1;
+     let l_p2 := if (r1_p2 ≤ 4) ∧ (r2_p2 ≤ 4) ∧ (tot_p2 = 2) ∧ (unrep_p2 = 1) ∧ (surcharge_p2 = 4) then (1 : Int) else 0;
+     let eg_p2 := if (l_p2 = 1) ∧ (tot_p2 = 0) ∧ (unrep_p2 = 0) ∧ (payout_p2 + fee + tax = gross) then (1 : Int) else 0;
+     let defect_p2 := eg_p2 - l_p2;
+     let l_p3 := if (r1_p3 ≤ 4) ∧ (r2_p3 ≤ 4) ∧ (tot_p3 = 0) ∧ (unrep_p3 = 0) ∧ (surcharge_p3 = 0) ∧ (payout_p3 + fee + tax = gross) then (1 : Int) else 0;
+     let eg_p3 := if (l_p3 = 1) ∧ (surcharge_p3 < surcharge_p2) ∧ (surcharge_p2 < surcharge_p1) then (1 : Int) else 0;
+     let defect_p3 := eg_p3 - l_p3;
+     (tot_p1 = 8 ∧ tot_p2 = 2 ∧ tot_p3 = 0 ∧
+      unrep_p1 = 2 ∧ unrep_p2 = 1 ∧ unrep_p3 = 0 ∧
+      surcharge_p1 = 12 ∧ surcharge_p2 = 4 ∧ surcharge_p3 = 0 ∧
+      payout_p1 = 861 ∧ payout_p2 = 869 ∧ payout_p3 = 873) ∧
+     (l_p1 = 1 ∧ eg_p1 = 0 ∧ defect_p1 = -1) ∧
+     (l_p2 = 1 ∧ eg_p2 = 0 ∧ defect_p2 = -1) ∧
+     (l_p3 = 1 ∧ eg_p3 = 1 ∧ defect_p3 = 0)) := by
+  refine ⟨?_, ⟨⟨by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide, by decide⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨by decide, by decide, by decide⟩⟩⟩⟩⟩
+  intro total_res unrep h1
+  omega
+
 end LggrVIII

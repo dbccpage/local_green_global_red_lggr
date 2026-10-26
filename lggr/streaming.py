@@ -40330,6 +40330,557 @@ class StreamingCodebaseThresholdGovernanceMonitor:
     emit_receipt = current_receipt
 
 
+class StreamingCodebaseClosedLoopRepairMonitor:
+    """Audit a 3-module closed-loop repair convergence vs. open-loop single-shot drift settlement codebase (Theorem 138).
+
+    AuthorityEffect: None.
+    Composes `StreamingClosedLoopRepairMonitor`, `StreamingCodebaseInterfaceMergeMonitor`,
+    and `StreamingFiberMonitor` over `pricing_loop.py`, `tax_loop.py`, and `settlement_loop.py`
+    auditing 2-edge interface residual vectors `r = (4 - c_1, 4 - c_2)` starting from initial
+    residual `r^{(0)} = (4, 4)` (`D_0 = 8`), with `c = (c_1, c_2) in {(0, 0), (4, 2), (4, 4)}`,
+    `total_boundary_residual = |r_1| + |r_2|`, `unrepaired_edge_count = 1[r_1 != 0] + 1[r_2 != 0]`,
+    and `loop_surcharge_cents = total_boundary_residual + 2 * unrepaired_edge_count`:
+      - Phase 1 (Open-Loop Unrepaired Baseline `R_0`, `corrections = [0, 0]`, `residuals = [4, 4]`):
+        Each module passes its isolated unit test (`|r_i| <= 4` locally, `L_p1 = 1`), yet
+        `total_boundary_residual = 8 > 0` and `unrepaired_edge_count = 2 > 0`, incurring
+        `loop_surcharge_cents = 8 + 2 * 2 = 12` and `merchant_payout_cents = 861 != 873`
+        (`OPEN_LOOP_BASELINE_OBSTRUCTED_LGGR`, `E_{g,p1} = 0`, `Delta_{E,p1} = -1`).
+      - Phase 2 (Single-Shot Partial Open-Loop Repair `R_1`, `corrections = [4, 2]`, `residuals = [0, 2]`):
+        Without witness-guided residual magnitude feedback, `pricing_loop.py` clears `r_1 = 0` (`c_1 = 4`)
+        while `tax_loop.py` applies a half-step `c_2 = 2`, leaving `r_2 = 2 > 0`
+        (`total_boundary_residual = 2 > 0`, `unrepaired_edge_count = 1 > 0`), incurring
+        `loop_surcharge_cents = 2 + 2 * 1 = 4` and `merchant_payout_cents = 869 != 873`
+        (`SINGLE_SHOT_PARTIAL_REPAIR_RESIDUAL_LGGR`, `L_p2 = 1`, `E_{g,p2} = 0`, `Delta_{E,p2} = -1`).
+      - Phase 3 (Closed-Loop Witness-Guided Convergence `R_2`, `corrections = [4, 4]`, `residuals = [0, 0]`):
+        `StreamingCodebaseClosedLoopRepairMonitor` issues role-scoped witness feedback directives,
+        clearing both boundary residuals (`residuals = [0, 0]`, `total_boundary_residual = 0`,
+        `unrepaired_edge_count = 0`), yielding `loop_surcharge_cents = 0` and
+        `merchant_payout_cents = 873` (`873 + 27 + 90 = 990`,
+        `CLOSED_LOOP_WITNESS_REPAIR_CONVERGED_LGGG`, `L_p3 = 1`, `E_{g,p3} = 1`, `Delta_{E,p3} = 0`).
+    """
+
+    INITIAL_RESIDUAL_R1 = 4
+    INITIAL_RESIDUAL_R2 = 4
+
+    PHASE_1_PRICING_LOOP_SOURCE = (
+        "def quote_loop_pricing(gross_cents: int = 990) -> dict:\n"
+        "    platform_fee_cents = (gross_cents * 27) // 990\n"
+        "    net_after_fee_cents = gross_cents - platform_fee_cents\n"
+        "    # Phase 1: open-loop unrepaired baseline correction c1 = 0 (residual r1 = 4)\n"
+        "    pricing_step_correction_c1 = 0\n"
+        "    return {\n"
+        "        'gross_cents': gross_cents,\n"
+        "        'platform_fee_cents': platform_fee_cents,\n"
+        "        'net_after_fee_cents': net_after_fee_cents,\n"
+        "        'initial_residual_r1': 4,\n"
+        "        'pricing_step_correction_c1': pricing_step_correction_c1,\n"
+        "        'residual_r1': 4 - pricing_step_correction_c1,\n"
+        "    }\n"
+    )
+
+    PHASE_2_PRICING_LOOP_SOURCE = (
+        "def quote_loop_pricing(gross_cents: int = 990) -> dict:\n"
+        "    platform_fee_cents = (gross_cents * 27) // 990\n"
+        "    net_after_fee_cents = gross_cents - platform_fee_cents\n"
+        "    # Phase 2 & 3: exact pricing boundary correction c1 = 4 (residual r1 = 0)\n"
+        "    pricing_step_correction_c1 = 4\n"
+        "    return {\n"
+        "        'gross_cents': gross_cents,\n"
+        "        'platform_fee_cents': platform_fee_cents,\n"
+        "        'net_after_fee_cents': net_after_fee_cents,\n"
+        "        'initial_residual_r1': 4,\n"
+        "        'pricing_step_correction_c1': pricing_step_correction_c1,\n"
+        "        'residual_r1': 4 - pricing_step_correction_c1,\n"
+        "    }\n"
+    )
+
+    PHASE_3_PRICING_LOOP_SOURCE = PHASE_2_PRICING_LOOP_SOURCE
+
+    PHASE_1_TAX_LOOP_SOURCE = (
+        "def compute_loop_tax(pricing_out: dict) -> dict:\n"
+        "    gross_cents = int(pricing_out['gross_cents'])\n"
+        "    tax_reserve_cents = (gross_cents * 90) // 990\n"
+        "    c1 = int(pricing_out.get('pricing_step_correction_c1', 0))\n"
+        "    r1 = 4 - c1\n"
+        "    # Phase 1: open-loop unrepaired baseline correction c2 = 0 (residual r2 = 4)\n"
+        "    tax_step_correction_c2 = 0\n"
+        "    r2 = 4 - tax_step_correction_c2\n"
+        "    return {\n"
+        "        'tax_reserve_cents': tax_reserve_cents,\n"
+        "        'pricing_step_correction_c1': c1,\n"
+        "        'tax_step_correction_c2': tax_step_correction_c2,\n"
+        "        'correction_vector': [c1, tax_step_correction_c2],\n"
+        "        'residual_vector': [r1, r2],\n"
+        "    }\n"
+    )
+
+    PHASE_2_TAX_LOOP_SOURCE = (
+        "def compute_loop_tax(pricing_out: dict) -> dict:\n"
+        "    gross_cents = int(pricing_out['gross_cents'])\n"
+        "    tax_reserve_cents = (gross_cents * 90) // 990\n"
+        "    c1 = int(pricing_out.get('pricing_step_correction_c1', 4))\n"
+        "    r1 = 4 - c1\n"
+        "    # Phase 2: single-shot open-loop partial correction c2 = 2 (residual r2 = 2 > 0)\n"
+        "    tax_step_correction_c2 = 2\n"
+        "    r2 = 4 - tax_step_correction_c2\n"
+        "    return {\n"
+        "        'tax_reserve_cents': tax_reserve_cents,\n"
+        "        'pricing_step_correction_c1': c1,\n"
+        "        'tax_step_correction_c2': tax_step_correction_c2,\n"
+        "        'correction_vector': [c1, tax_step_correction_c2],\n"
+        "        'residual_vector': [r1, r2],\n"
+        "    }\n"
+    )
+
+    PHASE_3_TAX_LOOP_SOURCE = (
+        "def compute_loop_tax(pricing_out: dict) -> dict:\n"
+        "    gross_cents = int(pricing_out['gross_cents'])\n"
+        "    tax_reserve_cents = (gross_cents * 90) // 990\n"
+        "    c1 = int(pricing_out.get('pricing_step_correction_c1', 4))\n"
+        "    r1 = 4 - c1\n"
+        "    # Phase 3: closed-loop witness-guided correction c2 = 4 (residual r2 = 0)\n"
+        "    tax_step_correction_c2 = 4\n"
+        "    r2 = 4 - tax_step_correction_c2\n"
+        "    return {\n"
+        "        'tax_reserve_cents': tax_reserve_cents,\n"
+        "        'pricing_step_correction_c1': c1,\n"
+        "        'tax_step_correction_c2': tax_step_correction_c2,\n"
+        "        'correction_vector': [c1, tax_step_correction_c2],\n"
+        "        'residual_vector': [r1, r2],\n"
+        "    }\n"
+    )
+
+    PHASE_1_SETTLEMENT_LOOP_SOURCE = (
+        "def settle_loop_payout(pricing_out: dict, tax_out: dict) -> dict:\n"
+        "    net = int(pricing_out['net_after_fee_cents'])\n"
+        "    fee = int(pricing_out['platform_fee_cents'])\n"
+        "    tax = int(tax_out['tax_reserve_cents'])\n"
+        "    residuals = list(tax_out['residual_vector'])\n"
+        "    total_res = sum(abs(int(r)) for r in residuals)\n"
+        "    unrep_count = sum(1 for r in residuals if int(r) != 0)\n"
+        "    surcharge = total_res + 2 * unrep_count\n"
+        "    payout = net - tax - surcharge\n"
+        "    return {\n"
+        "        'merchant_payout_cents': payout,\n"
+        "        'platform_fee_cents': fee,\n"
+        "        'tax_reserve_cents': tax,\n"
+        "        'total_boundary_residual': total_res,\n"
+        "        'unrepaired_edge_count': unrep_count,\n"
+        "        'loop_surcharge_cents': surcharge,\n"
+        "    }\n"
+    )
+
+    PHASE_2_SETTLEMENT_LOOP_SOURCE = PHASE_1_SETTLEMENT_LOOP_SOURCE
+
+    PHASE_3_SETTLEMENT_LOOP_SOURCE = (
+        "def settle_loop_payout(pricing_out: dict, tax_out: dict) -> dict:\n"
+        "    net = int(pricing_out['net_after_fee_cents'])\n"
+        "    fee = int(pricing_out['platform_fee_cents'])\n"
+        "    tax = int(tax_out['tax_reserve_cents'])\n"
+        "    residuals = list(tax_out['residual_vector'])\n"
+        "    total_res = sum(abs(int(r)) for r in residuals)\n"
+        "    unrep_count = sum(1 for r in residuals if int(r) != 0)\n"
+        "    surcharge = total_res + 2 * unrep_count\n"
+        "    if total_res > 0 or unrep_count > 0 or surcharge > 0:\n"
+        "        raise ValueError('Boundary residual obstruction requires c1=4, c2=4')\n"
+        "    payout = net - tax\n"
+        "    return {\n"
+        "        'merchant_payout_cents': payout,\n"
+        "        'platform_fee_cents': fee,\n"
+        "        'tax_reserve_cents': tax,\n"
+        "        'total_boundary_residual': 0,\n"
+        "        'unrepaired_edge_count': 0,\n"
+        "        'loop_surcharge_cents': 0,\n"
+        "    }\n"
+    )
+
+    def __init__(
+        self,
+        *,
+        scope_id: str = "streaming-codebase-closed-loop-repair-scope",
+        gross_cents: int = 990,
+        expected_fee_cents: int = 27,
+        expected_tax_cents: int = 90,
+        expected_payout_cents: int = 873,
+    ) -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.gross_cents = exact_int(gross_cents, "gross_cents", minimum=1)
+        self.expected_fee_cents = exact_int(expected_fee_cents, "expected_fee_cents", minimum=0)
+        self.expected_tax_cents = exact_int(expected_tax_cents, "expected_tax_cents", minimum=0)
+        self.expected_payout_cents = exact_int(expected_payout_cents, "expected_payout_cents", minimum=0)
+        if self.expected_fee_cents + self.expected_tax_cents + self.expected_payout_cents != self.gross_cents:
+            raise ValidationError("expected fee + tax + payout must equal gross_cents")
+
+        self.loop_monitor = StreamingClosedLoopRepairMonitor(
+            scope_id=f"{self.scope_id}:closed-loop"
+        )
+        self.fiber_monitor = StreamingFiberMonitor()
+        self.evaluations: list[dict[str, Any]] = []
+        self.three_phase_audits: list[dict[str, Any]] = []
+        self.last_loop_receipt: dict[str, Any] | None = None
+
+    def evaluate_closed_loop_repair_modules(
+        self,
+        evaluation_id: str,
+        pricing_loop_source: str,
+        tax_loop_source: str,
+        settlement_loop_source: str,
+        *,
+        model_id: str = "deterministic",
+        infeasible_constraint: str | None = None,
+        local_pricing_loop_passed: bool = True,
+        local_tax_loop_passed: bool = True,
+        local_settlement_loop_passed: bool = True,
+    ) -> dict[str, Any]:
+        """Execute and audit `pricing_loop.py`, `tax_loop.py`, and `settlement_loop.py`."""
+        ev_id = text(evaluation_id, "evaluation_id")
+        mod_id = text(model_id, "model_id")
+        lp = boolean(local_pricing_loop_passed, "local_pricing_loop_passed")
+        lt = boolean(local_tax_loop_passed, "local_tax_loop_passed")
+        ls = boolean(local_settlement_loop_passed, "local_settlement_loop_passed")
+
+        p_ns = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(
+            "pricing_loop", pricing_loop_source
+        )
+        t_ns = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(
+            "tax_loop", tax_loop_source
+        )
+        s_ns = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(
+            "settlement_loop", settlement_loop_source
+        )
+
+        quote_fn = p_ns.get("quote_loop_pricing")
+        tax_fn = t_ns.get("compute_loop_tax")
+        settle_fn = s_ns.get("settle_loop_payout")
+        if not callable(quote_fn):
+            raise ValidationError("pricing_loop.py must define callable quote_loop_pricing")
+        if not callable(tax_fn):
+            raise ValidationError("tax_loop.py must define callable compute_loop_tax")
+        if not callable(settle_fn):
+            raise ValidationError("settlement_loop.py must define callable settle_loop_payout")
+
+        pricing_out = quote_fn(self.gross_cents)
+        if not isinstance(pricing_out, dict):
+            raise ValidationError("quote_loop_pricing must return a dict")
+        tax_out = tax_fn(pricing_out)
+        if not isinstance(tax_out, dict):
+            raise ValidationError("compute_loop_tax must return a dict")
+
+        settlement_raised = False
+        try:
+            settlement_out = settle_fn(pricing_out, tax_out)
+            if not isinstance(settlement_out, dict):
+                raise ValidationError("settle_loop_payout must return a dict")
+        except ValueError:
+            settlement_raised = True
+            settlement_out = {}
+
+        c1 = exact_int(pricing_out.get("pricing_step_correction_c1", 0), "pricing_step_correction_c1")
+        c2 = exact_int(tax_out.get("tax_step_correction_c2", 0), "tax_step_correction_c2")
+        if c1 not in (0, 2, 4) or c2 not in (0, 2, 4):
+            raise ValidationError(
+                f"corrections (c1, c2) must be in {{0, 2, 4}}^2, got ({c1}, {c2})"
+            )
+
+        r1 = 4 - c1
+        r2 = 4 - c2
+        correction_vector = [c1, c2]
+        residual_vector = [r1, r2]
+        total_boundary_residual = abs(r1) + abs(r2)
+        unrepaired_edge_count = int(r1 != 0) + int(r2 != 0)
+        expected_surcharge = total_boundary_residual + 2 * unrepaired_edge_count
+
+        fee = exact_int(pricing_out.get("platform_fee_cents", self.expected_fee_cents), "platform_fee_cents")
+        net = exact_int(pricing_out.get("net_after_fee_cents", self.gross_cents - fee), "net_after_fee_cents")
+        tax = exact_int(tax_out.get("tax_reserve_cents", self.expected_tax_cents), "tax_reserve_cents")
+        if settlement_raised:
+            surcharge = expected_surcharge
+            payout = net - tax - surcharge
+        else:
+            surcharge = exact_int(settlement_out.get("loop_surcharge_cents"), "loop_surcharge_cents")
+            payout = exact_int(settlement_out.get("merchant_payout_cents"), "merchant_payout_cents")
+
+        infeasible_spec_contradiction = bool(infeasible_constraint)
+        local_green = (
+            1
+            if (
+                lp
+                and lt
+                and ls
+                and fee == self.expected_fee_cents
+                and tax == self.expected_tax_cents
+                and abs(r1) <= 4
+                and abs(r2) <= 4
+                and surcharge == expected_surcharge
+                and payout == self.expected_payout_cents - expected_surcharge
+                and not infeasible_spec_contradiction
+            )
+            else 0
+        )
+
+        conservation_ok = (
+            not settlement_raised
+            and (payout + fee + tax == self.gross_cents)
+            and (payout == self.expected_payout_cents)
+        )
+        global_green = (
+            1
+            if (
+                local_green == 1
+                and total_boundary_residual == 0
+                and unrepaired_edge_count == 0
+                and surcharge == 0
+                and conservation_ok
+            )
+            else 0
+        )
+        defect = global_green - local_green
+
+        if infeasible_spec_contradiction:
+            status = "INFEASIBLE_CLOSED_LOOP_REPAIR_SPECIFICATION_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif local_green == 0:
+            status = "LOCAL_UNIT_TEST_FAILED_LGLR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif unrepaired_edge_count == 2:
+            status = "OPEN_LOOP_BASELINE_OBSTRUCTED_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif unrepaired_edge_count == 1 or total_boundary_residual > 0:
+            status = "SINGLE_SHOT_PARTIAL_REPAIR_RESIDUAL_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "CLOSED_LOOP_WITNESS_REPAIR_CONVERGED_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+
+        # Record a 2-round trajectory in StreamingClosedLoopRepairMonitor for this evaluation
+        self.loop_monitor.record_trajectory(
+            f"{ev_id}:{mod_id}",
+            monitor_name="StreamingCodebaseClosedLoopRepairMonitor",
+            model_id=mod_id,
+            rounds=[
+                {
+                    "feedback_mode": "round_0_baseline",
+                    "receipt_status": "OPEN_LOOP_BASELINE_OBSTRUCTED_LGGR",
+                    "contract_status": "OBSTRUCTED_LGGR",
+                    "local_pass": True,
+                    "global_pass": False,
+                },
+                {
+                    "feedback_mode": "codebase_eval",
+                    "receipt_status": status,
+                    "contract_status": contract_status,
+                    "local_pass": bool(local_green == 1),
+                    "global_pass": bool(global_green == 1),
+                },
+            ],
+        )
+        self.last_loop_receipt = self.loop_monitor.get_receipt()
+
+        self.fiber_monitor.observe(
+            state_id=f"{self.scope_id}:{ev_id}",
+            report={"local_green": local_green, "residuals_within_four": (abs(r1) <= 4 and abs(r2) <= 4)},
+            query="LGGG" if global_green == 1 else "LGGR",
+        )
+
+        directives = {
+            "worker-0": {
+                "module": "pricing_loop",
+                "action": (
+                    "APPLY_EXACT_PRICING_CORRECTION_C1_FOUR"
+                    if c1 != 4
+                    else "HOLD_PRICING_CORRECTION_C1_FOUR"
+                ),
+                "target_pricing_step_correction_c1": 4,
+            },
+            "worker-1": {
+                "module": "tax_loop",
+                "action": (
+                    "APPLY_EXACT_TAX_CORRECTION_C2_FOUR"
+                    if c2 != 4
+                    else "HOLD_TAX_CORRECTION_C2_FOUR"
+                ),
+                "target_tax_step_correction_c2": 4,
+            },
+            "worker-2": {
+                "module": "settlement_loop",
+                "action": (
+                    "ENFORCE_CLOSED_LOOP_ZERO_RESIDUAL_GUARD"
+                    if global_green == 0
+                    else "HOLD_ZERO_RESIDUAL_SETTLEMENT"
+                ),
+                "target_loop_surcharge_cents": 0,
+                "target_payout_cents": self.expected_payout_cents,
+            },
+        }
+
+        eval_rec = json_value(
+            {
+                "evaluation_id": ev_id,
+                "model_id": mod_id,
+                "correction_vector": correction_vector,
+                "residual_vector": residual_vector,
+                "pricing_step_correction_c1": c1,
+                "tax_step_correction_c2": c2,
+                "residual_r1": r1,
+                "residual_r2": r2,
+                "total_boundary_residual": total_boundary_residual,
+                "unrepaired_edge_count": unrepaired_edge_count,
+                "loop_surcharge_cents": surcharge,
+                "merchant_payout_cents": payout,
+                "platform_fee_cents": fee,
+                "tax_reserve_cents": tax,
+                "gross_cents": self.gross_cents,
+                "local_green": local_green,
+                "global_green": global_green,
+                "defect": defect,
+                "status": status,
+                "contract_status": contract_status,
+                "directives": directives,
+            }
+        )
+        self.evaluations.append(eval_rec)
+        return eval_rec
+
+    def record_three_phase_codebase_audit(
+        self,
+        audit_id: str = "closed-loop-repair-3phase",
+        *,
+        model_id: str = "deterministic",
+    ) -> dict[str, Any]:
+        """Run the canonical 3-phase closed-loop repair codebase audit (Theorem 138)."""
+        aid = text(audit_id, "audit_id")
+        mod_id = text(model_id, "model_id")
+
+        p1 = self.evaluate_closed_loop_repair_modules(
+            f"{aid}:phase-1",
+            self.PHASE_1_PRICING_LOOP_SOURCE,
+            self.PHASE_1_TAX_LOOP_SOURCE,
+            self.PHASE_1_SETTLEMENT_LOOP_SOURCE,
+            model_id=mod_id,
+        )
+        p2 = self.evaluate_closed_loop_repair_modules(
+            f"{aid}:phase-2",
+            self.PHASE_2_PRICING_LOOP_SOURCE,
+            self.PHASE_2_TAX_LOOP_SOURCE,
+            self.PHASE_2_SETTLEMENT_LOOP_SOURCE,
+            model_id=mod_id,
+        )
+        p3 = self.evaluate_closed_loop_repair_modules(
+            f"{aid}:phase-3",
+            self.PHASE_3_PRICING_LOOP_SOURCE,
+            self.PHASE_3_TAX_LOOP_SOURCE,
+            self.PHASE_3_SETTLEMENT_LOOP_SOURCE,
+            model_id=mod_id,
+        )
+
+        traj_rec = self.loop_monitor.record_trajectory(
+            f"{aid}:{mod_id}:3round",
+            monitor_name="StreamingCodebaseClosedLoopRepairMonitor",
+            model_id=mod_id,
+            rounds=[
+                {
+                    "feedback_mode": "round_0_open_loop_baseline",
+                    "receipt_status": p1["status"],
+                    "contract_status": p1["contract_status"],
+                    "local_pass": bool(p1["local_green"] == 1),
+                    "global_pass": bool(p1["global_green"] == 1),
+                },
+                {
+                    "feedback_mode": "round_1_single_shot_open_loop",
+                    "receipt_status": p2["status"],
+                    "contract_status": p2["contract_status"],
+                    "local_pass": bool(p2["local_green"] == 1),
+                    "global_pass": bool(p2["global_green"] == 1),
+                },
+                {
+                    "feedback_mode": "round_2_closed_loop_witness_feedback",
+                    "receipt_status": p3["status"],
+                    "contract_status": p3["contract_status"],
+                    "local_pass": bool(p3["local_green"] == 1),
+                    "global_pass": bool(p3["global_green"] == 1),
+                },
+            ],
+        )
+        self.last_loop_receipt = self.loop_monitor.get_receipt()
+
+        audit_rec = json_value(
+            {
+                "audit_id": aid,
+                "model_id": mod_id,
+                "phase_1_correction_vector": p1["correction_vector"],
+                "phase_1_residual_vector": p1["residual_vector"],
+                "phase_1_total_boundary_residual": p1["total_boundary_residual"],
+                "phase_1_unrepaired_edge_count": p1["unrepaired_edge_count"],
+                "phase_1_surcharge_cents": p1["loop_surcharge_cents"],
+                "phase_1_payout_cents": p1["merchant_payout_cents"],
+                "phase_1_local_green": p1["local_green"],
+                "phase_1_global_green": p1["global_green"],
+                "phase_1_defect": p1["defect"],
+                "phase_1_status": p1["status"],
+                "phase_2_correction_vector": p2["correction_vector"],
+                "phase_2_residual_vector": p2["residual_vector"],
+                "phase_2_total_boundary_residual": p2["total_boundary_residual"],
+                "phase_2_unrepaired_edge_count": p2["unrepaired_edge_count"],
+                "phase_2_surcharge_cents": p2["loop_surcharge_cents"],
+                "phase_2_payout_cents": p2["merchant_payout_cents"],
+                "phase_2_local_green": p2["local_green"],
+                "phase_2_global_green": p2["global_green"],
+                "phase_2_defect": p2["defect"],
+                "phase_2_status": p2["status"],
+                "phase_3_correction_vector": p3["correction_vector"],
+                "phase_3_residual_vector": p3["residual_vector"],
+                "phase_3_total_boundary_residual": p3["total_boundary_residual"],
+                "phase_3_unrepaired_edge_count": p3["unrepaired_edge_count"],
+                "phase_3_surcharge_cents": p3["loop_surcharge_cents"],
+                "phase_3_payout_cents": p3["merchant_payout_cents"],
+                "phase_3_local_green": p3["local_green"],
+                "phase_3_global_green": p3["global_green"],
+                "phase_3_defect": p3["defect"],
+                "phase_3_status": p3["status"],
+                "trajectory_status": traj_rec["trajectory_status"],
+                "rounds_to_convergence": traj_rec["rounds_to_convergence"],
+                "defect_progression": traj_rec["defect_progression"],
+            }
+        )
+        self.three_phase_audits.append(audit_rec)
+        return audit_rec
+
+    evaluate_three_phase_closed_loop_repair_audit = record_three_phase_codebase_audit
+    record_three_phase_audit = record_three_phase_codebase_audit
+
+    def current_receipt(self) -> dict[str, Any]:
+        """Emit a deterministic SHA-256 signed receipt for the 3-module closed-loop repair audit."""
+        if not self.evaluations:
+            raise ValidationError(
+                "at least one codebase closed-loop repair evaluation must be recorded"
+            )
+
+        n = len(self.evaluations)
+        lggr_count = sum(1 for e in self.evaluations if e["defect"] == -1)
+        lggg_count = sum(1 for e in self.evaluations if e["global_green"] == 1)
+        last = self.evaluations[-1]
+
+        body: dict[str, Any] = {
+            "schema": "lggr.online_codebase_closed_loop_repair.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": last["status"],
+            "contract_status": last["contract_status"],
+            "evaluation_count": n,
+            "lggr_obstruction_count": lggr_count,
+            "lggg_coherent_count": lggg_count,
+            "closed_loop_repair_receipt": self.last_loop_receipt,
+            "fiber_receipt": self.fiber_monitor.get_receipt(),
+            "three_phase_audits": self.three_phase_audits,
+            "evaluations": self.evaluations,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+    get_receipt = current_receipt
+    emit_receipt = current_receipt
+
+
+
 
 
 

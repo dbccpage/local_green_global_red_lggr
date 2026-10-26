@@ -81,6 +81,8 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     INITIAL_PRICING_WREL_P3_PY,
     INITIAL_PRICING_THRESH_P1_P2_PY,
     INITIAL_PRICING_THRESH_P3_PY,
+    INITIAL_PRICING_LOOP_P1_PY,
+    INITIAL_PRICING_LOOP_P2_P3_PY,
     INITIAL_PRICING_PIVOT_P1_PY,
     INITIAL_PRICING_PIVOT_P2_P3_PY,
     INITIAL_PRICING_POE_P1_PY,
@@ -122,6 +124,8 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     INITIAL_SETTLEMENT_WREL_P3_PY,
     INITIAL_SETTLEMENT_THRESH_P1_P2_PY,
     INITIAL_SETTLEMENT_THRESH_P3_PY,
+    INITIAL_SETTLEMENT_LOOP_P1_P2_PY,
+    INITIAL_SETTLEMENT_LOOP_P3_PY,
     INITIAL_SETTLEMENT_PIVOT_P1_P2_PY,
     INITIAL_SETTLEMENT_PIVOT_P3_PY,
     INITIAL_SETTLEMENT_POE_P1_PY,
@@ -168,6 +172,9 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     INITIAL_TAX_THRESH_P1_PY,
     INITIAL_TAX_THRESH_P2_PY,
     INITIAL_TAX_THRESH_P3_PY,
+    INITIAL_TAX_LOOP_P1_PY,
+    INITIAL_TAX_LOOP_P2_PY,
+    INITIAL_TAX_LOOP_P3_PY,
     INITIAL_TAX_PIVOT_P1_PY,
     INITIAL_TAX_PIVOT_P2_PY,
     INITIAL_TAX_PIVOT_P3_PY,
@@ -247,6 +254,7 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     BoundaryQuorumCodeWorkspace,
     CPTPChannelCodeWorkspace,
     CatalystCodeWorkspace,
+    ClosedLoopRepairCodeWorkspace,
     CoalitionalCodeWorkspace,
     CodeWorkspace,
     ContextualSheafCodeWorkspace,
@@ -289,6 +297,7 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     adversarial_schema_fixture,
     bell_polytope_fixture,
     catalyst_fixture,
+    closed_loop_repair_fixture,
     coalitional_fixture,
     council_fixture,
     cptp_fixture,
@@ -318,6 +327,7 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     replay_fixture,
     run_adversarial_schema_local_unit_tests,
     run_bell_polytope_local_unit_tests,
+    run_closed_loop_repair_local_unit_tests,
     run_coalitional_local_unit_tests,
     run_council_local_unit_tests,
     run_cptp_local_unit_tests,
@@ -380,6 +390,7 @@ from experiments.concurrent_code_engineering_swarm.runner import (
     bell_polytope_campaign,
     campaign,
     catalyst_campaign,
+    closed_loop_repair_campaign,
     coalitional_campaign,
     council_campaign,
     cptp_campaign,
@@ -429,6 +440,7 @@ from lggr.streaming import (
     StreamingCodebaseBoundaryQuorumMonitor,
     StreamingCodebaseCPTPChannelMonitor,
     StreamingCodebaseCatalystEvolutionMonitor,
+    StreamingCodebaseClosedLoopRepairMonitor,
     StreamingCodebaseCoalitionalMonitor,
     StreamingCodebaseContextualSheafMonitor,
     StreamingCodebaseDisagreementCouncilMonitor,
@@ -9704,6 +9716,276 @@ class GracefulSheddingCodeEngineeringSwarmTests(unittest.TestCase):
             self.assertEqual(seed_13400_arms["B"]["final_thresh_surcharge_cents"], 2)
             self.assertEqual(seed_13400_arms["C"]["final_thresh_surcharge_cents"], 0)
             self.assertEqual(seed_13400_arms["C"]["status"], "completed")
+
+    def test_closed_loop_repair_workspace_and_unit_tests(self) -> None:
+        """Verify ClosedLoopRepairCodeWorkspace and local unit tests across all 3 phases."""
+        ws = ClosedLoopRepairCodeWorkspace(closed_loop_repair_fixture(13500))
+        for w in ("worker-0", "worker-1", "worker-2"):
+            insp = ws.tool(w, "inspect_workspace", {})
+            self.assertTrue(insp["local_unit_test"]["passed"])
+
+        mon = StreamingCodebaseClosedLoopRepairMonitor(scope_id="test-closed-loop-repair-ws")
+        p1 = mon.evaluate_closed_loop_repair_modules(
+            "p1",
+            pricing_loop_source=INITIAL_PRICING_LOOP_P1_PY,
+            tax_loop_source=INITIAL_TAX_LOOP_P1_PY,
+            settlement_loop_source=INITIAL_SETTLEMENT_LOOP_P1_P2_PY,
+        )
+        self.assertEqual(p1["local_green"], 1)
+        self.assertEqual(p1["global_green"], 0)
+        self.assertEqual(p1["defect"], -1)
+        self.assertEqual(p1["correction_vector"], [0, 0])
+        self.assertEqual(p1["residual_vector"], [4, 4])
+        self.assertEqual(p1["total_boundary_residual"], 8)
+        self.assertEqual(p1["unrepaired_edge_count"], 2)
+        self.assertEqual(p1["loop_surcharge_cents"], 12)
+        self.assertEqual(p1["merchant_payout_cents"], 861)
+
+        p2 = mon.evaluate_closed_loop_repair_modules(
+            "p2",
+            pricing_loop_source=INITIAL_PRICING_LOOP_P2_P3_PY,
+            tax_loop_source=INITIAL_TAX_LOOP_P2_PY,
+            settlement_loop_source=INITIAL_SETTLEMENT_LOOP_P1_P2_PY,
+        )
+        self.assertEqual(p2["local_green"], 1)
+        self.assertEqual(p2["global_green"], 0)
+        self.assertEqual(p2["defect"], -1)
+        self.assertEqual(p2["correction_vector"], [4, 2])
+        self.assertEqual(p2["residual_vector"], [0, 2])
+        self.assertEqual(p2["total_boundary_residual"], 2)
+        self.assertEqual(p2["unrepaired_edge_count"], 1)
+        self.assertEqual(p2["loop_surcharge_cents"], 4)
+        self.assertEqual(p2["merchant_payout_cents"], 869)
+
+        p3 = mon.evaluate_closed_loop_repair_modules(
+            "p3",
+            pricing_loop_source=INITIAL_PRICING_LOOP_P2_P3_PY,
+            tax_loop_source=INITIAL_TAX_LOOP_P3_PY,
+            settlement_loop_source=INITIAL_SETTLEMENT_LOOP_P3_PY,
+        )
+        self.assertEqual(p3["local_green"], 1)
+        self.assertEqual(p3["global_green"], 1)
+        self.assertEqual(p3["defect"], 0)
+        self.assertEqual(p3["correction_vector"], [4, 4])
+        self.assertEqual(p3["residual_vector"], [0, 0])
+        self.assertEqual(p3["total_boundary_residual"], 0)
+        self.assertEqual(p3["unrepaired_edge_count"], 0)
+        self.assertEqual(p3["loop_surcharge_cents"], 0)
+        self.assertEqual(p3["merchant_payout_cents"], 873)
+
+    def test_concurrent_closed_loop_repair_campaign_and_tamper_replay(self) -> None:
+        """Verify concurrent 3-agent closed_loop_repair campaign, Arm C convergence, and tamper rejection."""
+
+        def stub_closed_loop_repair_transport(payload: dict[str, Any]) -> dict[str, Any]:
+            messages = payload["messages"]
+            model = payload.get("model", "stub-model")
+            sys_prompt = messages[0].get("content", "")
+            worker = "worker-0"
+            for w in ("worker-0", "worker-1", "worker-2"):
+                if f"You are `{w}`" in sys_prompt:
+                    worker = w
+                    break
+            tool_outputs = [m for m in messages if m.get("role") == "tool"]
+            if not tool_outputs:
+                tool_call = {
+                    "id": f"call-inspect-{worker}",
+                    "type": "function",
+                    "function": {"name": "inspect_workspace", "arguments": "{}"},
+                }
+            elif any(
+                '"accepted": true' in m.get("content", "")
+                or '"escalated": true' in m.get("content", "")
+                for m in tool_outputs
+            ):
+                return {
+                    "response": {
+                        "id": f"stub-done-{worker}",
+                        "model": model,
+                        "usage": {
+                            "prompt_tokens": 100,
+                            "completion_tokens": 20,
+                            "cost": "0.000100",
+                        },
+                        "choices": [
+                            {
+                                "index": 0,
+                                "finish_reason": "stop",
+                                "message": {"role": "assistant", "content": "Done."},
+                            }
+                        ],
+                    },
+                    "started_ns": 10,
+                    "finished_ns": 20,
+                }
+            else:
+                inspected = json.loads(tool_outputs[0]["content"])
+                if inspected.get("infeasible_constraint"):
+                    tool_call = {
+                        "id": f"call-escalate-{worker}",
+                        "type": "function",
+                        "function": {
+                            "name": "escalate",
+                            "arguments": json.dumps(
+                                {
+                                    "reason": "Hardware-locked tax step correction c_2=2 leaves residual r_2=2 > 0."
+                                }
+                            ),
+                        },
+                    }
+                elif "Arm A" in sys_prompt:
+                    return {
+                        "response": {
+                            "id": f"stub-done-{worker}",
+                            "model": model,
+                            "usage": {
+                                "prompt_tokens": 100,
+                                "completion_tokens": 20,
+                                "cost": "0.000100",
+                            },
+                            "choices": [
+                                {
+                                    "index": 0,
+                                    "finish_reason": "stop",
+                                    "message": {"role": "assistant", "content": "Done."},
+                                }
+                            ],
+                        },
+                        "started_ns": 10,
+                        "finished_ns": 20,
+                    }
+                elif "Arm B" in sys_prompt:
+                    if worker == "worker-0":
+                        tool_call = {
+                            "id": f"call-patch-b-{worker}",
+                            "type": "function",
+                            "function": {
+                                "name": "submit_module_patch",
+                                "arguments": json.dumps({"source_code": INITIAL_PRICING_LOOP_P2_P3_PY}),
+                            },
+                        }
+                    elif worker == "worker-1":
+                        tool_call = {
+                            "id": f"call-patch-b-{worker}",
+                            "type": "function",
+                            "function": {
+                                "name": "submit_module_patch",
+                                "arguments": json.dumps({"source_code": INITIAL_TAX_LOOP_P2_PY}),
+                            },
+                        }
+                    else:
+                        return {
+                            "response": {
+                                "id": f"stub-hold-b-{worker}",
+                                "model": model,
+                                "usage": {
+                                    "prompt_tokens": 100,
+                                    "completion_tokens": 20,
+                                    "cost": "0.000100",
+                                },
+                                "choices": [
+                                    {
+                                        "index": 0,
+                                        "finish_reason": "stop",
+                                        "message": {"role": "assistant", "content": "Done."},
+                                    }
+                                ],
+                            },
+                            "started_ns": 10,
+                            "finished_ns": 20,
+                        }
+                else:
+                    patch_map = {
+                        "worker-0": INITIAL_PRICING_LOOP_P2_P3_PY,
+                        "worker-1": INITIAL_TAX_LOOP_P3_PY,
+                        "worker-2": INITIAL_SETTLEMENT_LOOP_P3_PY,
+                    }
+                    tool_call = {
+                        "id": f"call-patch-c-{worker}",
+                        "type": "function",
+                        "function": {
+                            "name": "submit_module_patch",
+                            "arguments": json.dumps({"source_code": patch_map[worker]}),
+                        },
+                    }
+
+            return {
+                "response": {
+                    "id": f"stub-call-{worker}",
+                    "model": model,
+                    "usage": {
+                        "prompt_tokens": 100,
+                        "completion_tokens": 30,
+                        "cost": "0.000100",
+                    },
+                    "choices": [
+                        {
+                            "index": 0,
+                            "finish_reason": "tool_calls",
+                            "message": {
+                                "role": "assistant",
+                                "tool_calls": [tool_call],
+                            },
+                        }
+                    ],
+                },
+                "started_ns": 10,
+                "finished_ns": 20,
+            }
+
+        with tempfile.TemporaryDirectory() as td:
+            events_path = Path(td) / "events.jsonl"
+            events = Events(events_path)
+            config = {
+                "topology": "closed_loop_repair",
+                "seeds": [13500, 13501],
+                "models": CODE_SWARM_MODELS,
+                "budget_usd": "0.50",
+            }
+            events.emit("start", {"config": config})
+            client = CodeBatchClient(events, "0.50", transport=stub_closed_loop_repair_transport)
+            summary = closed_loop_repair_campaign(client, events, config)
+            (Path(td) / "summary.json").write_text(
+                json.dumps(summary, indent=2) + "\n", encoding="utf-8"
+            )
+
+            replayed = replay(events_path)
+            self.assertEqual(replayed, summary)
+            self.assertEqual(replayed["schema"], "lggr.closed_loop_repair_code_engineering_swarm.v1")
+            self.assertEqual(replayed["max_inflight_requests"], 3)
+
+            records = deepcopy(events.records)
+            gate_rec = next(r["data"] for r in records if r["kind"] == "gate")
+            gate_rec["loop_surcharge_cents"] = int(gate_rec["loop_surcharge_cents"]) + 1
+            for i, r in enumerate(records):
+                r["previous"] = records[i - 1]["sha256"] if i else None
+                r["sha256"] = event_digest({k: v for k, v in r.items() if k != "sha256"})
+            events_path.write_text(
+                "\n".join(json.dumps(r, sort_keys=True) for r in records) + "\n",
+                encoding="utf-8",
+            )
+            with self.assertRaises(ValueError):
+                replay(events_path)
+
+    def test_live_closed_loop_repair_pilot_evidence_replay_if_present(self) -> None:
+        """Replay live closed_loop_repair pilot evidence offline if present."""
+        loop_events = (
+            Path(__file__).resolve().parents[1]
+            / "experiments"
+            / "concurrent_code_engineering_swarm"
+            / "evidence"
+            / "closed_loop_repair_pilot_run"
+            / "events.jsonl"
+        )
+        loop_summary = loop_events.with_name("summary.json")
+        if loop_events.exists() and loop_summary.exists():
+            replayed = replay(loop_events)
+            self.assertEqual(replayed["schema"], "lggr.closed_loop_repair_code_engineering_swarm.v1")
+            self.assertEqual(len(replayed["cases"]), 3)
+            seed_13500_arms = {a["arm"]: a for a in replayed["cases"][0]["arms"]}
+            self.assertEqual(seed_13500_arms["A"]["final_loop_surcharge_cents"], 12)
+            self.assertEqual(seed_13500_arms["B"]["final_loop_surcharge_cents"], 4)
+            self.assertEqual(seed_13500_arms["C"]["final_loop_surcharge_cents"], 0)
+            self.assertEqual(seed_13500_arms["C"]["status"], "completed")
 
 
 if __name__ == "__main__":

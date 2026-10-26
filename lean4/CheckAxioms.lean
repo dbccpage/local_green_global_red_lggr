@@ -154,6 +154,7 @@ import LggrVIII
 #print axioms LggrVIII.bell_polytope_codebase_chsh_violation_and_lhv_audit
 #print axioms LggrVIII.weighted_relaxation_codebase_pareto_tie_and_minimum_weighted_slack_audit
 #print axioms LggrVIII.threshold_governance_codebase_prefix_excursion_and_endpoint_audit
+#print axioms LggrVIII.closed_loop_repair_codebase_open_loop_residual_and_witness_convergence_audit
 
 
 

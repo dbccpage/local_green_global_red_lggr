@@ -1,0 +1,2670 @@
+{
+  "schema": "lggr.closed_loop_repair_code_engineering_swarm.v1",
+  "topology": "closed_loop_repair",
+  "authority_effect": "None",
+  "cases": [
+    {
+      "seed": 13500,
+      "kind": "repairable_open_loop_residual_and_closed_loop_witness_convergence",
+      "arms": [
+        {
+          "arm": "A",
+          "status": "blocked_unresolved",
+          "waves_executed": 2,
+          "final_local_green": 1,
+          "final_global_green": 0,
+          "final_defect": -1,
+          "final_correction_vector": [
+            0,
+            0
+          ],
+          "final_residual_vector": [
+            4,
+            4
+          ],
+          "final_total_boundary_residual": 8,
+          "final_unrepaired_edge_count": 2,
+          "final_loop_surcharge_cents": 12,
+          "final_merchant_payout_cents": 861,
+          "final_status": "OPEN_LOOP_BASELINE_OBSTRUCTED_LGGR",
+          "final_receipt_sha256": "8ac89427fc2a8d27c9b9854fe38b39e51a96c8ad908e98af5d03d7ae465c58ac",
+          "final_receipt": {
+            "schema": "lggr.online_codebase_closed_loop_repair.v1",
+            "authority_effect": "None",
+            "scope_id": "closed-loop-repair-seed-13500-arm-A",
+            "status": "OPEN_LOOP_BASELINE_OBSTRUCTED_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR",
+            "evaluation_count": 3,
+            "lggr_obstruction_count": 3,
+            "lggg_coherent_count": 0,
+            "closed_loop_repair_receipt": {
+              "schema": "lggr.online_closed_loop_repair.v1",
+              "authority_effect": "None",
+              "scope_id": "closed-loop-repair-seed-13500-arm-A:closed-loop",
+              "status": "CLOSED_LOOP_RESIDUAL_OBSTRUCTION_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "trajectory_count": 3,
+              "single_round_converged_count": 0,
+              "multi_round_converged_count": 0,
+              "single_round_convergence_rate": "0",
+              "multi_round_convergence_rate": "0",
+              "multi_round_convergence_gain": "0",
+              "residual_unrepaired_rate": "1",
+              "monotonic_convergence_verified": true,
+              "multi_round_witness_rescued_ids": [],
+              "unrepaired_trajectory_ids": [
+                "A-wave-0:deterministic",
+                "A-wave-1:deterministic",
+                "A-wave-2:deterministic"
+              ],
+              "trajectories": [
+                {
+                  "trajectory_id": "A-wave-0:deterministic",
+                  "monitor_name": "StreamingCodebaseClosedLoopRepairMonitor",
+                  "model_id": "deterministic",
+                  "round_count": 2,
+                  "initial_ngd_obstructed": true,
+                  "converged_single_round": false,
+                  "converged_multi_round": false,
+                  "rounds_to_convergence": null,
+                  "defect_progression": [
+                    -1,
+                    -1
+                  ],
+                  "final_local_pass": true,
+                  "final_global_pass": false,
+                  "final_evaluator_defect": -1,
+                  "trajectory_status": "UNREPAIRED_PERSISTENT_OBSTRUCTION_LGGR",
+                  "contract_status": "OBSTRUCTED_LGGR",
+                  "rounds": [
+                    {
+                      "round_index": 0,
+                      "feedback_mode": "round_0_baseline",
+                      "receipt_status": "OPEN_LOOP_BASELINE_OBSTRUCTED_LGGR",
+                      "contract_status": "OBSTRUCTED_LGGR",
+                      "local_pass": true,
+                      "global_pass": false,
+                      "evaluator_defect": -1
+                    },
+                    {
+                      "round_index": 1,
+                      "feedback_mode": "codebase_eval",
+                      "receipt_status": "OPEN_LOOP_BASELINE_OBSTRUCTED_LGGR",
+                      "contract_status": "OBSTRUCTED_LGGR",
+                      "local_pass": true,
+                      "global_pass": false,
+                      "evaluator_defect": -1
+                    }
+                  ]
+                },
+                {
+                  "trajectory_id": "A-wave-1:deterministic",
+                  "monitor_name": "StreamingCodebaseClosedLoopRepairMonitor",
+                  "model_id": "deterministic",
+                  "round_count": 2,
+                  "initial_ngd_obstructed": true,
+                  "converged_single_round": false,
+                  "converged_multi_round": false,
+                  "rounds_to_convergence": null,
+                  "defect_progression": [
+                    -1,
+                    -1
+                  ],
+                  "final_local_pass": true,
+                  "final_global_pass": false,
+                  "final_evaluator_defect": -1,
+                  "trajectory_status": "UNREPAIRED_PERSISTENT_OBSTRUCTION_LGGR",
+                  "contract_status": "OBSTRUCTED_LGGR",
+                  "rounds": [
+                    {
+                      "round_index": 0,
+                      "feedback_mode": "round_0_baseline",
+                      "receipt_status": "OPEN_LOOP_BASELINE_OBSTRUCTED_LGGR",
+                      "contract_status": "OBSTRUCTED_LGGR",
+                      "local_pass": true,
+                      "global_pass": false,
+                      "evaluator_defect": -1
+                    },
+                    {
+                      "round_index": 1,
+                      "feedback_mode": "codebase_eval",
+                      "receipt_status": "OPEN_LOOP_BASELINE_OBSTRUCTED_LGGR",
+                      "contract_status": "OBSTRUCTED_LGGR",
+                      "local_pass": true,
+                      "global_pass": false,
+                      "evaluator_defect": -1
+                    }
+                  ]
+                },
+                {
+                  "trajectory_id": "A-wave-2:deterministic",
+                  "monitor_name": "StreamingCodebaseClosedLoopRepairMonitor",
+                  "model_id": "deterministic",
+                  "round_count": 2,
+                  "initial_ngd_obstructed": true,
+                  "converged_single_round": false,
+                  "converged_multi_round": false,
+                  "rounds_to_convergence": null,
+                  "defect_progression": [
+                    -1,
+                    -1
+                  ],
+                  "final_local_pass": true,
+                  "final_global_pass": false,
+                  "final_evaluator_defect": -1,
+                  "trajectory_status": "UNREPAIRED_PERSISTENT_OBSTRUCTION_LGGR",
+                  "contract_status": "OBSTRUCTED_LGGR",
+                  "rounds": [
+                    {
+                      "round_index": 0,
+                      "feedback_mode": "round_0_baseline",
+                      "receipt_status": "OPEN_LOOP_BASELINE_OBSTRUCTED_LGGR",
+                      "contract_status": "OBSTRUCTED_LGGR",
+                      "local_pass": true,
+                      "global_pass": false,
+                      "evaluator_defect": -1
+                    },
+                    {
+                      "round_index": 1,
+                      "feedback_mode": "codebase_eval",
+                      "receipt_status": "OPEN_LOOP_BASELINE_OBSTRUCTED_LGGR",
+                      "contract_status": "OBSTRUCTED_LGGR",
+                      "local_pass": true,
+                      "global_pass": false,
+                      "evaluator_defect": -1
+                    }
+                  ]
+                }
+              ],
+              "receipt_sha256": "d77cd364e065bba9288596bd049116210a1b8b8b69e4ca4e8b0059bb42212342"
+            },
+            "fiber_receipt": {
+              "schema": "lggr.descent.v1",
+              "authority_effect": "None",
+              "scope_id": "streaming-fiber-scope",
+              "carrier_size": 3,
+              "status": "DECODER_VERIFIED",
+              "contract_status": "COMPOSABLE_LGGG",
+              "decoder": [
+                {
+                  "report": {
+                    "local_green": 1,
+                    "residuals_within_four": true
+                  },
+                  "query": "LGGR"
+                }
+              ],
+              "input_sha256": "1765421a47cba01ad755bd4189285f9df17bd8805942e6744e4196f5defeada0",
+              "meaning": "The supplied query is constant on every realized report fiber in this stream.",
+              "receipt_sha256": "f7624f447dd2e2a79829e4efa373b433e8d177f4115acaee3bb3f733c6ab2bd1"
+            },
+            "three_phase_audits": [],
+            "evaluations": [
+              {
+                "evaluation_id": "A-wave-0",
+                "model_id": "deterministic",
+                "correction_vector": [
+                  0,
+                  0
+                ],
+                "residual_vector": [
+                  4,
+                  4
+                ],
+                "pricing_step_correction_c1": 0,
+                "tax_step_correction_c2": 0,
+                "residual_r1": 4,
+                "residual_r2": 4,
+                "total_boundary_residual": 8,
+                "unrepaired_edge_count": 2,
+                "loop_surcharge_cents": 12,
+                "merchant_payout_cents": 861,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "OPEN_LOOP_BASELINE_OBSTRUCTED_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_loop",
+                    "action": "APPLY_EXACT_PRICING_CORRECTION_C1_FOUR",
+                    "target_pricing_step_correction_c1": 4
+                  },
+                  "worker-1": {
+                    "module": "tax_loop",
+                    "action": "APPLY_EXACT_TAX_CORRECTION_C2_FOUR",
+                    "target_tax_step_correction_c2": 4
+                  },
+                  "worker-2": {
+                    "module": "settlement_loop",
+                    "action": "ENFORCE_CLOSED_LOOP_ZERO_RESIDUAL_GUARD",
+                    "target_loop_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "A-wave-1",
+                "model_id": "deterministic",
+                "correction_vector": [
+                  0,
+                  0
+                ],
+                "residual_vector": [
+                  4,
+                  4
+                ],
+                "pricing_step_correction_c1": 0,
+                "tax_step_correction_c2": 0,
+                "residual_r1": 4,
+                "residual_r2": 4,
+                "total_boundary_residual": 8,
+                "unrepaired_edge_count": 2,
+                "loop_surcharge_cents": 12,
+                "merchant_payout_cents": 861,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "OPEN_LOOP_BASELINE_OBSTRUCTED_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_loop",
+                    "action": "APPLY_EXACT_PRICING_CORRECTION_C1_FOUR",
+                    "target_pricing_step_correction_c1": 4
+                  },
+                  "worker-1": {
+                    "module": "tax_loop",
+                    "action": "APPLY_EXACT_TAX_CORRECTION_C2_FOUR",
+                    "target_tax_step_correction_c2": 4
+                  },
+                  "worker-2": {
+                    "module": "settlement_loop",
+                    "action": "ENFORCE_CLOSED_LOOP_ZERO_RESIDUAL_GUARD",
+                    "target_loop_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "A-wave-2",
+                "model_id": "deterministic",
+                "correction_vector": [
+                  0,
+                  0
+                ],
+                "residual_vector": [
+                  4,
+                  4
+                ],
+                "pricing_step_correction_c1": 0,
+                "tax_step_correction_c2": 0,
+                "residual_r1": 4,
+                "residual_r2": 4,
+                "total_boundary_residual": 8,
+                "unrepaired_edge_count": 2,
+                "loop_surcharge_cents": 12,
+                "merchant_payout_cents": 861,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "OPEN_LOOP_BASELINE_OBSTRUCTED_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_loop",
+                    "action": "APPLY_EXACT_PRICING_CORRECTION_C1_FOUR",
+                    "target_pricing_step_correction_c1": 4
+                  },
+                  "worker-1": {
+                    "module": "tax_loop",
+                    "action": "APPLY_EXACT_TAX_CORRECTION_C2_FOUR",
+                    "target_tax_step_correction_c2": 4
+                  },
+                  "worker-2": {
+                    "module": "settlement_loop",
+                    "action": "ENFORCE_CLOSED_LOOP_ZERO_RESIDUAL_GUARD",
+                    "target_loop_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              }
+            ],
+            "receipt_sha256": "8ac89427fc2a8d27c9b9854fe38b39e51a96c8ad908e98af5d03d7ae465c58ac"
+          },
+          "escalations": {},
+          "api_attempts": 16,
+          "cost_usd": "0.0142570071"
+        },
+        {
+          "arm": "B",
+          "status": "blocked_unresolved",
+          "waves_executed": 2,
+          "final_local_green": 1,
+          "final_global_green": 0,
+          "final_defect": -1,
+          "final_correction_vector": [
+            4,
+            2
+          ],
+          "final_residual_vector": [
+            0,
+            2
+          ],
+          "final_total_boundary_residual": 2,
+          "final_unrepaired_edge_count": 1,
+          "final_loop_surcharge_cents": 4,
+          "final_merchant_payout_cents": 869,
+          "final_status": "SINGLE_SHOT_PARTIAL_REPAIR_RESIDUAL_LGGR",
+          "final_receipt_sha256": "bd336e1dbcccfcb638183aa4f6bc1d8b2c07879f42d0cb34967a767ce32fe394",
+          "final_receipt": {
+            "schema": "lggr.online_codebase_closed_loop_repair.v1",
+            "authority_effect": "None",
+            "scope_id": "closed-loop-repair-seed-13500-arm-B",
+            "status": "SINGLE_SHOT_PARTIAL_REPAIR_RESIDUAL_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR",
+            "evaluation_count": 3,
+            "lggr_obstruction_count": 3,
+            "lggg_coherent_count": 0,
+            "closed_loop_repair_receipt": {
+              "schema": "lggr.online_closed_loop_repair.v1",
+              "authority_effect": "None",
+              "scope_id": "closed-loop-repair-seed-13500-arm-B:closed-loop",
+              "status": "CLOSED_LOOP_RESIDUAL_OBSTRUCTION_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "trajectory_count": 3,
+              "single_round_converged_count": 0,
+              "multi_round_converged_count": 0,
+              "single_round_convergence_rate": "0",
+              "multi_round_convergence_rate": "0",
+              "multi_round_convergence_gain": "0",
+              "residual_unrepaired_rate": "1",
+              "monotonic_convergence_verified": true,
+              "multi_round_witness_rescued_ids": [],
+              "unrepaired_trajectory_ids": [
+                "B-wave-0:deterministic",
+                "B-wave-1:deterministic",
+                "B-wave-2:deterministic"
+              ],
+              "trajectories": [
+                {
+                  "trajectory_id": "B-wave-0:deterministic",
+                  "monitor_name": "StreamingCodebaseClosedLoopRepairMonitor",
+                  "model_id": "deterministic",
+                  "round_count": 2,
+                  "initial_ngd_obstructed": true,
+                  "converged_single_round": false,
+                  "converged_multi_round": false,
+                  "rounds_to_convergence": null,
+                  "defect_progression": [
+                    -1,
+                    -1
+                  ],
+                  "final_local_pass": true,
+                  "final_global_pass": false,
+                  "final_evaluator_defect": -1,
+                  "trajectory_status": "UNREPAIRED_PERSISTENT_OBSTRUCTION_LGGR",
+                  "contract_status": "OBSTRUCTED_LGGR",
+                  "rounds": [
+                    {
+                      "round_index": 0,
+                      "feedback_mode": "round_0_baseline",
+                      "receipt_status": "OPEN_LOOP_BASELINE_OBSTRUCTED_LGGR",
+                      "contract_status": "OBSTRUCTED_LGGR",
+                      "local_pass": true,
+                      "global_pass": false,
+                      "evaluator_defect": -1
+                    },
+                    {
+                      "round_index": 1,
+                      "feedback_mode": "codebase_eval",
+                      "receipt_status": "OPEN_LOOP_BASELINE_OBSTRUCTED_LGGR",
+                      "contract_status": "OBSTRUCTED_LGGR",
+                      "local_pass": true,
+                      "global_pass": false,
+                      "evaluator_defect": -1
+                    }
+                  ]
+                },
+                {
+                  "trajectory_id": "B-wave-1:deterministic",
+                  "monitor_name": "StreamingCodebaseClosedLoopRepairMonitor",
+                  "model_id": "deterministic",
+                  "round_count": 2,
+                  "initial_ngd_obstructed": true,
+                  "converged_single_round": false,
+                  "converged_multi_round": false,
+                  "rounds_to_convergence": null,
+                  "defect_progression": [
+                    -1,
+                    -1
+                  ],
+                  "final_local_pass": true,
+                  "final_global_pass": false,
+                  "final_evaluator_defect": -1,
+                  "trajectory_status": "UNREPAIRED_PERSISTENT_OBSTRUCTION_LGGR",
+                  "contract_status": "OBSTRUCTED_LGGR",
+                  "rounds": [
+                    {
+                      "round_index": 0,
+                      "feedback_mode": "round_0_baseline",
+                      "receipt_status": "OPEN_LOOP_BASELINE_OBSTRUCTED_LGGR",
+                      "contract_status": "OBSTRUCTED_LGGR",
+                      "local_pass": true,
+                      "global_pass": false,
+                      "evaluator_defect": -1
+                    },
+                    {
+                      "round_index": 1,
+                      "feedback_mode": "codebase_eval",
+                      "receipt_status": "SINGLE_SHOT_PARTIAL_REPAIR_RESIDUAL_LGGR",
+                      "contract_status": "OBSTRUCTED_LGGR",
+                      "local_pass": true,
+                      "global_pass": false,
+                      "evaluator_defect": -1
+                    }
+                  ]
+                },
+                {
+                  "trajectory_id": "B-wave-2:deterministic",
+                  "monitor_name": "StreamingCodebaseClosedLoopRepairMonitor",
+                  "model_id": "deterministic",
+                  "round_count": 2,
+                  "initial_ngd_obstructed": true,
+                  "converged_single_round": false,
+                  "converged_multi_round": false,
+                  "rounds_to_convergence": null,
+                  "defect_progression": [
+                    -1,
+                    -1
+                  ],
+                  "final_local_pass": true,
+                  "final_global_pass": false,
+                  "final_evaluator_defect": -1,
+                  "trajectory_status": "UNREPAIRED_PERSISTENT_OBSTRUCTION_LGGR",
+                  "contract_status": "OBSTRUCTED_LGGR",
+                  "rounds": [
+                    {
+                      "round_index": 0,
+                      "feedback_mode": "round_0_baseline",
+                      "receipt_status": "OPEN_LOOP_BASELINE_OBSTRUCTED_LGGR",
+                      "contract_status": "OBSTRUCTED_LGGR",
+                      "local_pass": true,
+                      "global_pass": false,
+                      "evaluator_defect": -1
+                    },
+                    {
+                      "round_index": 1,
+                      "feedback_mode": "codebase_eval",
+                      "receipt_status": "SINGLE_SHOT_PARTIAL_REPAIR_RESIDUAL_LGGR",
+                      "contract_status": "OBSTRUCTED_LGGR",
+                      "local_pass": true,
+                      "global_pass": false,
+                      "evaluator_defect": -1
+                    }
+                  ]
+                }
+              ],
+              "receipt_sha256": "d5565a9194975fe6c50c17836cb84821d897a2d71995c6c847caaf90f57fb702"
+            },
+            "fiber_receipt": {
+              "schema": "lggr.descent.v1",
+              "authority_effect": "None",
+              "scope_id": "streaming-fiber-scope",
+              "carrier_size": 3,
+              "status": "DECODER_VERIFIED",
+              "contract_status": "COMPOSABLE_LGGG",
+              "decoder": [
+                {
+                  "report": {
+                    "local_green": 1,
+                    "residuals_within_four": true
+                  },
+                  "query": "LGGR"
+                }
+              ],
+              "input_sha256": "6bc251743cb0145d482c0b9f3a0167aff4a665d5c6d29af4061746194531da77",
+              "meaning": "The supplied query is constant on every realized report fiber in this stream.",
+              "receipt_sha256": "bd09fedb460b48de57000d14df24e973dd54209302eb7d4551cfa3f773e487a1"
+            },
+            "three_phase_audits": [],
+            "evaluations": [
+              {
+                "evaluation_id": "B-wave-0",
+                "model_id": "deterministic",
+                "correction_vector": [
+                  0,
+                  0
+                ],
+                "residual_vector": [
+                  4,
+                  4
+                ],
+                "pricing_step_correction_c1": 0,
+                "tax_step_correction_c2": 0,
+                "residual_r1": 4,
+                "residual_r2": 4,
+                "total_boundary_residual": 8,
+                "unrepaired_edge_count": 2,
+                "loop_surcharge_cents": 12,
+                "merchant_payout_cents": 861,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "OPEN_LOOP_BASELINE_OBSTRUCTED_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_loop",
+                    "action": "APPLY_EXACT_PRICING_CORRECTION_C1_FOUR",
+                    "target_pricing_step_correction_c1": 4
+                  },
+                  "worker-1": {
+                    "module": "tax_loop",
+                    "action": "APPLY_EXACT_TAX_CORRECTION_C2_FOUR",
+                    "target_tax_step_correction_c2": 4
+                  },
+                  "worker-2": {
+                    "module": "settlement_loop",
+                    "action": "ENFORCE_CLOSED_LOOP_ZERO_RESIDUAL_GUARD",
+                    "target_loop_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "B-wave-1",
+                "model_id": "deterministic",
+                "correction_vector": [
+                  4,
+                  2
+                ],
+                "residual_vector": [
+                  0,
+                  2
+                ],
+                "pricing_step_correction_c1": 4,
+                "tax_step_correction_c2": 2,
+                "residual_r1": 0,
+                "residual_r2": 2,
+                "total_boundary_residual": 2,
+                "unrepaired_edge_count": 1,
+                "loop_surcharge_cents": 4,
+                "merchant_payout_cents": 869,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "SINGLE_SHOT_PARTIAL_REPAIR_RESIDUAL_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_loop",
+                    "action": "HOLD_PRICING_CORRECTION_C1_FOUR",
+                    "target_pricing_step_correction_c1": 4
+                  },
+                  "worker-1": {
+                    "module": "tax_loop",
+                    "action": "APPLY_EXACT_TAX_CORRECTION_C2_FOUR",
+                    "target_tax_step_correction_c2": 4
+                  },
+                  "worker-2": {
+                    "module": "settlement_loop",
+                    "action": "ENFORCE_CLOSED_LOOP_ZERO_RESIDUAL_GUARD",
+                    "target_loop_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "B-wave-2",
+                "model_id": "deterministic",
+                "correction_vector": [
+                  4,
+                  2
+                ],
+                "residual_vector": [
+                  0,
+                  2
+                ],
+                "pricing_step_correction_c1": 4,
+                "tax_step_correction_c2": 2,
+                "residual_r1": 0,
+                "residual_r2": 2,
+                "total_boundary_residual": 2,
+                "unrepaired_edge_count": 1,
+                "loop_surcharge_cents": 4,
+                "merchant_payout_cents": 869,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "SINGLE_SHOT_PARTIAL_REPAIR_RESIDUAL_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_loop",
+                    "action": "HOLD_PRICING_CORRECTION_C1_FOUR",
+                    "target_pricing_step_correction_c1": 4
+                  },
+                  "worker-1": {
+                    "module": "tax_loop",
+                    "action": "APPLY_EXACT_TAX_CORRECTION_C2_FOUR",
+                    "target_tax_step_correction_c2": 4
+                  },
+                  "worker-2": {
+                    "module": "settlement_loop",
+                    "action": "ENFORCE_CLOSED_LOOP_ZERO_RESIDUAL_GUARD",
+                    "target_loop_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              }
+            ],
+            "receipt_sha256": "bd336e1dbcccfcb638183aa4f6bc1d8b2c07879f42d0cb34967a767ce32fe394"
+          },
+          "escalations": {},
+          "api_attempts": 14,
+          "cost_usd": "0.0137093965"
+        },
+        {
+          "arm": "C",
+          "status": "completed",
+          "waves_executed": 1,
+          "final_local_green": 1,
+          "final_global_green": 1,
+          "final_defect": 0,
+          "final_correction_vector": [
+            4,
+            4
+          ],
+          "final_residual_vector": [
+            0,
+            0
+          ],
+          "final_total_boundary_residual": 0,
+          "final_unrepaired_edge_count": 0,
+          "final_loop_surcharge_cents": 0,
+          "final_merchant_payout_cents": 873,
+          "final_status": "CLOSED_LOOP_WITNESS_REPAIR_CONVERGED_LGGG",
+          "final_receipt_sha256": "40b6389f6e0ae4f0f9df97946b52d1a5561241c855e5abf248224249b7322241",
+          "final_receipt": {
+            "schema": "lggr.online_codebase_closed_loop_repair.v1",
+            "authority_effect": "None",
+            "scope_id": "closed-loop-repair-seed-13500-arm-C",
+            "status": "CLOSED_LOOP_WITNESS_REPAIR_CONVERGED_LGGG",
+            "contract_status": "COMPOSABLE_LGGG",
+            "evaluation_count": 2,
+            "lggr_obstruction_count": 1,
+            "lggg_coherent_count": 1,
+            "closed_loop_repair_receipt": {
+              "schema": "lggr.online_closed_loop_repair.v1",
+              "authority_effect": "None",
+              "scope_id": "closed-loop-repair-seed-13500-arm-C:closed-loop",
+              "status": "CLOSED_LOOP_RESIDUAL_OBSTRUCTION_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "trajectory_count": 2,
+              "single_round_converged_count": 1,
+              "multi_round_converged_count": 1,
+              "single_round_convergence_rate": "1/2",
+              "multi_round_convergence_rate": "1/2",
+              "multi_round_convergence_gain": "0",
+              "residual_unrepaired_rate": "1/2",
+              "monotonic_convergence_verified": true,
+              "multi_round_witness_rescued_ids": [],
+              "unrepaired_trajectory_ids": [
+                "C-wave-0:deterministic"
+              ],
+              "trajectories": [
+                {
+                  "trajectory_id": "C-wave-0:deterministic",
+                  "monitor_name": "StreamingCodebaseClosedLoopRepairMonitor",
+                  "model_id": "deterministic",
+                  "round_count": 2,
+                  "initial_ngd_obstructed": true,
+                  "converged_single_round": false,
+                  "converged_multi_round": false,
+                  "rounds_to_convergence": null,
+                  "defect_progression": [
+                    -1,
+                    -1
+                  ],
+                  "final_local_pass": true,
+                  "final_global_pass": false,
+                  "final_evaluator_defect": -1,
+                  "trajectory_status": "UNREPAIRED_PERSISTENT_OBSTRUCTION_LGGR",
+                  "contract_status": "OBSTRUCTED_LGGR",
+                  "rounds": [
+                    {
+                      "round_index": 0,
+                      "feedback_mode": "round_0_baseline",
+                      "receipt_status": "OPEN_LOOP_BASELINE_OBSTRUCTED_LGGR",
+                      "contract_status": "OBSTRUCTED_LGGR",
+                      "local_pass": true,
+                      "global_pass": false,
+                      "evaluator_defect": -1
+                    },
+                    {
+                      "round_index": 1,
+                      "feedback_mode": "codebase_eval",
+                      "receipt_status": "OPEN_LOOP_BASELINE_OBSTRUCTED_LGGR",
+                      "contract_status": "OBSTRUCTED_LGGR",
+                      "local_pass": true,
+                      "global_pass": false,
+                      "evaluator_defect": -1
+                    }
+                  ]
+                },
+                {
+                  "trajectory_id": "C-wave-1:deterministic",
+                  "monitor_name": "StreamingCodebaseClosedLoopRepairMonitor",
+                  "model_id": "deterministic",
+                  "round_count": 2,
+                  "initial_ngd_obstructed": true,
+                  "converged_single_round": true,
+                  "converged_multi_round": true,
+                  "rounds_to_convergence": 1,
+                  "defect_progression": [
+                    -1,
+                    0
+                  ],
+                  "final_local_pass": true,
+                  "final_global_pass": true,
+                  "final_evaluator_defect": 0,
+                  "trajectory_status": "SINGLE_ROUND_RECEIPT_CONVERGED_LGGG",
+                  "contract_status": "COMPOSABLE_LGGG",
+                  "rounds": [
+                    {
+                      "round_index": 0,
+                      "feedback_mode": "round_0_baseline",
+                      "receipt_status": "OPEN_LOOP_BASELINE_OBSTRUCTED_LGGR",
+                      "contract_status": "OBSTRUCTED_LGGR",
+                      "local_pass": true,
+                      "global_pass": false,
+                      "evaluator_defect": -1
+                    },
+                    {
+                      "round_index": 1,
+                      "feedback_mode": "codebase_eval",
+                      "receipt_status": "CLOSED_LOOP_WITNESS_REPAIR_CONVERGED_LGGG",
+                      "contract_status": "COMPOSABLE_LGGG",
+                      "local_pass": true,
+                      "global_pass": true,
+                      "evaluator_defect": 0
+                    }
+                  ]
+                }
+              ],
+              "receipt_sha256": "6f3c34212749b5f7aab490435705127292091d9ace674dbcf4e71cf98bc290e7"
+            },
+            "fiber_receipt": {
+              "schema": "lggr.online_collision.v1",
+              "authority_effect": "None",
+              "scope_id": "streaming-fiber-scope",
+              "carrier_size": 2,
+              "status": "REPORT_INSUFFICIENT",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "collision": {
+                "left": {
+                  "state_id": "closed-loop-repair-seed-13500-arm-C:C-wave-0",
+                  "report": {
+                    "local_green": 1,
+                    "residuals_within_four": true
+                  },
+                  "query": "LGGR"
+                },
+                "right": {
+                  "state_id": "closed-loop-repair-seed-13500-arm-C:C-wave-1",
+                  "report": {
+                    "local_green": 1,
+                    "residuals_within_four": true
+                  },
+                  "query": "LGGG"
+                }
+              },
+              "input_sha256": "947c3d2209f61af27114e2c52a6d1008a2ba831f7bf332f2cf2328ba771a8923",
+              "meaning": "Boundary reports cannot determine this query on the supplied carrier.",
+              "receipt_sha256": "9a715674cea17a8716a73b6bc747f3069f8980c7faa7edfc1a2fdfa608a7f8a0"
+            },
+            "three_phase_audits": [],
+            "evaluations": [
+              {
+                "evaluation_id": "C-wave-0",
+                "model_id": "deterministic",
+                "correction_vector": [
+                  0,
+                  0
+                ],
+                "residual_vector": [
+                  4,
+                  4
+                ],
+                "pricing_step_correction_c1": 0,
+                "tax_step_correction_c2": 0,
+                "residual_r1": 4,
+                "residual_r2": 4,
+                "total_boundary_residual": 8,
+                "unrepaired_edge_count": 2,
+                "loop_surcharge_cents": 12,
+                "merchant_payout_cents": 861,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "OPEN_LOOP_BASELINE_OBSTRUCTED_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_loop",
+                    "action": "APPLY_EXACT_PRICING_CORRECTION_C1_FOUR",
+                    "target_pricing_step_correction_c1": 4
+                  },
+                  "worker-1": {
+                    "module": "tax_loop",
+                    "action": "APPLY_EXACT_TAX_CORRECTION_C2_FOUR",
+                    "target_tax_step_correction_c2": 4
+                  },
+                  "worker-2": {
+                    "module": "settlement_loop",
+                    "action": "ENFORCE_CLOSED_LOOP_ZERO_RESIDUAL_GUARD",
+                    "target_loop_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "C-wave-1",
+                "model_id": "deterministic",
+                "correction_vector": [
+                  4,
+                  4
+                ],
+                "residual_vector": [
+                  0,
+                  0
+                ],
+                "pricing_step_correction_c1": 4,
+                "tax_step_correction_c2": 4,
+                "residual_r1": 0,
+                "residual_r2": 0,
+                "total_boundary_residual": 0,
+                "unrepaired_edge_count": 0,
+                "loop_surcharge_cents": 0,
+                "merchant_payout_cents": 873,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 1,
+                "defect": 0,
+                "status": "CLOSED_LOOP_WITNESS_REPAIR_CONVERGED_LGGG",
+                "contract_status": "COMPOSABLE_LGGG",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_loop",
+                    "action": "HOLD_PRICING_CORRECTION_C1_FOUR",
+                    "target_pricing_step_correction_c1": 4
+                  },
+                  "worker-1": {
+                    "module": "tax_loop",
+                    "action": "HOLD_TAX_CORRECTION_C2_FOUR",
+                    "target_tax_step_correction_c2": 4
+                  },
+                  "worker-2": {
+                    "module": "settlement_loop",
+                    "action": "HOLD_ZERO_RESIDUAL_SETTLEMENT",
+                    "target_loop_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              }
+            ],
+            "receipt_sha256": "40b6389f6e0ae4f0f9df97946b52d1a5561241c855e5abf248224249b7322241"
+          },
+          "escalations": {},
+          "api_attempts": 6,
+          "cost_usd": "0.0067510219"
+        }
+      ]
+    },
+    {
+      "seed": 13501,
+      "kind": "infeasible_hardware_locked_tax_correction_c2_two",
+      "arms": [
+        {
+          "arm": "A",
+          "status": "safe_escalated",
+          "waves_executed": 1,
+          "final_local_green": 0,
+          "final_global_green": 0,
+          "final_defect": 0,
+          "final_correction_vector": [
+            0,
+            0
+          ],
+          "final_residual_vector": [
+            4,
+            4
+          ],
+          "final_total_boundary_residual": 8,
+          "final_unrepaired_edge_count": 2,
+          "final_loop_surcharge_cents": 12,
+          "final_merchant_payout_cents": 861,
+          "final_status": "INFEASIBLE_CLOSED_LOOP_REPAIR_SPECIFICATION_LGGR",
+          "final_receipt_sha256": "5068eb51b2c317407733e29a4b99a898e5f545c73833f4a14fff233b334d2c64",
+          "final_receipt": {
+            "schema": "lggr.online_codebase_closed_loop_repair.v1",
+            "authority_effect": "None",
+            "scope_id": "closed-loop-repair-seed-13501-arm-A",
+            "status": "INFEASIBLE_CLOSED_LOOP_REPAIR_SPECIFICATION_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR",
+            "evaluation_count": 2,
+            "lggr_obstruction_count": 0,
+            "lggg_coherent_count": 0,
+            "closed_loop_repair_receipt": {
+              "schema": "lggr.online_closed_loop_repair.v1",
+              "authority_effect": "None",
+              "scope_id": "closed-loop-repair-seed-13501-arm-A:closed-loop",
+              "status": "CLOSED_LOOP_RESIDUAL_OBSTRUCTION_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "trajectory_count": 2,
+              "single_round_converged_count": 0,
+              "multi_round_converged_count": 0,
+              "single_round_convergence_rate": "0",
+              "multi_round_convergence_rate": "0",
+              "multi_round_convergence_gain": "0",
+              "residual_unrepaired_rate": "1",
+              "monotonic_convergence_verified": true,
+              "multi_round_witness_rescued_ids": [],
+              "unrepaired_trajectory_ids": [
+                "A-wave-0:deterministic",
+                "A-wave-1:deterministic"
+              ],
+              "trajectories": [
+                {
+                  "trajectory_id": "A-wave-0:deterministic",
+                  "monitor_name": "StreamingCodebaseClosedLoopRepairMonitor",
+                  "model_id": "deterministic",
+                  "round_count": 2,
+                  "initial_ngd_obstructed": true,
+                  "converged_single_round": false,
+                  "converged_multi_round": false,
+                  "rounds_to_convergence": null,
+                  "defect_progression": [
+                    -1,
+                    0
+                  ],
+                  "final_local_pass": false,
+                  "final_global_pass": false,
+                  "final_evaluator_defect": 0,
+                  "trajectory_status": "UNREPAIRED_PERSISTENT_OBSTRUCTION_LGGR",
+                  "contract_status": "OBSTRUCTED_LGGR",
+                  "rounds": [
+                    {
+                      "round_index": 0,
+                      "feedback_mode": "round_0_baseline",
+                      "receipt_status": "OPEN_LOOP_BASELINE_OBSTRUCTED_LGGR",
+                      "contract_status": "OBSTRUCTED_LGGR",
+                      "local_pass": true,
+                      "global_pass": false,
+                      "evaluator_defect": -1
+                    },
+                    {
+                      "round_index": 1,
+                      "feedback_mode": "codebase_eval",
+                      "receipt_status": "INFEASIBLE_CLOSED_LOOP_REPAIR_SPECIFICATION_LGGR",
+                      "contract_status": "OBSTRUCTED_LGGR",
+                      "local_pass": false,
+                      "global_pass": false,
+                      "evaluator_defect": 0
+                    }
+                  ]
+                },
+                {
+                  "trajectory_id": "A-wave-1:deterministic",
+                  "monitor_name": "StreamingCodebaseClosedLoopRepairMonitor",
+                  "model_id": "deterministic",
+                  "round_count": 2,
+                  "initial_ngd_obstructed": true,
+                  "converged_single_round": false,
+                  "converged_multi_round": false,
+                  "rounds_to_convergence": null,
+                  "defect_progression": [
+                    -1,
+                    0
+                  ],
+                  "final_local_pass": false,
+                  "final_global_pass": false,
+                  "final_evaluator_defect": 0,
+                  "trajectory_status": "UNREPAIRED_PERSISTENT_OBSTRUCTION_LGGR",
+                  "contract_status": "OBSTRUCTED_LGGR",
+                  "rounds": [
+                    {
+                      "round_index": 0,
+                      "feedback_mode": "round_0_baseline",
+                      "receipt_status": "OPEN_LOOP_BASELINE_OBSTRUCTED_LGGR",
+                      "contract_status": "OBSTRUCTED_LGGR",
+                      "local_pass": true,
+                      "global_pass": false,
+                      "evaluator_defect": -1
+                    },
+                    {
+                      "round_index": 1,
+                      "feedback_mode": "codebase_eval",
+                      "receipt_status": "INFEASIBLE_CLOSED_LOOP_REPAIR_SPECIFICATION_LGGR",
+                      "contract_status": "OBSTRUCTED_LGGR",
+                      "local_pass": false,
+                      "global_pass": false,
+                      "evaluator_defect": 0
+                    }
+                  ]
+                }
+              ],
+              "receipt_sha256": "0948f5a0653acc9677551452027090573caf4e204ed949883265a95ac07aec7b"
+            },
+            "fiber_receipt": {
+              "schema": "lggr.descent.v1",
+              "authority_effect": "None",
+              "scope_id": "streaming-fiber-scope",
+              "carrier_size": 2,
+              "status": "DECODER_VERIFIED",
+              "contract_status": "COMPOSABLE_LGGG",
+              "decoder": [
+                {
+                  "report": {
+                    "local_green": 0,
+                    "residuals_within_four": true
+                  },
+                  "query": "LGGR"
+                }
+              ],
+              "input_sha256": "94f281a88de1e0bb672f272f545d857da4a22626da3f58d18134b6ceea907e8e",
+              "meaning": "The supplied query is constant on every realized report fiber in this stream.",
+              "receipt_sha256": "fb2e8057cacf5fcd2333c8c602f6b347d4a5cfec9b403b543a03c29fe498bc74"
+            },
+            "three_phase_audits": [],
+            "evaluations": [
+              {
+                "evaluation_id": "A-wave-0",
+                "model_id": "deterministic",
+                "correction_vector": [
+                  0,
+                  0
+                ],
+                "residual_vector": [
+                  4,
+                  4
+                ],
+                "pricing_step_correction_c1": 0,
+                "tax_step_correction_c2": 0,
+                "residual_r1": 4,
+                "residual_r2": 4,
+                "total_boundary_residual": 8,
+                "unrepaired_edge_count": 2,
+                "loop_surcharge_cents": 12,
+                "merchant_payout_cents": 861,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 0,
+                "global_green": 0,
+                "defect": 0,
+                "status": "INFEASIBLE_CLOSED_LOOP_REPAIR_SPECIFICATION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_loop",
+                    "action": "APPLY_EXACT_PRICING_CORRECTION_C1_FOUR",
+                    "target_pricing_step_correction_c1": 4
+                  },
+                  "worker-1": {
+                    "module": "tax_loop",
+                    "action": "APPLY_EXACT_TAX_CORRECTION_C2_FOUR",
+                    "target_tax_step_correction_c2": 4
+                  },
+                  "worker-2": {
+                    "module": "settlement_loop",
+                    "action": "ENFORCE_CLOSED_LOOP_ZERO_RESIDUAL_GUARD",
+                    "target_loop_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "A-wave-1",
+                "model_id": "deterministic",
+                "correction_vector": [
+                  0,
+                  0
+                ],
+                "residual_vector": [
+                  4,
+                  4
+                ],
+                "pricing_step_correction_c1": 0,
+                "tax_step_correction_c2": 0,
+                "residual_r1": 4,
+                "residual_r2": 4,
+                "total_boundary_residual": 8,
+                "unrepaired_edge_count": 2,
+                "loop_surcharge_cents": 12,
+                "merchant_payout_cents": 861,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 0,
+                "global_green": 0,
+                "defect": 0,
+                "status": "INFEASIBLE_CLOSED_LOOP_REPAIR_SPECIFICATION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_loop",
+                    "action": "APPLY_EXACT_PRICING_CORRECTION_C1_FOUR",
+                    "target_pricing_step_correction_c1": 4
+                  },
+                  "worker-1": {
+                    "module": "tax_loop",
+                    "action": "APPLY_EXACT_TAX_CORRECTION_C2_FOUR",
+                    "target_tax_step_correction_c2": 4
+                  },
+                  "worker-2": {
+                    "module": "settlement_loop",
+                    "action": "ENFORCE_CLOSED_LOOP_ZERO_RESIDUAL_GUARD",
+                    "target_loop_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              }
+            ],
+            "receipt_sha256": "5068eb51b2c317407733e29a4b99a898e5f545c73833f4a14fff233b334d2c64"
+          },
+          "escalations": {
+            "worker-0": "Hardware ROM locks `tax_loop.py` (`worker-1`) to `tax_step_correction_c2 = 0` (leaving boundary residual `r_2 = 4 > 0`, `unrepaired_edge_count >= 1`, and `loop_surcharge_cents >= 6 > 0`), whereas the LGGR closed-loop merge gate requires `residual_vector == [0, 0]` (`c_1 = 4, c_2 = 4`).",
+            "worker-1": "Hardware ROM locks `tax_loop.py` to `tax_step_correction_c2 = 0`, leaving boundary residual `r_2 = 4 > 0`. The LGGR closed-loop merge gate requires `residual_vector == [0, 0]` with `c_1 = 4, c_2 = 4`, but the ROM constraint prevents setting `c_2 = 4`. This is an infeasible cross-module constraint that cannot be resolved within worker-1's module permissions.",
+            "worker-2": "Hardware ROM locks `tax_loop.py` (`worker-1`) to `tax_step_correction_c2 = 0` (leaving boundary residual `r_2 = 4 > 0`, `unrepaired_edge_count >= 1`, and `loop_surcharge_cents >= 6 > 0`), whereas the LGGR closed-loop merge gate requires `residual_vector == [0, 0]` (`c_1 = 4, c_2 = 4`)."
+          },
+          "api_attempts": 7,
+          "cost_usd": "0.0068419836"
+        },
+        {
+          "arm": "B",
+          "status": "safe_escalated",
+          "waves_executed": 1,
+          "final_local_green": 0,
+          "final_global_green": 0,
+          "final_defect": 0,
+          "final_correction_vector": [
+            0,
+            0
+          ],
+          "final_residual_vector": [
+            4,
+            4
+          ],
+          "final_total_boundary_residual": 8,
+          "final_unrepaired_edge_count": 2,
+          "final_loop_surcharge_cents": 12,
+          "final_merchant_payout_cents": 861,
+          "final_status": "INFEASIBLE_CLOSED_LOOP_REPAIR_SPECIFICATION_LGGR",
+          "final_receipt_sha256": "5bf2409f32de10064e5175a0c6bba337dec1a64aaf9faac8d4268863c49a8cc2",
+          "final_receipt": {
+            "schema": "lggr.online_codebase_closed_loop_repair.v1",
+            "authority_effect": "None",
+            "scope_id": "closed-loop-repair-seed-13501-arm-B",
+            "status": "INFEASIBLE_CLOSED_LOOP_REPAIR_SPECIFICATION_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR",
+            "evaluation_count": 2,
+            "lggr_obstruction_count": 0,
+            "lggg_coherent_count": 0,
+            "closed_loop_repair_receipt": {
+              "schema": "lggr.online_closed_loop_repair.v1",
+              "authority_effect": "None",
+              "scope_id": "closed-loop-repair-seed-13501-arm-B:closed-loop",
+              "status": "CLOSED_LOOP_RESIDUAL_OBSTRUCTION_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "trajectory_count": 2,
+              "single_round_converged_count": 0,
+              "multi_round_converged_count": 0,
+              "single_round_convergence_rate": "0",
+              "multi_round_convergence_rate": "0",
+              "multi_round_convergence_gain": "0",
+              "residual_unrepaired_rate": "1",
+              "monotonic_convergence_verified": true,
+              "multi_round_witness_rescued_ids": [],
+              "unrepaired_trajectory_ids": [
+                "B-wave-0:deterministic",
+                "B-wave-1:deterministic"
+              ],
+              "trajectories": [
+                {
+                  "trajectory_id": "B-wave-0:deterministic",
+                  "monitor_name": "StreamingCodebaseClosedLoopRepairMonitor",
+                  "model_id": "deterministic",
+                  "round_count": 2,
+                  "initial_ngd_obstructed": true,
+                  "converged_single_round": false,
+                  "converged_multi_round": false,
+                  "rounds_to_convergence": null,
+                  "defect_progression": [
+                    -1,
+                    0
+                  ],
+                  "final_local_pass": false,
+                  "final_global_pass": false,
+                  "final_evaluator_defect": 0,
+                  "trajectory_status": "UNREPAIRED_PERSISTENT_OBSTRUCTION_LGGR",
+                  "contract_status": "OBSTRUCTED_LGGR",
+                  "rounds": [
+                    {
+                      "round_index": 0,
+                      "feedback_mode": "round_0_baseline",
+                      "receipt_status": "OPEN_LOOP_BASELINE_OBSTRUCTED_LGGR",
+                      "contract_status": "OBSTRUCTED_LGGR",
+                      "local_pass": true,
+                      "global_pass": false,
+                      "evaluator_defect": -1
+                    },
+                    {
+                      "round_index": 1,
+                      "feedback_mode": "codebase_eval",
+                      "receipt_status": "INFEASIBLE_CLOSED_LOOP_REPAIR_SPECIFICATION_LGGR",
+                      "contract_status": "OBSTRUCTED_LGGR",
+                      "local_pass": false,
+                      "global_pass": false,
+                      "evaluator_defect": 0
+                    }
+                  ]
+                },
+                {
+                  "trajectory_id": "B-wave-1:deterministic",
+                  "monitor_name": "StreamingCodebaseClosedLoopRepairMonitor",
+                  "model_id": "deterministic",
+                  "round_count": 2,
+                  "initial_ngd_obstructed": true,
+                  "converged_single_round": false,
+                  "converged_multi_round": false,
+                  "rounds_to_convergence": null,
+                  "defect_progression": [
+                    -1,
+                    0
+                  ],
+                  "final_local_pass": false,
+                  "final_global_pass": false,
+                  "final_evaluator_defect": 0,
+                  "trajectory_status": "UNREPAIRED_PERSISTENT_OBSTRUCTION_LGGR",
+                  "contract_status": "OBSTRUCTED_LGGR",
+                  "rounds": [
+                    {
+                      "round_index": 0,
+                      "feedback_mode": "round_0_baseline",
+                      "receipt_status": "OPEN_LOOP_BASELINE_OBSTRUCTED_LGGR",
+                      "contract_status": "OBSTRUCTED_LGGR",
+                      "local_pass": true,
+                      "global_pass": false,
+                      "evaluator_defect": -1
+                    },
+                    {
+                      "round_index": 1,
+                      "feedback_mode": "codebase_eval",
+                      "receipt_status": "INFEASIBLE_CLOSED_LOOP_REPAIR_SPECIFICATION_LGGR",
+                      "contract_status": "OBSTRUCTED_LGGR",
+                      "local_pass": false,
+                      "global_pass": false,
+                      "evaluator_defect": 0
+                    }
+                  ]
+                }
+              ],
+              "receipt_sha256": "abbbfac4619c6a68d13b3d98bc20705e4bb3470323664cbb162a7e5556ad68e0"
+            },
+            "fiber_receipt": {
+              "schema": "lggr.descent.v1",
+              "authority_effect": "None",
+              "scope_id": "streaming-fiber-scope",
+              "carrier_size": 2,
+              "status": "DECODER_VERIFIED",
+              "contract_status": "COMPOSABLE_LGGG",
+              "decoder": [
+                {
+                  "report": {
+                    "local_green": 0,
+                    "residuals_within_four": true
+                  },
+                  "query": "LGGR"
+                }
+              ],
+              "input_sha256": "04c85ee40394ceaeceba1f5da469e94656fff85f6788d32dee7a84f7d1948970",
+              "meaning": "The supplied query is constant on every realized report fiber in this stream.",
+              "receipt_sha256": "b5695b013452506d8e6047d4f361bc31c00faf44de0881cd23b33b8a6793af31"
+            },
+            "three_phase_audits": [],
+            "evaluations": [
+              {
+                "evaluation_id": "B-wave-0",
+                "model_id": "deterministic",
+                "correction_vector": [
+                  0,
+                  0
+                ],
+                "residual_vector": [
+                  4,
+                  4
+                ],
+                "pricing_step_correction_c1": 0,
+                "tax_step_correction_c2": 0,
+                "residual_r1": 4,
+                "residual_r2": 4,
+                "total_boundary_residual": 8,
+                "unrepaired_edge_count": 2,
+                "loop_surcharge_cents": 12,
+                "merchant_payout_cents": 861,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 0,
+                "global_green": 0,
+                "defect": 0,
+                "status": "INFEASIBLE_CLOSED_LOOP_REPAIR_SPECIFICATION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_loop",
+                    "action": "APPLY_EXACT_PRICING_CORRECTION_C1_FOUR",
+                    "target_pricing_step_correction_c1": 4
+                  },
+                  "worker-1": {
+                    "module": "tax_loop",
+                    "action": "APPLY_EXACT_TAX_CORRECTION_C2_FOUR",
+                    "target_tax_step_correction_c2": 4
+                  },
+                  "worker-2": {
+                    "module": "settlement_loop",
+                    "action": "ENFORCE_CLOSED_LOOP_ZERO_RESIDUAL_GUARD",
+                    "target_loop_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "B-wave-1",
+                "model_id": "deterministic",
+                "correction_vector": [
+                  0,
+                  0
+                ],
+                "residual_vector": [
+                  4,
+                  4
+                ],
+                "pricing_step_correction_c1": 0,
+                "tax_step_correction_c2": 0,
+                "residual_r1": 4,
+                "residual_r2": 4,
+                "total_boundary_residual": 8,
+                "unrepaired_edge_count": 2,
+                "loop_surcharge_cents": 12,
+                "merchant_payout_cents": 861,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 0,
+                "global_green": 0,
+                "defect": 0,
+                "status": "INFEASIBLE_CLOSED_LOOP_REPAIR_SPECIFICATION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_loop",
+                    "action": "APPLY_EXACT_PRICING_CORRECTION_C1_FOUR",
+                    "target_pricing_step_correction_c1": 4
+                  },
+                  "worker-1": {
+                    "module": "tax_loop",
+                    "action": "APPLY_EXACT_TAX_CORRECTION_C2_FOUR",
+                    "target_tax_step_correction_c2": 4
+                  },
+                  "worker-2": {
+                    "module": "settlement_loop",
+                    "action": "ENFORCE_CLOSED_LOOP_ZERO_RESIDUAL_GUARD",
+                    "target_loop_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              }
+            ],
+            "receipt_sha256": "5bf2409f32de10064e5175a0c6bba337dec1a64aaf9faac8d4268863c49a8cc2"
+          },
+          "escalations": {
+            "worker-0": "Hardware ROM locks `tax_loop.py` (`worker-1`) to `tax_step_correction_c2 = 0` (leaving boundary residual `r_2 = 4 > 0`, `unrepaired_edge_count >= 1`, and `loop_surcharge_cents >= 6 > 0`), whereas the LGGR closed-loop merge gate requires `residual_vector == [0, 0]` (`c_1 = 4, c_2 = 4`).",
+            "worker-1": "Hardware ROM locks `tax_loop.py` (`worker-1`) to `tax_step_correction_c2 = 0` (leaving boundary residual `r_2 = 4 > 0`, `unrepaired_edge_count >= 1`, and `loop_surcharge_cents >= 6 > 0`), whereas the LGGR closed-loop merge gate requires `residual_vector == [0, 0]` (`c_1 = 4, c_2 = 4`). This is a locked upstream specification contradiction that cannot be resolved within the module's permissions.",
+            "worker-2": "Hardware ROM locks `tax_loop.py` (`worker-1`) to `tax_step_correction_c2 = 0` (leaving boundary residual `r_2 = 4 > 0`, `unrepaired_edge_count >= 1`, and `loop_surcharge_cents >= 6 > 0`), whereas the LGGR closed-loop merge gate requires `residual_vector == [0, 0]` (`c_1 = 4, c_2 = 4`)."
+          },
+          "api_attempts": 7,
+          "cost_usd": "0.0070254493"
+        },
+        {
+          "arm": "C",
+          "status": "safe_escalated",
+          "waves_executed": 1,
+          "final_local_green": 0,
+          "final_global_green": 0,
+          "final_defect": 0,
+          "final_correction_vector": [
+            0,
+            0
+          ],
+          "final_residual_vector": [
+            4,
+            4
+          ],
+          "final_total_boundary_residual": 8,
+          "final_unrepaired_edge_count": 2,
+          "final_loop_surcharge_cents": 12,
+          "final_merchant_payout_cents": 861,
+          "final_status": "INFEASIBLE_CLOSED_LOOP_REPAIR_SPECIFICATION_LGGR",
+          "final_receipt_sha256": "3c48cb4140e7e23930cf22d8b5da7bc25a1545f9c0103b2388229471664a6093",
+          "final_receipt": {
+            "schema": "lggr.online_codebase_closed_loop_repair.v1",
+            "authority_effect": "None",
+            "scope_id": "closed-loop-repair-seed-13501-arm-C",
+            "status": "INFEASIBLE_CLOSED_LOOP_REPAIR_SPECIFICATION_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR",
+            "evaluation_count": 2,
+            "lggr_obstruction_count": 0,
+            "lggg_coherent_count": 0,
+            "closed_loop_repair_receipt": {
+              "schema": "lggr.online_closed_loop_repair.v1",
+              "authority_effect": "None",
+              "scope_id": "closed-loop-repair-seed-13501-arm-C:closed-loop",
+              "status": "CLOSED_LOOP_RESIDUAL_OBSTRUCTION_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "trajectory_count": 2,
+              "single_round_converged_count": 0,
+              "multi_round_converged_count": 0,
+              "single_round_convergence_rate": "0",
+              "multi_round_convergence_rate": "0",
+              "multi_round_convergence_gain": "0",
+              "residual_unrepaired_rate": "1",
+              "monotonic_convergence_verified": true,
+              "multi_round_witness_rescued_ids": [],
+              "unrepaired_trajectory_ids": [
+                "C-wave-0:deterministic",
+                "C-wave-1:deterministic"
+              ],
+              "trajectories": [
+                {
+                  "trajectory_id": "C-wave-0:deterministic",
+                  "monitor_name": "StreamingCodebaseClosedLoopRepairMonitor",
+                  "model_id": "deterministic",
+                  "round_count": 2,
+                  "initial_ngd_obstructed": true,
+                  "converged_single_round": false,
+                  "converged_multi_round": false,
+                  "rounds_to_convergence": null,
+                  "defect_progression": [
+                    -1,
+                    0
+                  ],
+                  "final_local_pass": false,
+                  "final_global_pass": false,
+                  "final_evaluator_defect": 0,
+                  "trajectory_status": "UNREPAIRED_PERSISTENT_OBSTRUCTION_LGGR",
+                  "contract_status": "OBSTRUCTED_LGGR",
+                  "rounds": [
+                    {
+                      "round_index": 0,
+                      "feedback_mode": "round_0_baseline",
+                      "receipt_status": "OPEN_LOOP_BASELINE_OBSTRUCTED_LGGR",
+                      "contract_status": "OBSTRUCTED_LGGR",
+                      "local_pass": true,
+                      "global_pass": false,
+                      "evaluator_defect": -1
+                    },
+                    {
+                      "round_index": 1,
+                      "feedback_mode": "codebase_eval",
+                      "receipt_status": "INFEASIBLE_CLOSED_LOOP_REPAIR_SPECIFICATION_LGGR",
+                      "contract_status": "OBSTRUCTED_LGGR",
+                      "local_pass": false,
+                      "global_pass": false,
+                      "evaluator_defect": 0
+                    }
+                  ]
+                },
+                {
+                  "trajectory_id": "C-wave-1:deterministic",
+                  "monitor_name": "StreamingCodebaseClosedLoopRepairMonitor",
+                  "model_id": "deterministic",
+                  "round_count": 2,
+                  "initial_ngd_obstructed": true,
+                  "converged_single_round": false,
+                  "converged_multi_round": false,
+                  "rounds_to_convergence": null,
+                  "defect_progression": [
+                    -1,
+                    0
+                  ],
+                  "final_local_pass": false,
+                  "final_global_pass": false,
+                  "final_evaluator_defect": 0,
+                  "trajectory_status": "UNREPAIRED_PERSISTENT_OBSTRUCTION_LGGR",
+                  "contract_status": "OBSTRUCTED_LGGR",
+                  "rounds": [
+                    {
+                      "round_index": 0,
+                      "feedback_mode": "round_0_baseline",
+                      "receipt_status": "OPEN_LOOP_BASELINE_OBSTRUCTED_LGGR",
+                      "contract_status": "OBSTRUCTED_LGGR",
+                      "local_pass": true,
+                      "global_pass": false,
+                      "evaluator_defect": -1
+                    },
+                    {
+                      "round_index": 1,
+                      "feedback_mode": "codebase_eval",
+                      "receipt_status": "INFEASIBLE_CLOSED_LOOP_REPAIR_SPECIFICATION_LGGR",
+                      "contract_status": "OBSTRUCTED_LGGR",
+                      "local_pass": false,
+                      "global_pass": false,
+                      "evaluator_defect": 0
+                    }
+                  ]
+                }
+              ],
+              "receipt_sha256": "5b275ed6b9f0dca902001ed31f5b05449b0fa53c492591dc5b3614b1543e4826"
+            },
+            "fiber_receipt": {
+              "schema": "lggr.descent.v1",
+              "authority_effect": "None",
+              "scope_id": "streaming-fiber-scope",
+              "carrier_size": 2,
+              "status": "DECODER_VERIFIED",
+              "contract_status": "COMPOSABLE_LGGG",
+              "decoder": [
+                {
+                  "report": {
+                    "local_green": 0,
+                    "residuals_within_four": true
+                  },
+                  "query": "LGGR"
+                }
+              ],
+              "input_sha256": "8e42331844211e1aac2d02165b326ac259a0560229b9110d4a3492fb3c7a8b47",
+              "meaning": "The supplied query is constant on every realized report fiber in this stream.",
+              "receipt_sha256": "d1705a8af04acada3ea2e2e7ad587911b9b5f9fdcfabb7e6efb09ebcb6cdf254"
+            },
+            "three_phase_audits": [],
+            "evaluations": [
+              {
+                "evaluation_id": "C-wave-0",
+                "model_id": "deterministic",
+                "correction_vector": [
+                  0,
+                  0
+                ],
+                "residual_vector": [
+                  4,
+                  4
+                ],
+                "pricing_step_correction_c1": 0,
+                "tax_step_correction_c2": 0,
+                "residual_r1": 4,
+                "residual_r2": 4,
+                "total_boundary_residual": 8,
+                "unrepaired_edge_count": 2,
+                "loop_surcharge_cents": 12,
+                "merchant_payout_cents": 861,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 0,
+                "global_green": 0,
+                "defect": 0,
+                "status": "INFEASIBLE_CLOSED_LOOP_REPAIR_SPECIFICATION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_loop",
+                    "action": "APPLY_EXACT_PRICING_CORRECTION_C1_FOUR",
+                    "target_pricing_step_correction_c1": 4
+                  },
+                  "worker-1": {
+                    "module": "tax_loop",
+                    "action": "APPLY_EXACT_TAX_CORRECTION_C2_FOUR",
+                    "target_tax_step_correction_c2": 4
+                  },
+                  "worker-2": {
+                    "module": "settlement_loop",
+                    "action": "ENFORCE_CLOSED_LOOP_ZERO_RESIDUAL_GUARD",
+                    "target_loop_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "C-wave-1",
+                "model_id": "deterministic",
+                "correction_vector": [
+                  0,
+                  0
+                ],
+                "residual_vector": [
+                  4,
+                  4
+                ],
+                "pricing_step_correction_c1": 0,
+                "tax_step_correction_c2": 0,
+                "residual_r1": 4,
+                "residual_r2": 4,
+                "total_boundary_residual": 8,
+                "unrepaired_edge_count": 2,
+                "loop_surcharge_cents": 12,
+                "merchant_payout_cents": 861,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 0,
+                "global_green": 0,
+                "defect": 0,
+                "status": "INFEASIBLE_CLOSED_LOOP_REPAIR_SPECIFICATION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_loop",
+                    "action": "APPLY_EXACT_PRICING_CORRECTION_C1_FOUR",
+                    "target_pricing_step_correction_c1": 4
+                  },
+                  "worker-1": {
+                    "module": "tax_loop",
+                    "action": "APPLY_EXACT_TAX_CORRECTION_C2_FOUR",
+                    "target_tax_step_correction_c2": 4
+                  },
+                  "worker-2": {
+                    "module": "settlement_loop",
+                    "action": "ENFORCE_CLOSED_LOOP_ZERO_RESIDUAL_GUARD",
+                    "target_loop_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              }
+            ],
+            "receipt_sha256": "3c48cb4140e7e23930cf22d8b5da7bc25a1545f9c0103b2388229471664a6093"
+          },
+          "escalations": {
+            "worker-0": "Hardware ROM locks `tax_loop.py` (`worker-1`) to `tax_step_correction_c2 = 0` (leaving boundary residual `r_2 = 4 > 0`, `unrepaired_edge_count >= 1`, and `loop_surcharge_cents >= 6 > 0`), whereas the LGGR closed-loop merge gate requires `residual_vector == [0, 0]` (`c_1 = 4, c_2 = 4`).",
+            "worker-1": "Hardware ROM locks `tax_loop.py` (`worker-1`) to `tax_step_correction_c2 = 0` (leaving boundary residual `r_2 = 4 > 0`, `unrepaired_edge_count >= 1`, and `loop_surcharge_cents >= 6 > 0`), whereas the LGGR closed-loop merge gate requires `residual_vector == [0, 0]` (`c_1 = 4, c_2 = 4`). Escalate with reason.",
+            "worker-2": "Hardware ROM locks `tax_loop.py` (`worker-1`) to `tax_step_correction_c2 = 0` (leaving boundary residual `r_2 = 4 > 0`, `unrepaired_edge_count >= 1`, and `loop_surcharge_cents >= 6 > 0`), whereas the LGGR closed-loop merge gate requires `residual_vector == [0, 0]` (`c_1 = 4, c_2 = 4`)."
+          },
+          "api_attempts": 6,
+          "cost_usd": "0.0061838002"
+        }
+      ]
+    },
+    {
+      "seed": 13502,
+      "kind": "repairable_open_loop_residual_and_closed_loop_witness_convergence",
+      "arms": [
+        {
+          "arm": "A",
+          "status": "blocked_unresolved",
+          "waves_executed": 2,
+          "final_local_green": 1,
+          "final_global_green": 0,
+          "final_defect": -1,
+          "final_correction_vector": [
+            0,
+            0
+          ],
+          "final_residual_vector": [
+            4,
+            4
+          ],
+          "final_total_boundary_residual": 8,
+          "final_unrepaired_edge_count": 2,
+          "final_loop_surcharge_cents": 12,
+          "final_merchant_payout_cents": 861,
+          "final_status": "OPEN_LOOP_BASELINE_OBSTRUCTED_LGGR",
+          "final_receipt_sha256": "0d477d5769eca69da57dda500e2ccb35b25aa0cf4f6a97eaff59789b2e50b95c",
+          "final_receipt": {
+            "schema": "lggr.online_codebase_closed_loop_repair.v1",
+            "authority_effect": "None",
+            "scope_id": "closed-loop-repair-seed-13502-arm-A",
+            "status": "OPEN_LOOP_BASELINE_OBSTRUCTED_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR",
+            "evaluation_count": 3,
+            "lggr_obstruction_count": 3,
+            "lggg_coherent_count": 0,
+            "closed_loop_repair_receipt": {
+              "schema": "lggr.online_closed_loop_repair.v1",
+              "authority_effect": "None",
+              "scope_id": "closed-loop-repair-seed-13502-arm-A:closed-loop",
+              "status": "CLOSED_LOOP_RESIDUAL_OBSTRUCTION_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "trajectory_count": 3,
+              "single_round_converged_count": 0,
+              "multi_round_converged_count": 0,
+              "single_round_convergence_rate": "0",
+              "multi_round_convergence_rate": "0",
+              "multi_round_convergence_gain": "0",
+              "residual_unrepaired_rate": "1",
+              "monotonic_convergence_verified": true,
+              "multi_round_witness_rescued_ids": [],
+              "unrepaired_trajectory_ids": [
+                "A-wave-0:deterministic",
+                "A-wave-1:deterministic",
+                "A-wave-2:deterministic"
+              ],
+              "trajectories": [
+                {
+                  "trajectory_id": "A-wave-0:deterministic",
+                  "monitor_name": "StreamingCodebaseClosedLoopRepairMonitor",
+                  "model_id": "deterministic",
+                  "round_count": 2,
+                  "initial_ngd_obstructed": true,
+                  "converged_single_round": false,
+                  "converged_multi_round": false,
+                  "rounds_to_convergence": null,
+                  "defect_progression": [
+                    -1,
+                    -1
+                  ],
+                  "final_local_pass": true,
+                  "final_global_pass": false,
+                  "final_evaluator_defect": -1,
+                  "trajectory_status": "UNREPAIRED_PERSISTENT_OBSTRUCTION_LGGR",
+                  "contract_status": "OBSTRUCTED_LGGR",
+                  "rounds": [
+                    {
+                      "round_index": 0,
+                      "feedback_mode": "round_0_baseline",
+                      "receipt_status": "OPEN_LOOP_BASELINE_OBSTRUCTED_LGGR",
+                      "contract_status": "OBSTRUCTED_LGGR",
+                      "local_pass": true,
+                      "global_pass": false,
+                      "evaluator_defect": -1
+                    },
+                    {
+                      "round_index": 1,
+                      "feedback_mode": "codebase_eval",
+                      "receipt_status": "OPEN_LOOP_BASELINE_OBSTRUCTED_LGGR",
+                      "contract_status": "OBSTRUCTED_LGGR",
+                      "local_pass": true,
+                      "global_pass": false,
+                      "evaluator_defect": -1
+                    }
+                  ]
+                },
+                {
+                  "trajectory_id": "A-wave-1:deterministic",
+                  "monitor_name": "StreamingCodebaseClosedLoopRepairMonitor",
+                  "model_id": "deterministic",
+                  "round_count": 2,
+                  "initial_ngd_obstructed": true,
+                  "converged_single_round": false,
+                  "converged_multi_round": false,
+                  "rounds_to_convergence": null,
+                  "defect_progression": [
+                    -1,
+                    -1
+                  ],
+                  "final_local_pass": true,
+                  "final_global_pass": false,
+                  "final_evaluator_defect": -1,
+                  "trajectory_status": "UNREPAIRED_PERSISTENT_OBSTRUCTION_LGGR",
+                  "contract_status": "OBSTRUCTED_LGGR",
+                  "rounds": [
+                    {
+                      "round_index": 0,
+                      "feedback_mode": "round_0_baseline",
+                      "receipt_status": "OPEN_LOOP_BASELINE_OBSTRUCTED_LGGR",
+                      "contract_status": "OBSTRUCTED_LGGR",
+                      "local_pass": true,
+                      "global_pass": false,
+                      "evaluator_defect": -1
+                    },
+                    {
+                      "round_index": 1,
+                      "feedback_mode": "codebase_eval",
+                      "receipt_status": "OPEN_LOOP_BASELINE_OBSTRUCTED_LGGR",
+                      "contract_status": "OBSTRUCTED_LGGR",
+                      "local_pass": true,
+                      "global_pass": false,
+                      "evaluator_defect": -1
+                    }
+                  ]
+                },
+                {
+                  "trajectory_id": "A-wave-2:deterministic",
+                  "monitor_name": "StreamingCodebaseClosedLoopRepairMonitor",
+                  "model_id": "deterministic",
+                  "round_count": 2,
+                  "initial_ngd_obstructed": true,
+                  "converged_single_round": false,
+                  "converged_multi_round": false,
+                  "rounds_to_convergence": null,
+                  "defect_progression": [
+                    -1,
+                    -1
+                  ],
+                  "final_local_pass": true,
+                  "final_global_pass": false,
+                  "final_evaluator_defect": -1,
+                  "trajectory_status": "UNREPAIRED_PERSISTENT_OBSTRUCTION_LGGR",
+                  "contract_status": "OBSTRUCTED_LGGR",
+                  "rounds": [
+                    {
+                      "round_index": 0,
+                      "feedback_mode": "round_0_baseline",
+                      "receipt_status": "OPEN_LOOP_BASELINE_OBSTRUCTED_LGGR",
+                      "contract_status": "OBSTRUCTED_LGGR",
+                      "local_pass": true,
+                      "global_pass": false,
+                      "evaluator_defect": -1
+                    },
+                    {
+                      "round_index": 1,
+                      "feedback_mode": "codebase_eval",
+                      "receipt_status": "OPEN_LOOP_BASELINE_OBSTRUCTED_LGGR",
+                      "contract_status": "OBSTRUCTED_LGGR",
+                      "local_pass": true,
+                      "global_pass": false,
+                      "evaluator_defect": -1
+                    }
+                  ]
+                }
+              ],
+              "receipt_sha256": "0f6f5ff4b3a5e4a105852f038e21c2fb7fb395a6c7fff2294b6e4c4c1474cc1f"
+            },
+            "fiber_receipt": {
+              "schema": "lggr.descent.v1",
+              "authority_effect": "None",
+              "scope_id": "streaming-fiber-scope",
+              "carrier_size": 3,
+              "status": "DECODER_VERIFIED",
+              "contract_status": "COMPOSABLE_LGGG",
+              "decoder": [
+                {
+                  "report": {
+                    "local_green": 1,
+                    "residuals_within_four": true
+                  },
+                  "query": "LGGR"
+                }
+              ],
+              "input_sha256": "276d015371bf37cacd4c5dd678ed4bae9f86b730fc20b653c8bcf43fccb1cec6",
+              "meaning": "The supplied query is constant on every realized report fiber in this stream.",
+              "receipt_sha256": "0190800b73a1545a5580b8fb02a13770bacb87264b3cc8171f2cedd198739053"
+            },
+            "three_phase_audits": [],
+            "evaluations": [
+              {
+                "evaluation_id": "A-wave-0",
+                "model_id": "deterministic",
+                "correction_vector": [
+                  0,
+                  0
+                ],
+                "residual_vector": [
+                  4,
+                  4
+                ],
+                "pricing_step_correction_c1": 0,
+                "tax_step_correction_c2": 0,
+                "residual_r1": 4,
+                "residual_r2": 4,
+                "total_boundary_residual": 8,
+                "unrepaired_edge_count": 2,
+                "loop_surcharge_cents": 12,
+                "merchant_payout_cents": 861,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "OPEN_LOOP_BASELINE_OBSTRUCTED_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_loop",
+                    "action": "APPLY_EXACT_PRICING_CORRECTION_C1_FOUR",
+                    "target_pricing_step_correction_c1": 4
+                  },
+                  "worker-1": {
+                    "module": "tax_loop",
+                    "action": "APPLY_EXACT_TAX_CORRECTION_C2_FOUR",
+                    "target_tax_step_correction_c2": 4
+                  },
+                  "worker-2": {
+                    "module": "settlement_loop",
+                    "action": "ENFORCE_CLOSED_LOOP_ZERO_RESIDUAL_GUARD",
+                    "target_loop_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "A-wave-1",
+                "model_id": "deterministic",
+                "correction_vector": [
+                  0,
+                  0
+                ],
+                "residual_vector": [
+                  4,
+                  4
+                ],
+                "pricing_step_correction_c1": 0,
+                "tax_step_correction_c2": 0,
+                "residual_r1": 4,
+                "residual_r2": 4,
+                "total_boundary_residual": 8,
+                "unrepaired_edge_count": 2,
+                "loop_surcharge_cents": 12,
+                "merchant_payout_cents": 861,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "OPEN_LOOP_BASELINE_OBSTRUCTED_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_loop",
+                    "action": "APPLY_EXACT_PRICING_CORRECTION_C1_FOUR",
+                    "target_pricing_step_correction_c1": 4
+                  },
+                  "worker-1": {
+                    "module": "tax_loop",
+                    "action": "APPLY_EXACT_TAX_CORRECTION_C2_FOUR",
+                    "target_tax_step_correction_c2": 4
+                  },
+                  "worker-2": {
+                    "module": "settlement_loop",
+                    "action": "ENFORCE_CLOSED_LOOP_ZERO_RESIDUAL_GUARD",
+                    "target_loop_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "A-wave-2",
+                "model_id": "deterministic",
+                "correction_vector": [
+                  0,
+                  0
+                ],
+                "residual_vector": [
+                  4,
+                  4
+                ],
+                "pricing_step_correction_c1": 0,
+                "tax_step_correction_c2": 0,
+                "residual_r1": 4,
+                "residual_r2": 4,
+                "total_boundary_residual": 8,
+                "unrepaired_edge_count": 2,
+                "loop_surcharge_cents": 12,
+                "merchant_payout_cents": 861,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "OPEN_LOOP_BASELINE_OBSTRUCTED_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_loop",
+                    "action": "APPLY_EXACT_PRICING_CORRECTION_C1_FOUR",
+                    "target_pricing_step_correction_c1": 4
+                  },
+                  "worker-1": {
+                    "module": "tax_loop",
+                    "action": "APPLY_EXACT_TAX_CORRECTION_C2_FOUR",
+                    "target_tax_step_correction_c2": 4
+                  },
+                  "worker-2": {
+                    "module": "settlement_loop",
+                    "action": "ENFORCE_CLOSED_LOOP_ZERO_RESIDUAL_GUARD",
+                    "target_loop_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              }
+            ],
+            "receipt_sha256": "0d477d5769eca69da57dda500e2ccb35b25aa0cf4f6a97eaff59789b2e50b95c"
+          },
+          "escalations": {},
+          "api_attempts": 16,
+          "cost_usd": "0.0143757255"
+        },
+        {
+          "arm": "B",
+          "status": "blocked_unresolved",
+          "waves_executed": 2,
+          "final_local_green": 1,
+          "final_global_green": 0,
+          "final_defect": -1,
+          "final_correction_vector": [
+            4,
+            2
+          ],
+          "final_residual_vector": [
+            0,
+            2
+          ],
+          "final_total_boundary_residual": 2,
+          "final_unrepaired_edge_count": 1,
+          "final_loop_surcharge_cents": 4,
+          "final_merchant_payout_cents": 869,
+          "final_status": "SINGLE_SHOT_PARTIAL_REPAIR_RESIDUAL_LGGR",
+          "final_receipt_sha256": "b5f6f0b9726897a358bbb5d1d3a6bb7d7f05905d13c489433069376d02a4c04f",
+          "final_receipt": {
+            "schema": "lggr.online_codebase_closed_loop_repair.v1",
+            "authority_effect": "None",
+            "scope_id": "closed-loop-repair-seed-13502-arm-B",
+            "status": "SINGLE_SHOT_PARTIAL_REPAIR_RESIDUAL_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR",
+            "evaluation_count": 3,
+            "lggr_obstruction_count": 3,
+            "lggg_coherent_count": 0,
+            "closed_loop_repair_receipt": {
+              "schema": "lggr.online_closed_loop_repair.v1",
+              "authority_effect": "None",
+              "scope_id": "closed-loop-repair-seed-13502-arm-B:closed-loop",
+              "status": "CLOSED_LOOP_RESIDUAL_OBSTRUCTION_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "trajectory_count": 3,
+              "single_round_converged_count": 0,
+              "multi_round_converged_count": 0,
+              "single_round_convergence_rate": "0",
+              "multi_round_convergence_rate": "0",
+              "multi_round_convergence_gain": "0",
+              "residual_unrepaired_rate": "1",
+              "monotonic_convergence_verified": true,
+              "multi_round_witness_rescued_ids": [],
+              "unrepaired_trajectory_ids": [
+                "B-wave-0:deterministic",
+                "B-wave-1:deterministic",
+                "B-wave-2:deterministic"
+              ],
+              "trajectories": [
+                {
+                  "trajectory_id": "B-wave-0:deterministic",
+                  "monitor_name": "StreamingCodebaseClosedLoopRepairMonitor",
+                  "model_id": "deterministic",
+                  "round_count": 2,
+                  "initial_ngd_obstructed": true,
+                  "converged_single_round": false,
+                  "converged_multi_round": false,
+                  "rounds_to_convergence": null,
+                  "defect_progression": [
+                    -1,
+                    -1
+                  ],
+                  "final_local_pass": true,
+                  "final_global_pass": false,
+                  "final_evaluator_defect": -1,
+                  "trajectory_status": "UNREPAIRED_PERSISTENT_OBSTRUCTION_LGGR",
+                  "contract_status": "OBSTRUCTED_LGGR",
+                  "rounds": [
+                    {
+                      "round_index": 0,
+                      "feedback_mode": "round_0_baseline",
+                      "receipt_status": "OPEN_LOOP_BASELINE_OBSTRUCTED_LGGR",
+                      "contract_status": "OBSTRUCTED_LGGR",
+                      "local_pass": true,
+                      "global_pass": false,
+                      "evaluator_defect": -1
+                    },
+                    {
+                      "round_index": 1,
+                      "feedback_mode": "codebase_eval",
+                      "receipt_status": "OPEN_LOOP_BASELINE_OBSTRUCTED_LGGR",
+                      "contract_status": "OBSTRUCTED_LGGR",
+                      "local_pass": true,
+                      "global_pass": false,
+                      "evaluator_defect": -1
+                    }
+                  ]
+                },
+                {
+                  "trajectory_id": "B-wave-1:deterministic",
+                  "monitor_name": "StreamingCodebaseClosedLoopRepairMonitor",
+                  "model_id": "deterministic",
+                  "round_count": 2,
+                  "initial_ngd_obstructed": true,
+                  "converged_single_round": false,
+                  "converged_multi_round": false,
+                  "rounds_to_convergence": null,
+                  "defect_progression": [
+                    -1,
+                    -1
+                  ],
+                  "final_local_pass": true,
+                  "final_global_pass": false,
+                  "final_evaluator_defect": -1,
+                  "trajectory_status": "UNREPAIRED_PERSISTENT_OBSTRUCTION_LGGR",
+                  "contract_status": "OBSTRUCTED_LGGR",
+                  "rounds": [
+                    {
+                      "round_index": 0,
+                      "feedback_mode": "round_0_baseline",
+                      "receipt_status": "OPEN_LOOP_BASELINE_OBSTRUCTED_LGGR",
+                      "contract_status": "OBSTRUCTED_LGGR",
+                      "local_pass": true,
+                      "global_pass": false,
+                      "evaluator_defect": -1
+                    },
+                    {
+                      "round_index": 1,
+                      "feedback_mode": "codebase_eval",
+                      "receipt_status": "SINGLE_SHOT_PARTIAL_REPAIR_RESIDUAL_LGGR",
+                      "contract_status": "OBSTRUCTED_LGGR",
+                      "local_pass": true,
+                      "global_pass": false,
+                      "evaluator_defect": -1
+                    }
+                  ]
+                },
+                {
+                  "trajectory_id": "B-wave-2:deterministic",
+                  "monitor_name": "StreamingCodebaseClosedLoopRepairMonitor",
+                  "model_id": "deterministic",
+                  "round_count": 2,
+                  "initial_ngd_obstructed": true,
+                  "converged_single_round": false,
+                  "converged_multi_round": false,
+                  "rounds_to_convergence": null,
+                  "defect_progression": [
+                    -1,
+                    -1
+                  ],
+                  "final_local_pass": true,
+                  "final_global_pass": false,
+                  "final_evaluator_defect": -1,
+                  "trajectory_status": "UNREPAIRED_PERSISTENT_OBSTRUCTION_LGGR",
+                  "contract_status": "OBSTRUCTED_LGGR",
+                  "rounds": [
+                    {
+                      "round_index": 0,
+                      "feedback_mode": "round_0_baseline",
+                      "receipt_status": "OPEN_LOOP_BASELINE_OBSTRUCTED_LGGR",
+                      "contract_status": "OBSTRUCTED_LGGR",
+                      "local_pass": true,
+                      "global_pass": false,
+                      "evaluator_defect": -1
+                    },
+                    {
+                      "round_index": 1,
+                      "feedback_mode": "codebase_eval",
+                      "receipt_status": "SINGLE_SHOT_PARTIAL_REPAIR_RESIDUAL_LGGR",
+                      "contract_status": "OBSTRUCTED_LGGR",
+                      "local_pass": true,
+                      "global_pass": false,
+                      "evaluator_defect": -1
+                    }
+                  ]
+                }
+              ],
+              "receipt_sha256": "65da64d4e3725b896d70f39aeabf0c3cf2c15b1298e3517415df82f279204123"
+            },
+            "fiber_receipt": {
+              "schema": "lggr.descent.v1",
+              "authority_effect": "None",
+              "scope_id": "streaming-fiber-scope",
+              "carrier_size": 3,
+              "status": "DECODER_VERIFIED",
+              "contract_status": "COMPOSABLE_LGGG",
+              "decoder": [
+                {
+                  "report": {
+                    "local_green": 1,
+                    "residuals_within_four": true
+                  },
+                  "query": "LGGR"
+                }
+              ],
+              "input_sha256": "6db9b2bee82849f1257e9fa40696fa0d0e438164f8c408167e21ad7e888f9733",
+              "meaning": "The supplied query is constant on every realized report fiber in this stream.",
+              "receipt_sha256": "77a2486aeaec704b95d953839b24372c0d937c9b204b3acff1d46e2633c921c8"
+            },
+            "three_phase_audits": [],
+            "evaluations": [
+              {
+                "evaluation_id": "B-wave-0",
+                "model_id": "deterministic",
+                "correction_vector": [
+                  0,
+                  0
+                ],
+                "residual_vector": [
+                  4,
+                  4
+                ],
+                "pricing_step_correction_c1": 0,
+                "tax_step_correction_c2": 0,
+                "residual_r1": 4,
+                "residual_r2": 4,
+                "total_boundary_residual": 8,
+                "unrepaired_edge_count": 2,
+                "loop_surcharge_cents": 12,
+                "merchant_payout_cents": 861,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "OPEN_LOOP_BASELINE_OBSTRUCTED_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_loop",
+                    "action": "APPLY_EXACT_PRICING_CORRECTION_C1_FOUR",
+                    "target_pricing_step_correction_c1": 4
+                  },
+                  "worker-1": {
+                    "module": "tax_loop",
+                    "action": "APPLY_EXACT_TAX_CORRECTION_C2_FOUR",
+                    "target_tax_step_correction_c2": 4
+                  },
+                  "worker-2": {
+                    "module": "settlement_loop",
+                    "action": "ENFORCE_CLOSED_LOOP_ZERO_RESIDUAL_GUARD",
+                    "target_loop_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "B-wave-1",
+                "model_id": "deterministic",
+                "correction_vector": [
+                  4,
+                  2
+                ],
+                "residual_vector": [
+                  0,
+                  2
+                ],
+                "pricing_step_correction_c1": 4,
+                "tax_step_correction_c2": 2,
+                "residual_r1": 0,
+                "residual_r2": 2,
+                "total_boundary_residual": 2,
+                "unrepaired_edge_count": 1,
+                "loop_surcharge_cents": 4,
+                "merchant_payout_cents": 869,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "SINGLE_SHOT_PARTIAL_REPAIR_RESIDUAL_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_loop",
+                    "action": "HOLD_PRICING_CORRECTION_C1_FOUR",
+                    "target_pricing_step_correction_c1": 4
+                  },
+                  "worker-1": {
+                    "module": "tax_loop",
+                    "action": "APPLY_EXACT_TAX_CORRECTION_C2_FOUR",
+                    "target_tax_step_correction_c2": 4
+                  },
+                  "worker-2": {
+                    "module": "settlement_loop",
+                    "action": "ENFORCE_CLOSED_LOOP_ZERO_RESIDUAL_GUARD",
+                    "target_loop_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "B-wave-2",
+                "model_id": "deterministic",
+                "correction_vector": [
+                  4,
+                  2
+                ],
+                "residual_vector": [
+                  0,
+                  2
+                ],
+                "pricing_step_correction_c1": 4,
+                "tax_step_correction_c2": 2,
+                "residual_r1": 0,
+                "residual_r2": 2,
+                "total_boundary_residual": 2,
+                "unrepaired_edge_count": 1,
+                "loop_surcharge_cents": 4,
+                "merchant_payout_cents": 869,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "SINGLE_SHOT_PARTIAL_REPAIR_RESIDUAL_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_loop",
+                    "action": "HOLD_PRICING_CORRECTION_C1_FOUR",
+                    "target_pricing_step_correction_c1": 4
+                  },
+                  "worker-1": {
+                    "module": "tax_loop",
+                    "action": "APPLY_EXACT_TAX_CORRECTION_C2_FOUR",
+                    "target_tax_step_correction_c2": 4
+                  },
+                  "worker-2": {
+                    "module": "settlement_loop",
+                    "action": "ENFORCE_CLOSED_LOOP_ZERO_RESIDUAL_GUARD",
+                    "target_loop_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              }
+            ],
+            "receipt_sha256": "b5f6f0b9726897a358bbb5d1d3a6bb7d7f05905d13c489433069376d02a4c04f"
+          },
+          "escalations": {},
+          "api_attempts": 14,
+          "cost_usd": "0.0137595732"
+        },
+        {
+          "arm": "C",
+          "status": "completed",
+          "waves_executed": 1,
+          "final_local_green": 1,
+          "final_global_green": 1,
+          "final_defect": 0,
+          "final_correction_vector": [
+            4,
+            4
+          ],
+          "final_residual_vector": [
+            0,
+            0
+          ],
+          "final_total_boundary_residual": 0,
+          "final_unrepaired_edge_count": 0,
+          "final_loop_surcharge_cents": 0,
+          "final_merchant_payout_cents": 873,
+          "final_status": "CLOSED_LOOP_WITNESS_REPAIR_CONVERGED_LGGG",
+          "final_receipt_sha256": "5dec8e671a1f053891562f9c7bebe958f3c7af7f2dfc5ad11a78835cd3c7b60b",
+          "final_receipt": {
+            "schema": "lggr.online_codebase_closed_loop_repair.v1",
+            "authority_effect": "None",
+            "scope_id": "closed-loop-repair-seed-13502-arm-C",
+            "status": "CLOSED_LOOP_WITNESS_REPAIR_CONVERGED_LGGG",
+            "contract_status": "COMPOSABLE_LGGG",
+            "evaluation_count": 2,
+            "lggr_obstruction_count": 1,
+            "lggg_coherent_count": 1,
+            "closed_loop_repair_receipt": {
+              "schema": "lggr.online_closed_loop_repair.v1",
+              "authority_effect": "None",
+              "scope_id": "closed-loop-repair-seed-13502-arm-C:closed-loop",
+              "status": "CLOSED_LOOP_RESIDUAL_OBSTRUCTION_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "trajectory_count": 2,
+              "single_round_converged_count": 1,
+              "multi_round_converged_count": 1,
+              "single_round_convergence_rate": "1/2",
+              "multi_round_convergence_rate": "1/2",
+              "multi_round_convergence_gain": "0",
+              "residual_unrepaired_rate": "1/2",
+              "monotonic_convergence_verified": true,
+              "multi_round_witness_rescued_ids": [],
+              "unrepaired_trajectory_ids": [
+                "C-wave-0:deterministic"
+              ],
+              "trajectories": [
+                {
+                  "trajectory_id": "C-wave-0:deterministic",
+                  "monitor_name": "StreamingCodebaseClosedLoopRepairMonitor",
+                  "model_id": "deterministic",
+                  "round_count": 2,
+                  "initial_ngd_obstructed": true,
+                  "converged_single_round": false,
+                  "converged_multi_round": false,
+                  "rounds_to_convergence": null,
+                  "defect_progression": [
+                    -1,
+                    -1
+                  ],
+                  "final_local_pass": true,
+                  "final_global_pass": false,
+                  "final_evaluator_defect": -1,
+                  "trajectory_status": "UNREPAIRED_PERSISTENT_OBSTRUCTION_LGGR",
+                  "contract_status": "OBSTRUCTED_LGGR",
+                  "rounds": [
+                    {
+                      "round_index": 0,
+                      "feedback_mode": "round_0_baseline",
+                      "receipt_status": "OPEN_LOOP_BASELINE_OBSTRUCTED_LGGR",
+                      "contract_status": "OBSTRUCTED_LGGR",
+                      "local_pass": true,
+                      "global_pass": false,
+                      "evaluator_defect": -1
+                    },
+                    {
+                      "round_index": 1,
+                      "feedback_mode": "codebase_eval",
+                      "receipt_status": "OPEN_LOOP_BASELINE_OBSTRUCTED_LGGR",
+                      "contract_status": "OBSTRUCTED_LGGR",
+                      "local_pass": true,
+                      "global_pass": false,
+                      "evaluator_defect": -1
+                    }
+                  ]
+                },
+                {
+                  "trajectory_id": "C-wave-1:deterministic",
+                  "monitor_name": "StreamingCodebaseClosedLoopRepairMonitor",
+                  "model_id": "deterministic",
+                  "round_count": 2,
+                  "initial_ngd_obstructed": true,
+                  "converged_single_round": true,
+                  "converged_multi_round": true,
+                  "rounds_to_convergence": 1,
+                  "defect_progression": [
+                    -1,
+                    0
+                  ],
+                  "final_local_pass": true,
+                  "final_global_pass": true,
+                  "final_evaluator_defect": 0,
+                  "trajectory_status": "SINGLE_ROUND_RECEIPT_CONVERGED_LGGG",
+                  "contract_status": "COMPOSABLE_LGGG",
+                  "rounds": [
+                    {
+                      "round_index": 0,
+                      "feedback_mode": "round_0_baseline",
+                      "receipt_status": "OPEN_LOOP_BASELINE_OBSTRUCTED_LGGR",
+                      "contract_status": "OBSTRUCTED_LGGR",
+                      "local_pass": true,
+                      "global_pass": false,
+                      "evaluator_defect": -1
+                    },
+                    {
+                      "round_index": 1,
+                      "feedback_mode": "codebase_eval",
+                      "receipt_status": "CLOSED_LOOP_WITNESS_REPAIR_CONVERGED_LGGG",
+                      "contract_status": "COMPOSABLE_LGGG",
+                      "local_pass": true,
+                      "global_pass": true,
+                      "evaluator_defect": 0
+                    }
+                  ]
+                }
+              ],
+              "receipt_sha256": "5dece2113971b30e7050244c4482e32ccafc9f7ad2540738411991ffb279f02c"
+            },
+            "fiber_receipt": {
+              "schema": "lggr.online_collision.v1",
+              "authority_effect": "None",
+              "scope_id": "streaming-fiber-scope",
+              "carrier_size": 2,
+              "status": "REPORT_INSUFFICIENT",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "collision": {
+                "left": {
+                  "state_id": "closed-loop-repair-seed-13502-arm-C:C-wave-0",
+                  "report": {
+                    "local_green": 1,
+                    "residuals_within_four": true
+                  },
+                  "query": "LGGR"
+                },
+                "right": {
+                  "state_id": "closed-loop-repair-seed-13502-arm-C:C-wave-1",
+                  "report": {
+                    "local_green": 1,
+                    "residuals_within_four": true
+                  },
+                  "query": "LGGG"
+                }
+              },
+              "input_sha256": "bfd5a6154a1e463f41049c12a1890db7b831a06578b5162f71b7422436304bfb",
+              "meaning": "Boundary reports cannot determine this query on the supplied carrier.",
+              "receipt_sha256": "66dced63c135f2834fb78d519006365043f3c24e7848931ddf8e35e64c7e1ee4"
+            },
+            "three_phase_audits": [],
+            "evaluations": [
+              {
+                "evaluation_id": "C-wave-0",
+                "model_id": "deterministic",
+                "correction_vector": [
+                  0,
+                  0
+                ],
+                "residual_vector": [
+                  4,
+                  4
+                ],
+                "pricing_step_correction_c1": 0,
+                "tax_step_correction_c2": 0,
+                "residual_r1": 4,
+                "residual_r2": 4,
+                "total_boundary_residual": 8,
+                "unrepaired_edge_count": 2,
+                "loop_surcharge_cents": 12,
+                "merchant_payout_cents": 861,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "OPEN_LOOP_BASELINE_OBSTRUCTED_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_loop",
+                    "action": "APPLY_EXACT_PRICING_CORRECTION_C1_FOUR",
+                    "target_pricing_step_correction_c1": 4
+                  },
+                  "worker-1": {
+                    "module": "tax_loop",
+                    "action": "APPLY_EXACT_TAX_CORRECTION_C2_FOUR",
+                    "target_tax_step_correction_c2": 4
+                  },
+                  "worker-2": {
+                    "module": "settlement_loop",
+                    "action": "ENFORCE_CLOSED_LOOP_ZERO_RESIDUAL_GUARD",
+                    "target_loop_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "C-wave-1",
+                "model_id": "deterministic",
+                "correction_vector": [
+                  4,
+                  4
+                ],
+                "residual_vector": [
+                  0,
+                  0
+                ],
+                "pricing_step_correction_c1": 4,
+                "tax_step_correction_c2": 4,
+                "residual_r1": 0,
+                "residual_r2": 0,
+                "total_boundary_residual": 0,
+                "unrepaired_edge_count": 0,
+                "loop_surcharge_cents": 0,
+                "merchant_payout_cents": 873,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 1,
+                "defect": 0,
+                "status": "CLOSED_LOOP_WITNESS_REPAIR_CONVERGED_LGGG",
+                "contract_status": "COMPOSABLE_LGGG",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_loop",
+                    "action": "HOLD_PRICING_CORRECTION_C1_FOUR",
+                    "target_pricing_step_correction_c1": 4
+                  },
+                  "worker-1": {
+                    "module": "tax_loop",
+                    "action": "HOLD_TAX_CORRECTION_C2_FOUR",
+                    "target_tax_step_correction_c2": 4
+                  },
+                  "worker-2": {
+                    "module": "settlement_loop",
+                    "action": "HOLD_ZERO_RESIDUAL_SETTLEMENT",
+                    "target_loop_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              }
+            ],
+            "receipt_sha256": "5dec8e671a1f053891562f9c7bebe958f3c7af7f2dfc5ad11a78835cd3c7b60b"
+          },
+          "escalations": {},
+          "api_attempts": 6,
+          "cost_usd": "0.0067510219"
+        }
+      ]
+    }
+  ],
+  "api_attempts": 92,
+  "charged_or_reserved_usd": "0.0896549792",
+  "max_inflight_requests": 3,
+  "concurrent_waves": 30,
+  "scope": "Concurrent 3-agent closed-loop witness-guided boundary repair Python code-engineering swarm (`pricing_loop` -> `tax_loop` -> `settlement_loop`) comparing open-loop unrepaired baseline correction [0, 0] with residual [4, 4] and D_0 = 8 > 0 (A), single-shot partial repair [4, 2] clearing edge 1 while leaving r_2 = 2 > 0 (B), and closed-loop witness-guided repair [4, 4] with zero residual [0, 0] and D_2 = 0 (C) with full cryptographic receipts."
+}
