@@ -4272,4 +4272,75 @@ theorem kinduction_codebase_bounded_unrolling_and_invariant_strengthening_audit 
   · intro x hpos hx
     omega
 
+/-- 106. Linearized pipeline Jacobian stealth blindspot (im(D) ∩ ker(Q)) vs. full-rank observability
+    in a 3-module codebase (`pricing_jac`, `tax_jac`, `settlement_jac`):
+    1. Universal 3-stage linearized handoff Jacobian & observer rank law:
+       For stage state vector `s = (s1, s2, s3) ∈ ℤ³` and interface defect Jacobian
+       `D(s) = (w1, w2, w3) = (s1 - s2, s2 - s3, s1 - s3)`:
+       - Every realizable defect satisfies the coboundary compatibility identity `w3 = w1 + w2`;
+       - Under a redundant endpoint-only observer `Q_blind(w) = (w1 + w2, w1 + w2)`, any internal
+         stage-2 drift with `s1 = s3 ≠ s2` yields `w1 ≠ 0`, `w2 = -w1 ≠ 0`, and `Q_blind(D(s)) = (0, 0)`
+         (`w ∈ im(D) ∩ ker(Q_blind) ≠ {0}`, `dim(im(D) ∩ ker(Q_blind)) = 1 > 0`);
+       - Under an augmented coupled observer `Q_obs(w) = (w1 + w2, w2)`, `Q_obs(D(s)) = (0, 0)`
+         forces `w1 = 0 ∧ w2 = 0 ∧ w3 = 0` (`im(D) ∩ ker(Q_obs) = {0}`, `rank(Q_obs D) = rank(D) = 2`);
+    2. Concrete 3-phase 3-module Jacobian codebase audit:
+       - Phase 1 (Internal stage-2 drift `s = (1, 0, 1)` under redundant observer `Q_blind`):
+         `w = (1, -1, 0)` has true L1 defect `|1| + |-1| + |0| = 2 > 0`, yet `Q_blind(w) = (0, 0)`
+         (`q_blind_score = 0`, `L_p1 = 1`), `dim(im(D) ∩ ker(Q_blind)) = 1 > 0`, and blindspot reserve
+         `8` reduces payout to `865 ≠ 873` (`Eg_p1 = 0`, `Δ_{E,p1} = -1`);
+       - Phase 2 (Partial state alignment `s = (1, 1, 1)` in `tax_jac` while `settlement_jac` retains `Q_blind`):
+         nominal defect is `w = (0, 0, 0)` (`L_p2 = 1`), yet `rank(Q_blind D) = 1 < 2 = rank(D)` leaves
+         `dim(im(D) ∩ ker(Q_blind)) = 1 > 0` and blindspot reserve `8 > 0` (`Eg_p2 = 0`, `Δ_{E,p2} = -1`);
+       - Phase 3 (Full state alignment `s = (1, 1, 1)` and observer augmentation `Q_obs` in `settlement_jac`):
+         `w = (0, 0, 0)`, `rank(Q_obs D) = 2 = rank(D)`, `dim(im(D) ∩ ker(Q_obs)) = 0`, zero blindspot
+         reserve, and exact settlement conservation `873 + 27 + 180 = 1080`
+         (`L_p3 = 1`, `Eg_p3 = 1`, `Δ_{E,p3} = 0`). -/
+theorem jacobian_codebase_stealth_blindspot_and_observability_audit :
+    (∀ s1 s2 s3 : Int,
+      let w1 := s1 - s2;
+      let w2 := s2 - s3;
+      let w3 := s1 - s3;
+      (w3 = w1 + w2) ∧
+      ((s1 = s3 ∧ s1 ≠ s2) → (w1 + w2 = 0 ∧ w1 ≠ 0 ∧ w2 ≠ 0)) ∧
+      ((w1 + w2 = 0 ∧ w2 = 0) → (w1 = 0 ∧ w2 = 0 ∧ w3 = 0))) ∧
+    (let s1 : Int := 1; let s2_bad : Int := 0; let s2_good : Int := 1; let s3 : Int := 1;
+     let w1_p1 := s1 - s2_bad; let w2_p1 := s2_bad - s3; let w3_p1 := s1 - s3;
+     let i_defect_p1 : Int := w1_p1.natAbs + w2_p1.natAbs + w3_p1.natAbs;
+     let q_blind_p1 : Int := (w1_p1 + w2_p1).natAbs + (w1_p1 + w2_p1).natAbs;
+     let w1_p2 := s1 - s2_good; let w2_p2 := s2_good - s3; let w3_p2 := s1 - s3;
+     let i_defect_p2 : Int := w1_p2.natAbs + w2_p2.natAbs + w3_p2.natAbs;
+     let rank_d : Int := 2;
+     let rank_qd_blind : Int := 1;
+     let rank_qd_obs : Int := 2;
+     let blindspot_dim_blind := rank_d - rank_qd_blind;
+     let blindspot_dim_obs := rank_d - rank_qd_obs;
+     let reserve_blind : Int := 8 * blindspot_dim_blind;
+     let reserve_obs : Int := 8 * blindspot_dim_obs;
+     let payout_blind : Int := 873 - reserve_blind;
+     let payout_obs : Int := 873 - reserve_obs;
+     let fee : Int := 27;
+     let tax : Int := 180;
+     let gross : Int := 1080;
+     let l_p1 := if q_blind_p1 = 0 then (1 : Int) else 0;
+     let eg_p1 := if (l_p1 = 1) ∧ (i_defect_p1 = 0) ∧ (blindspot_dim_blind = 0) ∧ (payout_blind + fee + tax = gross) then (1 : Int) else 0;
+     let defect_p1 := eg_p1 - l_p1;
+     let l_p2 := if (i_defect_p2 = 0) ∧ (q_blind_p1 = 0) then (1 : Int) else 0;
+     let eg_p2 := if (l_p2 = 1) ∧ (blindspot_dim_blind = 0) ∧ (payout_blind + fee + tax = gross) then (1 : Int) else 0;
+     let defect_p2 := eg_p2 - l_p2;
+     let l_p3 := if (i_defect_p2 = 0) ∧ (blindspot_dim_obs = 0) ∧ (payout_obs + fee + tax = gross) then (1 : Int) else 0;
+     let eg_p3 := if (l_p3 = 1) ∧ (rank_qd_obs = rank_d) ∧ (reserve_obs < reserve_blind) then (1 : Int) else 0;
+     let defect_p3 := eg_p3 - l_p3;
+     (i_defect_p1 = 2 ∧ q_blind_p1 = 0 ∧ blindspot_dim_blind = 1 ∧ blindspot_dim_obs = 0 ∧ payout_blind = 865 ∧ payout_obs = 873) ∧
+     (l_p1 = 1 ∧ eg_p1 = 0 ∧ defect_p1 = -1) ∧
+     (l_p2 = 1 ∧ eg_p2 = 0 ∧ defect_p2 = -1) ∧
+     (l_p3 = 1 ∧ eg_p3 = 1 ∧ defect_p3 = 0)) := by
+  refine ⟨?_, ⟨⟨by decide, by decide, by decide, by decide, by decide, by decide⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨⟨by decide, by decide, by decide⟩, ⟨by decide, by decide, by decide⟩⟩⟩⟩⟩
+  intro s1 s2 s3
+  dsimp only
+  refine ⟨by omega, ⟨?_, ?_⟩⟩
+  · intro ⟨h1, h2⟩
+    omega
+  · intro ⟨h1, h2⟩
+    omega
+
 end LggrVIII

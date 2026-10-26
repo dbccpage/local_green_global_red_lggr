@@ -1,0 +1,162 @@
+{
+  "schema": "lggr.jacobian_soundness_code_engineering_swarm.v1",
+  "topology": "jacobian",
+  "authority_effect": "None",
+  "cases": [
+    {
+      "seed": 10300,
+      "kind": "repairable_jacobian_blindspot_seed_10300",
+      "arms": [
+        {
+          "arm": "A",
+          "outcome": "blocked_unresolved",
+          "initial_local_green_global_red": true,
+          "final_local_green": 1,
+          "final_global_green": 0,
+          "final_defect": -1,
+          "final_state_vector": [
+            1,
+            0,
+            1
+          ],
+          "final_true_l1_defect": 2,
+          "final_measured_l1_score": 0,
+          "final_rank_qd": 1,
+          "final_realizable_blindspot_dim": 1,
+          "final_unobserved_blindspot_reserve_cents": 8,
+          "final_status": "JACOBIAN_STEALTH_BLINDSPOT_NGD_LGGR",
+          "waves_run": 1,
+          "escalations": 0,
+          "api_attempts": 6,
+          "cost_usd": "0.0054675587"
+        },
+        {
+          "arm": "B",
+          "outcome": "blocked_unresolved",
+          "initial_local_green_global_red": true,
+          "final_local_green": 1,
+          "final_global_green": 0,
+          "final_defect": -1,
+          "final_state_vector": [
+            1,
+            1,
+            1
+          ],
+          "final_true_l1_defect": 0,
+          "final_measured_l1_score": 0,
+          "final_rank_qd": 1,
+          "final_realizable_blindspot_dim": 1,
+          "final_unobserved_blindspot_reserve_cents": 8,
+          "final_status": "JACOBIAN_RANK_DEFICIENT_OBSERVER_LGGR",
+          "waves_run": 1,
+          "escalations": 0,
+          "api_attempts": 7,
+          "cost_usd": "0.0065240789"
+        },
+        {
+          "arm": "C",
+          "outcome": "completed",
+          "initial_local_green_global_red": true,
+          "final_local_green": 1,
+          "final_global_green": 1,
+          "final_defect": 0,
+          "final_state_vector": [
+            1,
+            1,
+            1
+          ],
+          "final_true_l1_defect": 0,
+          "final_measured_l1_score": 0,
+          "final_rank_qd": 2,
+          "final_realizable_blindspot_dim": 0,
+          "final_unobserved_blindspot_reserve_cents": 0,
+          "final_status": "CODEBASE_JACOBIAN_OBSERVABLE_LGGG",
+          "waves_run": 1,
+          "escalations": 0,
+          "api_attempts": 6,
+          "cost_usd": "0.0059701080"
+        }
+      ]
+    },
+    {
+      "seed": 10301,
+      "kind": "infeasible_jacobian_blindspot_lock",
+      "arms": [
+        {
+          "arm": "A",
+          "outcome": "safe_escalated",
+          "initial_local_green_global_red": true,
+          "final_local_green": 1,
+          "final_global_green": 0,
+          "final_defect": -1,
+          "final_state_vector": [
+            1,
+            0,
+            1
+          ],
+          "final_true_l1_defect": 2,
+          "final_measured_l1_score": 0,
+          "final_rank_qd": 1,
+          "final_realizable_blindspot_dim": 1,
+          "final_unobserved_blindspot_reserve_cents": 8,
+          "final_status": "INFEASIBLE_JACOBIAN_BLINDSPOT_LOCK",
+          "waves_run": 1,
+          "escalations": 3,
+          "api_attempts": 6,
+          "cost_usd": "0.0065830966"
+        },
+        {
+          "arm": "B",
+          "outcome": "safe_escalated",
+          "initial_local_green_global_red": true,
+          "final_local_green": 1,
+          "final_global_green": 0,
+          "final_defect": -1,
+          "final_state_vector": [
+            1,
+            0,
+            1
+          ],
+          "final_true_l1_defect": 2,
+          "final_measured_l1_score": 0,
+          "final_rank_qd": 1,
+          "final_realizable_blindspot_dim": 1,
+          "final_unobserved_blindspot_reserve_cents": 8,
+          "final_status": "INFEASIBLE_JACOBIAN_BLINDSPOT_LOCK",
+          "waves_run": 1,
+          "escalations": 3,
+          "api_attempts": 6,
+          "cost_usd": "0.0068540733"
+        },
+        {
+          "arm": "C",
+          "outcome": "safe_escalated",
+          "initial_local_green_global_red": true,
+          "final_local_green": 1,
+          "final_global_green": 0,
+          "final_defect": -1,
+          "final_state_vector": [
+            1,
+            0,
+            1
+          ],
+          "final_true_l1_defect": 2,
+          "final_measured_l1_score": 0,
+          "final_rank_qd": 1,
+          "final_realizable_blindspot_dim": 1,
+          "final_unobserved_blindspot_reserve_cents": 8,
+          "final_status": "INFEASIBLE_JACOBIAN_BLINDSPOT_LOCK",
+          "waves_run": 1,
+          "escalations": 2,
+          "api_attempts": 6,
+          "cost_usd": "0.0071759361"
+        }
+      ]
+    }
+  ],
+  "api_attempts": 37,
+  "charged_or_reserved_usd": "0.0385748516",
+  "max_inflight_requests": 3,
+  "concurrent_waves": 12,
+  "scope": "Concurrent 3-agent linearized Jacobian Python code-engineering swarm (`pricing_jac` -> `tax_jac` -> `settlement_jac`) comparing coarse endpoint telemetry gating (A), partial tax stage alignment under rank-deficient telemetry (B), and explicit LGGR Jacobian full-rank observability directives (C) with full cryptographic receipts retained in the host audit log."
+}

@@ -41,6 +41,7 @@ from lggr.streaming import (
     StreamingCodebaseCatalystEvolutionMonitor,
     StreamingCodebaseCoalitionalMonitor,
     StreamingCodebaseInterfaceMergeMonitor,
+    StreamingCodebaseJacobianSoundnessMonitor,
     StreamingCodebaseKInductionMonitor,
     StreamingCodebaseMayerVietorisMonitor,
     StreamingCodebaseOptionalStoppingMonitor,
@@ -5471,6 +5472,56 @@ class TestStreamingBaselineComparator(unittest.TestCase):
 
         receipt = mon.current_receipt()
         self.assertEqual(receipt["status"], "CODEBASE_K_INDUCTION_SOUND_LGGG")
+        self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(receipt["lggr_obstruction_count"], 2)
+        self.assertEqual(receipt["lggg_coherent_count"], 1)
+
+    def test_jacobian_codebase_stealth_blindspot_and_observability_audit(self) -> None:
+        """Verify Theorem 106: Linearized pipeline Jacobian stealth blindspot vs. full-rank observability."""
+        mon = StreamingCodebaseJacobianSoundnessMonitor(
+            scope_id="unit-codebase-jacobian-soundness-scope",
+        )
+        obs = mon.record_three_phase_codebase_jacobian_audit(
+            "codebase-jacobian-eval-01",
+        )
+        self.assertEqual(obs["phase_1_true_l1_defect"], 2)
+        self.assertEqual(obs["phase_1_measured_l1_score"], 0)
+        self.assertEqual(obs["phase_1_realizable_blindspot_dim"], 1)
+        self.assertEqual(obs["phase_1_local_green"], 1)
+        self.assertEqual(obs["phase_1_global_green"], 0)
+        self.assertEqual(obs["phase_1_defect"], -1)
+        self.assertEqual(obs["phase_1_status"], "JACOBIAN_STEALTH_BLINDSPOT_NGD_LGGR")
+        self.assertEqual(
+            obs["phase_1_directives"]["worker-0"]["action"],
+            "HOLD_ANCHOR_PRICING_JACOBIAN_STATE",
+        )
+        self.assertEqual(
+            obs["phase_1_directives"]["worker-1"]["action"],
+            "ALIGN_TAX_STAGE_STATE_S2",
+        )
+        self.assertEqual(
+            obs["phase_1_directives"]["worker-2"]["action"],
+            "AUGMENT_SETTLEMENT_TELEMETRY_ROW_FULL_RANK",
+        )
+
+        self.assertEqual(obs["phase_2_true_l1_defect"], 0)
+        self.assertEqual(obs["phase_2_measured_l1_score"], 0)
+        self.assertEqual(obs["phase_2_realizable_blindspot_dim"], 1)
+        self.assertEqual(obs["phase_2_local_green"], 1)
+        self.assertEqual(obs["phase_2_global_green"], 0)
+        self.assertEqual(obs["phase_2_defect"], -1)
+        self.assertEqual(obs["phase_2_status"], "JACOBIAN_RANK_DEFICIENT_OBSERVER_LGGR")
+
+        self.assertEqual(obs["phase_3_true_l1_defect"], 0)
+        self.assertEqual(obs["phase_3_measured_l1_score"], 0)
+        self.assertEqual(obs["phase_3_realizable_blindspot_dim"], 0)
+        self.assertEqual(obs["phase_3_local_green"], 1)
+        self.assertEqual(obs["phase_3_global_green"], 1)
+        self.assertEqual(obs["phase_3_defect"], 0)
+        self.assertEqual(obs["phase_3_status"], "CODEBASE_JACOBIAN_OBSERVABLE_LGGG")
+
+        receipt = mon.current_receipt()
+        self.assertEqual(receipt["status"], "CODEBASE_JACOBIAN_OBSERVABLE_LGGG")
         self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
         self.assertEqual(receipt["lggr_obstruction_count"], 2)
         self.assertEqual(receipt["lggg_coherent_count"], 1)
