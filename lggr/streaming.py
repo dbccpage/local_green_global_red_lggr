@@ -34729,6 +34729,518 @@ class StreamingCodebasePolicyRatchetMonitor:
         return json_value({**body, "receipt_sha256": digest(body)})
 
 
+class StreamingCodebaseSkewRepairMonitor:
+    """Audit skew non-diagonal norm-attainment divergence (l^1 / l^2 / l^infty) across codebase modules.
+
+    Composes StreamingSkewRepairMonitor with StreamingCodebaseInterfaceMergeMonitor
+    and StreamingFiberMonitor across `pricing_skew`, `tax_skew`, and `settlement_skew`
+    (Theorem 128).
+
+    AuthorityEffect: None.
+    """
+
+    PHASE_1_PRICING_SKEW_SOURCE = (
+        "def quote_skew_pricing(gross_cents: int = 990) -> dict:\n"
+        "    net_base = (gross_cents * 10) // 11\n"
+        "    fee = (net_base * 3) // 100\n"
+        "    a = 10\n"
+        "    alpha = 0\n"
+        "    return {\n"
+        "        'gross_cents': gross_cents,\n"
+        "        'platform_fee_cents': fee,\n"
+        "        'net_after_fee_cents': gross_cents - fee,\n"
+        "        'omega_a': a,\n"
+        "        'omega_b': -10,\n"
+        "        'l_inf_coordinate_budget': 15,\n"
+        "        'l_1_global_budget': 15,\n"
+        "        'pricing_alpha': alpha,\n"
+        "        'residual_1': a + alpha,\n"
+        "    }\n"
+    )
+
+    PHASE_1_TAX_SKEW_SOURCE = (
+        "def quote_skew_tax(gross_cents: int = 990) -> dict:\n"
+        "    net_base = (gross_cents * 10) // 11\n"
+        "    tax = (net_base * 10) // 100\n"
+        "    b = -10\n"
+        "    alpha = 0\n"
+        "    return {\n"
+        "        'tax_reserve_cents': tax,\n"
+        "        'tax_alpha': alpha,\n"
+        "        'residual_2': b + 2 * alpha,\n"
+        "    }\n"
+    )
+
+    PHASE_1_SETTLEMENT_SKEW_SOURCE = (
+        "def settle_skew_invoice(pricing: dict, tax: dict) -> dict:\n"
+        "    net = int(pricing['net_after_fee_cents'])\n"
+        "    tax_res = int(tax['tax_reserve_cents'])\n"
+        "    r1 = int(pricing['residual_1'])\n"
+        "    r2 = int(tax['residual_2'])\n"
+        "    b1 = int(pricing['l_1_global_budget'])\n"
+        "    alpha_mismatch = abs(int(pricing['pricing_alpha']) - int(tax['tax_alpha']))\n"
+        "    cand_l1 = abs(r1) + abs(r2)\n"
+        "    excess_l1 = max(0, cand_l1 - b1) + 2 * alpha_mismatch\n"
+        "    surcharge = 2 * excess_l1\n"
+        "    if surcharge > 0:\n"
+        "        raise ValueError('Skew norm-attainment L1 excess surcharge required')\n"
+        "    return {\n"
+        "        'merchant_payout_cents': net - tax_res,\n"
+        "        'candidate_l1_cost': cand_l1,\n"
+        "        'excess_l1_cost': excess_l1,\n"
+        "        'skew_surcharge_cents': 0,\n"
+        "    }\n"
+    )
+
+    PHASE_2_PRICING_SKEW_SOURCE = (
+        "def quote_skew_pricing(gross_cents: int = 990) -> dict:\n"
+        "    net_base = (gross_cents * 10) // 11\n"
+        "    fee = (net_base * 3) // 100\n"
+        "    a = 10\n"
+        "    alpha = 2\n"
+        "    return {\n"
+        "        'gross_cents': gross_cents,\n"
+        "        'platform_fee_cents': fee,\n"
+        "        'net_after_fee_cents': gross_cents - fee,\n"
+        "        'omega_a': a,\n"
+        "        'omega_b': -10,\n"
+        "        'l_inf_coordinate_budget': 15,\n"
+        "        'l_1_global_budget': 15,\n"
+        "        'pricing_alpha': alpha,\n"
+        "        'residual_1': a + alpha,\n"
+        "    }\n"
+    )
+
+    PHASE_2_TAX_SKEW_SOURCE = (
+        "def quote_skew_tax(gross_cents: int = 990) -> dict:\n"
+        "    net_base = (gross_cents * 10) // 11\n"
+        "    tax = (net_base * 10) // 100\n"
+        "    b = -10\n"
+        "    alpha = 2\n"
+        "    return {\n"
+        "        'tax_reserve_cents': tax,\n"
+        "        'tax_alpha': alpha,\n"
+        "        'residual_2': b + 2 * alpha,\n"
+        "    }\n"
+    )
+
+    PHASE_2_SETTLEMENT_SKEW_SOURCE = (
+        "def settle_skew_invoice(pricing: dict, tax: dict) -> dict:\n"
+        "    net = int(pricing['net_after_fee_cents'])\n"
+        "    tax_res = int(tax['tax_reserve_cents'])\n"
+        "    r1 = int(pricing['residual_1'])\n"
+        "    r2 = int(tax['residual_2'])\n"
+        "    b1 = int(pricing['l_1_global_budget'])\n"
+        "    alpha_mismatch = abs(int(pricing['pricing_alpha']) - int(tax['tax_alpha']))\n"
+        "    cand_l1 = abs(r1) + abs(r2)\n"
+        "    excess_l1 = max(0, cand_l1 - b1) + 2 * alpha_mismatch\n"
+        "    surcharge = 2 * excess_l1\n"
+        "    return {\n"
+        "        'merchant_payout_cents': net - tax_res - surcharge,\n"
+        "        'candidate_l1_cost': cand_l1,\n"
+        "        'excess_l1_cost': excess_l1,\n"
+        "        'skew_surcharge_cents': surcharge,\n"
+        "    }\n"
+    )
+
+    PHASE_3_PRICING_SKEW_SOURCE = (
+        "def quote_skew_pricing(gross_cents: int = 990) -> dict:\n"
+        "    net_base = (gross_cents * 10) // 11\n"
+        "    fee = (net_base * 3) // 100\n"
+        "    a = 10\n"
+        "    alpha = 5\n"
+        "    return {\n"
+        "        'gross_cents': gross_cents,\n"
+        "        'platform_fee_cents': fee,\n"
+        "        'net_after_fee_cents': gross_cents - fee,\n"
+        "        'omega_a': a,\n"
+        "        'omega_b': -10,\n"
+        "        'l_inf_coordinate_budget': 15,\n"
+        "        'l_1_global_budget': 15,\n"
+        "        'pricing_alpha': alpha,\n"
+        "        'residual_1': a + alpha,\n"
+        "    }\n"
+    )
+
+    PHASE_3_TAX_SKEW_SOURCE = (
+        "def quote_skew_tax(gross_cents: int = 990) -> dict:\n"
+        "    net_base = (gross_cents * 10) // 11\n"
+        "    tax = (net_base * 10) // 100\n"
+        "    b = -10\n"
+        "    alpha = 5\n"
+        "    return {\n"
+        "        'tax_reserve_cents': tax,\n"
+        "        'tax_alpha': alpha,\n"
+        "        'residual_2': b + 2 * alpha,\n"
+        "    }\n"
+    )
+
+    PHASE_3_SETTLEMENT_SKEW_SOURCE = (
+        "def settle_skew_invoice(pricing: dict, tax: dict) -> dict:\n"
+        "    net = int(pricing['net_after_fee_cents'])\n"
+        "    tax_res = int(tax['tax_reserve_cents'])\n"
+        "    r1 = int(pricing['residual_1'])\n"
+        "    r2 = int(tax['residual_2'])\n"
+        "    b1 = int(pricing['l_1_global_budget'])\n"
+        "    alpha_mismatch = abs(int(pricing['pricing_alpha']) - int(tax['tax_alpha']))\n"
+        "    cand_l1 = abs(r1) + abs(r2)\n"
+        "    excess_l1 = max(0, cand_l1 - b1) + 2 * alpha_mismatch\n"
+        "    surcharge = 2 * excess_l1\n"
+        "    if surcharge > 0:\n"
+        "        raise ValueError('Skew norm-attainment L1 excess surcharge required')\n"
+        "    return {\n"
+        "        'merchant_payout_cents': net - tax_res,\n"
+        "        'candidate_l1_cost': cand_l1,\n"
+        "        'excess_l1_cost': excess_l1,\n"
+        "        'skew_surcharge_cents': 0,\n"
+        "    }\n"
+    )
+
+    def __init__(self, *, scope_id: str = "streaming-codebase-skew-repair") -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.skew_monitor = StreamingSkewRepairMonitor(
+            scope_id=f"{self.scope_id}:skew"
+        )
+        self.fiber_monitor = StreamingFiberMonitor()
+        self.evaluations: list[dict[str, Any]] = []
+        self.three_phase_audits: list[dict[str, Any]] = []
+
+    def evaluate_skew_repair_modules(
+        self,
+        evaluation_id: str,
+        *,
+        pricing_skew_source: str,
+        tax_skew_source: str,
+        settlement_skew_source: str,
+        gross_cents: int = 990,
+        infeasible_constraint: Mapping[str, Any] | str | None = None,
+        model_id: str = "deterministic",
+    ) -> dict[str, Any]:
+        eval_id = text(evaluation_id, "evaluation_id")
+        mod_id = text(model_id, "model_id")
+        gross = exact_int(gross_cents, "gross_cents", minimum=100)
+
+        p_ns = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(
+            "pricing_skew", pricing_skew_source
+        )
+        t_ns = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(
+            "tax_skew", tax_skew_source
+        )
+        s_ns = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(
+            "settlement_skew", settlement_skew_source
+        )
+        for mod_name, ns, fn_name in (
+            ("pricing_skew", p_ns, "quote_skew_pricing"),
+            ("tax_skew", t_ns, "quote_skew_tax"),
+            ("settlement_skew", s_ns, "settle_skew_invoice"),
+        ):
+            if fn_name not in ns or not callable(ns[fn_name]):
+                raise ValidationError(f"{mod_name} missing callable {fn_name}")
+
+        pricing_out = p_ns["quote_skew_pricing"](gross)
+        tax_out = t_ns["quote_skew_tax"](gross)
+        if not isinstance(pricing_out, Mapping) or not isinstance(tax_out, Mapping):
+            raise ValidationError("quote_skew_pricing and quote_skew_tax must return mappings")
+        try:
+            settlement_out = s_ns["settle_skew_invoice"](pricing_out, tax_out)
+            if not isinstance(settlement_out, Mapping):
+                raise ValidationError("settle_skew_invoice must return a mapping")
+            settlement_raised = False
+        except ValidationError:
+            raise
+        except Exception:
+            settlement_raised = True
+            settlement_out = {}
+
+        omega_a = exact_int(pricing_out.get("omega_a", 10), "omega_a")
+        omega_b = exact_int(pricing_out.get("omega_b", -10), "omega_b")
+        b_inf = exact_int(pricing_out.get("l_inf_coordinate_budget", 15), "l_inf_coordinate_budget", minimum=1)
+        b_1 = exact_int(pricing_out.get("l_1_global_budget", 15), "l_1_global_budget", minimum=1)
+        p_alpha = exact_int(pricing_out.get("pricing_alpha", 0), "pricing_alpha")
+        t_alpha = exact_int(tax_out.get("tax_alpha", 0), "tax_alpha")
+        r1 = exact_int(pricing_out.get("residual_1", omega_a + p_alpha), "residual_1")
+        r2 = exact_int(tax_out.get("residual_2", omega_b + 2 * t_alpha), "residual_2")
+
+        fee = exact_int(pricing_out.get("platform_fee_cents", 0), "platform_fee_cents")
+        net = exact_int(pricing_out.get("net_after_fee_cents", 0), "net_after_fee_cents")
+        tax = exact_int(tax_out.get("tax_reserve_cents", 0), "tax_reserve_cents")
+        net_base = (gross * 10) // 11
+
+        local_p_ok = (
+            (fee == (net_base * 3) // 100)
+            and (net == gross - fee)
+            and (omega_a == 10)
+            and (omega_b == -10)
+            and (b_inf == 15)
+            and (b_1 == 15)
+            and (p_alpha in (0, 2, 5))
+            and (r1 == omega_a + p_alpha)
+            and (abs(r1) <= b_inf)
+        )
+        local_t_ok = (
+            (tax == (net_base * 10) // 100)
+            and (t_alpha in (0, 2, 5))
+            and (r2 == omega_b + 2 * t_alpha)
+            and (abs(r2) <= b_inf)
+        )
+
+        self.skew_monitor.record_probe(
+            f"{eval_id}:skew",
+            omega_a,
+            omega_b,
+            candidate_alpha=p_alpha,
+            l_inf_coordinate_budget=b_inf,
+            l_1_global_budget=b_1,
+        )
+
+        alpha_mismatch = abs(p_alpha - t_alpha)
+        cand_l1 = abs(r1) + abs(r2)
+        cand_linf = max(abs(r1), abs(r2))
+        cand_l2_sq = r1 * r1 + r2 * r2
+        excess_l1 = max(0, cand_l1 - b_1) + 2 * alpha_mismatch
+        surcharge = 2 * excess_l1
+
+        if settlement_raised:
+            payout = net - tax - surcharge
+            local_s_ok = surcharge != 0
+        else:
+            payout = exact_int(settlement_out.get("merchant_payout_cents", 0), "merchant_payout_cents")
+            reported_surcharge = exact_int(
+                settlement_out.get("skew_surcharge_cents", surcharge),
+                "skew_surcharge_cents",
+            )
+            local_s_ok = (reported_surcharge == surcharge) and (payout == net - tax - surcharge)
+
+        infeasible_spec_contradiction = bool(infeasible_constraint is not None)
+        local_green = 1 if (local_p_ok and local_t_ok and local_s_ok and not infeasible_spec_contradiction) else 0
+        conservation_ok = (
+            not settlement_raised
+            and surcharge == 0
+            and p_alpha == 5
+            and t_alpha == 5
+            and [r1, r2] == [15, 0]
+            and payout == 873
+            and (payout + fee + tax == gross)
+        )
+        global_green = 1 if (local_green == 1 and conservation_ok) else 0
+        defect = global_green - local_green
+
+        self.fiber_monitor.observe(
+            state_id=f"{eval_id}_{mod_id}",
+            report={
+                "local_green": local_green,
+                "l_inf_coordinate_budget": b_inf,
+            },
+            query="LGGG" if global_green == 1 else "LGGR",
+            metadata={
+                "pricing_alpha": p_alpha,
+                "tax_alpha": t_alpha,
+                "residual_vector": [r1, r2],
+                "candidate_l1_cost": cand_l1,
+                "excess_l1_cost": excess_l1,
+                "skew_surcharge_cents": surcharge,
+            },
+        )
+
+        if infeasible_spec_contradiction:
+            status = "INFEASIBLE_SKEW_REPAIR_SPECIFICATION_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif local_green == 0:
+            status = "LOCAL_SKEW_MODULE_CONTRACT_BROKEN"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif p_alpha == 0 and t_alpha == 0:
+            status = "SKEW_LINF_NORM_ATTAINMENT_DIVERGENCE_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif global_green == 0:
+            status = "SKEW_L2_NORM_ATTAINMENT_DIVERGENCE_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "SKEW_L1_MINIMUM_REPAIR_COHERENT_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+
+        if global_green == 1:
+            directives = {
+                "worker-0": {
+                    "module": "pricing_skew",
+                    "action": "HOLD_L1_OPTIMAL_SKEW_ALPHA_5",
+                    "target_pricing_alpha": 5,
+                    "target_residual_1": 15,
+                },
+                "worker-1": {
+                    "module": "tax_skew",
+                    "action": "HOLD_L1_OPTIMAL_SKEW_ALPHA_5",
+                    "target_tax_alpha": 5,
+                    "target_residual_2": 0,
+                },
+                "worker-2": {
+                    "module": "settlement_skew",
+                    "action": "HOLD_ZERO_SKEW_REPAIR_SURCHARGE",
+                    "target_skew_surcharge_cents": 0,
+                    "target_payout_cents": 873,
+                },
+            }
+        else:
+            directives = {
+                "worker-0": {
+                    "module": "pricing_skew",
+                    "action": (
+                        "ALIGN_PRICING_SKEW_ALPHA_TO_L1_MINIMIZER_5"
+                        if (p_alpha != 5 or r1 != 15 or not local_p_ok)
+                        else "HOLD_L1_OPTIMAL_SKEW_ALPHA_5"
+                    ),
+                    "target_pricing_alpha": 5,
+                    "target_residual_1": 15,
+                },
+                "worker-1": {
+                    "module": "tax_skew",
+                    "action": (
+                        "ALIGN_TAX_SKEW_ALPHA_TO_L1_MINIMIZER_5"
+                        if (t_alpha != 5 or r2 != 0 or not local_t_ok)
+                        else "HOLD_L1_OPTIMAL_SKEW_ALPHA_5"
+                    ),
+                    "target_tax_alpha": 5,
+                    "target_residual_2": 0,
+                },
+                "worker-2": {
+                    "module": "settlement_skew",
+                    "action": (
+                        "REPAIR_SETTLEMENT_SKEW_NORM_GATE"
+                        if not conservation_ok
+                        else "HOLD_ZERO_SKEW_REPAIR_SURCHARGE"
+                    ),
+                    "target_skew_surcharge_cents": 0,
+                    "target_payout_cents": 873,
+                },
+            }
+
+        rec = json_value(
+            {
+                "evaluation_id": eval_id,
+                "model_id": mod_id,
+                "omega": [omega_a, omega_b],
+                "skew_discrepancy": 2 * omega_a - omega_b,
+                "l_inf_coordinate_budget": b_inf,
+                "l_1_global_budget": b_1,
+                "pricing_alpha": p_alpha,
+                "tax_alpha": t_alpha,
+                "residual_vector": [r1, r2],
+                "candidate_l1_cost": cand_l1,
+                "candidate_l2_squared_cost": cand_l2_sq,
+                "candidate_linf_cost": cand_linf,
+                "excess_l1_cost": excess_l1,
+                "skew_surcharge_cents": surcharge,
+                "merchant_payout_cents": payout,
+                "platform_fee_cents": fee,
+                "tax_reserve_cents": tax,
+                "gross_cents": gross,
+                "local_green": local_green,
+                "global_green": global_green,
+                "defect": defect,
+                "status": status,
+                "contract_status": contract_status,
+                "directives": directives,
+            }
+        )
+        self.evaluations.append(rec)
+        return rec
+
+    def record_three_phase_codebase_audit(
+        self,
+        *,
+        audit_id: str = "codebase_skew_repair_three_phase",
+        model_id: str = "deterministic",
+    ) -> dict[str, Any]:
+        mid = text(model_id, "model_id")
+        p1 = self.evaluate_skew_repair_modules(
+            f"{audit_id}_p1",
+            pricing_skew_source=self.PHASE_1_PRICING_SKEW_SOURCE,
+            tax_skew_source=self.PHASE_1_TAX_SKEW_SOURCE,
+            settlement_skew_source=self.PHASE_1_SETTLEMENT_SKEW_SOURCE,
+            model_id=mid,
+        )
+        p2 = self.evaluate_skew_repair_modules(
+            f"{audit_id}_p2",
+            pricing_skew_source=self.PHASE_2_PRICING_SKEW_SOURCE,
+            tax_skew_source=self.PHASE_2_TAX_SKEW_SOURCE,
+            settlement_skew_source=self.PHASE_2_SETTLEMENT_SKEW_SOURCE,
+            model_id=mid,
+        )
+        p3 = self.evaluate_skew_repair_modules(
+            f"{audit_id}_p3",
+            pricing_skew_source=self.PHASE_3_PRICING_SKEW_SOURCE,
+            tax_skew_source=self.PHASE_3_TAX_SKEW_SOURCE,
+            settlement_skew_source=self.PHASE_3_SETTLEMENT_SKEW_SOURCE,
+            model_id=mid,
+        )
+        audit_rec = json_value(
+            {
+                "audit_id": text(audit_id, "audit_id"),
+                "model_id": mid,
+                "phase_1_alpha": p1["pricing_alpha"],
+                "phase_1_residual_vector": p1["residual_vector"],
+                "phase_1_candidate_l1_cost": p1["candidate_l1_cost"],
+                "phase_1_excess_l1_cost": p1["excess_l1_cost"],
+                "phase_1_surcharge_cents": p1["skew_surcharge_cents"],
+                "phase_1_payout_cents": p1["merchant_payout_cents"],
+                "phase_1_local_green": p1["local_green"],
+                "phase_1_global_green": p1["global_green"],
+                "phase_1_defect": p1["defect"],
+                "phase_1_status": p1["status"],
+                "phase_2_alpha": p2["pricing_alpha"],
+                "phase_2_residual_vector": p2["residual_vector"],
+                "phase_2_candidate_l1_cost": p2["candidate_l1_cost"],
+                "phase_2_excess_l1_cost": p2["excess_l1_cost"],
+                "phase_2_surcharge_cents": p2["skew_surcharge_cents"],
+                "phase_2_payout_cents": p2["merchant_payout_cents"],
+                "phase_2_local_green": p2["local_green"],
+                "phase_2_global_green": p2["global_green"],
+                "phase_2_defect": p2["defect"],
+                "phase_2_status": p2["status"],
+                "phase_3_alpha": p3["pricing_alpha"],
+                "phase_3_residual_vector": p3["residual_vector"],
+                "phase_3_candidate_l1_cost": p3["candidate_l1_cost"],
+                "phase_3_excess_l1_cost": p3["excess_l1_cost"],
+                "phase_3_surcharge_cents": p3["skew_surcharge_cents"],
+                "phase_3_payout_cents": p3["merchant_payout_cents"],
+                "phase_3_local_green": p3["local_green"],
+                "phase_3_global_green": p3["global_green"],
+                "phase_3_defect": p3["defect"],
+                "phase_3_status": p3["status"],
+            }
+        )
+        self.three_phase_audits.append(audit_rec)
+        return audit_rec
+
+    def current_receipt(self) -> dict[str, Any]:
+        if not self.evaluations:
+            raise ValidationError("at least one codebase skew repair evaluation must be recorded")
+        n = len(self.evaluations)
+        lggr_count = sum(1 for e in self.evaluations if e["defect"] == -1)
+        lggg_count = sum(1 for e in self.evaluations if e["global_green"] == 1)
+        last = self.evaluations[-1]
+
+        body: dict[str, Any] = {
+            "schema": "lggr.online_codebase_skew_repair.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": last["status"],
+            "contract_status": last["contract_status"],
+            "evaluation_count": n,
+            "lggr_obstruction_count": lggr_count,
+            "lggg_coherent_count": lggg_count,
+            "skew_repair_receipt": (
+                self.skew_monitor.get_receipt()
+                if self.skew_monitor.probes
+                else None
+            ),
+            "fiber_receipt": self.fiber_monitor.get_receipt(),
+            "three_phase_audits": self.three_phase_audits,
+            "evaluations": self.evaluations,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+
+
 
 
 

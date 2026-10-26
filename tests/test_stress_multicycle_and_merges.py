@@ -65,6 +65,7 @@ from lggr.streaming import (
     StreamingCodebaseReplayOrderMonitor,
     StreamingCodebaseSharedChordDiamondMonitor,
     StreamingCodebaseSixRoleDeduplicationMonitor,
+    StreamingCodebaseSkewRepairMonitor,
     StreamingCodebaseSubgradientPivotMonitor,
     StreamingCodebaseThreePartyConstantMonitor,
     StreamingCodebaseWatcherDropoutMonitor,
@@ -6566,6 +6567,62 @@ class TestStreamingBaselineComparator(unittest.TestCase):
                 pricing_ratchet_source="def quote_ratchet_pricing(g):\n    return 123\n",
                 tax_ratchet_source=mon.PHASE_1_TAX_RATCHET_SOURCE,
                 settlement_ratchet_source=mon.PHASE_1_SETTLEMENT_RATCHET_SOURCE,
+            )
+
+    def test_skew_repair_codebase_norm_attainment_divergence_audit(self) -> None:
+        """Verify Theorem 128: Skew-coboundary norm-attainment divergence & l1-minimum repair codebase audit."""
+        mon = StreamingCodebaseSkewRepairMonitor(
+            scope_id="unit-codebase-skew-repair-scope",
+        )
+        obs = mon.record_three_phase_codebase_audit(
+            model_id="unit-skew-repair-eval-01",
+        )
+        self.assertEqual(obs["phase_1_alpha"], 0)
+        self.assertEqual(obs["phase_1_residual_vector"], [10, -10])
+        self.assertEqual(obs["phase_1_candidate_l1_cost"], 20)
+        self.assertEqual(obs["phase_1_excess_l1_cost"], 5)
+        self.assertEqual(obs["phase_1_surcharge_cents"], 10)
+        self.assertEqual(obs["phase_1_payout_cents"], 863)
+        self.assertEqual(obs["phase_1_local_green"], 1)
+        self.assertEqual(obs["phase_1_global_green"], 0)
+        self.assertEqual(obs["phase_1_defect"], -1)
+        self.assertEqual(obs["phase_1_status"], "SKEW_LINF_NORM_ATTAINMENT_DIVERGENCE_LGGR")
+
+        self.assertEqual(obs["phase_2_alpha"], 2)
+        self.assertEqual(obs["phase_2_residual_vector"], [12, -6])
+        self.assertEqual(obs["phase_2_candidate_l1_cost"], 18)
+        self.assertEqual(obs["phase_2_excess_l1_cost"], 3)
+        self.assertEqual(obs["phase_2_surcharge_cents"], 6)
+        self.assertEqual(obs["phase_2_payout_cents"], 867)
+        self.assertEqual(obs["phase_2_local_green"], 1)
+        self.assertEqual(obs["phase_2_global_green"], 0)
+        self.assertEqual(obs["phase_2_defect"], -1)
+        self.assertEqual(obs["phase_2_status"], "SKEW_L2_NORM_ATTAINMENT_DIVERGENCE_LGGR")
+
+        self.assertEqual(obs["phase_3_alpha"], 5)
+        self.assertEqual(obs["phase_3_residual_vector"], [15, 0])
+        self.assertEqual(obs["phase_3_candidate_l1_cost"], 15)
+        self.assertEqual(obs["phase_3_excess_l1_cost"], 0)
+        self.assertEqual(obs["phase_3_surcharge_cents"], 0)
+        self.assertEqual(obs["phase_3_payout_cents"], 873)
+        self.assertEqual(obs["phase_3_local_green"], 1)
+        self.assertEqual(obs["phase_3_global_green"], 1)
+        self.assertEqual(obs["phase_3_defect"], 0)
+        self.assertEqual(obs["phase_3_status"], "SKEW_L1_MINIMUM_REPAIR_COHERENT_LGGG")
+
+        receipt = mon.current_receipt()
+        self.assertEqual(receipt["status"], "SKEW_L1_MINIMUM_REPAIR_COHERENT_LGGG")
+        self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(receipt["lggr_obstruction_count"], 2)
+        self.assertEqual(receipt["lggg_coherent_count"], 1)
+        self.assertIsNotNone(receipt["skew_repair_receipt"])
+
+        with self.assertRaises(ValidationError):
+            mon.evaluate_skew_repair_modules(
+                "bad-return",
+                pricing_skew_source="def quote_skew_pricing(g):\n    return 123\n",
+                tax_skew_source=mon.PHASE_1_TAX_SKEW_SOURCE,
+                settlement_skew_source=mon.PHASE_1_SETTLEMENT_SKEW_SOURCE,
             )
 
 

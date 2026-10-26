@@ -1,0 +1,2640 @@
+{
+  "schema": "lggr.skew_repair_code_engineering_swarm.v1",
+  "topology": "skew_repair",
+  "authority_effect": "None",
+  "cases": [
+    {
+      "seed": 12500,
+      "kind": "repairable_skew_repair_norm_attainment_divergence_defect",
+      "arms": [
+        {
+          "arm": "A",
+          "status": "blocked_unresolved",
+          "waves_executed": 2,
+          "final_local_green": 1,
+          "final_global_green": 0,
+          "final_defect": -1,
+          "final_pricing_alpha": 0,
+          "final_tax_alpha": 0,
+          "final_residual_vector": [
+            10,
+            -10
+          ],
+          "final_candidate_l1_cost": 20,
+          "final_excess_l1_cost": 5,
+          "final_skew_surcharge_cents": 10,
+          "final_merchant_payout_cents": 863,
+          "final_status": "SKEW_LINF_NORM_ATTAINMENT_DIVERGENCE_LGGR",
+          "final_receipt_sha256": "074ca203b02fe17d3bdabf80ae1fedc24ec979d7d0954caeb4add3025d49b85b",
+          "final_receipt": {
+            "schema": "lggr.online_codebase_skew_repair.v1",
+            "authority_effect": "None",
+            "scope_id": "skew-repair-seed-12500-arm-A",
+            "status": "SKEW_LINF_NORM_ATTAINMENT_DIVERGENCE_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR",
+            "evaluation_count": 3,
+            "lggr_obstruction_count": 3,
+            "lggg_coherent_count": 0,
+            "skew_repair_receipt": {
+              "schema": "lggr.online_skew_repair.v1",
+              "authority_effect": "None",
+              "scope_id": "skew-repair-seed-12500-arm-A:skew",
+              "status": "SKEW_NORM_ATTAINMENT_DIVERGENCE_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "probe_count": 3,
+              "all_closed_form_identities_verified": true,
+              "skew_norm_divergence_probe_ids": [
+                "A-wave-0:skew",
+                "A-wave-1:skew",
+                "A-wave-2:skew"
+              ],
+              "rejected_probe_ids": [],
+              "probes": [
+                {
+                  "probe_id": "A-wave-0:skew",
+                  "omega": [
+                    "10",
+                    "-10"
+                  ],
+                  "skew_discrepancy_2a_minus_b": "30",
+                  "alpha_1": "5",
+                  "alpha_2": "2",
+                  "alpha_inf": "0",
+                  "phi_1": "15",
+                  "phi_2_squared": "180",
+                  "phi_inf": "10",
+                  "closed_form_identities_hold": true,
+                  "minimizers_strictly_diverge": true,
+                  "candidate_alpha": "0",
+                  "candidate_residual": [
+                    "10",
+                    "-10"
+                  ],
+                  "candidate_l1_cost": "20",
+                  "candidate_l2_squared_cost": "200",
+                  "candidate_linf_cost": "10",
+                  "l_inf_coordinate_budget": "15",
+                  "l_1_global_budget": "15",
+                  "local_coordinate_evaluators": [
+                    1,
+                    1
+                  ],
+                  "local_product_aggregator": 1,
+                  "global_l1_budget_evaluator": 0,
+                  "evaluator_defect": -1,
+                  "probe_status": "SKEW_NORM_ATTAINMENT_DIVERGENCE_LGGR"
+                },
+                {
+                  "probe_id": "A-wave-1:skew",
+                  "omega": [
+                    "10",
+                    "-10"
+                  ],
+                  "skew_discrepancy_2a_minus_b": "30",
+                  "alpha_1": "5",
+                  "alpha_2": "2",
+                  "alpha_inf": "0",
+                  "phi_1": "15",
+                  "phi_2_squared": "180",
+                  "phi_inf": "10",
+                  "closed_form_identities_hold": true,
+                  "minimizers_strictly_diverge": true,
+                  "candidate_alpha": "0",
+                  "candidate_residual": [
+                    "10",
+                    "-10"
+                  ],
+                  "candidate_l1_cost": "20",
+                  "candidate_l2_squared_cost": "200",
+                  "candidate_linf_cost": "10",
+                  "l_inf_coordinate_budget": "15",
+                  "l_1_global_budget": "15",
+                  "local_coordinate_evaluators": [
+                    1,
+                    1
+                  ],
+                  "local_product_aggregator": 1,
+                  "global_l1_budget_evaluator": 0,
+                  "evaluator_defect": -1,
+                  "probe_status": "SKEW_NORM_ATTAINMENT_DIVERGENCE_LGGR"
+                },
+                {
+                  "probe_id": "A-wave-2:skew",
+                  "omega": [
+                    "10",
+                    "-10"
+                  ],
+                  "skew_discrepancy_2a_minus_b": "30",
+                  "alpha_1": "5",
+                  "alpha_2": "2",
+                  "alpha_inf": "0",
+                  "phi_1": "15",
+                  "phi_2_squared": "180",
+                  "phi_inf": "10",
+                  "closed_form_identities_hold": true,
+                  "minimizers_strictly_diverge": true,
+                  "candidate_alpha": "0",
+                  "candidate_residual": [
+                    "10",
+                    "-10"
+                  ],
+                  "candidate_l1_cost": "20",
+                  "candidate_l2_squared_cost": "200",
+                  "candidate_linf_cost": "10",
+                  "l_inf_coordinate_budget": "15",
+                  "l_1_global_budget": "15",
+                  "local_coordinate_evaluators": [
+                    1,
+                    1
+                  ],
+                  "local_product_aggregator": 1,
+                  "global_l1_budget_evaluator": 0,
+                  "evaluator_defect": -1,
+                  "probe_status": "SKEW_NORM_ATTAINMENT_DIVERGENCE_LGGR"
+                }
+              ],
+              "receipt_sha256": "cf87c14802369e867936917d29cf745f482644793baccf2b4d7562107dfe0f8d"
+            },
+            "fiber_receipt": {
+              "schema": "lggr.descent.v1",
+              "authority_effect": "None",
+              "scope_id": "streaming-fiber-scope",
+              "carrier_size": 3,
+              "status": "DECODER_VERIFIED",
+              "contract_status": "COMPOSABLE_LGGG",
+              "decoder": [
+                {
+                  "report": {
+                    "l_inf_coordinate_budget": 15,
+                    "local_green": 1
+                  },
+                  "query": "LGGR"
+                }
+              ],
+              "input_sha256": "a28be7157fe9e050c07ef136e2862707983198cfbcab95e3709b013843eafac4",
+              "meaning": "The supplied query is constant on every realized report fiber in this stream.",
+              "receipt_sha256": "39df8268044735bbf3a3645c30dd576cd31baa743aabda4f741063624823ce92"
+            },
+            "three_phase_audits": [],
+            "evaluations": [
+              {
+                "evaluation_id": "A-wave-0",
+                "model_id": "deterministic",
+                "omega": [
+                  10,
+                  -10
+                ],
+                "skew_discrepancy": 30,
+                "l_inf_coordinate_budget": 15,
+                "l_1_global_budget": 15,
+                "pricing_alpha": 0,
+                "tax_alpha": 0,
+                "residual_vector": [
+                  10,
+                  -10
+                ],
+                "candidate_l1_cost": 20,
+                "candidate_l2_squared_cost": 200,
+                "candidate_linf_cost": 10,
+                "excess_l1_cost": 5,
+                "skew_surcharge_cents": 10,
+                "merchant_payout_cents": 863,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "SKEW_LINF_NORM_ATTAINMENT_DIVERGENCE_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_skew",
+                    "action": "ALIGN_PRICING_SKEW_ALPHA_TO_L1_MINIMIZER_5",
+                    "target_pricing_alpha": 5,
+                    "target_residual_1": 15
+                  },
+                  "worker-1": {
+                    "module": "tax_skew",
+                    "action": "ALIGN_TAX_SKEW_ALPHA_TO_L1_MINIMIZER_5",
+                    "target_tax_alpha": 5,
+                    "target_residual_2": 0
+                  },
+                  "worker-2": {
+                    "module": "settlement_skew",
+                    "action": "REPAIR_SETTLEMENT_SKEW_NORM_GATE",
+                    "target_skew_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "A-wave-1",
+                "model_id": "deterministic",
+                "omega": [
+                  10,
+                  -10
+                ],
+                "skew_discrepancy": 30,
+                "l_inf_coordinate_budget": 15,
+                "l_1_global_budget": 15,
+                "pricing_alpha": 0,
+                "tax_alpha": 0,
+                "residual_vector": [
+                  10,
+                  -10
+                ],
+                "candidate_l1_cost": 20,
+                "candidate_l2_squared_cost": 200,
+                "candidate_linf_cost": 10,
+                "excess_l1_cost": 5,
+                "skew_surcharge_cents": 10,
+                "merchant_payout_cents": 863,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "SKEW_LINF_NORM_ATTAINMENT_DIVERGENCE_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_skew",
+                    "action": "ALIGN_PRICING_SKEW_ALPHA_TO_L1_MINIMIZER_5",
+                    "target_pricing_alpha": 5,
+                    "target_residual_1": 15
+                  },
+                  "worker-1": {
+                    "module": "tax_skew",
+                    "action": "ALIGN_TAX_SKEW_ALPHA_TO_L1_MINIMIZER_5",
+                    "target_tax_alpha": 5,
+                    "target_residual_2": 0
+                  },
+                  "worker-2": {
+                    "module": "settlement_skew",
+                    "action": "REPAIR_SETTLEMENT_SKEW_NORM_GATE",
+                    "target_skew_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "A-wave-2",
+                "model_id": "deterministic",
+                "omega": [
+                  10,
+                  -10
+                ],
+                "skew_discrepancy": 30,
+                "l_inf_coordinate_budget": 15,
+                "l_1_global_budget": 15,
+                "pricing_alpha": 0,
+                "tax_alpha": 0,
+                "residual_vector": [
+                  10,
+                  -10
+                ],
+                "candidate_l1_cost": 20,
+                "candidate_l2_squared_cost": 200,
+                "candidate_linf_cost": 10,
+                "excess_l1_cost": 5,
+                "skew_surcharge_cents": 10,
+                "merchant_payout_cents": 863,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "SKEW_LINF_NORM_ATTAINMENT_DIVERGENCE_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_skew",
+                    "action": "ALIGN_PRICING_SKEW_ALPHA_TO_L1_MINIMIZER_5",
+                    "target_pricing_alpha": 5,
+                    "target_residual_1": 15
+                  },
+                  "worker-1": {
+                    "module": "tax_skew",
+                    "action": "ALIGN_TAX_SKEW_ALPHA_TO_L1_MINIMIZER_5",
+                    "target_tax_alpha": 5,
+                    "target_residual_2": 0
+                  },
+                  "worker-2": {
+                    "module": "settlement_skew",
+                    "action": "REPAIR_SETTLEMENT_SKEW_NORM_GATE",
+                    "target_skew_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              }
+            ],
+            "receipt_sha256": "074ca203b02fe17d3bdabf80ae1fedc24ec979d7d0954caeb4add3025d49b85b"
+          },
+          "escalations": {},
+          "api_attempts": 18,
+          "cost_usd": "0.0167316897"
+        },
+        {
+          "arm": "B",
+          "status": "blocked_unresolved",
+          "waves_executed": 2,
+          "final_local_green": 1,
+          "final_global_green": 0,
+          "final_defect": -1,
+          "final_pricing_alpha": 2,
+          "final_tax_alpha": 2,
+          "final_residual_vector": [
+            12,
+            -6
+          ],
+          "final_candidate_l1_cost": 18,
+          "final_excess_l1_cost": 3,
+          "final_skew_surcharge_cents": 6,
+          "final_merchant_payout_cents": 867,
+          "final_status": "SKEW_L2_NORM_ATTAINMENT_DIVERGENCE_LGGR",
+          "final_receipt_sha256": "1dfd6e36c6ceab1f7cf52b53d9d8fe2ec1adbf9ff8246cc5d272f644683305cf",
+          "final_receipt": {
+            "schema": "lggr.online_codebase_skew_repair.v1",
+            "authority_effect": "None",
+            "scope_id": "skew-repair-seed-12500-arm-B",
+            "status": "SKEW_L2_NORM_ATTAINMENT_DIVERGENCE_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR",
+            "evaluation_count": 3,
+            "lggr_obstruction_count": 3,
+            "lggg_coherent_count": 0,
+            "skew_repair_receipt": {
+              "schema": "lggr.online_skew_repair.v1",
+              "authority_effect": "None",
+              "scope_id": "skew-repair-seed-12500-arm-B:skew",
+              "status": "SKEW_NORM_ATTAINMENT_DIVERGENCE_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "probe_count": 3,
+              "all_closed_form_identities_verified": true,
+              "skew_norm_divergence_probe_ids": [
+                "B-wave-0:skew",
+                "B-wave-1:skew",
+                "B-wave-2:skew"
+              ],
+              "rejected_probe_ids": [],
+              "probes": [
+                {
+                  "probe_id": "B-wave-0:skew",
+                  "omega": [
+                    "10",
+                    "-10"
+                  ],
+                  "skew_discrepancy_2a_minus_b": "30",
+                  "alpha_1": "5",
+                  "alpha_2": "2",
+                  "alpha_inf": "0",
+                  "phi_1": "15",
+                  "phi_2_squared": "180",
+                  "phi_inf": "10",
+                  "closed_form_identities_hold": true,
+                  "minimizers_strictly_diverge": true,
+                  "candidate_alpha": "0",
+                  "candidate_residual": [
+                    "10",
+                    "-10"
+                  ],
+                  "candidate_l1_cost": "20",
+                  "candidate_l2_squared_cost": "200",
+                  "candidate_linf_cost": "10",
+                  "l_inf_coordinate_budget": "15",
+                  "l_1_global_budget": "15",
+                  "local_coordinate_evaluators": [
+                    1,
+                    1
+                  ],
+                  "local_product_aggregator": 1,
+                  "global_l1_budget_evaluator": 0,
+                  "evaluator_defect": -1,
+                  "probe_status": "SKEW_NORM_ATTAINMENT_DIVERGENCE_LGGR"
+                },
+                {
+                  "probe_id": "B-wave-1:skew",
+                  "omega": [
+                    "10",
+                    "-10"
+                  ],
+                  "skew_discrepancy_2a_minus_b": "30",
+                  "alpha_1": "5",
+                  "alpha_2": "2",
+                  "alpha_inf": "0",
+                  "phi_1": "15",
+                  "phi_2_squared": "180",
+                  "phi_inf": "10",
+                  "closed_form_identities_hold": true,
+                  "minimizers_strictly_diverge": true,
+                  "candidate_alpha": "2",
+                  "candidate_residual": [
+                    "12",
+                    "-6"
+                  ],
+                  "candidate_l1_cost": "18",
+                  "candidate_l2_squared_cost": "180",
+                  "candidate_linf_cost": "12",
+                  "l_inf_coordinate_budget": "15",
+                  "l_1_global_budget": "15",
+                  "local_coordinate_evaluators": [
+                    1,
+                    1
+                  ],
+                  "local_product_aggregator": 1,
+                  "global_l1_budget_evaluator": 0,
+                  "evaluator_defect": -1,
+                  "probe_status": "SKEW_NORM_ATTAINMENT_DIVERGENCE_LGGR"
+                },
+                {
+                  "probe_id": "B-wave-2:skew",
+                  "omega": [
+                    "10",
+                    "-10"
+                  ],
+                  "skew_discrepancy_2a_minus_b": "30",
+                  "alpha_1": "5",
+                  "alpha_2": "2",
+                  "alpha_inf": "0",
+                  "phi_1": "15",
+                  "phi_2_squared": "180",
+                  "phi_inf": "10",
+                  "closed_form_identities_hold": true,
+                  "minimizers_strictly_diverge": true,
+                  "candidate_alpha": "2",
+                  "candidate_residual": [
+                    "12",
+                    "-6"
+                  ],
+                  "candidate_l1_cost": "18",
+                  "candidate_l2_squared_cost": "180",
+                  "candidate_linf_cost": "12",
+                  "l_inf_coordinate_budget": "15",
+                  "l_1_global_budget": "15",
+                  "local_coordinate_evaluators": [
+                    1,
+                    1
+                  ],
+                  "local_product_aggregator": 1,
+                  "global_l1_budget_evaluator": 0,
+                  "evaluator_defect": -1,
+                  "probe_status": "SKEW_NORM_ATTAINMENT_DIVERGENCE_LGGR"
+                }
+              ],
+              "receipt_sha256": "a2b0a3d1d9623922ed9e6ed2d364514e8801f7ec8b29f20d21366ca8a215ac49"
+            },
+            "fiber_receipt": {
+              "schema": "lggr.descent.v1",
+              "authority_effect": "None",
+              "scope_id": "streaming-fiber-scope",
+              "carrier_size": 3,
+              "status": "DECODER_VERIFIED",
+              "contract_status": "COMPOSABLE_LGGG",
+              "decoder": [
+                {
+                  "report": {
+                    "l_inf_coordinate_budget": 15,
+                    "local_green": 1
+                  },
+                  "query": "LGGR"
+                }
+              ],
+              "input_sha256": "1f5f69fe8ead4b0b87a23ba6bddc7fd50d809aab209efa47fbe14c7cbb92665b",
+              "meaning": "The supplied query is constant on every realized report fiber in this stream.",
+              "receipt_sha256": "605c315f8d9ef795bcb43ceffe1c484ad9eb7179d711a337c4f55b967d07c6d1"
+            },
+            "three_phase_audits": [],
+            "evaluations": [
+              {
+                "evaluation_id": "B-wave-0",
+                "model_id": "deterministic",
+                "omega": [
+                  10,
+                  -10
+                ],
+                "skew_discrepancy": 30,
+                "l_inf_coordinate_budget": 15,
+                "l_1_global_budget": 15,
+                "pricing_alpha": 0,
+                "tax_alpha": 0,
+                "residual_vector": [
+                  10,
+                  -10
+                ],
+                "candidate_l1_cost": 20,
+                "candidate_l2_squared_cost": 200,
+                "candidate_linf_cost": 10,
+                "excess_l1_cost": 5,
+                "skew_surcharge_cents": 10,
+                "merchant_payout_cents": 863,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "SKEW_LINF_NORM_ATTAINMENT_DIVERGENCE_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_skew",
+                    "action": "ALIGN_PRICING_SKEW_ALPHA_TO_L1_MINIMIZER_5",
+                    "target_pricing_alpha": 5,
+                    "target_residual_1": 15
+                  },
+                  "worker-1": {
+                    "module": "tax_skew",
+                    "action": "ALIGN_TAX_SKEW_ALPHA_TO_L1_MINIMIZER_5",
+                    "target_tax_alpha": 5,
+                    "target_residual_2": 0
+                  },
+                  "worker-2": {
+                    "module": "settlement_skew",
+                    "action": "REPAIR_SETTLEMENT_SKEW_NORM_GATE",
+                    "target_skew_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "B-wave-1",
+                "model_id": "deterministic",
+                "omega": [
+                  10,
+                  -10
+                ],
+                "skew_discrepancy": 30,
+                "l_inf_coordinate_budget": 15,
+                "l_1_global_budget": 15,
+                "pricing_alpha": 2,
+                "tax_alpha": 2,
+                "residual_vector": [
+                  12,
+                  -6
+                ],
+                "candidate_l1_cost": 18,
+                "candidate_l2_squared_cost": 180,
+                "candidate_linf_cost": 12,
+                "excess_l1_cost": 3,
+                "skew_surcharge_cents": 6,
+                "merchant_payout_cents": 867,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "SKEW_L2_NORM_ATTAINMENT_DIVERGENCE_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_skew",
+                    "action": "ALIGN_PRICING_SKEW_ALPHA_TO_L1_MINIMIZER_5",
+                    "target_pricing_alpha": 5,
+                    "target_residual_1": 15
+                  },
+                  "worker-1": {
+                    "module": "tax_skew",
+                    "action": "ALIGN_TAX_SKEW_ALPHA_TO_L1_MINIMIZER_5",
+                    "target_tax_alpha": 5,
+                    "target_residual_2": 0
+                  },
+                  "worker-2": {
+                    "module": "settlement_skew",
+                    "action": "REPAIR_SETTLEMENT_SKEW_NORM_GATE",
+                    "target_skew_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "B-wave-2",
+                "model_id": "deterministic",
+                "omega": [
+                  10,
+                  -10
+                ],
+                "skew_discrepancy": 30,
+                "l_inf_coordinate_budget": 15,
+                "l_1_global_budget": 15,
+                "pricing_alpha": 2,
+                "tax_alpha": 2,
+                "residual_vector": [
+                  12,
+                  -6
+                ],
+                "candidate_l1_cost": 18,
+                "candidate_l2_squared_cost": 180,
+                "candidate_linf_cost": 12,
+                "excess_l1_cost": 3,
+                "skew_surcharge_cents": 6,
+                "merchant_payout_cents": 867,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "SKEW_L2_NORM_ATTAINMENT_DIVERGENCE_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_skew",
+                    "action": "ALIGN_PRICING_SKEW_ALPHA_TO_L1_MINIMIZER_5",
+                    "target_pricing_alpha": 5,
+                    "target_residual_1": 15
+                  },
+                  "worker-1": {
+                    "module": "tax_skew",
+                    "action": "ALIGN_TAX_SKEW_ALPHA_TO_L1_MINIMIZER_5",
+                    "target_tax_alpha": 5,
+                    "target_residual_2": 0
+                  },
+                  "worker-2": {
+                    "module": "settlement_skew",
+                    "action": "REPAIR_SETTLEMENT_SKEW_NORM_GATE",
+                    "target_skew_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              }
+            ],
+            "receipt_sha256": "1dfd6e36c6ceab1f7cf52b53d9d8fe2ec1adbf9ff8246cc5d272f644683305cf"
+          },
+          "escalations": {},
+          "api_attempts": 12,
+          "cost_usd": "0.0137938163"
+        },
+        {
+          "arm": "C",
+          "status": "completed",
+          "waves_executed": 1,
+          "final_local_green": 1,
+          "final_global_green": 1,
+          "final_defect": 0,
+          "final_pricing_alpha": 5,
+          "final_tax_alpha": 5,
+          "final_residual_vector": [
+            15,
+            0
+          ],
+          "final_candidate_l1_cost": 15,
+          "final_excess_l1_cost": 0,
+          "final_skew_surcharge_cents": 0,
+          "final_merchant_payout_cents": 873,
+          "final_status": "SKEW_L1_MINIMUM_REPAIR_COHERENT_LGGG",
+          "final_receipt_sha256": "e99ec79443dbe8647632985283425b79e64f28e1328b10296d71fd6e63f0b304",
+          "final_receipt": {
+            "schema": "lggr.online_codebase_skew_repair.v1",
+            "authority_effect": "None",
+            "scope_id": "skew-repair-seed-12500-arm-C",
+            "status": "SKEW_L1_MINIMUM_REPAIR_COHERENT_LGGG",
+            "contract_status": "COMPOSABLE_LGGG",
+            "evaluation_count": 2,
+            "lggr_obstruction_count": 1,
+            "lggg_coherent_count": 1,
+            "skew_repair_receipt": {
+              "schema": "lggr.online_skew_repair.v1",
+              "authority_effect": "None",
+              "scope_id": "skew-repair-seed-12500-arm-C:skew",
+              "status": "SKEW_NORM_ATTAINMENT_DIVERGENCE_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "probe_count": 2,
+              "all_closed_form_identities_verified": true,
+              "skew_norm_divergence_probe_ids": [
+                "C-wave-0:skew"
+              ],
+              "rejected_probe_ids": [],
+              "probes": [
+                {
+                  "probe_id": "C-wave-0:skew",
+                  "omega": [
+                    "10",
+                    "-10"
+                  ],
+                  "skew_discrepancy_2a_minus_b": "30",
+                  "alpha_1": "5",
+                  "alpha_2": "2",
+                  "alpha_inf": "0",
+                  "phi_1": "15",
+                  "phi_2_squared": "180",
+                  "phi_inf": "10",
+                  "closed_form_identities_hold": true,
+                  "minimizers_strictly_diverge": true,
+                  "candidate_alpha": "0",
+                  "candidate_residual": [
+                    "10",
+                    "-10"
+                  ],
+                  "candidate_l1_cost": "20",
+                  "candidate_l2_squared_cost": "200",
+                  "candidate_linf_cost": "10",
+                  "l_inf_coordinate_budget": "15",
+                  "l_1_global_budget": "15",
+                  "local_coordinate_evaluators": [
+                    1,
+                    1
+                  ],
+                  "local_product_aggregator": 1,
+                  "global_l1_budget_evaluator": 0,
+                  "evaluator_defect": -1,
+                  "probe_status": "SKEW_NORM_ATTAINMENT_DIVERGENCE_LGGR"
+                },
+                {
+                  "probe_id": "C-wave-1:skew",
+                  "omega": [
+                    "10",
+                    "-10"
+                  ],
+                  "skew_discrepancy_2a_minus_b": "30",
+                  "alpha_1": "5",
+                  "alpha_2": "2",
+                  "alpha_inf": "0",
+                  "phi_1": "15",
+                  "phi_2_squared": "180",
+                  "phi_inf": "10",
+                  "closed_form_identities_hold": true,
+                  "minimizers_strictly_diverge": true,
+                  "candidate_alpha": "5",
+                  "candidate_residual": [
+                    "15",
+                    "0"
+                  ],
+                  "candidate_l1_cost": "15",
+                  "candidate_l2_squared_cost": "225",
+                  "candidate_linf_cost": "15",
+                  "l_inf_coordinate_budget": "15",
+                  "l_1_global_budget": "15",
+                  "local_coordinate_evaluators": [
+                    1,
+                    1
+                  ],
+                  "local_product_aggregator": 1,
+                  "global_l1_budget_evaluator": 1,
+                  "evaluator_defect": 0,
+                  "probe_status": "SKEW_REPAIR_BUDGET_COHERENT_LGGG"
+                }
+              ],
+              "receipt_sha256": "7cf05306dacd036911e4ae3329241345352ed24e84c9c17b65fc278f52495d91"
+            },
+            "fiber_receipt": {
+              "schema": "lggr.online_collision.v1",
+              "authority_effect": "None",
+              "scope_id": "streaming-fiber-scope",
+              "carrier_size": 2,
+              "status": "REPORT_INSUFFICIENT",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "collision": {
+                "left": {
+                  "state_id": "C-wave-0_deterministic",
+                  "report": {
+                    "l_inf_coordinate_budget": 15,
+                    "local_green": 1
+                  },
+                  "query": "LGGR",
+                  "metadata": {
+                    "candidate_l1_cost": 20,
+                    "excess_l1_cost": 5,
+                    "pricing_alpha": 0,
+                    "residual_vector": [
+                      10,
+                      -10
+                    ],
+                    "skew_surcharge_cents": 10,
+                    "tax_alpha": 0
+                  }
+                },
+                "right": {
+                  "state_id": "C-wave-1_deterministic",
+                  "report": {
+                    "l_inf_coordinate_budget": 15,
+                    "local_green": 1
+                  },
+                  "query": "LGGG",
+                  "metadata": {
+                    "candidate_l1_cost": 15,
+                    "excess_l1_cost": 0,
+                    "pricing_alpha": 5,
+                    "residual_vector": [
+                      15,
+                      0
+                    ],
+                    "skew_surcharge_cents": 0,
+                    "tax_alpha": 5
+                  }
+                }
+              },
+              "input_sha256": "63e7692002a63d8764bfb7354e8c68403439f8d396c420888f8ed6db43ff154c",
+              "meaning": "Boundary reports cannot determine this query on the supplied carrier.",
+              "receipt_sha256": "150e64de9e269e4a20edc8cf034024f8d8ace90123ce72aa80c3325f73b6eca7"
+            },
+            "three_phase_audits": [],
+            "evaluations": [
+              {
+                "evaluation_id": "C-wave-0",
+                "model_id": "deterministic",
+                "omega": [
+                  10,
+                  -10
+                ],
+                "skew_discrepancy": 30,
+                "l_inf_coordinate_budget": 15,
+                "l_1_global_budget": 15,
+                "pricing_alpha": 0,
+                "tax_alpha": 0,
+                "residual_vector": [
+                  10,
+                  -10
+                ],
+                "candidate_l1_cost": 20,
+                "candidate_l2_squared_cost": 200,
+                "candidate_linf_cost": 10,
+                "excess_l1_cost": 5,
+                "skew_surcharge_cents": 10,
+                "merchant_payout_cents": 863,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "SKEW_LINF_NORM_ATTAINMENT_DIVERGENCE_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_skew",
+                    "action": "ALIGN_PRICING_SKEW_ALPHA_TO_L1_MINIMIZER_5",
+                    "target_pricing_alpha": 5,
+                    "target_residual_1": 15
+                  },
+                  "worker-1": {
+                    "module": "tax_skew",
+                    "action": "ALIGN_TAX_SKEW_ALPHA_TO_L1_MINIMIZER_5",
+                    "target_tax_alpha": 5,
+                    "target_residual_2": 0
+                  },
+                  "worker-2": {
+                    "module": "settlement_skew",
+                    "action": "REPAIR_SETTLEMENT_SKEW_NORM_GATE",
+                    "target_skew_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "C-wave-1",
+                "model_id": "deterministic",
+                "omega": [
+                  10,
+                  -10
+                ],
+                "skew_discrepancy": 30,
+                "l_inf_coordinate_budget": 15,
+                "l_1_global_budget": 15,
+                "pricing_alpha": 5,
+                "tax_alpha": 5,
+                "residual_vector": [
+                  15,
+                  0
+                ],
+                "candidate_l1_cost": 15,
+                "candidate_l2_squared_cost": 225,
+                "candidate_linf_cost": 15,
+                "excess_l1_cost": 0,
+                "skew_surcharge_cents": 0,
+                "merchant_payout_cents": 873,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 1,
+                "defect": 0,
+                "status": "SKEW_L1_MINIMUM_REPAIR_COHERENT_LGGG",
+                "contract_status": "COMPOSABLE_LGGG",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_skew",
+                    "action": "HOLD_L1_OPTIMAL_SKEW_ALPHA_5",
+                    "target_pricing_alpha": 5,
+                    "target_residual_1": 15
+                  },
+                  "worker-1": {
+                    "module": "tax_skew",
+                    "action": "HOLD_L1_OPTIMAL_SKEW_ALPHA_5",
+                    "target_tax_alpha": 5,
+                    "target_residual_2": 0
+                  },
+                  "worker-2": {
+                    "module": "settlement_skew",
+                    "action": "HOLD_ZERO_SKEW_REPAIR_SURCHARGE",
+                    "target_skew_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              }
+            ],
+            "receipt_sha256": "e99ec79443dbe8647632985283425b79e64f28e1328b10296d71fd6e63f0b304"
+          },
+          "escalations": {},
+          "api_attempts": 6,
+          "cost_usd": "0.0068793093"
+        }
+      ]
+    },
+    {
+      "seed": 12501,
+      "kind": "infeasible_hardware_locked_skew_linf_norm_minimizer",
+      "arms": [
+        {
+          "arm": "A",
+          "status": "safe_escalated",
+          "waves_executed": 1,
+          "final_local_green": 0,
+          "final_global_green": 0,
+          "final_defect": 0,
+          "final_pricing_alpha": 0,
+          "final_tax_alpha": 0,
+          "final_residual_vector": [
+            10,
+            -10
+          ],
+          "final_candidate_l1_cost": 20,
+          "final_excess_l1_cost": 5,
+          "final_skew_surcharge_cents": 10,
+          "final_merchant_payout_cents": 863,
+          "final_status": "INFEASIBLE_SKEW_REPAIR_SPECIFICATION_LGGR",
+          "final_receipt_sha256": "97dd8714916a2c40346bb003c584e99acb8213a723583b78db6b8d4590ecde68",
+          "final_receipt": {
+            "schema": "lggr.online_codebase_skew_repair.v1",
+            "authority_effect": "None",
+            "scope_id": "skew-repair-seed-12501-arm-A",
+            "status": "INFEASIBLE_SKEW_REPAIR_SPECIFICATION_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR",
+            "evaluation_count": 2,
+            "lggr_obstruction_count": 0,
+            "lggg_coherent_count": 0,
+            "skew_repair_receipt": {
+              "schema": "lggr.online_skew_repair.v1",
+              "authority_effect": "None",
+              "scope_id": "skew-repair-seed-12501-arm-A:skew",
+              "status": "SKEW_NORM_ATTAINMENT_DIVERGENCE_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "probe_count": 2,
+              "all_closed_form_identities_verified": true,
+              "skew_norm_divergence_probe_ids": [
+                "A-wave-0:skew",
+                "A-wave-1:skew"
+              ],
+              "rejected_probe_ids": [],
+              "probes": [
+                {
+                  "probe_id": "A-wave-0:skew",
+                  "omega": [
+                    "10",
+                    "-10"
+                  ],
+                  "skew_discrepancy_2a_minus_b": "30",
+                  "alpha_1": "5",
+                  "alpha_2": "2",
+                  "alpha_inf": "0",
+                  "phi_1": "15",
+                  "phi_2_squared": "180",
+                  "phi_inf": "10",
+                  "closed_form_identities_hold": true,
+                  "minimizers_strictly_diverge": true,
+                  "candidate_alpha": "0",
+                  "candidate_residual": [
+                    "10",
+                    "-10"
+                  ],
+                  "candidate_l1_cost": "20",
+                  "candidate_l2_squared_cost": "200",
+                  "candidate_linf_cost": "10",
+                  "l_inf_coordinate_budget": "15",
+                  "l_1_global_budget": "15",
+                  "local_coordinate_evaluators": [
+                    1,
+                    1
+                  ],
+                  "local_product_aggregator": 1,
+                  "global_l1_budget_evaluator": 0,
+                  "evaluator_defect": -1,
+                  "probe_status": "SKEW_NORM_ATTAINMENT_DIVERGENCE_LGGR"
+                },
+                {
+                  "probe_id": "A-wave-1:skew",
+                  "omega": [
+                    "10",
+                    "-10"
+                  ],
+                  "skew_discrepancy_2a_minus_b": "30",
+                  "alpha_1": "5",
+                  "alpha_2": "2",
+                  "alpha_inf": "0",
+                  "phi_1": "15",
+                  "phi_2_squared": "180",
+                  "phi_inf": "10",
+                  "closed_form_identities_hold": true,
+                  "minimizers_strictly_diverge": true,
+                  "candidate_alpha": "0",
+                  "candidate_residual": [
+                    "10",
+                    "-10"
+                  ],
+                  "candidate_l1_cost": "20",
+                  "candidate_l2_squared_cost": "200",
+                  "candidate_linf_cost": "10",
+                  "l_inf_coordinate_budget": "15",
+                  "l_1_global_budget": "15",
+                  "local_coordinate_evaluators": [
+                    1,
+                    1
+                  ],
+                  "local_product_aggregator": 1,
+                  "global_l1_budget_evaluator": 0,
+                  "evaluator_defect": -1,
+                  "probe_status": "SKEW_NORM_ATTAINMENT_DIVERGENCE_LGGR"
+                }
+              ],
+              "receipt_sha256": "67896b8e564e0feefcfb9d5ff0b7b655467f2dbaab4526eb3b648c4e07b1825e"
+            },
+            "fiber_receipt": {
+              "schema": "lggr.descent.v1",
+              "authority_effect": "None",
+              "scope_id": "streaming-fiber-scope",
+              "carrier_size": 2,
+              "status": "DECODER_VERIFIED",
+              "contract_status": "COMPOSABLE_LGGG",
+              "decoder": [
+                {
+                  "report": {
+                    "l_inf_coordinate_budget": 15,
+                    "local_green": 0
+                  },
+                  "query": "LGGR"
+                }
+              ],
+              "input_sha256": "8ae42a3840244341f447e114f0c2b9bf41077544ecfacd4a586edb1ef70b0ca2",
+              "meaning": "The supplied query is constant on every realized report fiber in this stream.",
+              "receipt_sha256": "addacdb6067ee1ab1f81f648d628708cac655fe00169d871057248d6500d349a"
+            },
+            "three_phase_audits": [],
+            "evaluations": [
+              {
+                "evaluation_id": "A-wave-0",
+                "model_id": "deterministic",
+                "omega": [
+                  10,
+                  -10
+                ],
+                "skew_discrepancy": 30,
+                "l_inf_coordinate_budget": 15,
+                "l_1_global_budget": 15,
+                "pricing_alpha": 0,
+                "tax_alpha": 0,
+                "residual_vector": [
+                  10,
+                  -10
+                ],
+                "candidate_l1_cost": 20,
+                "candidate_l2_squared_cost": 200,
+                "candidate_linf_cost": 10,
+                "excess_l1_cost": 5,
+                "skew_surcharge_cents": 10,
+                "merchant_payout_cents": 863,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 0,
+                "global_green": 0,
+                "defect": 0,
+                "status": "INFEASIBLE_SKEW_REPAIR_SPECIFICATION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_skew",
+                    "action": "ALIGN_PRICING_SKEW_ALPHA_TO_L1_MINIMIZER_5",
+                    "target_pricing_alpha": 5,
+                    "target_residual_1": 15
+                  },
+                  "worker-1": {
+                    "module": "tax_skew",
+                    "action": "ALIGN_TAX_SKEW_ALPHA_TO_L1_MINIMIZER_5",
+                    "target_tax_alpha": 5,
+                    "target_residual_2": 0
+                  },
+                  "worker-2": {
+                    "module": "settlement_skew",
+                    "action": "REPAIR_SETTLEMENT_SKEW_NORM_GATE",
+                    "target_skew_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "A-wave-1",
+                "model_id": "deterministic",
+                "omega": [
+                  10,
+                  -10
+                ],
+                "skew_discrepancy": 30,
+                "l_inf_coordinate_budget": 15,
+                "l_1_global_budget": 15,
+                "pricing_alpha": 0,
+                "tax_alpha": 0,
+                "residual_vector": [
+                  10,
+                  -10
+                ],
+                "candidate_l1_cost": 20,
+                "candidate_l2_squared_cost": 200,
+                "candidate_linf_cost": 10,
+                "excess_l1_cost": 5,
+                "skew_surcharge_cents": 10,
+                "merchant_payout_cents": 863,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 0,
+                "global_green": 0,
+                "defect": 0,
+                "status": "INFEASIBLE_SKEW_REPAIR_SPECIFICATION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_skew",
+                    "action": "ALIGN_PRICING_SKEW_ALPHA_TO_L1_MINIMIZER_5",
+                    "target_pricing_alpha": 5,
+                    "target_residual_1": 15
+                  },
+                  "worker-1": {
+                    "module": "tax_skew",
+                    "action": "ALIGN_TAX_SKEW_ALPHA_TO_L1_MINIMIZER_5",
+                    "target_tax_alpha": 5,
+                    "target_residual_2": 0
+                  },
+                  "worker-2": {
+                    "module": "settlement_skew",
+                    "action": "REPAIR_SETTLEMENT_SKEW_NORM_GATE",
+                    "target_skew_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              }
+            ],
+            "receipt_sha256": "97dd8714916a2c40346bb003c584e99acb8213a723583b78db6b8d4590ecde68"
+          },
+          "escalations": {
+            "worker-0": "Legacy skew-coboundary ROM lock: `pricing_skew.py` is locked in read-only ROM with coordinatewise l^infty minimizer `pricing_alpha = 0` (`residual_1 = 10`, `||r(0)||_1 = 20 > Phi_1 = 15`), while the LGGR skew-repair merge gate requires alignment to the l^1 minimizer `alpha_1 = 5` (`residual_vector = [15, 0]`, `excess_l1_cost == 0`, `skew_surcharge_cents == 0`).",
+            "worker-2": "Legacy skew-coboundary ROM lock: `pricing_skew.py` is locked in read-only ROM with coordinatewise l^infty minimizer `pricing_alpha = 0` (`residual_1 = 10`, `||r(0)||_1 = 20 > Phi_1 = 15`), while the LGGR skew-repair merge gate requires alignment to the l^1 minimizer `alpha_1 = 5` (`residual_vector = [15, 0]`, `excess_l1_cost == 0`, `skew_surcharge_cents == 0`). Escalate to human architecture review."
+          },
+          "api_attempts": 6,
+          "cost_usd": "0.0076110853"
+        },
+        {
+          "arm": "B",
+          "status": "safe_escalated",
+          "waves_executed": 1,
+          "final_local_green": 0,
+          "final_global_green": 0,
+          "final_defect": 0,
+          "final_pricing_alpha": 0,
+          "final_tax_alpha": 0,
+          "final_residual_vector": [
+            10,
+            -10
+          ],
+          "final_candidate_l1_cost": 20,
+          "final_excess_l1_cost": 5,
+          "final_skew_surcharge_cents": 10,
+          "final_merchant_payout_cents": 863,
+          "final_status": "INFEASIBLE_SKEW_REPAIR_SPECIFICATION_LGGR",
+          "final_receipt_sha256": "b40809ec42ccccf2844cd46c45dd640eea2d02e836ce084d8ebf7ab4b9ad887b",
+          "final_receipt": {
+            "schema": "lggr.online_codebase_skew_repair.v1",
+            "authority_effect": "None",
+            "scope_id": "skew-repair-seed-12501-arm-B",
+            "status": "INFEASIBLE_SKEW_REPAIR_SPECIFICATION_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR",
+            "evaluation_count": 2,
+            "lggr_obstruction_count": 0,
+            "lggg_coherent_count": 0,
+            "skew_repair_receipt": {
+              "schema": "lggr.online_skew_repair.v1",
+              "authority_effect": "None",
+              "scope_id": "skew-repair-seed-12501-arm-B:skew",
+              "status": "SKEW_NORM_ATTAINMENT_DIVERGENCE_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "probe_count": 2,
+              "all_closed_form_identities_verified": true,
+              "skew_norm_divergence_probe_ids": [
+                "B-wave-0:skew",
+                "B-wave-1:skew"
+              ],
+              "rejected_probe_ids": [],
+              "probes": [
+                {
+                  "probe_id": "B-wave-0:skew",
+                  "omega": [
+                    "10",
+                    "-10"
+                  ],
+                  "skew_discrepancy_2a_minus_b": "30",
+                  "alpha_1": "5",
+                  "alpha_2": "2",
+                  "alpha_inf": "0",
+                  "phi_1": "15",
+                  "phi_2_squared": "180",
+                  "phi_inf": "10",
+                  "closed_form_identities_hold": true,
+                  "minimizers_strictly_diverge": true,
+                  "candidate_alpha": "0",
+                  "candidate_residual": [
+                    "10",
+                    "-10"
+                  ],
+                  "candidate_l1_cost": "20",
+                  "candidate_l2_squared_cost": "200",
+                  "candidate_linf_cost": "10",
+                  "l_inf_coordinate_budget": "15",
+                  "l_1_global_budget": "15",
+                  "local_coordinate_evaluators": [
+                    1,
+                    1
+                  ],
+                  "local_product_aggregator": 1,
+                  "global_l1_budget_evaluator": 0,
+                  "evaluator_defect": -1,
+                  "probe_status": "SKEW_NORM_ATTAINMENT_DIVERGENCE_LGGR"
+                },
+                {
+                  "probe_id": "B-wave-1:skew",
+                  "omega": [
+                    "10",
+                    "-10"
+                  ],
+                  "skew_discrepancy_2a_minus_b": "30",
+                  "alpha_1": "5",
+                  "alpha_2": "2",
+                  "alpha_inf": "0",
+                  "phi_1": "15",
+                  "phi_2_squared": "180",
+                  "phi_inf": "10",
+                  "closed_form_identities_hold": true,
+                  "minimizers_strictly_diverge": true,
+                  "candidate_alpha": "0",
+                  "candidate_residual": [
+                    "10",
+                    "-10"
+                  ],
+                  "candidate_l1_cost": "20",
+                  "candidate_l2_squared_cost": "200",
+                  "candidate_linf_cost": "10",
+                  "l_inf_coordinate_budget": "15",
+                  "l_1_global_budget": "15",
+                  "local_coordinate_evaluators": [
+                    1,
+                    1
+                  ],
+                  "local_product_aggregator": 1,
+                  "global_l1_budget_evaluator": 0,
+                  "evaluator_defect": -1,
+                  "probe_status": "SKEW_NORM_ATTAINMENT_DIVERGENCE_LGGR"
+                }
+              ],
+              "receipt_sha256": "7be4c50b217fcc77f0e788429a912e079d9b5a13beffbd3618d59df5c726dbdd"
+            },
+            "fiber_receipt": {
+              "schema": "lggr.descent.v1",
+              "authority_effect": "None",
+              "scope_id": "streaming-fiber-scope",
+              "carrier_size": 2,
+              "status": "DECODER_VERIFIED",
+              "contract_status": "COMPOSABLE_LGGG",
+              "decoder": [
+                {
+                  "report": {
+                    "l_inf_coordinate_budget": 15,
+                    "local_green": 0
+                  },
+                  "query": "LGGR"
+                }
+              ],
+              "input_sha256": "f9b2189585547338879470f31515619575b765c23757e89e75d0c4460e59f5e5",
+              "meaning": "The supplied query is constant on every realized report fiber in this stream.",
+              "receipt_sha256": "8033807a2a171c32103d3c93c6d2b085db835ac407051855822b9256a885617d"
+            },
+            "three_phase_audits": [],
+            "evaluations": [
+              {
+                "evaluation_id": "B-wave-0",
+                "model_id": "deterministic",
+                "omega": [
+                  10,
+                  -10
+                ],
+                "skew_discrepancy": 30,
+                "l_inf_coordinate_budget": 15,
+                "l_1_global_budget": 15,
+                "pricing_alpha": 0,
+                "tax_alpha": 0,
+                "residual_vector": [
+                  10,
+                  -10
+                ],
+                "candidate_l1_cost": 20,
+                "candidate_l2_squared_cost": 200,
+                "candidate_linf_cost": 10,
+                "excess_l1_cost": 5,
+                "skew_surcharge_cents": 10,
+                "merchant_payout_cents": 863,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 0,
+                "global_green": 0,
+                "defect": 0,
+                "status": "INFEASIBLE_SKEW_REPAIR_SPECIFICATION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_skew",
+                    "action": "ALIGN_PRICING_SKEW_ALPHA_TO_L1_MINIMIZER_5",
+                    "target_pricing_alpha": 5,
+                    "target_residual_1": 15
+                  },
+                  "worker-1": {
+                    "module": "tax_skew",
+                    "action": "ALIGN_TAX_SKEW_ALPHA_TO_L1_MINIMIZER_5",
+                    "target_tax_alpha": 5,
+                    "target_residual_2": 0
+                  },
+                  "worker-2": {
+                    "module": "settlement_skew",
+                    "action": "REPAIR_SETTLEMENT_SKEW_NORM_GATE",
+                    "target_skew_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "B-wave-1",
+                "model_id": "deterministic",
+                "omega": [
+                  10,
+                  -10
+                ],
+                "skew_discrepancy": 30,
+                "l_inf_coordinate_budget": 15,
+                "l_1_global_budget": 15,
+                "pricing_alpha": 0,
+                "tax_alpha": 0,
+                "residual_vector": [
+                  10,
+                  -10
+                ],
+                "candidate_l1_cost": 20,
+                "candidate_l2_squared_cost": 200,
+                "candidate_linf_cost": 10,
+                "excess_l1_cost": 5,
+                "skew_surcharge_cents": 10,
+                "merchant_payout_cents": 863,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 0,
+                "global_green": 0,
+                "defect": 0,
+                "status": "INFEASIBLE_SKEW_REPAIR_SPECIFICATION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_skew",
+                    "action": "ALIGN_PRICING_SKEW_ALPHA_TO_L1_MINIMIZER_5",
+                    "target_pricing_alpha": 5,
+                    "target_residual_1": 15
+                  },
+                  "worker-1": {
+                    "module": "tax_skew",
+                    "action": "ALIGN_TAX_SKEW_ALPHA_TO_L1_MINIMIZER_5",
+                    "target_tax_alpha": 5,
+                    "target_residual_2": 0
+                  },
+                  "worker-2": {
+                    "module": "settlement_skew",
+                    "action": "REPAIR_SETTLEMENT_SKEW_NORM_GATE",
+                    "target_skew_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              }
+            ],
+            "receipt_sha256": "b40809ec42ccccf2844cd46c45dd640eea2d02e836ce084d8ebf7ab4b9ad887b"
+          },
+          "escalations": {
+            "worker-0": "Legacy skew-coboundary ROM lock: `pricing_skew.py` is locked in read-only ROM with coordinatewise l^infty minimizer `pricing_alpha = 0` (`residual_1 = 10`, `||r(0)||_1 = 20 > Phi_1 = 15`), while the LGGR skew-repair merge gate requires alignment to the l^1 minimizer `alpha_1 = 5` (`residual_vector = [15, 0]`, `excess_l1_cost == 0`, `skew_surcharge_cents == 0`).",
+            "worker-1": "Legacy skew-coboundary ROM lock: `pricing_skew.py` is locked in read-only ROM with coordinatewise l^infty minimizer `pricing_alpha = 0` (`residual_1 = 10`, `||r(0)||_1 = 20 > Phi_1 = 15`), while the LGGR skew-repair merge gate requires alignment to the l^1 minimizer `alpha_1 = 5` (`residual_vector = [15, 0]`, `excess_l1_cost == 0`, `skew_surcharge_cents == 0`). The upstream module lock prevents feasible resolution within `tax_skew.py` permissions. Requires human architecture review to unlock `pricing_skew.py` or coordinate global alpha strategy.",
+            "worker-2": "Legacy skew-coboundary ROM lock: `pricing_skew.py` is locked in read-only ROM with coordinatewise l^infty minimizer `pricing_alpha = 0` (`residual_1 = 10`, `||r(0)||_1 = 20 > Phi_1 = 15`), while the LGGR skew-repair merge gate requires alignment to the l^1 minimizer `alpha_1 = 5` (`residual_vector = [15, 0]`, `excess_l1_cost == 0`, `skew_surcharge_cents == 0`). Escalate to human architecture review."
+          },
+          "api_attempts": 6,
+          "cost_usd": "0.0076887475"
+        },
+        {
+          "arm": "C",
+          "status": "safe_escalated",
+          "waves_executed": 1,
+          "final_local_green": 0,
+          "final_global_green": 0,
+          "final_defect": 0,
+          "final_pricing_alpha": 0,
+          "final_tax_alpha": 0,
+          "final_residual_vector": [
+            10,
+            -10
+          ],
+          "final_candidate_l1_cost": 20,
+          "final_excess_l1_cost": 5,
+          "final_skew_surcharge_cents": 10,
+          "final_merchant_payout_cents": 863,
+          "final_status": "INFEASIBLE_SKEW_REPAIR_SPECIFICATION_LGGR",
+          "final_receipt_sha256": "693dae666452faeb4e295536034bd5479b23cfec67d8ea98d4504b1b1fa6d59e",
+          "final_receipt": {
+            "schema": "lggr.online_codebase_skew_repair.v1",
+            "authority_effect": "None",
+            "scope_id": "skew-repair-seed-12501-arm-C",
+            "status": "INFEASIBLE_SKEW_REPAIR_SPECIFICATION_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR",
+            "evaluation_count": 2,
+            "lggr_obstruction_count": 0,
+            "lggg_coherent_count": 0,
+            "skew_repair_receipt": {
+              "schema": "lggr.online_skew_repair.v1",
+              "authority_effect": "None",
+              "scope_id": "skew-repair-seed-12501-arm-C:skew",
+              "status": "SKEW_NORM_ATTAINMENT_DIVERGENCE_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "probe_count": 2,
+              "all_closed_form_identities_verified": true,
+              "skew_norm_divergence_probe_ids": [
+                "C-wave-0:skew",
+                "C-wave-1:skew"
+              ],
+              "rejected_probe_ids": [],
+              "probes": [
+                {
+                  "probe_id": "C-wave-0:skew",
+                  "omega": [
+                    "10",
+                    "-10"
+                  ],
+                  "skew_discrepancy_2a_minus_b": "30",
+                  "alpha_1": "5",
+                  "alpha_2": "2",
+                  "alpha_inf": "0",
+                  "phi_1": "15",
+                  "phi_2_squared": "180",
+                  "phi_inf": "10",
+                  "closed_form_identities_hold": true,
+                  "minimizers_strictly_diverge": true,
+                  "candidate_alpha": "0",
+                  "candidate_residual": [
+                    "10",
+                    "-10"
+                  ],
+                  "candidate_l1_cost": "20",
+                  "candidate_l2_squared_cost": "200",
+                  "candidate_linf_cost": "10",
+                  "l_inf_coordinate_budget": "15",
+                  "l_1_global_budget": "15",
+                  "local_coordinate_evaluators": [
+                    1,
+                    1
+                  ],
+                  "local_product_aggregator": 1,
+                  "global_l1_budget_evaluator": 0,
+                  "evaluator_defect": -1,
+                  "probe_status": "SKEW_NORM_ATTAINMENT_DIVERGENCE_LGGR"
+                },
+                {
+                  "probe_id": "C-wave-1:skew",
+                  "omega": [
+                    "10",
+                    "-10"
+                  ],
+                  "skew_discrepancy_2a_minus_b": "30",
+                  "alpha_1": "5",
+                  "alpha_2": "2",
+                  "alpha_inf": "0",
+                  "phi_1": "15",
+                  "phi_2_squared": "180",
+                  "phi_inf": "10",
+                  "closed_form_identities_hold": true,
+                  "minimizers_strictly_diverge": true,
+                  "candidate_alpha": "0",
+                  "candidate_residual": [
+                    "10",
+                    "-10"
+                  ],
+                  "candidate_l1_cost": "20",
+                  "candidate_l2_squared_cost": "200",
+                  "candidate_linf_cost": "10",
+                  "l_inf_coordinate_budget": "15",
+                  "l_1_global_budget": "15",
+                  "local_coordinate_evaluators": [
+                    1,
+                    1
+                  ],
+                  "local_product_aggregator": 1,
+                  "global_l1_budget_evaluator": 0,
+                  "evaluator_defect": -1,
+                  "probe_status": "SKEW_NORM_ATTAINMENT_DIVERGENCE_LGGR"
+                }
+              ],
+              "receipt_sha256": "17e5d6dafc3bdb91700bdb80b8ccf3dcaf89c271586baa346b4b24c69afc3d40"
+            },
+            "fiber_receipt": {
+              "schema": "lggr.descent.v1",
+              "authority_effect": "None",
+              "scope_id": "streaming-fiber-scope",
+              "carrier_size": 2,
+              "status": "DECODER_VERIFIED",
+              "contract_status": "COMPOSABLE_LGGG",
+              "decoder": [
+                {
+                  "report": {
+                    "l_inf_coordinate_budget": 15,
+                    "local_green": 0
+                  },
+                  "query": "LGGR"
+                }
+              ],
+              "input_sha256": "da0ef0268ed3cfad094173c51c39baad1796e3b43df44a19e0be1fe0c6f3158e",
+              "meaning": "The supplied query is constant on every realized report fiber in this stream.",
+              "receipt_sha256": "78a2a16e00351397491e1cd562ac89b0d8f6ffd457d319c5995475c4b6d0bf0e"
+            },
+            "three_phase_audits": [],
+            "evaluations": [
+              {
+                "evaluation_id": "C-wave-0",
+                "model_id": "deterministic",
+                "omega": [
+                  10,
+                  -10
+                ],
+                "skew_discrepancy": 30,
+                "l_inf_coordinate_budget": 15,
+                "l_1_global_budget": 15,
+                "pricing_alpha": 0,
+                "tax_alpha": 0,
+                "residual_vector": [
+                  10,
+                  -10
+                ],
+                "candidate_l1_cost": 20,
+                "candidate_l2_squared_cost": 200,
+                "candidate_linf_cost": 10,
+                "excess_l1_cost": 5,
+                "skew_surcharge_cents": 10,
+                "merchant_payout_cents": 863,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 0,
+                "global_green": 0,
+                "defect": 0,
+                "status": "INFEASIBLE_SKEW_REPAIR_SPECIFICATION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_skew",
+                    "action": "ALIGN_PRICING_SKEW_ALPHA_TO_L1_MINIMIZER_5",
+                    "target_pricing_alpha": 5,
+                    "target_residual_1": 15
+                  },
+                  "worker-1": {
+                    "module": "tax_skew",
+                    "action": "ALIGN_TAX_SKEW_ALPHA_TO_L1_MINIMIZER_5",
+                    "target_tax_alpha": 5,
+                    "target_residual_2": 0
+                  },
+                  "worker-2": {
+                    "module": "settlement_skew",
+                    "action": "REPAIR_SETTLEMENT_SKEW_NORM_GATE",
+                    "target_skew_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "C-wave-1",
+                "model_id": "deterministic",
+                "omega": [
+                  10,
+                  -10
+                ],
+                "skew_discrepancy": 30,
+                "l_inf_coordinate_budget": 15,
+                "l_1_global_budget": 15,
+                "pricing_alpha": 0,
+                "tax_alpha": 0,
+                "residual_vector": [
+                  10,
+                  -10
+                ],
+                "candidate_l1_cost": 20,
+                "candidate_l2_squared_cost": 200,
+                "candidate_linf_cost": 10,
+                "excess_l1_cost": 5,
+                "skew_surcharge_cents": 10,
+                "merchant_payout_cents": 863,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 0,
+                "global_green": 0,
+                "defect": 0,
+                "status": "INFEASIBLE_SKEW_REPAIR_SPECIFICATION_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_skew",
+                    "action": "ALIGN_PRICING_SKEW_ALPHA_TO_L1_MINIMIZER_5",
+                    "target_pricing_alpha": 5,
+                    "target_residual_1": 15
+                  },
+                  "worker-1": {
+                    "module": "tax_skew",
+                    "action": "ALIGN_TAX_SKEW_ALPHA_TO_L1_MINIMIZER_5",
+                    "target_tax_alpha": 5,
+                    "target_residual_2": 0
+                  },
+                  "worker-2": {
+                    "module": "settlement_skew",
+                    "action": "REPAIR_SETTLEMENT_SKEW_NORM_GATE",
+                    "target_skew_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              }
+            ],
+            "receipt_sha256": "693dae666452faeb4e295536034bd5479b23cfec67d8ea98d4504b1b1fa6d59e"
+          },
+          "escalations": {
+            "worker-0": "Legacy skew-coboundary ROM lock: `pricing_skew.py` is locked in read-only ROM with coordinatewise l^infty minimizer `pricing_alpha = 0` (`residual_1 = 10`, `||r(0)||_1 = 20 > Phi_1 = 15`), while the LGGR skew-repair merge gate requires alignment to the l^1 minimizer `alpha_1 = 5` (`residual_vector = [15, 0]`, `excess_l1_cost == 0`, `skew_surcharge_cents == 0`). Escalate to human architecture review.",
+            "worker-2": "Legacy skew-coboundary ROM lock: `pricing_skew.py` is locked in read-only ROM with coordinatewise l^infty minimizer `pricing_alpha = 0` (`residual_1 = 10`, `||r(0)||_1 = 20 > Phi_1 = 15`), while the LGGR skew-repair merge gate requires alignment to the l^1 minimizer `alpha_1 = 5` (`residual_vector = [15, 0]`, `excess_l1_cost == 0`, `skew_surcharge_cents == 0`). Escalate to human architecture review."
+          },
+          "api_attempts": 6,
+          "cost_usd": "0.0077597242"
+        }
+      ]
+    },
+    {
+      "seed": 12502,
+      "kind": "repairable_skew_repair_norm_attainment_divergence_defect",
+      "arms": [
+        {
+          "arm": "A",
+          "status": "blocked_unresolved",
+          "waves_executed": 2,
+          "final_local_green": 1,
+          "final_global_green": 0,
+          "final_defect": -1,
+          "final_pricing_alpha": 0,
+          "final_tax_alpha": 0,
+          "final_residual_vector": [
+            10,
+            -10
+          ],
+          "final_candidate_l1_cost": 20,
+          "final_excess_l1_cost": 5,
+          "final_skew_surcharge_cents": 10,
+          "final_merchant_payout_cents": 863,
+          "final_status": "SKEW_LINF_NORM_ATTAINMENT_DIVERGENCE_LGGR",
+          "final_receipt_sha256": "1d7fc07be84c4c10af68fdfe8944f318df998b06d8fee261ee1ca6aea0c79a05",
+          "final_receipt": {
+            "schema": "lggr.online_codebase_skew_repair.v1",
+            "authority_effect": "None",
+            "scope_id": "skew-repair-seed-12502-arm-A",
+            "status": "SKEW_LINF_NORM_ATTAINMENT_DIVERGENCE_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR",
+            "evaluation_count": 3,
+            "lggr_obstruction_count": 3,
+            "lggg_coherent_count": 0,
+            "skew_repair_receipt": {
+              "schema": "lggr.online_skew_repair.v1",
+              "authority_effect": "None",
+              "scope_id": "skew-repair-seed-12502-arm-A:skew",
+              "status": "SKEW_NORM_ATTAINMENT_DIVERGENCE_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "probe_count": 3,
+              "all_closed_form_identities_verified": true,
+              "skew_norm_divergence_probe_ids": [
+                "A-wave-0:skew",
+                "A-wave-1:skew",
+                "A-wave-2:skew"
+              ],
+              "rejected_probe_ids": [],
+              "probes": [
+                {
+                  "probe_id": "A-wave-0:skew",
+                  "omega": [
+                    "10",
+                    "-10"
+                  ],
+                  "skew_discrepancy_2a_minus_b": "30",
+                  "alpha_1": "5",
+                  "alpha_2": "2",
+                  "alpha_inf": "0",
+                  "phi_1": "15",
+                  "phi_2_squared": "180",
+                  "phi_inf": "10",
+                  "closed_form_identities_hold": true,
+                  "minimizers_strictly_diverge": true,
+                  "candidate_alpha": "0",
+                  "candidate_residual": [
+                    "10",
+                    "-10"
+                  ],
+                  "candidate_l1_cost": "20",
+                  "candidate_l2_squared_cost": "200",
+                  "candidate_linf_cost": "10",
+                  "l_inf_coordinate_budget": "15",
+                  "l_1_global_budget": "15",
+                  "local_coordinate_evaluators": [
+                    1,
+                    1
+                  ],
+                  "local_product_aggregator": 1,
+                  "global_l1_budget_evaluator": 0,
+                  "evaluator_defect": -1,
+                  "probe_status": "SKEW_NORM_ATTAINMENT_DIVERGENCE_LGGR"
+                },
+                {
+                  "probe_id": "A-wave-1:skew",
+                  "omega": [
+                    "10",
+                    "-10"
+                  ],
+                  "skew_discrepancy_2a_minus_b": "30",
+                  "alpha_1": "5",
+                  "alpha_2": "2",
+                  "alpha_inf": "0",
+                  "phi_1": "15",
+                  "phi_2_squared": "180",
+                  "phi_inf": "10",
+                  "closed_form_identities_hold": true,
+                  "minimizers_strictly_diverge": true,
+                  "candidate_alpha": "0",
+                  "candidate_residual": [
+                    "10",
+                    "-10"
+                  ],
+                  "candidate_l1_cost": "20",
+                  "candidate_l2_squared_cost": "200",
+                  "candidate_linf_cost": "10",
+                  "l_inf_coordinate_budget": "15",
+                  "l_1_global_budget": "15",
+                  "local_coordinate_evaluators": [
+                    1,
+                    1
+                  ],
+                  "local_product_aggregator": 1,
+                  "global_l1_budget_evaluator": 0,
+                  "evaluator_defect": -1,
+                  "probe_status": "SKEW_NORM_ATTAINMENT_DIVERGENCE_LGGR"
+                },
+                {
+                  "probe_id": "A-wave-2:skew",
+                  "omega": [
+                    "10",
+                    "-10"
+                  ],
+                  "skew_discrepancy_2a_minus_b": "30",
+                  "alpha_1": "5",
+                  "alpha_2": "2",
+                  "alpha_inf": "0",
+                  "phi_1": "15",
+                  "phi_2_squared": "180",
+                  "phi_inf": "10",
+                  "closed_form_identities_hold": true,
+                  "minimizers_strictly_diverge": true,
+                  "candidate_alpha": "0",
+                  "candidate_residual": [
+                    "10",
+                    "-10"
+                  ],
+                  "candidate_l1_cost": "20",
+                  "candidate_l2_squared_cost": "200",
+                  "candidate_linf_cost": "10",
+                  "l_inf_coordinate_budget": "15",
+                  "l_1_global_budget": "15",
+                  "local_coordinate_evaluators": [
+                    1,
+                    1
+                  ],
+                  "local_product_aggregator": 1,
+                  "global_l1_budget_evaluator": 0,
+                  "evaluator_defect": -1,
+                  "probe_status": "SKEW_NORM_ATTAINMENT_DIVERGENCE_LGGR"
+                }
+              ],
+              "receipt_sha256": "a46d89d25826c44d74de091ff5855f17ddd0bb208bbb07911927a81326194c39"
+            },
+            "fiber_receipt": {
+              "schema": "lggr.descent.v1",
+              "authority_effect": "None",
+              "scope_id": "streaming-fiber-scope",
+              "carrier_size": 3,
+              "status": "DECODER_VERIFIED",
+              "contract_status": "COMPOSABLE_LGGG",
+              "decoder": [
+                {
+                  "report": {
+                    "l_inf_coordinate_budget": 15,
+                    "local_green": 1
+                  },
+                  "query": "LGGR"
+                }
+              ],
+              "input_sha256": "a28be7157fe9e050c07ef136e2862707983198cfbcab95e3709b013843eafac4",
+              "meaning": "The supplied query is constant on every realized report fiber in this stream.",
+              "receipt_sha256": "39df8268044735bbf3a3645c30dd576cd31baa743aabda4f741063624823ce92"
+            },
+            "three_phase_audits": [],
+            "evaluations": [
+              {
+                "evaluation_id": "A-wave-0",
+                "model_id": "deterministic",
+                "omega": [
+                  10,
+                  -10
+                ],
+                "skew_discrepancy": 30,
+                "l_inf_coordinate_budget": 15,
+                "l_1_global_budget": 15,
+                "pricing_alpha": 0,
+                "tax_alpha": 0,
+                "residual_vector": [
+                  10,
+                  -10
+                ],
+                "candidate_l1_cost": 20,
+                "candidate_l2_squared_cost": 200,
+                "candidate_linf_cost": 10,
+                "excess_l1_cost": 5,
+                "skew_surcharge_cents": 10,
+                "merchant_payout_cents": 863,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "SKEW_LINF_NORM_ATTAINMENT_DIVERGENCE_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_skew",
+                    "action": "ALIGN_PRICING_SKEW_ALPHA_TO_L1_MINIMIZER_5",
+                    "target_pricing_alpha": 5,
+                    "target_residual_1": 15
+                  },
+                  "worker-1": {
+                    "module": "tax_skew",
+                    "action": "ALIGN_TAX_SKEW_ALPHA_TO_L1_MINIMIZER_5",
+                    "target_tax_alpha": 5,
+                    "target_residual_2": 0
+                  },
+                  "worker-2": {
+                    "module": "settlement_skew",
+                    "action": "REPAIR_SETTLEMENT_SKEW_NORM_GATE",
+                    "target_skew_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "A-wave-1",
+                "model_id": "deterministic",
+                "omega": [
+                  10,
+                  -10
+                ],
+                "skew_discrepancy": 30,
+                "l_inf_coordinate_budget": 15,
+                "l_1_global_budget": 15,
+                "pricing_alpha": 0,
+                "tax_alpha": 0,
+                "residual_vector": [
+                  10,
+                  -10
+                ],
+                "candidate_l1_cost": 20,
+                "candidate_l2_squared_cost": 200,
+                "candidate_linf_cost": 10,
+                "excess_l1_cost": 5,
+                "skew_surcharge_cents": 10,
+                "merchant_payout_cents": 863,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "SKEW_LINF_NORM_ATTAINMENT_DIVERGENCE_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_skew",
+                    "action": "ALIGN_PRICING_SKEW_ALPHA_TO_L1_MINIMIZER_5",
+                    "target_pricing_alpha": 5,
+                    "target_residual_1": 15
+                  },
+                  "worker-1": {
+                    "module": "tax_skew",
+                    "action": "ALIGN_TAX_SKEW_ALPHA_TO_L1_MINIMIZER_5",
+                    "target_tax_alpha": 5,
+                    "target_residual_2": 0
+                  },
+                  "worker-2": {
+                    "module": "settlement_skew",
+                    "action": "REPAIR_SETTLEMENT_SKEW_NORM_GATE",
+                    "target_skew_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "A-wave-2",
+                "model_id": "deterministic",
+                "omega": [
+                  10,
+                  -10
+                ],
+                "skew_discrepancy": 30,
+                "l_inf_coordinate_budget": 15,
+                "l_1_global_budget": 15,
+                "pricing_alpha": 0,
+                "tax_alpha": 0,
+                "residual_vector": [
+                  10,
+                  -10
+                ],
+                "candidate_l1_cost": 20,
+                "candidate_l2_squared_cost": 200,
+                "candidate_linf_cost": 10,
+                "excess_l1_cost": 5,
+                "skew_surcharge_cents": 10,
+                "merchant_payout_cents": 863,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "SKEW_LINF_NORM_ATTAINMENT_DIVERGENCE_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_skew",
+                    "action": "ALIGN_PRICING_SKEW_ALPHA_TO_L1_MINIMIZER_5",
+                    "target_pricing_alpha": 5,
+                    "target_residual_1": 15
+                  },
+                  "worker-1": {
+                    "module": "tax_skew",
+                    "action": "ALIGN_TAX_SKEW_ALPHA_TO_L1_MINIMIZER_5",
+                    "target_tax_alpha": 5,
+                    "target_residual_2": 0
+                  },
+                  "worker-2": {
+                    "module": "settlement_skew",
+                    "action": "REPAIR_SETTLEMENT_SKEW_NORM_GATE",
+                    "target_skew_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              }
+            ],
+            "receipt_sha256": "1d7fc07be84c4c10af68fdfe8944f318df998b06d8fee261ee1ca6aea0c79a05"
+          },
+          "escalations": {},
+          "api_attempts": 18,
+          "cost_usd": "0.0165578280"
+        },
+        {
+          "arm": "B",
+          "status": "blocked_unresolved",
+          "waves_executed": 2,
+          "final_local_green": 1,
+          "final_global_green": 0,
+          "final_defect": -1,
+          "final_pricing_alpha": 2,
+          "final_tax_alpha": 2,
+          "final_residual_vector": [
+            12,
+            -6
+          ],
+          "final_candidate_l1_cost": 18,
+          "final_excess_l1_cost": 3,
+          "final_skew_surcharge_cents": 6,
+          "final_merchant_payout_cents": 867,
+          "final_status": "SKEW_L2_NORM_ATTAINMENT_DIVERGENCE_LGGR",
+          "final_receipt_sha256": "9f82b38345536decd488296f7e028e9fce20bd2a3957f33319e5a2c53d5519ec",
+          "final_receipt": {
+            "schema": "lggr.online_codebase_skew_repair.v1",
+            "authority_effect": "None",
+            "scope_id": "skew-repair-seed-12502-arm-B",
+            "status": "SKEW_L2_NORM_ATTAINMENT_DIVERGENCE_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR",
+            "evaluation_count": 3,
+            "lggr_obstruction_count": 3,
+            "lggg_coherent_count": 0,
+            "skew_repair_receipt": {
+              "schema": "lggr.online_skew_repair.v1",
+              "authority_effect": "None",
+              "scope_id": "skew-repair-seed-12502-arm-B:skew",
+              "status": "SKEW_NORM_ATTAINMENT_DIVERGENCE_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "probe_count": 3,
+              "all_closed_form_identities_verified": true,
+              "skew_norm_divergence_probe_ids": [
+                "B-wave-0:skew",
+                "B-wave-1:skew",
+                "B-wave-2:skew"
+              ],
+              "rejected_probe_ids": [],
+              "probes": [
+                {
+                  "probe_id": "B-wave-0:skew",
+                  "omega": [
+                    "10",
+                    "-10"
+                  ],
+                  "skew_discrepancy_2a_minus_b": "30",
+                  "alpha_1": "5",
+                  "alpha_2": "2",
+                  "alpha_inf": "0",
+                  "phi_1": "15",
+                  "phi_2_squared": "180",
+                  "phi_inf": "10",
+                  "closed_form_identities_hold": true,
+                  "minimizers_strictly_diverge": true,
+                  "candidate_alpha": "0",
+                  "candidate_residual": [
+                    "10",
+                    "-10"
+                  ],
+                  "candidate_l1_cost": "20",
+                  "candidate_l2_squared_cost": "200",
+                  "candidate_linf_cost": "10",
+                  "l_inf_coordinate_budget": "15",
+                  "l_1_global_budget": "15",
+                  "local_coordinate_evaluators": [
+                    1,
+                    1
+                  ],
+                  "local_product_aggregator": 1,
+                  "global_l1_budget_evaluator": 0,
+                  "evaluator_defect": -1,
+                  "probe_status": "SKEW_NORM_ATTAINMENT_DIVERGENCE_LGGR"
+                },
+                {
+                  "probe_id": "B-wave-1:skew",
+                  "omega": [
+                    "10",
+                    "-10"
+                  ],
+                  "skew_discrepancy_2a_minus_b": "30",
+                  "alpha_1": "5",
+                  "alpha_2": "2",
+                  "alpha_inf": "0",
+                  "phi_1": "15",
+                  "phi_2_squared": "180",
+                  "phi_inf": "10",
+                  "closed_form_identities_hold": true,
+                  "minimizers_strictly_diverge": true,
+                  "candidate_alpha": "2",
+                  "candidate_residual": [
+                    "12",
+                    "-6"
+                  ],
+                  "candidate_l1_cost": "18",
+                  "candidate_l2_squared_cost": "180",
+                  "candidate_linf_cost": "12",
+                  "l_inf_coordinate_budget": "15",
+                  "l_1_global_budget": "15",
+                  "local_coordinate_evaluators": [
+                    1,
+                    1
+                  ],
+                  "local_product_aggregator": 1,
+                  "global_l1_budget_evaluator": 0,
+                  "evaluator_defect": -1,
+                  "probe_status": "SKEW_NORM_ATTAINMENT_DIVERGENCE_LGGR"
+                },
+                {
+                  "probe_id": "B-wave-2:skew",
+                  "omega": [
+                    "10",
+                    "-10"
+                  ],
+                  "skew_discrepancy_2a_minus_b": "30",
+                  "alpha_1": "5",
+                  "alpha_2": "2",
+                  "alpha_inf": "0",
+                  "phi_1": "15",
+                  "phi_2_squared": "180",
+                  "phi_inf": "10",
+                  "closed_form_identities_hold": true,
+                  "minimizers_strictly_diverge": true,
+                  "candidate_alpha": "2",
+                  "candidate_residual": [
+                    "12",
+                    "-6"
+                  ],
+                  "candidate_l1_cost": "18",
+                  "candidate_l2_squared_cost": "180",
+                  "candidate_linf_cost": "12",
+                  "l_inf_coordinate_budget": "15",
+                  "l_1_global_budget": "15",
+                  "local_coordinate_evaluators": [
+                    1,
+                    1
+                  ],
+                  "local_product_aggregator": 1,
+                  "global_l1_budget_evaluator": 0,
+                  "evaluator_defect": -1,
+                  "probe_status": "SKEW_NORM_ATTAINMENT_DIVERGENCE_LGGR"
+                }
+              ],
+              "receipt_sha256": "ba2b00a59ea648eed477905f66c5f2abcd3e234b0e2dc960b5d08381b00fb7b6"
+            },
+            "fiber_receipt": {
+              "schema": "lggr.descent.v1",
+              "authority_effect": "None",
+              "scope_id": "streaming-fiber-scope",
+              "carrier_size": 3,
+              "status": "DECODER_VERIFIED",
+              "contract_status": "COMPOSABLE_LGGG",
+              "decoder": [
+                {
+                  "report": {
+                    "l_inf_coordinate_budget": 15,
+                    "local_green": 1
+                  },
+                  "query": "LGGR"
+                }
+              ],
+              "input_sha256": "1f5f69fe8ead4b0b87a23ba6bddc7fd50d809aab209efa47fbe14c7cbb92665b",
+              "meaning": "The supplied query is constant on every realized report fiber in this stream.",
+              "receipt_sha256": "605c315f8d9ef795bcb43ceffe1c484ad9eb7179d711a337c4f55b967d07c6d1"
+            },
+            "three_phase_audits": [],
+            "evaluations": [
+              {
+                "evaluation_id": "B-wave-0",
+                "model_id": "deterministic",
+                "omega": [
+                  10,
+                  -10
+                ],
+                "skew_discrepancy": 30,
+                "l_inf_coordinate_budget": 15,
+                "l_1_global_budget": 15,
+                "pricing_alpha": 0,
+                "tax_alpha": 0,
+                "residual_vector": [
+                  10,
+                  -10
+                ],
+                "candidate_l1_cost": 20,
+                "candidate_l2_squared_cost": 200,
+                "candidate_linf_cost": 10,
+                "excess_l1_cost": 5,
+                "skew_surcharge_cents": 10,
+                "merchant_payout_cents": 863,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "SKEW_LINF_NORM_ATTAINMENT_DIVERGENCE_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_skew",
+                    "action": "ALIGN_PRICING_SKEW_ALPHA_TO_L1_MINIMIZER_5",
+                    "target_pricing_alpha": 5,
+                    "target_residual_1": 15
+                  },
+                  "worker-1": {
+                    "module": "tax_skew",
+                    "action": "ALIGN_TAX_SKEW_ALPHA_TO_L1_MINIMIZER_5",
+                    "target_tax_alpha": 5,
+                    "target_residual_2": 0
+                  },
+                  "worker-2": {
+                    "module": "settlement_skew",
+                    "action": "REPAIR_SETTLEMENT_SKEW_NORM_GATE",
+                    "target_skew_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "B-wave-1",
+                "model_id": "deterministic",
+                "omega": [
+                  10,
+                  -10
+                ],
+                "skew_discrepancy": 30,
+                "l_inf_coordinate_budget": 15,
+                "l_1_global_budget": 15,
+                "pricing_alpha": 2,
+                "tax_alpha": 2,
+                "residual_vector": [
+                  12,
+                  -6
+                ],
+                "candidate_l1_cost": 18,
+                "candidate_l2_squared_cost": 180,
+                "candidate_linf_cost": 12,
+                "excess_l1_cost": 3,
+                "skew_surcharge_cents": 6,
+                "merchant_payout_cents": 867,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "SKEW_L2_NORM_ATTAINMENT_DIVERGENCE_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_skew",
+                    "action": "ALIGN_PRICING_SKEW_ALPHA_TO_L1_MINIMIZER_5",
+                    "target_pricing_alpha": 5,
+                    "target_residual_1": 15
+                  },
+                  "worker-1": {
+                    "module": "tax_skew",
+                    "action": "ALIGN_TAX_SKEW_ALPHA_TO_L1_MINIMIZER_5",
+                    "target_tax_alpha": 5,
+                    "target_residual_2": 0
+                  },
+                  "worker-2": {
+                    "module": "settlement_skew",
+                    "action": "REPAIR_SETTLEMENT_SKEW_NORM_GATE",
+                    "target_skew_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "B-wave-2",
+                "model_id": "deterministic",
+                "omega": [
+                  10,
+                  -10
+                ],
+                "skew_discrepancy": 30,
+                "l_inf_coordinate_budget": 15,
+                "l_1_global_budget": 15,
+                "pricing_alpha": 2,
+                "tax_alpha": 2,
+                "residual_vector": [
+                  12,
+                  -6
+                ],
+                "candidate_l1_cost": 18,
+                "candidate_l2_squared_cost": 180,
+                "candidate_linf_cost": 12,
+                "excess_l1_cost": 3,
+                "skew_surcharge_cents": 6,
+                "merchant_payout_cents": 867,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "SKEW_L2_NORM_ATTAINMENT_DIVERGENCE_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_skew",
+                    "action": "ALIGN_PRICING_SKEW_ALPHA_TO_L1_MINIMIZER_5",
+                    "target_pricing_alpha": 5,
+                    "target_residual_1": 15
+                  },
+                  "worker-1": {
+                    "module": "tax_skew",
+                    "action": "ALIGN_TAX_SKEW_ALPHA_TO_L1_MINIMIZER_5",
+                    "target_tax_alpha": 5,
+                    "target_residual_2": 0
+                  },
+                  "worker-2": {
+                    "module": "settlement_skew",
+                    "action": "REPAIR_SETTLEMENT_SKEW_NORM_GATE",
+                    "target_skew_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              }
+            ],
+            "receipt_sha256": "9f82b38345536decd488296f7e028e9fce20bd2a3957f33319e5a2c53d5519ec"
+          },
+          "escalations": {},
+          "api_attempts": 13,
+          "cost_usd": "0.0157744269"
+        },
+        {
+          "arm": "C",
+          "status": "completed",
+          "waves_executed": 1,
+          "final_local_green": 1,
+          "final_global_green": 1,
+          "final_defect": 0,
+          "final_pricing_alpha": 5,
+          "final_tax_alpha": 5,
+          "final_residual_vector": [
+            15,
+            0
+          ],
+          "final_candidate_l1_cost": 15,
+          "final_excess_l1_cost": 0,
+          "final_skew_surcharge_cents": 0,
+          "final_merchant_payout_cents": 873,
+          "final_status": "SKEW_L1_MINIMUM_REPAIR_COHERENT_LGGG",
+          "final_receipt_sha256": "6bd28f3387feaede6b73797ff7f139a039bc59a03ac208843ef161c3249a1b16",
+          "final_receipt": {
+            "schema": "lggr.online_codebase_skew_repair.v1",
+            "authority_effect": "None",
+            "scope_id": "skew-repair-seed-12502-arm-C",
+            "status": "SKEW_L1_MINIMUM_REPAIR_COHERENT_LGGG",
+            "contract_status": "COMPOSABLE_LGGG",
+            "evaluation_count": 2,
+            "lggr_obstruction_count": 1,
+            "lggg_coherent_count": 1,
+            "skew_repair_receipt": {
+              "schema": "lggr.online_skew_repair.v1",
+              "authority_effect": "None",
+              "scope_id": "skew-repair-seed-12502-arm-C:skew",
+              "status": "SKEW_NORM_ATTAINMENT_DIVERGENCE_LGGR",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "probe_count": 2,
+              "all_closed_form_identities_verified": true,
+              "skew_norm_divergence_probe_ids": [
+                "C-wave-0:skew"
+              ],
+              "rejected_probe_ids": [],
+              "probes": [
+                {
+                  "probe_id": "C-wave-0:skew",
+                  "omega": [
+                    "10",
+                    "-10"
+                  ],
+                  "skew_discrepancy_2a_minus_b": "30",
+                  "alpha_1": "5",
+                  "alpha_2": "2",
+                  "alpha_inf": "0",
+                  "phi_1": "15",
+                  "phi_2_squared": "180",
+                  "phi_inf": "10",
+                  "closed_form_identities_hold": true,
+                  "minimizers_strictly_diverge": true,
+                  "candidate_alpha": "0",
+                  "candidate_residual": [
+                    "10",
+                    "-10"
+                  ],
+                  "candidate_l1_cost": "20",
+                  "candidate_l2_squared_cost": "200",
+                  "candidate_linf_cost": "10",
+                  "l_inf_coordinate_budget": "15",
+                  "l_1_global_budget": "15",
+                  "local_coordinate_evaluators": [
+                    1,
+                    1
+                  ],
+                  "local_product_aggregator": 1,
+                  "global_l1_budget_evaluator": 0,
+                  "evaluator_defect": -1,
+                  "probe_status": "SKEW_NORM_ATTAINMENT_DIVERGENCE_LGGR"
+                },
+                {
+                  "probe_id": "C-wave-1:skew",
+                  "omega": [
+                    "10",
+                    "-10"
+                  ],
+                  "skew_discrepancy_2a_minus_b": "30",
+                  "alpha_1": "5",
+                  "alpha_2": "2",
+                  "alpha_inf": "0",
+                  "phi_1": "15",
+                  "phi_2_squared": "180",
+                  "phi_inf": "10",
+                  "closed_form_identities_hold": true,
+                  "minimizers_strictly_diverge": true,
+                  "candidate_alpha": "5",
+                  "candidate_residual": [
+                    "15",
+                    "0"
+                  ],
+                  "candidate_l1_cost": "15",
+                  "candidate_l2_squared_cost": "225",
+                  "candidate_linf_cost": "15",
+                  "l_inf_coordinate_budget": "15",
+                  "l_1_global_budget": "15",
+                  "local_coordinate_evaluators": [
+                    1,
+                    1
+                  ],
+                  "local_product_aggregator": 1,
+                  "global_l1_budget_evaluator": 1,
+                  "evaluator_defect": 0,
+                  "probe_status": "SKEW_REPAIR_BUDGET_COHERENT_LGGG"
+                }
+              ],
+              "receipt_sha256": "b870efcc81dd9aeb00a9ace80c977a792899d7f3c5844ca08bd61a659fe08cc8"
+            },
+            "fiber_receipt": {
+              "schema": "lggr.online_collision.v1",
+              "authority_effect": "None",
+              "scope_id": "streaming-fiber-scope",
+              "carrier_size": 2,
+              "status": "REPORT_INSUFFICIENT",
+              "contract_status": "OBSTRUCTED_LGGR",
+              "collision": {
+                "left": {
+                  "state_id": "C-wave-0_deterministic",
+                  "report": {
+                    "l_inf_coordinate_budget": 15,
+                    "local_green": 1
+                  },
+                  "query": "LGGR",
+                  "metadata": {
+                    "candidate_l1_cost": 20,
+                    "excess_l1_cost": 5,
+                    "pricing_alpha": 0,
+                    "residual_vector": [
+                      10,
+                      -10
+                    ],
+                    "skew_surcharge_cents": 10,
+                    "tax_alpha": 0
+                  }
+                },
+                "right": {
+                  "state_id": "C-wave-1_deterministic",
+                  "report": {
+                    "l_inf_coordinate_budget": 15,
+                    "local_green": 1
+                  },
+                  "query": "LGGG",
+                  "metadata": {
+                    "candidate_l1_cost": 15,
+                    "excess_l1_cost": 0,
+                    "pricing_alpha": 5,
+                    "residual_vector": [
+                      15,
+                      0
+                    ],
+                    "skew_surcharge_cents": 0,
+                    "tax_alpha": 5
+                  }
+                }
+              },
+              "input_sha256": "63e7692002a63d8764bfb7354e8c68403439f8d396c420888f8ed6db43ff154c",
+              "meaning": "Boundary reports cannot determine this query on the supplied carrier.",
+              "receipt_sha256": "150e64de9e269e4a20edc8cf034024f8d8ace90123ce72aa80c3325f73b6eca7"
+            },
+            "three_phase_audits": [],
+            "evaluations": [
+              {
+                "evaluation_id": "C-wave-0",
+                "model_id": "deterministic",
+                "omega": [
+                  10,
+                  -10
+                ],
+                "skew_discrepancy": 30,
+                "l_inf_coordinate_budget": 15,
+                "l_1_global_budget": 15,
+                "pricing_alpha": 0,
+                "tax_alpha": 0,
+                "residual_vector": [
+                  10,
+                  -10
+                ],
+                "candidate_l1_cost": 20,
+                "candidate_l2_squared_cost": 200,
+                "candidate_linf_cost": 10,
+                "excess_l1_cost": 5,
+                "skew_surcharge_cents": 10,
+                "merchant_payout_cents": 863,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 0,
+                "defect": -1,
+                "status": "SKEW_LINF_NORM_ATTAINMENT_DIVERGENCE_LGGR",
+                "contract_status": "OBSTRUCTED_LGGR",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_skew",
+                    "action": "ALIGN_PRICING_SKEW_ALPHA_TO_L1_MINIMIZER_5",
+                    "target_pricing_alpha": 5,
+                    "target_residual_1": 15
+                  },
+                  "worker-1": {
+                    "module": "tax_skew",
+                    "action": "ALIGN_TAX_SKEW_ALPHA_TO_L1_MINIMIZER_5",
+                    "target_tax_alpha": 5,
+                    "target_residual_2": 0
+                  },
+                  "worker-2": {
+                    "module": "settlement_skew",
+                    "action": "REPAIR_SETTLEMENT_SKEW_NORM_GATE",
+                    "target_skew_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              },
+              {
+                "evaluation_id": "C-wave-1",
+                "model_id": "deterministic",
+                "omega": [
+                  10,
+                  -10
+                ],
+                "skew_discrepancy": 30,
+                "l_inf_coordinate_budget": 15,
+                "l_1_global_budget": 15,
+                "pricing_alpha": 5,
+                "tax_alpha": 5,
+                "residual_vector": [
+                  15,
+                  0
+                ],
+                "candidate_l1_cost": 15,
+                "candidate_l2_squared_cost": 225,
+                "candidate_linf_cost": 15,
+                "excess_l1_cost": 0,
+                "skew_surcharge_cents": 0,
+                "merchant_payout_cents": 873,
+                "platform_fee_cents": 27,
+                "tax_reserve_cents": 90,
+                "gross_cents": 990,
+                "local_green": 1,
+                "global_green": 1,
+                "defect": 0,
+                "status": "SKEW_L1_MINIMUM_REPAIR_COHERENT_LGGG",
+                "contract_status": "COMPOSABLE_LGGG",
+                "directives": {
+                  "worker-0": {
+                    "module": "pricing_skew",
+                    "action": "HOLD_L1_OPTIMAL_SKEW_ALPHA_5",
+                    "target_pricing_alpha": 5,
+                    "target_residual_1": 15
+                  },
+                  "worker-1": {
+                    "module": "tax_skew",
+                    "action": "HOLD_L1_OPTIMAL_SKEW_ALPHA_5",
+                    "target_tax_alpha": 5,
+                    "target_residual_2": 0
+                  },
+                  "worker-2": {
+                    "module": "settlement_skew",
+                    "action": "HOLD_ZERO_SKEW_REPAIR_SURCHARGE",
+                    "target_skew_surcharge_cents": 0,
+                    "target_payout_cents": 873
+                  }
+                }
+              }
+            ],
+            "receipt_sha256": "6bd28f3387feaede6b73797ff7f139a039bc59a03ac208843ef161c3249a1b16"
+          },
+          "escalations": {},
+          "api_attempts": 5,
+          "cost_usd": "0.0065509741"
+        }
+      ]
+    }
+  ],
+  "api_attempts": 90,
+  "charged_or_reserved_usd": "0.0993476013",
+  "max_inflight_requests": 3,
+  "concurrent_waves": 30,
+  "scope": "Concurrent 3-agent skew non-diagonal norm-attainment divergence (l^1 / l^2 / l^infty) Python code-engineering swarm (`pricing_skew` -> `tax_skew` -> `settlement_skew`) comparing coordinatewise l^infty minimizer alpha_inf = 0 (A), Euclidean l^2 minimizer alpha_2 = 2 (B), and global l^1 minimizer alpha_1 = 5 (C) with full cryptographic receipts."
+}

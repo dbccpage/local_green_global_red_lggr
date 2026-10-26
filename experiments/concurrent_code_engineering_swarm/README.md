@@ -527,13 +527,27 @@ In `--topology policy_ratchet`, the 3 concurrent agents maintain a 3-module mult
 | `12402` | `repairable_policy_ratchet_cumulative_drift_and_sunset_revocation_defect` | **B** | `partial_sunset_lease_revocation_gate` | `blocked_unresolved` | `[4, 3, 7]` | `7` | `3` | `1` | `5` | `868` | 2 | 12 | `$0.014089` |
 | `12402` | `repairable_policy_ratchet_cumulative_drift_and_sunset_revocation_defect` | **C** | `explicit_lggr_sunset_lease_revocation_directive` | **`completed`** | **`[4, 3, 4]`** | **`4`** | **`0`** | **`0`** | **`0`** | **`873`** | **1** | **6** | **`$0.007159`** |
 
+## 35. Skew Non-Diagonal Norm-Attainment Divergence $\ell^1 / \ell^2 / \ell^\infty$ Audit (`--topology skew_repair`, Theorem 128)
+
+In `--topology skew_repair`, the 3 concurrent agents maintain a 3-module skew-coboundary norm-attainment divergence settlement codebase (`pricing_skew.py`, `tax_skew.py`, `settlement_skew.py`) over cochain $\omega = (10, -10)$ with skew discrepancy $\Delta_{\mathrm{skew}} = 2a - b = 30$, coordinatewise $\ell^\infty$ budget $B_\infty = 15$, and global $\ell^1$ minimum repair budget $\Phi_1 = |2a - b|/2 = 15$ (`StreamingCodebaseSkewRepairMonitor`, Theorem 128):
+
+| Seed | Case | Arm | Gate Policy | Status | `(p_alpha, t_alpha)` | `residual_vector` | `l1_cost` | `excess_l1` | Surcharge | Payout | Waves | API Calls | Cost (USD) |
+| :--- | :--- | :---: | :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| `12500` | `repairable_skew_repair_norm_attainment_divergence_defect` | **A** | `linf_minimax_skew_repair_gate` | `blocked_unresolved` | `(0, 0)` | `[10, -10]` | `20` | `5` | `10` | `863` | 2 | 18 | `$0.016732` |
+| `12500` | `repairable_skew_repair_norm_attainment_divergence_defect` | **B** | `l2_hodge_least_squares_skew_repair_gate` | `blocked_unresolved` | `(2, 2)` | `[12, -6]` | `18` | `3` | `6` | `867` | 2 | 12 | `$0.013794` |
+| `12500` | `repairable_skew_repair_norm_attainment_divergence_defect` | **C** | `explicit_lggr_l1_minimum_skew_repair_directive` | **`completed`** | **`(5, 5)`** | **`[15, 0]`** | **`15`** | **`0`** | **`0`** | **`873`** | **1** | **6** | **`$0.006879`** |
+| `12501` | `infeasible_hardware_locked_skew_linf_norm_minimizer` | **A / B / C** | All policies | `safe_escalated` | `(0, 0)` | `[10, -10]` | `20` | `5` | `10` | `863` | 1 | 18 | `$0.023060` |
+| `12502` | `repairable_skew_repair_norm_attainment_divergence_defect` | **A** | `linf_minimax_skew_repair_gate` | `blocked_unresolved` | `(0, 0)` | `[10, -10]` | `20` | `5` | `10` | `863` | 2 | 18 | `$0.016558` |
+| `12502` | `repairable_skew_repair_norm_attainment_divergence_defect` | **B** | `l2_hodge_least_squares_skew_repair_gate` | `blocked_unresolved` | `(2, 2)` | `[12, -6]` | `18` | `3` | `6` | `867` | 2 | 13 | `$0.015774` |
+| `12502` | `repairable_skew_repair_norm_attainment_divergence_defect` | **C** | `explicit_lggr_l1_minimum_skew_repair_directive` | **`completed`** | **`(5, 5)`** | **`[15, 0]`** | **`15`** | **`0`** | **`0`** | **`873`** | **1** | **5** | **`$0.006551`** |
+
 ## Offline Verification & Live Execution
 
 ```powershell
 # Run unit, tamper, and deterministic replay tests (no API calls)
 python -m unittest tests.test_concurrent_code_engineering_swarm -v
 
-# Replay archived live 3-agent linear, 4-agent diamond, 3-agent catalyst, 3-agent stateful DFA, 3-agent replay-order, 3-agent coalitional, 3-agent Mayer-Vietoris, 3-agent windowed-drift, 3-agent optional-stopping, 3-agent CPTP channel, 3-agent Regge holonomy, 3-agent k-induction, 3-agent Jacobian, 3-agent boundary-quorum, 3-agent lease-overlap, 3-agent contextual-sheaf, 3-agent watcher-dropout, 3-agent policy-reversal, 3-agent fiber-splitting, 3-agent disagreement-council, 3-agent six-role deduplication, 3-agent path-kernel dashboard, 3-agent dynamic-schema synthesis, 3-agent adversarial-schema side-channel, 3-agent graceful-shedding, 3-agent obligation-migration, 3-agent three-party-c3, 3-agent multi-loop-hodge, 3-agent figure-eight-wedge, 3-agent shared-chord-diamond, 3-agent governed-relaxation, 3-agent non-abelian-braid, 3-agent subgradient-pivot, and 3-agent policy-ratchet evidence (no API calls)
+# Replay archived live 3-agent linear, 4-agent diamond, 3-agent catalyst, 3-agent stateful DFA, 3-agent replay-order, 3-agent coalitional, 3-agent Mayer-Vietoris, 3-agent windowed-drift, 3-agent optional-stopping, 3-agent CPTP channel, 3-agent Regge holonomy, 3-agent k-induction, 3-agent Jacobian, 3-agent boundary-quorum, 3-agent lease-overlap, 3-agent contextual-sheaf, 3-agent watcher-dropout, 3-agent policy-reversal, 3-agent fiber-splitting, 3-agent disagreement-council, 3-agent six-role deduplication, 3-agent path-kernel dashboard, 3-agent dynamic-schema synthesis, 3-agent adversarial-schema side-channel, 3-agent graceful-shedding, 3-agent obligation-migration, 3-agent three-party-c3, 3-agent multi-loop-hodge, 3-agent figure-eight-wedge, 3-agent shared-chord-diamond, 3-agent governed-relaxation, 3-agent non-abelian-braid, 3-agent subgradient-pivot, 3-agent policy-ratchet, and 3-agent skew-repair evidence (no API calls)
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/diamond_pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/catalyst_pilot_run/events.jsonl
@@ -568,4 +582,5 @@ python -m experiments.concurrent_code_engineering_swarm.runner replay experiment
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/non_abelian_braid_pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/subgradient_pivot_pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/policy_ratchet_pilot_run/events.jsonl
+python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/skew_repair_pilot_run/events.jsonl
 ```
