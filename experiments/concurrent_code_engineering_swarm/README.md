@@ -272,13 +272,28 @@ Executed across 3 concurrent LLM worker models (`max_inflight_requests = 3`, `38
 | `10500` | `repairable_lease_overlap_seed_10500` | **C** | `explicit_lggr_fencing_token_directive` | **`completed`** | **`[[0,1],[1,2],[2,3]]`** | **`[1, 2, 3]`** | **`4`** | **1** | **6** | **`$0.005702`** |
 | `10502` | `infeasible_lease_overlap_lock` | **A / B / C** | All policies | `safe_escalated` | `[[0,1],[0,3],[0,3]]` | `[1, 1, 1]` | `11` | 1 | 19 | `$0.018159` |
 
+## 16. 3-Agent Cyclic Pairwise Constraint Sheaf Contextuality vs. Global Section Reconciliation Campaign (`--topology contextuality`)
+
+In `--topology contextuality`, 3 concurrent LLM workers edit `pricing_sheaf.py`, `tax_sheaf.py`, and `settlement_sheaf.py` where each module emits a 2-variable empirical context table (`table_ab`, `table_bc`, `table_ca`) satisfying single-variable marginal compatibility ($p_A = p_B = p_C = 1/2$, $M = 4$):
+- On `seed 10602` (`repairable_contextual_sheaf_seed_10602`), all 3 modules use anti-correlated pairwise tables `['0', '1/2', '1/2', '0']` (`q_ab_num = 0`, `q_bc_num = 0`, `q_ca_num = 0`, `local_green = 1`), creating a cyclic hollow-triangle sheaf obstruction ($q_{BC} + q_{CA} = 0 \ne 2$, `scaled_gap_m4 = 2 > 0`, $H^1 \ne 0$) and `contextuality_reserve_cents = 11` (`payout = 862 != 873`, `global_green = 0`, $\Delta_E = -1$).
+- On `seed 10600` (`infeasible_contextual_sheaf_lock`), legacy constraints lock `tax_sheaf.py` and `settlement_sheaf.py` to their hollow-triangle pairwise tables while requiring a non-negative global joint section $d \ge 0$, requiring safe escalation.
+
+Executed across 3 concurrent LLM worker models (`max_inflight_requests = 3`, `40` live API attempts, `$0.038555` total cost):
+
+| Seed | Scenario Kind | Arm | Feedback Policy | Outcome | `q_bc_num` | `q_ca_num` | `scaled_gap_m4` | Waves Run | API Attempts | Cost (USD) |
+| :--- | :--- | :---: | :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
+| `10602` | `repairable_contextual_sheaf_seed_10602` | **A** | `pairwise_no_signaling_marginal_gate` | `blocked_unresolved` | `0` | `0` | `2` | 1 | 7 | `$0.005699` |
+| `10602` | `repairable_contextual_sheaf_seed_10602` | **B** | `partial_tax_pairwise_reconciliation` | `blocked_unresolved` | `1` | `0` | `1` | 1 | 6 | `$0.005054` |
+| `10602` | `repairable_contextual_sheaf_seed_10602` | **C** | `explicit_lggr_global_section_directive` | **`completed`** | **`1`** | **`1`** | **`0`** | **1** | **6** | **`$0.005698`** |
+| `10600` | `infeasible_contextual_sheaf_lock` | **A / B / C** | All policies | `safe_escalated` | `0` | `0` | `2` | 1 | 21 | `$0.022104` |
+
 ## Offline Verification & Live Execution
 
 ```powershell
 # Run unit, tamper, and deterministic replay tests (no API calls)
 python -m unittest tests.test_concurrent_code_engineering_swarm -v
 
-# Replay archived live 3-agent linear, 4-agent diamond, 3-agent catalyst, 3-agent stateful DFA, 3-agent replay-order, 3-agent coalitional, 3-agent Mayer-Vietoris, 3-agent windowed-drift, 3-agent optional-stopping, 3-agent CPTP channel, 3-agent Regge holonomy, 3-agent k-induction, 3-agent Jacobian, 3-agent boundary-quorum, and 3-agent lease-overlap evidence (no API calls)
+# Replay archived live 3-agent linear, 4-agent diamond, 3-agent catalyst, 3-agent stateful DFA, 3-agent replay-order, 3-agent coalitional, 3-agent Mayer-Vietoris, 3-agent windowed-drift, 3-agent optional-stopping, 3-agent CPTP channel, 3-agent Regge holonomy, 3-agent k-induction, 3-agent Jacobian, 3-agent boundary-quorum, 3-agent lease-overlap, and 3-agent contextual-sheaf evidence (no API calls)
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/diamond_pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/catalyst_pilot_run/events.jsonl
@@ -294,4 +309,5 @@ python -m experiments.concurrent_code_engineering_swarm.runner replay experiment
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/jacobian_pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/quorum_pilot_run/events.jsonl
 python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/lease_pilot_run/events.jsonl
+python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/contextuality_pilot_run/events.jsonl
 ```

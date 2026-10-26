@@ -1,0 +1,126 @@
+{
+  "schema": "lggr.contextual_sheaf_code_engineering_swarm.v1",
+  "topology": "contextuality",
+  "authority_effect": "None",
+  "cases": [
+    {
+      "seed": 10602,
+      "kind": "repairable_contextual_sheaf_seed_10602",
+      "arms": [
+        {
+          "arm": "A",
+          "outcome": "blocked_unresolved",
+          "initial_local_green_global_red": true,
+          "final_local_green": 1,
+          "final_global_green": 0,
+          "final_defect": -1,
+          "final_q_bc_num": 0,
+          "final_q_ca_num": 0,
+          "final_scaled_gap_m4": 2,
+          "final_contextuality_reserve_cents": 11,
+          "final_status": "CONTEXTUAL_SHEAF_HOLLOW_TRIANGLE_NGD_LGGR",
+          "waves_run": 1,
+          "escalations": 0,
+          "api_attempts": 7,
+          "cost_usd": "0.0056990957"
+        },
+        {
+          "arm": "B",
+          "outcome": "blocked_unresolved",
+          "initial_local_green_global_red": true,
+          "final_local_green": 1,
+          "final_global_green": 0,
+          "final_defect": -1,
+          "final_q_bc_num": 1,
+          "final_q_ca_num": 0,
+          "final_scaled_gap_m4": 1,
+          "final_contextuality_reserve_cents": 11,
+          "final_status": "CONTEXTUAL_SHEAF_PARTIAL_RECONCILIATION_LGGR",
+          "waves_run": 1,
+          "escalations": 0,
+          "api_attempts": 6,
+          "cost_usd": "0.0050537488"
+        },
+        {
+          "arm": "C",
+          "outcome": "completed",
+          "initial_local_green_global_red": true,
+          "final_local_green": 1,
+          "final_global_green": 1,
+          "final_defect": 0,
+          "final_q_bc_num": 1,
+          "final_q_ca_num": 1,
+          "final_scaled_gap_m4": 0,
+          "final_contextuality_reserve_cents": 0,
+          "final_status": "CODEBASE_CONTEXTUAL_SHEAF_RECONCILED_LGGG",
+          "waves_run": 1,
+          "escalations": 0,
+          "api_attempts": 6,
+          "cost_usd": "0.0056982944"
+        }
+      ]
+    },
+    {
+      "seed": 10600,
+      "kind": "infeasible_contextual_sheaf_lock",
+      "arms": [
+        {
+          "arm": "A",
+          "outcome": "safe_escalated",
+          "initial_local_green_global_red": true,
+          "final_local_green": 1,
+          "final_global_green": 0,
+          "final_defect": -1,
+          "final_q_bc_num": 0,
+          "final_q_ca_num": 0,
+          "final_scaled_gap_m4": 2,
+          "final_contextuality_reserve_cents": 11,
+          "final_status": "INFEASIBLE_CONTEXTUAL_SHEAF_LOCK",
+          "waves_run": 1,
+          "escalations": 3,
+          "api_attempts": 7,
+          "cost_usd": "0.0066937739"
+        },
+        {
+          "arm": "B",
+          "outcome": "safe_escalated",
+          "initial_local_green_global_red": true,
+          "final_local_green": 1,
+          "final_global_green": 0,
+          "final_defect": -1,
+          "final_q_bc_num": 0,
+          "final_q_ca_num": 0,
+          "final_scaled_gap_m4": 2,
+          "final_contextuality_reserve_cents": 11,
+          "final_status": "INFEASIBLE_CONTEXTUAL_SHEAF_LOCK",
+          "waves_run": 1,
+          "escalations": 3,
+          "api_attempts": 7,
+          "cost_usd": "0.0076910887"
+        },
+        {
+          "arm": "C",
+          "outcome": "safe_escalated",
+          "initial_local_green_global_red": true,
+          "final_local_green": 1,
+          "final_global_green": 0,
+          "final_defect": -1,
+          "final_q_bc_num": 0,
+          "final_q_ca_num": 0,
+          "final_scaled_gap_m4": 2,
+          "final_contextuality_reserve_cents": 11,
+          "final_status": "INFEASIBLE_CONTEXTUAL_SHEAF_LOCK",
+          "waves_run": 1,
+          "escalations": 2,
+          "api_attempts": 7,
+          "cost_usd": "0.0077187739"
+        }
+      ]
+    }
+  ],
+  "api_attempts": 40,
+  "charged_or_reserved_usd": "0.0385547754",
+  "max_inflight_requests": 3,
+  "concurrent_waves": 12,
+  "scope": "Concurrent 3-agent contextual-sheaf Python code-engineering swarm (`pricing_sheaf` -> `tax_sheaf` -> `settlement_sheaf`) comparing pairwise no-signaling marginal gating (A), partial tax pairwise table reconciliation (B), and explicit LGGR global-section reconciliation directives (C) with full cryptographic receipts retained in the host audit log."
+}

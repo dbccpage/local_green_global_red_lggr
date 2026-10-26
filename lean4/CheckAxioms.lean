@@ -125,6 +125,7 @@ import LggrVIII
 #print axioms LggrVIII.jacobian_codebase_stealth_blindspot_and_observability_audit
 #print axioms LggrVIII.boundary_quorum_codebase_mixing_and_quorum_masking_audit
 #print axioms LggrVIII.lease_overlap_codebase_split_brain_and_fencing_token_audit
+#print axioms LggrVIII.contextual_sheaf_codebase_hollow_triangle_and_reconciliation_audit
 
 
 

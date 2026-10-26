@@ -41,6 +41,7 @@ from lggr.streaming import (
     StreamingCodebaseCPTPChannelMonitor,
     StreamingCodebaseCatalystEvolutionMonitor,
     StreamingCodebaseCoalitionalMonitor,
+    StreamingCodebaseContextualSheafMonitor,
     StreamingCodebaseInterfaceMergeMonitor,
     StreamingCodebaseJacobianSoundnessMonitor,
     StreamingCodebaseKInductionMonitor,
@@ -5625,6 +5626,53 @@ class TestStreamingBaselineComparator(unittest.TestCase):
 
         receipt = mon.current_receipt()
         self.assertEqual(receipt["status"], "CODEBASE_LEASE_FENCING_SERIALIZED_LGGG")
+        self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
+        self.assertEqual(receipt["lggr_obstruction_count"], 2)
+        self.assertEqual(receipt["lggg_coherent_count"], 1)
+
+    def test_contextual_sheaf_codebase_hollow_triangle_and_reconciliation_audit(self) -> None:
+        """Verify Theorem 109: Multi-turn pairwise constraint sheaf contextuality vs. global section reconciliation."""
+        mon = StreamingCodebaseContextualSheafMonitor(
+            scope_id="unit-codebase-contextual-sheaf-scope",
+        )
+        obs = mon.evaluate_three_phase_sheaf_audit(
+            "codebase-sheaf-eval-01",
+        )
+        self.assertEqual(obs["phase_1_scaled_gap_m4"], 2)
+        self.assertEqual(obs["phase_1_q_pair_sum"], 0)
+        self.assertEqual(obs["phase_1_local_green"], 1)
+        self.assertEqual(obs["phase_1_global_green"], 0)
+        self.assertEqual(obs["phase_1_defect"], -1)
+        self.assertEqual(obs["phase_1_status"], "CONTEXTUAL_SHEAF_HOLLOW_TRIANGLE_NGD_LGGR")
+        self.assertEqual(
+            obs["phase_1_directives"]["worker-0"]["action"],
+            "HOLD_ANCHOR_PAIRWISE_TABLE_AB",
+        )
+        self.assertEqual(
+            obs["phase_1_directives"]["worker-1"]["action"],
+            "RECONCILE_TAX_PAIRWISE_TABLE_BC_Q1",
+        )
+        self.assertEqual(
+            obs["phase_1_directives"]["worker-2"]["action"],
+            "RECONCILE_SETTLEMENT_PAIRWISE_TABLE_CA_Q1",
+        )
+
+        self.assertEqual(obs["phase_2_scaled_gap_m4"], 1)
+        self.assertEqual(obs["phase_2_q_pair_sum"], 1)
+        self.assertEqual(obs["phase_2_local_green"], 1)
+        self.assertEqual(obs["phase_2_global_green"], 0)
+        self.assertEqual(obs["phase_2_defect"], -1)
+        self.assertEqual(obs["phase_2_status"], "CONTEXTUAL_SHEAF_PARTIAL_RECONCILIATION_LGGR")
+
+        self.assertEqual(obs["phase_3_scaled_gap_m4"], 0)
+        self.assertEqual(obs["phase_3_q_pair_sum"], 2)
+        self.assertEqual(obs["phase_3_local_green"], 1)
+        self.assertEqual(obs["phase_3_global_green"], 1)
+        self.assertEqual(obs["phase_3_defect"], 0)
+        self.assertEqual(obs["phase_3_status"], "CODEBASE_CONTEXTUAL_SHEAF_RECONCILED_LGGG")
+
+        receipt = mon.current_receipt()
+        self.assertEqual(receipt["status"], "CODEBASE_CONTEXTUAL_SHEAF_RECONCILED_LGGG")
         self.assertEqual(receipt["contract_status"], "COMPOSABLE_LGGG")
         self.assertEqual(receipt["lggr_obstruction_count"], 2)
         self.assertEqual(receipt["lggg_coherent_count"], 1)

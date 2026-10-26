@@ -25111,33 +25111,448 @@ class StreamingCodebaseLeaseOverlapMonitor:
         return json_value({**body, "receipt_sha256": digest(body)})
 
 
+class StreamingCodebaseContextualSheafMonitor:
+    """Online 3-module contextual sheaf hollow-triangle & global section reconciliation monitor (Volume VIII, Theorem 109).
 
+    Composes StreamingContextualSheafMonitor, StreamingMultiTurnPairwiseTranscriptMonitor,
+    StreamingCodebaseInterfaceMergeMonitor, and StreamingFiberMonitor to audit a 3-module
+    settlement codebase (`pricing_sheaf.py`, `tax_sheaf.py`, `settlement_sheaf.py`) where
+    each module emits a 4-entry pairwise probability table over binary convention flags
+    `C_AB = {A, B}`, `C_BC = {B, C}`, `C_CA = {C, A}` with single-variable marginals
+    `p_A = p_B = p_C = 1/2` (scaled by `M = 4`: `p_A = p_B = p_C = 2`) and anchor
+    `table_ab = ["0", "1/2", "1/2", "0"]` (`q_AB = 0`):
+      - Phase 1 (Hollow-triangle anti-correlated tables `q_AB = 0, q_BC = 0, q_CA = 0`):
+        `tax_sheaf.py` (`table_bc = ["0", "1/2", "1/2", "0"]`) and `settlement_sheaf.py`
+        (`table_ca = ["0", "1/2", "1/2", "0"]`, `contextuality_reserve_cents = 11`) satisfy
+        all isolated pairwise tests and no-signaling overlap marginals (`L_p1 = 1`), yet
+        `q_BC + q_CA = 0 != 1/2`, `alpha_min = 0 > -1/2 = alpha_max` (`infeasibility_gap = 1/2`,
+        `scaled_gap_m4 = 2 > 0`), and `payout = 862 != 873` (`Eg_p1 = 0`, `Delta_{E,p1} = -1`,
+        `CONTEXTUAL_SHEAF_HOLLOW_TRIANGLE_NGD_LGGR`).
+      - Phase 2 (Partial repair: `tax_sheaf.py` reconciles `table_bc = ["1/4", "1/4", "1/4", "1/4"]`
+        with `q_BC = 1/4` while `settlement_sheaf.py` retains `q_CA = 0` and `reserve = 11`):
+        reduces `infeasibility_gap` from `1/2 -> 1/4` (`scaled_gap_m4 = 1 < 2`, `L_p2 = 1`), yet
+        `q_BC + q_CA = 1/4 != 1/2` and `alpha_max = -1/4 < 0` (`Eg_p2 = 0`, `Delta_{E,p2} = -1`,
+        `CONTEXTUAL_SHEAF_PARTIAL_RECONCILIATION_LGGR`).
+      - Phase 3 (Full global section reconciliation: `tax_sheaf.py` sets `q_BC = 1/4` and
+        `settlement_sheaf.py` sets `table_ca = ["1/4", "1/4", "1/4", "1/4"]` with `q_CA = 1/4`
+        and `contextuality_reserve_cents = 0`):
+        `q_BC + q_CA = 1/2`, `alpha_min = alpha_max = 0` (`infeasibility_gap = 0`), unique
+        global joint section `d(0,1,0) = d(0,1,1) = d(1,0,0) = d(1,0,1) = 1/4`, and exact
+        settlement conservation `873 + 27 + 180 = 1080` (`L_p3 = 1`, `Eg_p3 = 1`, `Delta_{E,p3} = 0`,
+        `CODEBASE_CONTEXTUAL_SHEAF_RECONCILED_LGGG`).
 
+    AuthorityEffect: None.
+    """
 
+    DEFAULT_PRICING_SOURCE: str = (
+        "def pricing_sheaf(gross_cents: int, discount_bps: int, rebate_cents: int) -> dict:\n"
+        "    discount_cents = (gross_cents * discount_bps) // 10_000\n"
+        "    net_cents = gross_cents - discount_cents - rebate_cents\n"
+        "    return {\n"
+        "        'subtotal_cents': gross_cents,\n"
+        "        'discount_cents': discount_cents,\n"
+        "        'rebate_cents': rebate_cents,\n"
+        "        'net_cents': net_cents,\n"
+        "        'table_ab': ['0', '1/2', '1/2', '0'],\n"
+        "        'q_ab_num': 0,\n"
+        "    }\n"
+    )
 
+    DEFAULT_TAX_CONTEXTUAL_SOURCE: str = (
+        "def tax_sheaf(pricing_quote: dict, tax_rate_bps: int) -> dict:\n"
+        "    net_cents = int(pricing_quote['net_cents'])\n"
+        "    tax_cents = (net_cents * tax_rate_bps) // 10_000\n"
+        "    return {\n"
+        "        'taxable_cents': net_cents,\n"
+        "        'tax_cents': tax_cents,\n"
+        "        'table_bc': ['0', '1/2', '1/2', '0'],\n"
+        "        'q_bc_num': 0,\n"
+        "    }\n"
+    )
 
+    DEFAULT_TAX_RECONCILED_SOURCE: str = (
+        "def tax_sheaf(pricing_quote: dict, tax_rate_bps: int) -> dict:\n"
+        "    net_cents = int(pricing_quote['net_cents'])\n"
+        "    tax_cents = (net_cents * tax_rate_bps) // 10_000\n"
+        "    return {\n"
+        "        'taxable_cents': net_cents,\n"
+        "        'tax_cents': tax_cents,\n"
+        "        'table_bc': ['1/4', '1/4', '1/4', '1/4'],\n"
+        "        'q_bc_num': 1,\n"
+        "    }\n"
+    )
 
+    DEFAULT_SETTLEMENT_CONTEXTUAL_SOURCE: str = (
+        "def settlement_sheaf(pricing_quote: dict, tax_quote: dict, fee_bps: int) -> dict:\n"
+        "    net_cents = int(pricing_quote['net_cents'])\n"
+        "    tax_cents = int(tax_quote['tax_cents'])\n"
+        "    fee_cents = (net_cents * fee_bps) // 10_000\n"
+        "    contextuality_reserve_cents = 11\n"
+        "    payout_cents = net_cents - fee_cents - contextuality_reserve_cents\n"
+        "    return {\n"
+        "        'gross_collected_cents': net_cents + tax_cents,\n"
+        "        'fee_cents': fee_cents,\n"
+        "        'tax_remitted_cents': tax_cents,\n"
+        "        'contextuality_reserve_cents': contextuality_reserve_cents,\n"
+        "        'merchant_payout_cents': payout_cents,\n"
+        "        'table_ca': ['0', '1/2', '1/2', '0'],\n"
+        "        'q_ca_num': 0,\n"
+        "        'total_accounted_cents': payout_cents + fee_cents + tax_cents,\n"
+        "    }\n"
+    )
 
+    DEFAULT_SETTLEMENT_RECONCILED_SOURCE: str = (
+        "def settlement_sheaf(pricing_quote: dict, tax_quote: dict, fee_bps: int) -> dict:\n"
+        "    net_cents = int(pricing_quote['net_cents'])\n"
+        "    tax_cents = int(tax_quote['tax_cents'])\n"
+        "    fee_cents = (net_cents * fee_bps) // 10_000\n"
+        "    contextuality_reserve_cents = 0\n"
+        "    payout_cents = net_cents - fee_cents\n"
+        "    return {\n"
+        "        'gross_collected_cents': net_cents + tax_cents,\n"
+        "        'fee_cents': fee_cents,\n"
+        "        'tax_remitted_cents': tax_cents,\n"
+        "        'contextuality_reserve_cents': contextuality_reserve_cents,\n"
+        "        'merchant_payout_cents': payout_cents,\n"
+        "        'table_ca': ['1/4', '1/4', '1/4', '1/4'],\n"
+        "        'q_ca_num': 1,\n"
+        "        'total_accounted_cents': payout_cents + fee_cents + tax_cents,\n"
+        "    }\n"
+    )
 
+    def __init__(
+        self,
+        *,
+        scope_id: str = "streaming-codebase-contextual-sheaf-scope",
+    ) -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.sheaf_monitor = StreamingContextualSheafMonitor(
+            scope_id=f"{self.scope_id}-sheaf"
+        )
+        self.transcript_monitor = StreamingMultiTurnPairwiseTranscriptMonitor(
+            scope_id=f"{self.scope_id}-transcript"
+        )
+        self.fiber_monitor = StreamingFiberMonitor(
+            scope_id=f"{self.scope_id}-fiber"
+        )
+        self.evaluations: list[dict[str, Any]] = []
+        self.three_phase_audits: list[dict[str, Any]] = []
 
+    @staticmethod
+    def _exec_sheaf_modules(
+        module_sources: Mapping[str, str],
+    ) -> dict[str, Any]:
+        ns: dict[str, Any] = {}
+        for mod_name in ("pricing_sheaf", "tax_sheaf", "settlement_sheaf"):
+            if mod_name not in module_sources:
+                raise ValidationError(f"Missing module source for {mod_name!r}")
+            src = text(module_sources[mod_name], f"module_sources[{mod_name}]")
+            mod_ns = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(mod_name, src)
+            if mod_name not in mod_ns or not callable(mod_ns[mod_name]):
+                raise ValidationError(f"Module {mod_name} must define callable {mod_name}(...)")
+            ns[mod_name] = mod_ns[mod_name]
+        return ns
 
+    def evaluate_sheaf_merge(
+        self,
+        evaluation_id: str,
+        *,
+        module_sources: Mapping[str, str],
+        local_test_results: Mapping[str, bool],
+        gross_cents: int = 1000,
+        discount_bps: int = 500,
+        rebate_cents: int = 50,
+        tax_rate_bps: int = 2000,
+        fee_bps: int = 300,
+        model_id: str = "deterministic-fixture",
+        infeasible_constraint: str | None = None,
+    ) -> dict[str, Any]:
+        eval_id = text(evaluation_id, "evaluation_id")
+        mid = text(model_id, "model_id")
+        ns = self._exec_sheaf_modules(module_sources)
 
+        p_out = ns["pricing_sheaf"](gross_cents, discount_bps, rebate_cents)
+        t_out = ns["tax_sheaf"](p_out, tax_rate_bps)
+        s_out = ns["settlement_sheaf"](p_out, t_out, fee_bps)
 
+        table_ab = list(p_out.get("table_ab", ["0", "1/2", "1/2", "0"]))
+        table_bc = list(t_out.get("table_bc", ["0", "1/2", "1/2", "0"]))
+        table_ca = list(s_out.get("table_ca", ["0", "1/2", "1/2", "0"]))
 
+        q_ab_num = int(p_out.get("q_ab_num", 0))
+        q_bc_num = int(t_out.get("q_bc_num", 0))
+        q_ca_num = int(s_out.get("q_ca_num", 0))
 
+        sheaf_rec = self.sheaf_monitor.record_three_cycle_model(
+            f"{eval_id}::sheaf",
+            table_ab,
+            table_bc,
+            table_ca,
+        )
 
+        q_table_consistent = (
+            len(table_ab) == 4
+            and len(table_bc) == 4
+            and len(table_ca) == 4
+            and q_ab_num == int(rational(table_ab[3]) * Fraction(4))
+            and q_bc_num == int(rational(table_bc[3]) * Fraction(4))
+            and q_ca_num == int(rational(table_ca[3]) * Fraction(4))
+        )
 
+        no_signaling_ok = bool(sheaf_rec["no_signaling_verified"])
+        global_section_exists = bool(sheaf_rec["global_section_exists"])
+        infeasibility_gap = rational(sheaf_rec["infeasibility_gap"])
+        scaled_gap_m4 = int(infeasibility_gap * Fraction(4))
 
+        net_cents = int(p_out["net_cents"])
+        tax_cents = int(t_out["tax_cents"])
+        fee_cents = int(s_out["fee_cents"])
+        payout_cents = int(s_out["merchant_payout_cents"])
+        reserve_cents = int(s_out.get("contextuality_reserve_cents", 0))
+        gross_collected = int(s_out["gross_collected_cents"])
+        total_accounted = int(s_out["total_accounted_cents"])
 
+        expected_net = 900
+        expected_tax = 180
+        expected_fee = 27
+        expected_payout = 873
+        expected_gross_collected = 1080
 
+        all_local_pass = all(bool(local_test_results.get(m, False)) for m in ("pricing_sheaf", "tax_sheaf", "settlement_sheaf"))
+        local_green = 1 if (all_local_pass and no_signaling_ok and q_table_consistent) else 0
 
+        settlement_conserved = (
+            net_cents == expected_net
+            and tax_cents == expected_tax
+            and fee_cents == expected_fee
+            and payout_cents == expected_payout
+            and reserve_cents == 0
+            and gross_collected == expected_gross_collected
+            and total_accounted == expected_gross_collected
+            and payout_cents + fee_cents + tax_cents == expected_gross_collected
+        )
 
+        global_green = 1 if (
+            local_green == 1
+            and global_section_exists
+            and scaled_gap_m4 == 0
+            and (q_bc_num + q_ca_num == 2)
+            and settlement_conserved
+            and infeasible_constraint is None
+        ) else 0
+        defect = global_green - local_green
 
+        self.fiber_monitor.observe(
+            state_id=f"{eval_id}::fiber",
+            report={"all_local_pass": all_local_pass, "no_signaling_verified": no_signaling_ok},
+            query="LGGG" if global_green == 1 else "LGGR",
+            metadata={
+                "table_ab": table_ab,
+                "table_bc": table_bc,
+                "table_ca": table_ca,
+                "q_bc_num": q_bc_num,
+                "q_ca_num": q_ca_num,
+                "scaled_gap_m4": scaled_gap_m4,
+                "reserve_cents": reserve_cents,
+            },
+        )
 
+        directives: dict[str, dict[str, Any]] = {
+            "worker-0": {
+                "module": "pricing_sheaf",
+                "action": "HOLD_ANCHOR_PAIRWISE_TABLE_AB",
+                "target": "Keep table_ab = ['0', '1/2', '1/2', '0'] and q_ab_num = 0.",
+            }
+        }
+        if q_bc_num != 1 or table_bc != ["1/4", "1/4", "1/4", "1/4"]:
+            directives["worker-1"] = {
+                "module": "tax_sheaf",
+                "action": "RECONCILE_TAX_PAIRWISE_TABLE_BC_Q1",
+                "target": "Set table_bc = ['1/4', '1/4', '1/4', '1/4'] and q_bc_num = 1.",
+            }
+        else:
+            directives["worker-1"] = {
+                "module": "tax_sheaf",
+                "action": "HOLD_TAX_PAIRWISE_TABLE_BC",
+                "target": "Keep table_bc = ['1/4', '1/4', '1/4', '1/4'] and q_bc_num = 1.",
+            }
 
+        if q_ca_num != 1 or table_ca != ["1/4", "1/4", "1/4", "1/4"] or reserve_cents != 0 or not settlement_conserved:
+            directives["worker-2"] = {
+                "module": "settlement_sheaf",
+                "action": "RECONCILE_SETTLEMENT_PAIRWISE_TABLE_CA_Q1",
+                "target": (
+                    "Set table_ca = ['1/4', '1/4', '1/4', '1/4'], q_ca_num = 1, "
+                    "and contextuality_reserve_cents = 0 so payout_cents = net_cents - fee_cents (873)."
+                ),
+            }
+        else:
+            directives["worker-2"] = {
+                "module": "settlement_sheaf",
+                "action": "HOLD_SETTLEMENT_PAIRWISE_TABLE_CA",
+                "target": "Keep table_ca = ['1/4', '1/4', '1/4', '1/4'], q_ca_num = 1, and contextuality_reserve_cents = 0.",
+            }
 
+        if infeasible_constraint is not None and global_green == 0:
+            status = "INFEASIBLE_CONTEXTUAL_SHEAF_LOCK"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif global_green == 1:
+            status = "CODEBASE_CONTEXTUAL_SHEAF_RECONCILED_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+        elif local_green == 1 and q_bc_num == 1 and (q_ca_num != 1 or reserve_cents != 0):
+            status = "CONTEXTUAL_SHEAF_PARTIAL_RECONCILIATION_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif local_green == 1:
+            status = "CONTEXTUAL_SHEAF_HOLLOW_TRIANGLE_NGD_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "CONTEXTUAL_SHEAF_LOCAL_UNIT_FAILURE"
+            contract_status = "OBSTRUCTED_LGGR"
 
+        rec = json_value(
+            {
+                "evaluation_id": eval_id,
+                "model_id": mid,
+                "local_green": local_green,
+                "global_green": global_green,
+                "defect": defect,
+                "status": status,
+                "contract_status": contract_status,
+                "no_signaling_verified": no_signaling_ok,
+                "global_section_exists": global_section_exists,
+                "table_ab": table_ab,
+                "table_bc": table_bc,
+                "table_ca": table_ca,
+                "q_ab_num": q_ab_num,
+                "q_bc_num": q_bc_num,
+                "q_ca_num": q_ca_num,
+                "infeasibility_gap": infeasibility_gap,
+                "scaled_gap_m4": scaled_gap_m4,
+                "contextuality_reserve_cents": reserve_cents,
+                "merchant_payout_cents": payout_cents,
+                "fee_cents": fee_cents,
+                "tax_cents": tax_cents,
+                "gross_collected_cents": gross_collected,
+                "total_accounted_cents": total_accounted,
+                "sheaf_model_receipt": sheaf_rec,
+                "compact_role_directives": directives,
+            }
+        )
+        self.evaluations.append(rec)
+        return rec
 
+    def evaluate_three_phase_sheaf_audit(
+        self,
+        evaluation_id: str,
+        *,
+        model_id: str = "deterministic-fixture",
+        pricing_source: str | None = None,
+        tax_contextual_source: str | None = None,
+        tax_reconciled_source: str | None = None,
+        settlement_contextual_source: str | None = None,
+        settlement_reconciled_source: str | None = None,
+    ) -> dict[str, Any]:
+        eval_id = text(evaluation_id, "evaluation_id")
+        mid = text(model_id, "model_id")
 
+        src_p = pricing_source or self.DEFAULT_PRICING_SOURCE
+        src_t_ctx = tax_contextual_source or self.DEFAULT_TAX_CONTEXTUAL_SOURCE
+        src_t_rec = tax_reconciled_source or self.DEFAULT_TAX_RECONCILED_SOURCE
+        src_s_ctx = settlement_contextual_source or self.DEFAULT_SETTLEMENT_CONTEXTUAL_SOURCE
+        src_s_rec = settlement_reconciled_source or self.DEFAULT_SETTLEMENT_RECONCILED_SOURCE
 
+        all_local_green = {
+            "pricing_sheaf": True,
+            "tax_sheaf": True,
+            "settlement_sheaf": True,
+        }
+
+        transcript_rec = self.transcript_monitor.evaluate_transcript(
+            f"{eval_id}::transcript"
+        )
+
+        p1 = self.evaluate_sheaf_merge(
+            f"{eval_id}::phase_1_hollow_triangle",
+            module_sources={
+                "pricing_sheaf": src_p,
+                "tax_sheaf": src_t_ctx,
+                "settlement_sheaf": src_s_ctx,
+            },
+            local_test_results=all_local_green,
+            model_id=mid,
+        )
+        p2 = self.evaluate_sheaf_merge(
+            f"{eval_id}::phase_2_partial_tax_reconciliation",
+            module_sources={
+                "pricing_sheaf": src_p,
+                "tax_sheaf": src_t_rec,
+                "settlement_sheaf": src_s_ctx,
+            },
+            local_test_results=all_local_green,
+            model_id=mid,
+        )
+        p3 = self.evaluate_sheaf_merge(
+            f"{eval_id}::phase_3_full_global_section_reconciled",
+            module_sources={
+                "pricing_sheaf": src_p,
+                "tax_sheaf": src_t_rec,
+                "settlement_sheaf": src_s_rec,
+            },
+            local_test_results=all_local_green,
+            model_id=mid,
+        )
+
+        audit_rec = json_value(
+            {
+                "evaluation_id": eval_id,
+                "model_id": mid,
+                "phase_1_scaled_gap_m4": p1["scaled_gap_m4"],
+                "phase_1_q_pair_sum": p1["q_bc_num"] + p1["q_ca_num"],
+                "phase_1_local_green": p1["local_green"],
+                "phase_1_global_green": p1["global_green"],
+                "phase_1_defect": p1["defect"],
+                "phase_1_status": p1["status"],
+                "phase_1_directives": p1["compact_role_directives"],
+                "phase_2_scaled_gap_m4": p2["scaled_gap_m4"],
+                "phase_2_q_pair_sum": p2["q_bc_num"] + p2["q_ca_num"],
+                "phase_2_local_green": p2["local_green"],
+                "phase_2_global_green": p2["global_green"],
+                "phase_2_defect": p2["defect"],
+                "phase_2_status": p2["status"],
+                "phase_3_scaled_gap_m4": p3["scaled_gap_m4"],
+                "phase_3_q_pair_sum": p3["q_bc_num"] + p3["q_ca_num"],
+                "phase_3_local_green": p3["local_green"],
+                "phase_3_global_green": p3["global_green"],
+                "phase_3_defect": p3["defect"],
+                "phase_3_status": p3["status"],
+                "transcript_audit": transcript_rec,
+            }
+        )
+        self.three_phase_audits.append(audit_rec)
+        return audit_rec
+
+    def current_receipt(self) -> dict[str, Any]:
+        if not self.evaluations:
+            raise ValidationError("at least one codebase contextual-sheaf evaluation must be recorded")
+        n = len(self.evaluations)
+        lggr_count = sum(1 for e in self.evaluations if e["defect"] == -1)
+        lggg_count = sum(1 for e in self.evaluations if e["global_green"] == 1)
+        last = self.evaluations[-1]
+
+        body: dict[str, Any] = {
+            "schema": "lggr.online_codebase_contextual_sheaf.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": last["status"],
+            "contract_status": last["contract_status"],
+            "evaluation_count": n,
+            "lggr_obstruction_count": lggr_count,
+            "lggg_coherent_count": lggg_count,
+            "sheaf_receipt": self.sheaf_monitor.get_receipt(),
+            "transcript_receipt": self.transcript_monitor.current_receipt() if self.transcript_monitor.evaluations else None,
+            "fiber_receipt": self.fiber_monitor.get_receipt(),
+            "three_phase_audits": self.three_phase_audits,
+            "evaluations": self.evaluations,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
 

@@ -1,0 +1,4352 @@
+{
+  "schema": "lggr.codebase_contextual_sheaf_replay.v1",
+  "authority_effect": "None",
+  "benchmark_name": "codebase_contextual_sheaf_benchmark",
+  "models_evaluated": [
+    "openai/gpt-4o-mini",
+    "google/gemini-2.5-flash-lite",
+    "meta-llama/llama-3.3-70b-instruct",
+    "deepseek/deepseek-chat",
+    "mistralai/mistral-small-3.2-24b-instruct"
+  ],
+  "total_completions": 5,
+  "evaluation_count": 5,
+  "phase_1_hollow_triangle_metrics": {
+    "N": 5,
+    "LPR": "1",
+    "GPR": "0",
+    "NGD_rate": "1",
+    "ZDR_rate": "0",
+    "PGD_rate": "0",
+    "mean_defect": "-1",
+    "EGD_rate": "-1",
+    "LRGR_rate": "0",
+    "identity_verified": true
+  },
+  "phase_2_partial_reconciliation_metrics": {
+    "N": 5,
+    "LPR": "1",
+    "GPR": "0",
+    "NGD_rate": "1",
+    "ZDR_rate": "0",
+    "PGD_rate": "0",
+    "mean_defect": "-1",
+    "EGD_rate": "-1",
+    "LRGR_rate": "0",
+    "identity_verified": true
+  },
+  "phase_3_global_section_reconciled_metrics": {
+    "N": 5,
+    "LPR": "1",
+    "GPR": "1",
+    "NGD_rate": "0",
+    "ZDR_rate": "1",
+    "PGD_rate": "0",
+    "mean_defect": "0",
+    "EGD_rate": "0",
+    "LRGR_rate": "0",
+    "identity_verified": true
+  },
+  "hollow_triangle_codebase_coherence_rate": "0",
+  "global_section_reconciled_codebase_coherence_rate": "1",
+  "codebase_contextual_sheaf_coherence_gain": "1",
+  "codebase_contextual_sheaf_receipt": {
+    "schema": "lggr.online_codebase_contextual_sheaf.v1",
+    "authority_effect": "None",
+    "scope_id": "live-codebase-contextual-sheaf-benchmark",
+    "status": "CODEBASE_CONTEXTUAL_SHEAF_RECONCILED_LGGG",
+    "contract_status": "COMPOSABLE_LGGG",
+    "evaluation_count": 15,
+    "lggr_obstruction_count": 10,
+    "lggg_coherent_count": 5,
+    "sheaf_receipt": {
+      "schema": "lggr.online_contextual_sheaf.v1",
+      "authority_effect": "None",
+      "scope_id": "live-codebase-contextual-sheaf-benchmark-sheaf",
+      "status": "PRESHEAF_SECTION_OBSTRUCTED_LGGR",
+      "contract_status": "OBSTRUCTED_LGGR",
+      "model_count": 15,
+      "contextual_obstructed_model_ids": [
+        "codebase_sheaf_eval_1_openai_gpt-4o-mini::phase_1_hollow_triangle::sheaf",
+        "codebase_sheaf_eval_1_openai_gpt-4o-mini::phase_2_partial_tax_reconciliation::sheaf",
+        "codebase_sheaf_eval_2_google_gemini-2.5-flash-lite::phase_1_hollow_triangle::sheaf",
+        "codebase_sheaf_eval_2_google_gemini-2.5-flash-lite::phase_2_partial_tax_reconciliation::sheaf",
+        "codebase_sheaf_eval_3_meta-llama_llama-3.3-70b-instruct::phase_1_hollow_triangle::sheaf",
+        "codebase_sheaf_eval_3_meta-llama_llama-3.3-70b-instruct::phase_2_partial_tax_reconciliation::sheaf",
+        "codebase_sheaf_eval_4_deepseek_deepseek-chat::phase_1_hollow_triangle::sheaf",
+        "codebase_sheaf_eval_4_deepseek_deepseek-chat::phase_2_partial_tax_reconciliation::sheaf",
+        "codebase_sheaf_eval_5_mistralai_mistral-small-3.2-24b-instruct::phase_1_hollow_triangle::sheaf",
+        "codebase_sheaf_eval_5_mistralai_mistral-small-3.2-24b-instruct::phase_2_partial_tax_reconciliation::sheaf"
+      ],
+      "signaling_obstructed_model_ids": [],
+      "all_affine_marginal_recoveries_verified": true,
+      "models": [
+        {
+          "model_id": "codebase_sheaf_eval_1_openai_gpt-4o-mini::phase_1_hollow_triangle::sheaf",
+          "no_signaling_verified": true,
+          "marginals_one": {
+            "A": "1/2",
+            "B": "1/2",
+            "C": "1/2"
+          },
+          "joint_ones": {
+            "AB": "0",
+            "BC": "0",
+            "CA": "0"
+          },
+          "d000_plus_d111_invariant": "-1/2",
+          "alpha_min": "0",
+          "alpha_max": "-1/2",
+          "infeasibility_gap": "1/2",
+          "global_section_exists": false,
+          "witness_global_joint": null,
+          "affine_marginal_recovery_verified": true,
+          "classification": "CONTEXTUAL_HOLLOW_TRIANGLE_OBSTRUCTION_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR"
+        },
+        {
+          "model_id": "codebase_sheaf_eval_1_openai_gpt-4o-mini::phase_2_partial_tax_reconciliation::sheaf",
+          "no_signaling_verified": true,
+          "marginals_one": {
+            "A": "1/2",
+            "B": "1/2",
+            "C": "1/2"
+          },
+          "joint_ones": {
+            "AB": "0",
+            "BC": "1/4",
+            "CA": "0"
+          },
+          "d000_plus_d111_invariant": "-1/4",
+          "alpha_min": "0",
+          "alpha_max": "-1/4",
+          "infeasibility_gap": "1/4",
+          "global_section_exists": false,
+          "witness_global_joint": null,
+          "affine_marginal_recovery_verified": true,
+          "classification": "CONTEXTUAL_HOLLOW_TRIANGLE_OBSTRUCTION_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR"
+        },
+        {
+          "model_id": "codebase_sheaf_eval_1_openai_gpt-4o-mini::phase_3_full_global_section_reconciled::sheaf",
+          "no_signaling_verified": true,
+          "marginals_one": {
+            "A": "1/2",
+            "B": "1/2",
+            "C": "1/2"
+          },
+          "joint_ones": {
+            "AB": "0",
+            "BC": "1/4",
+            "CA": "1/4"
+          },
+          "d000_plus_d111_invariant": "0",
+          "alpha_min": "0",
+          "alpha_max": "0",
+          "infeasibility_gap": "0",
+          "global_section_exists": true,
+          "witness_global_joint": {
+            "000": "0",
+            "001": "0",
+            "010": "1/4",
+            "011": "1/4",
+            "100": "1/4",
+            "101": "1/4",
+            "110": "0",
+            "111": "0"
+          },
+          "affine_marginal_recovery_verified": true,
+          "classification": "GLOBAL_JOINT_SECTION_EXTENSIBLE_LGGG",
+          "contract_status": "COMPOSABLE_LGGG"
+        },
+        {
+          "model_id": "codebase_sheaf_eval_2_google_gemini-2.5-flash-lite::phase_1_hollow_triangle::sheaf",
+          "no_signaling_verified": true,
+          "marginals_one": {
+            "A": "1/2",
+            "B": "1/2",
+            "C": "1/2"
+          },
+          "joint_ones": {
+            "AB": "0",
+            "BC": "0",
+            "CA": "0"
+          },
+          "d000_plus_d111_invariant": "-1/2",
+          "alpha_min": "0",
+          "alpha_max": "-1/2",
+          "infeasibility_gap": "1/2",
+          "global_section_exists": false,
+          "witness_global_joint": null,
+          "affine_marginal_recovery_verified": true,
+          "classification": "CONTEXTUAL_HOLLOW_TRIANGLE_OBSTRUCTION_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR"
+        },
+        {
+          "model_id": "codebase_sheaf_eval_2_google_gemini-2.5-flash-lite::phase_2_partial_tax_reconciliation::sheaf",
+          "no_signaling_verified": true,
+          "marginals_one": {
+            "A": "1/2",
+            "B": "1/2",
+            "C": "1/2"
+          },
+          "joint_ones": {
+            "AB": "0",
+            "BC": "1/4",
+            "CA": "0"
+          },
+          "d000_plus_d111_invariant": "-1/4",
+          "alpha_min": "0",
+          "alpha_max": "-1/4",
+          "infeasibility_gap": "1/4",
+          "global_section_exists": false,
+          "witness_global_joint": null,
+          "affine_marginal_recovery_verified": true,
+          "classification": "CONTEXTUAL_HOLLOW_TRIANGLE_OBSTRUCTION_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR"
+        },
+        {
+          "model_id": "codebase_sheaf_eval_2_google_gemini-2.5-flash-lite::phase_3_full_global_section_reconciled::sheaf",
+          "no_signaling_verified": true,
+          "marginals_one": {
+            "A": "1/2",
+            "B": "1/2",
+            "C": "1/2"
+          },
+          "joint_ones": {
+            "AB": "0",
+            "BC": "1/4",
+            "CA": "1/4"
+          },
+          "d000_plus_d111_invariant": "0",
+          "alpha_min": "0",
+          "alpha_max": "0",
+          "infeasibility_gap": "0",
+          "global_section_exists": true,
+          "witness_global_joint": {
+            "000": "0",
+            "001": "0",
+            "010": "1/4",
+            "011": "1/4",
+            "100": "1/4",
+            "101": "1/4",
+            "110": "0",
+            "111": "0"
+          },
+          "affine_marginal_recovery_verified": true,
+          "classification": "GLOBAL_JOINT_SECTION_EXTENSIBLE_LGGG",
+          "contract_status": "COMPOSABLE_LGGG"
+        },
+        {
+          "model_id": "codebase_sheaf_eval_3_meta-llama_llama-3.3-70b-instruct::phase_1_hollow_triangle::sheaf",
+          "no_signaling_verified": true,
+          "marginals_one": {
+            "A": "1/2",
+            "B": "1/2",
+            "C": "1/2"
+          },
+          "joint_ones": {
+            "AB": "0",
+            "BC": "0",
+            "CA": "0"
+          },
+          "d000_plus_d111_invariant": "-1/2",
+          "alpha_min": "0",
+          "alpha_max": "-1/2",
+          "infeasibility_gap": "1/2",
+          "global_section_exists": false,
+          "witness_global_joint": null,
+          "affine_marginal_recovery_verified": true,
+          "classification": "CONTEXTUAL_HOLLOW_TRIANGLE_OBSTRUCTION_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR"
+        },
+        {
+          "model_id": "codebase_sheaf_eval_3_meta-llama_llama-3.3-70b-instruct::phase_2_partial_tax_reconciliation::sheaf",
+          "no_signaling_verified": true,
+          "marginals_one": {
+            "A": "1/2",
+            "B": "1/2",
+            "C": "1/2"
+          },
+          "joint_ones": {
+            "AB": "0",
+            "BC": "1/4",
+            "CA": "0"
+          },
+          "d000_plus_d111_invariant": "-1/4",
+          "alpha_min": "0",
+          "alpha_max": "-1/4",
+          "infeasibility_gap": "1/4",
+          "global_section_exists": false,
+          "witness_global_joint": null,
+          "affine_marginal_recovery_verified": true,
+          "classification": "CONTEXTUAL_HOLLOW_TRIANGLE_OBSTRUCTION_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR"
+        },
+        {
+          "model_id": "codebase_sheaf_eval_3_meta-llama_llama-3.3-70b-instruct::phase_3_full_global_section_reconciled::sheaf",
+          "no_signaling_verified": true,
+          "marginals_one": {
+            "A": "1/2",
+            "B": "1/2",
+            "C": "1/2"
+          },
+          "joint_ones": {
+            "AB": "0",
+            "BC": "1/4",
+            "CA": "1/4"
+          },
+          "d000_plus_d111_invariant": "0",
+          "alpha_min": "0",
+          "alpha_max": "0",
+          "infeasibility_gap": "0",
+          "global_section_exists": true,
+          "witness_global_joint": {
+            "000": "0",
+            "001": "0",
+            "010": "1/4",
+            "011": "1/4",
+            "100": "1/4",
+            "101": "1/4",
+            "110": "0",
+            "111": "0"
+          },
+          "affine_marginal_recovery_verified": true,
+          "classification": "GLOBAL_JOINT_SECTION_EXTENSIBLE_LGGG",
+          "contract_status": "COMPOSABLE_LGGG"
+        },
+        {
+          "model_id": "codebase_sheaf_eval_4_deepseek_deepseek-chat::phase_1_hollow_triangle::sheaf",
+          "no_signaling_verified": true,
+          "marginals_one": {
+            "A": "1/2",
+            "B": "1/2",
+            "C": "1/2"
+          },
+          "joint_ones": {
+            "AB": "0",
+            "BC": "0",
+            "CA": "0"
+          },
+          "d000_plus_d111_invariant": "-1/2",
+          "alpha_min": "0",
+          "alpha_max": "-1/2",
+          "infeasibility_gap": "1/2",
+          "global_section_exists": false,
+          "witness_global_joint": null,
+          "affine_marginal_recovery_verified": true,
+          "classification": "CONTEXTUAL_HOLLOW_TRIANGLE_OBSTRUCTION_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR"
+        },
+        {
+          "model_id": "codebase_sheaf_eval_4_deepseek_deepseek-chat::phase_2_partial_tax_reconciliation::sheaf",
+          "no_signaling_verified": true,
+          "marginals_one": {
+            "A": "1/2",
+            "B": "1/2",
+            "C": "1/2"
+          },
+          "joint_ones": {
+            "AB": "0",
+            "BC": "1/4",
+            "CA": "0"
+          },
+          "d000_plus_d111_invariant": "-1/4",
+          "alpha_min": "0",
+          "alpha_max": "-1/4",
+          "infeasibility_gap": "1/4",
+          "global_section_exists": false,
+          "witness_global_joint": null,
+          "affine_marginal_recovery_verified": true,
+          "classification": "CONTEXTUAL_HOLLOW_TRIANGLE_OBSTRUCTION_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR"
+        },
+        {
+          "model_id": "codebase_sheaf_eval_4_deepseek_deepseek-chat::phase_3_full_global_section_reconciled::sheaf",
+          "no_signaling_verified": true,
+          "marginals_one": {
+            "A": "1/2",
+            "B": "1/2",
+            "C": "1/2"
+          },
+          "joint_ones": {
+            "AB": "0",
+            "BC": "1/4",
+            "CA": "1/4"
+          },
+          "d000_plus_d111_invariant": "0",
+          "alpha_min": "0",
+          "alpha_max": "0",
+          "infeasibility_gap": "0",
+          "global_section_exists": true,
+          "witness_global_joint": {
+            "000": "0",
+            "001": "0",
+            "010": "1/4",
+            "011": "1/4",
+            "100": "1/4",
+            "101": "1/4",
+            "110": "0",
+            "111": "0"
+          },
+          "affine_marginal_recovery_verified": true,
+          "classification": "GLOBAL_JOINT_SECTION_EXTENSIBLE_LGGG",
+          "contract_status": "COMPOSABLE_LGGG"
+        },
+        {
+          "model_id": "codebase_sheaf_eval_5_mistralai_mistral-small-3.2-24b-instruct::phase_1_hollow_triangle::sheaf",
+          "no_signaling_verified": true,
+          "marginals_one": {
+            "A": "1/2",
+            "B": "1/2",
+            "C": "1/2"
+          },
+          "joint_ones": {
+            "AB": "0",
+            "BC": "0",
+            "CA": "0"
+          },
+          "d000_plus_d111_invariant": "-1/2",
+          "alpha_min": "0",
+          "alpha_max": "-1/2",
+          "infeasibility_gap": "1/2",
+          "global_section_exists": false,
+          "witness_global_joint": null,
+          "affine_marginal_recovery_verified": true,
+          "classification": "CONTEXTUAL_HOLLOW_TRIANGLE_OBSTRUCTION_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR"
+        },
+        {
+          "model_id": "codebase_sheaf_eval_5_mistralai_mistral-small-3.2-24b-instruct::phase_2_partial_tax_reconciliation::sheaf",
+          "no_signaling_verified": true,
+          "marginals_one": {
+            "A": "1/2",
+            "B": "1/2",
+            "C": "1/2"
+          },
+          "joint_ones": {
+            "AB": "0",
+            "BC": "1/4",
+            "CA": "0"
+          },
+          "d000_plus_d111_invariant": "-1/4",
+          "alpha_min": "0",
+          "alpha_max": "-1/4",
+          "infeasibility_gap": "1/4",
+          "global_section_exists": false,
+          "witness_global_joint": null,
+          "affine_marginal_recovery_verified": true,
+          "classification": "CONTEXTUAL_HOLLOW_TRIANGLE_OBSTRUCTION_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR"
+        },
+        {
+          "model_id": "codebase_sheaf_eval_5_mistralai_mistral-small-3.2-24b-instruct::phase_3_full_global_section_reconciled::sheaf",
+          "no_signaling_verified": true,
+          "marginals_one": {
+            "A": "1/2",
+            "B": "1/2",
+            "C": "1/2"
+          },
+          "joint_ones": {
+            "AB": "0",
+            "BC": "1/4",
+            "CA": "1/4"
+          },
+          "d000_plus_d111_invariant": "0",
+          "alpha_min": "0",
+          "alpha_max": "0",
+          "infeasibility_gap": "0",
+          "global_section_exists": true,
+          "witness_global_joint": {
+            "000": "0",
+            "001": "0",
+            "010": "1/4",
+            "011": "1/4",
+            "100": "1/4",
+            "101": "1/4",
+            "110": "0",
+            "111": "0"
+          },
+          "affine_marginal_recovery_verified": true,
+          "classification": "GLOBAL_JOINT_SECTION_EXTENSIBLE_LGGG",
+          "contract_status": "COMPOSABLE_LGGG"
+        }
+      ],
+      "receipt_sha256": "c74150118d2360f65c3a1eb97d0a4b99ab66586e2a09cc898a90ee344fe5314a"
+    },
+    "transcript_receipt": {
+      "schema": "lggr.online_multi_turn_pairwise_transcript.v1",
+      "authority_effect": "None",
+      "scope_id": "live-codebase-contextual-sheaf-benchmark-transcript",
+      "status": "PRE_GENERATION_SHEAF_RECONCILED_LGGG",
+      "contract_status": "COMPOSABLE_LGGG",
+      "evaluation_count": 5,
+      "phase_1_signaling_mismatch_count": 5,
+      "phase_2_contextual_obstruction_count": 5,
+      "phase_3_sheaf_reconciled_count": 5,
+      "ungated_contextual_coherence_rate": "0",
+      "sheaf_reconciled_coherence_rate": "1",
+      "sheaf_reconciliation_coherence_gain": "1",
+      "sheaf_monitor_receipt": {
+        "schema": "lggr.online_contextual_sheaf.v1",
+        "authority_effect": "None",
+        "scope_id": "live-codebase-contextual-sheaf-benchmark-transcript-sheaf",
+        "status": "PRESHEAF_SECTION_OBSTRUCTED_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "model_count": 15,
+        "contextual_obstructed_model_ids": [
+          "codebase_sheaf_eval_1_openai_gpt-4o-mini::transcript::phase_2_contextual",
+          "codebase_sheaf_eval_2_google_gemini-2.5-flash-lite::transcript::phase_2_contextual",
+          "codebase_sheaf_eval_3_meta-llama_llama-3.3-70b-instruct::transcript::phase_2_contextual",
+          "codebase_sheaf_eval_4_deepseek_deepseek-chat::transcript::phase_2_contextual",
+          "codebase_sheaf_eval_5_mistralai_mistral-small-3.2-24b-instruct::transcript::phase_2_contextual"
+        ],
+        "signaling_obstructed_model_ids": [
+          "codebase_sheaf_eval_1_openai_gpt-4o-mini::transcript::phase_1_signaling",
+          "codebase_sheaf_eval_2_google_gemini-2.5-flash-lite::transcript::phase_1_signaling",
+          "codebase_sheaf_eval_3_meta-llama_llama-3.3-70b-instruct::transcript::phase_1_signaling",
+          "codebase_sheaf_eval_4_deepseek_deepseek-chat::transcript::phase_1_signaling",
+          "codebase_sheaf_eval_5_mistralai_mistral-small-3.2-24b-instruct::transcript::phase_1_signaling"
+        ],
+        "all_affine_marginal_recoveries_verified": true,
+        "models": [
+          {
+            "model_id": "codebase_sheaf_eval_1_openai_gpt-4o-mini::transcript::phase_1_signaling",
+            "no_signaling_verified": false,
+            "marginals_one": {
+              "A": "1/2",
+              "B": "1/2",
+              "C": "1/4"
+            },
+            "joint_ones": {
+              "AB": "0",
+              "BC": "0",
+              "CA": "1/4"
+            },
+            "d000_plus_d111_invariant": "0",
+            "alpha_min": "0",
+            "alpha_max": "0",
+            "infeasibility_gap": "0",
+            "global_section_exists": false,
+            "witness_global_joint": null,
+            "affine_marginal_recovery_verified": false,
+            "classification": "SIGNALING_MARGINAL_MISMATCH_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR"
+          },
+          {
+            "model_id": "codebase_sheaf_eval_1_openai_gpt-4o-mini::transcript::phase_2_contextual",
+            "no_signaling_verified": true,
+            "marginals_one": {
+              "A": "1/2",
+              "B": "1/2",
+              "C": "1/2"
+            },
+            "joint_ones": {
+              "AB": "0",
+              "BC": "0",
+              "CA": "0"
+            },
+            "d000_plus_d111_invariant": "-1/2",
+            "alpha_min": "0",
+            "alpha_max": "-1/2",
+            "infeasibility_gap": "1/2",
+            "global_section_exists": false,
+            "witness_global_joint": null,
+            "affine_marginal_recovery_verified": true,
+            "classification": "CONTEXTUAL_HOLLOW_TRIANGLE_OBSTRUCTION_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR"
+          },
+          {
+            "model_id": "codebase_sheaf_eval_1_openai_gpt-4o-mini::transcript::phase_3_reconciled",
+            "no_signaling_verified": true,
+            "marginals_one": {
+              "A": "1/2",
+              "B": "1/2",
+              "C": "1/2"
+            },
+            "joint_ones": {
+              "AB": "0",
+              "BC": "0",
+              "CA": "1/2"
+            },
+            "d000_plus_d111_invariant": "0",
+            "alpha_min": "0",
+            "alpha_max": "0",
+            "infeasibility_gap": "0",
+            "global_section_exists": true,
+            "witness_global_joint": {
+              "000": "0",
+              "001": "0",
+              "010": "1/2",
+              "011": "0",
+              "100": "0",
+              "101": "1/2",
+              "110": "0",
+              "111": "0"
+            },
+            "affine_marginal_recovery_verified": true,
+            "classification": "GLOBAL_JOINT_SECTION_EXTENSIBLE_LGGG",
+            "contract_status": "COMPOSABLE_LGGG"
+          },
+          {
+            "model_id": "codebase_sheaf_eval_2_google_gemini-2.5-flash-lite::transcript::phase_1_signaling",
+            "no_signaling_verified": false,
+            "marginals_one": {
+              "A": "1/2",
+              "B": "1/2",
+              "C": "1/4"
+            },
+            "joint_ones": {
+              "AB": "0",
+              "BC": "0",
+              "CA": "1/4"
+            },
+            "d000_plus_d111_invariant": "0",
+            "alpha_min": "0",
+            "alpha_max": "0",
+            "infeasibility_gap": "0",
+            "global_section_exists": false,
+            "witness_global_joint": null,
+            "affine_marginal_recovery_verified": false,
+            "classification": "SIGNALING_MARGINAL_MISMATCH_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR"
+          },
+          {
+            "model_id": "codebase_sheaf_eval_2_google_gemini-2.5-flash-lite::transcript::phase_2_contextual",
+            "no_signaling_verified": true,
+            "marginals_one": {
+              "A": "1/2",
+              "B": "1/2",
+              "C": "1/2"
+            },
+            "joint_ones": {
+              "AB": "0",
+              "BC": "0",
+              "CA": "0"
+            },
+            "d000_plus_d111_invariant": "-1/2",
+            "alpha_min": "0",
+            "alpha_max": "-1/2",
+            "infeasibility_gap": "1/2",
+            "global_section_exists": false,
+            "witness_global_joint": null,
+            "affine_marginal_recovery_verified": true,
+            "classification": "CONTEXTUAL_HOLLOW_TRIANGLE_OBSTRUCTION_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR"
+          },
+          {
+            "model_id": "codebase_sheaf_eval_2_google_gemini-2.5-flash-lite::transcript::phase_3_reconciled",
+            "no_signaling_verified": true,
+            "marginals_one": {
+              "A": "1/2",
+              "B": "1/2",
+              "C": "1/2"
+            },
+            "joint_ones": {
+              "AB": "0",
+              "BC": "0",
+              "CA": "1/2"
+            },
+            "d000_plus_d111_invariant": "0",
+            "alpha_min": "0",
+            "alpha_max": "0",
+            "infeasibility_gap": "0",
+            "global_section_exists": true,
+            "witness_global_joint": {
+              "000": "0",
+              "001": "0",
+              "010": "1/2",
+              "011": "0",
+              "100": "0",
+              "101": "1/2",
+              "110": "0",
+              "111": "0"
+            },
+            "affine_marginal_recovery_verified": true,
+            "classification": "GLOBAL_JOINT_SECTION_EXTENSIBLE_LGGG",
+            "contract_status": "COMPOSABLE_LGGG"
+          },
+          {
+            "model_id": "codebase_sheaf_eval_3_meta-llama_llama-3.3-70b-instruct::transcript::phase_1_signaling",
+            "no_signaling_verified": false,
+            "marginals_one": {
+              "A": "1/2",
+              "B": "1/2",
+              "C": "1/4"
+            },
+            "joint_ones": {
+              "AB": "0",
+              "BC": "0",
+              "CA": "1/4"
+            },
+            "d000_plus_d111_invariant": "0",
+            "alpha_min": "0",
+            "alpha_max": "0",
+            "infeasibility_gap": "0",
+            "global_section_exists": false,
+            "witness_global_joint": null,
+            "affine_marginal_recovery_verified": false,
+            "classification": "SIGNALING_MARGINAL_MISMATCH_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR"
+          },
+          {
+            "model_id": "codebase_sheaf_eval_3_meta-llama_llama-3.3-70b-instruct::transcript::phase_2_contextual",
+            "no_signaling_verified": true,
+            "marginals_one": {
+              "A": "1/2",
+              "B": "1/2",
+              "C": "1/2"
+            },
+            "joint_ones": {
+              "AB": "0",
+              "BC": "0",
+              "CA": "0"
+            },
+            "d000_plus_d111_invariant": "-1/2",
+            "alpha_min": "0",
+            "alpha_max": "-1/2",
+            "infeasibility_gap": "1/2",
+            "global_section_exists": false,
+            "witness_global_joint": null,
+            "affine_marginal_recovery_verified": true,
+            "classification": "CONTEXTUAL_HOLLOW_TRIANGLE_OBSTRUCTION_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR"
+          },
+          {
+            "model_id": "codebase_sheaf_eval_3_meta-llama_llama-3.3-70b-instruct::transcript::phase_3_reconciled",
+            "no_signaling_verified": true,
+            "marginals_one": {
+              "A": "1/2",
+              "B": "1/2",
+              "C": "1/2"
+            },
+            "joint_ones": {
+              "AB": "0",
+              "BC": "0",
+              "CA": "1/2"
+            },
+            "d000_plus_d111_invariant": "0",
+            "alpha_min": "0",
+            "alpha_max": "0",
+            "infeasibility_gap": "0",
+            "global_section_exists": true,
+            "witness_global_joint": {
+              "000": "0",
+              "001": "0",
+              "010": "1/2",
+              "011": "0",
+              "100": "0",
+              "101": "1/2",
+              "110": "0",
+              "111": "0"
+            },
+            "affine_marginal_recovery_verified": true,
+            "classification": "GLOBAL_JOINT_SECTION_EXTENSIBLE_LGGG",
+            "contract_status": "COMPOSABLE_LGGG"
+          },
+          {
+            "model_id": "codebase_sheaf_eval_4_deepseek_deepseek-chat::transcript::phase_1_signaling",
+            "no_signaling_verified": false,
+            "marginals_one": {
+              "A": "1/2",
+              "B": "1/2",
+              "C": "1/4"
+            },
+            "joint_ones": {
+              "AB": "0",
+              "BC": "0",
+              "CA": "1/4"
+            },
+            "d000_plus_d111_invariant": "0",
+            "alpha_min": "0",
+            "alpha_max": "0",
+            "infeasibility_gap": "0",
+            "global_section_exists": false,
+            "witness_global_joint": null,
+            "affine_marginal_recovery_verified": false,
+            "classification": "SIGNALING_MARGINAL_MISMATCH_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR"
+          },
+          {
+            "model_id": "codebase_sheaf_eval_4_deepseek_deepseek-chat::transcript::phase_2_contextual",
+            "no_signaling_verified": true,
+            "marginals_one": {
+              "A": "1/2",
+              "B": "1/2",
+              "C": "1/2"
+            },
+            "joint_ones": {
+              "AB": "0",
+              "BC": "0",
+              "CA": "0"
+            },
+            "d000_plus_d111_invariant": "-1/2",
+            "alpha_min": "0",
+            "alpha_max": "-1/2",
+            "infeasibility_gap": "1/2",
+            "global_section_exists": false,
+            "witness_global_joint": null,
+            "affine_marginal_recovery_verified": true,
+            "classification": "CONTEXTUAL_HOLLOW_TRIANGLE_OBSTRUCTION_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR"
+          },
+          {
+            "model_id": "codebase_sheaf_eval_4_deepseek_deepseek-chat::transcript::phase_3_reconciled",
+            "no_signaling_verified": true,
+            "marginals_one": {
+              "A": "1/2",
+              "B": "1/2",
+              "C": "1/2"
+            },
+            "joint_ones": {
+              "AB": "0",
+              "BC": "0",
+              "CA": "1/2"
+            },
+            "d000_plus_d111_invariant": "0",
+            "alpha_min": "0",
+            "alpha_max": "0",
+            "infeasibility_gap": "0",
+            "global_section_exists": true,
+            "witness_global_joint": {
+              "000": "0",
+              "001": "0",
+              "010": "1/2",
+              "011": "0",
+              "100": "0",
+              "101": "1/2",
+              "110": "0",
+              "111": "0"
+            },
+            "affine_marginal_recovery_verified": true,
+            "classification": "GLOBAL_JOINT_SECTION_EXTENSIBLE_LGGG",
+            "contract_status": "COMPOSABLE_LGGG"
+          },
+          {
+            "model_id": "codebase_sheaf_eval_5_mistralai_mistral-small-3.2-24b-instruct::transcript::phase_1_signaling",
+            "no_signaling_verified": false,
+            "marginals_one": {
+              "A": "1/2",
+              "B": "1/2",
+              "C": "1/4"
+            },
+            "joint_ones": {
+              "AB": "0",
+              "BC": "0",
+              "CA": "1/4"
+            },
+            "d000_plus_d111_invariant": "0",
+            "alpha_min": "0",
+            "alpha_max": "0",
+            "infeasibility_gap": "0",
+            "global_section_exists": false,
+            "witness_global_joint": null,
+            "affine_marginal_recovery_verified": false,
+            "classification": "SIGNALING_MARGINAL_MISMATCH_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR"
+          },
+          {
+            "model_id": "codebase_sheaf_eval_5_mistralai_mistral-small-3.2-24b-instruct::transcript::phase_2_contextual",
+            "no_signaling_verified": true,
+            "marginals_one": {
+              "A": "1/2",
+              "B": "1/2",
+              "C": "1/2"
+            },
+            "joint_ones": {
+              "AB": "0",
+              "BC": "0",
+              "CA": "0"
+            },
+            "d000_plus_d111_invariant": "-1/2",
+            "alpha_min": "0",
+            "alpha_max": "-1/2",
+            "infeasibility_gap": "1/2",
+            "global_section_exists": false,
+            "witness_global_joint": null,
+            "affine_marginal_recovery_verified": true,
+            "classification": "CONTEXTUAL_HOLLOW_TRIANGLE_OBSTRUCTION_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR"
+          },
+          {
+            "model_id": "codebase_sheaf_eval_5_mistralai_mistral-small-3.2-24b-instruct::transcript::phase_3_reconciled",
+            "no_signaling_verified": true,
+            "marginals_one": {
+              "A": "1/2",
+              "B": "1/2",
+              "C": "1/2"
+            },
+            "joint_ones": {
+              "AB": "0",
+              "BC": "0",
+              "CA": "1/2"
+            },
+            "d000_plus_d111_invariant": "0",
+            "alpha_min": "0",
+            "alpha_max": "0",
+            "infeasibility_gap": "0",
+            "global_section_exists": true,
+            "witness_global_joint": {
+              "000": "0",
+              "001": "0",
+              "010": "1/2",
+              "011": "0",
+              "100": "0",
+              "101": "1/2",
+              "110": "0",
+              "111": "0"
+            },
+            "affine_marginal_recovery_verified": true,
+            "classification": "GLOBAL_JOINT_SECTION_EXTENSIBLE_LGGG",
+            "contract_status": "COMPOSABLE_LGGG"
+          }
+        ],
+        "receipt_sha256": "af83b943a9fcd192fb847ff86657910c474132788a0e57a2db98fb57bf358733"
+      },
+      "evaluations": [
+        {
+          "transcript_id": "codebase_sheaf_eval_1_openai_gpt-4o-mini::transcript",
+          "phase_1_no_signaling_verified": false,
+          "phase_1_local_green": 0,
+          "phase_1_global_green": 0,
+          "phase_1_defect": 0,
+          "phase_1_status": "SIGNALING_MARGINAL_MISMATCH_LGGR",
+          "phase_2_no_signaling_verified": true,
+          "phase_2_alpha_min": "0",
+          "phase_2_alpha_max": "-1/2",
+          "phase_2_infeasibility_gap": "1/2",
+          "phase_2_local_green": 1,
+          "phase_2_global_green": 0,
+          "phase_2_defect": -1,
+          "phase_2_status": "CONTEXTUAL_HOLLOW_TRIANGLE_OBSTRUCTION_LGGR",
+          "phase_3_no_signaling_verified": true,
+          "phase_3_alpha_min": "0",
+          "phase_3_alpha_max": "0",
+          "phase_3_infeasibility_gap": "0",
+          "phase_3_witness_global_joint": {
+            "000": "0",
+            "001": "0",
+            "010": "1/2",
+            "011": "0",
+            "100": "0",
+            "101": "1/2",
+            "110": "0",
+            "111": "0"
+          },
+          "phase_3_local_green": 1,
+          "phase_3_global_green": 1,
+          "phase_3_defect": 0,
+          "phase_3_status": "GLOBAL_JOINT_SECTION_EXTENSIBLE_LGGG",
+          "audit_signaling": {
+            "model_id": "codebase_sheaf_eval_1_openai_gpt-4o-mini::transcript::phase_1_signaling",
+            "no_signaling_verified": false,
+            "marginals_one": {
+              "A": "1/2",
+              "B": "1/2",
+              "C": "1/4"
+            },
+            "joint_ones": {
+              "AB": "0",
+              "BC": "0",
+              "CA": "1/4"
+            },
+            "d000_plus_d111_invariant": "0",
+            "alpha_min": "0",
+            "alpha_max": "0",
+            "infeasibility_gap": "0",
+            "global_section_exists": false,
+            "witness_global_joint": null,
+            "affine_marginal_recovery_verified": false,
+            "classification": "SIGNALING_MARGINAL_MISMATCH_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR"
+          },
+          "audit_contextual": {
+            "model_id": "codebase_sheaf_eval_1_openai_gpt-4o-mini::transcript::phase_2_contextual",
+            "no_signaling_verified": true,
+            "marginals_one": {
+              "A": "1/2",
+              "B": "1/2",
+              "C": "1/2"
+            },
+            "joint_ones": {
+              "AB": "0",
+              "BC": "0",
+              "CA": "0"
+            },
+            "d000_plus_d111_invariant": "-1/2",
+            "alpha_min": "0",
+            "alpha_max": "-1/2",
+            "infeasibility_gap": "1/2",
+            "global_section_exists": false,
+            "witness_global_joint": null,
+            "affine_marginal_recovery_verified": true,
+            "classification": "CONTEXTUAL_HOLLOW_TRIANGLE_OBSTRUCTION_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR"
+          },
+          "audit_reconciled": {
+            "model_id": "codebase_sheaf_eval_1_openai_gpt-4o-mini::transcript::phase_3_reconciled",
+            "no_signaling_verified": true,
+            "marginals_one": {
+              "A": "1/2",
+              "B": "1/2",
+              "C": "1/2"
+            },
+            "joint_ones": {
+              "AB": "0",
+              "BC": "0",
+              "CA": "1/2"
+            },
+            "d000_plus_d111_invariant": "0",
+            "alpha_min": "0",
+            "alpha_max": "0",
+            "infeasibility_gap": "0",
+            "global_section_exists": true,
+            "witness_global_joint": {
+              "000": "0",
+              "001": "0",
+              "010": "1/2",
+              "011": "0",
+              "100": "0",
+              "101": "1/2",
+              "110": "0",
+              "111": "0"
+            },
+            "affine_marginal_recovery_verified": true,
+            "classification": "GLOBAL_JOINT_SECTION_EXTENSIBLE_LGGG",
+            "contract_status": "COMPOSABLE_LGGG"
+          }
+        },
+        {
+          "transcript_id": "codebase_sheaf_eval_2_google_gemini-2.5-flash-lite::transcript",
+          "phase_1_no_signaling_verified": false,
+          "phase_1_local_green": 0,
+          "phase_1_global_green": 0,
+          "phase_1_defect": 0,
+          "phase_1_status": "SIGNALING_MARGINAL_MISMATCH_LGGR",
+          "phase_2_no_signaling_verified": true,
+          "phase_2_alpha_min": "0",
+          "phase_2_alpha_max": "-1/2",
+          "phase_2_infeasibility_gap": "1/2",
+          "phase_2_local_green": 1,
+          "phase_2_global_green": 0,
+          "phase_2_defect": -1,
+          "phase_2_status": "CONTEXTUAL_HOLLOW_TRIANGLE_OBSTRUCTION_LGGR",
+          "phase_3_no_signaling_verified": true,
+          "phase_3_alpha_min": "0",
+          "phase_3_alpha_max": "0",
+          "phase_3_infeasibility_gap": "0",
+          "phase_3_witness_global_joint": {
+            "000": "0",
+            "001": "0",
+            "010": "1/2",
+            "011": "0",
+            "100": "0",
+            "101": "1/2",
+            "110": "0",
+            "111": "0"
+          },
+          "phase_3_local_green": 1,
+          "phase_3_global_green": 1,
+          "phase_3_defect": 0,
+          "phase_3_status": "GLOBAL_JOINT_SECTION_EXTENSIBLE_LGGG",
+          "audit_signaling": {
+            "model_id": "codebase_sheaf_eval_2_google_gemini-2.5-flash-lite::transcript::phase_1_signaling",
+            "no_signaling_verified": false,
+            "marginals_one": {
+              "A": "1/2",
+              "B": "1/2",
+              "C": "1/4"
+            },
+            "joint_ones": {
+              "AB": "0",
+              "BC": "0",
+              "CA": "1/4"
+            },
+            "d000_plus_d111_invariant": "0",
+            "alpha_min": "0",
+            "alpha_max": "0",
+            "infeasibility_gap": "0",
+            "global_section_exists": false,
+            "witness_global_joint": null,
+            "affine_marginal_recovery_verified": false,
+            "classification": "SIGNALING_MARGINAL_MISMATCH_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR"
+          },
+          "audit_contextual": {
+            "model_id": "codebase_sheaf_eval_2_google_gemini-2.5-flash-lite::transcript::phase_2_contextual",
+            "no_signaling_verified": true,
+            "marginals_one": {
+              "A": "1/2",
+              "B": "1/2",
+              "C": "1/2"
+            },
+            "joint_ones": {
+              "AB": "0",
+              "BC": "0",
+              "CA": "0"
+            },
+            "d000_plus_d111_invariant": "-1/2",
+            "alpha_min": "0",
+            "alpha_max": "-1/2",
+            "infeasibility_gap": "1/2",
+            "global_section_exists": false,
+            "witness_global_joint": null,
+            "affine_marginal_recovery_verified": true,
+            "classification": "CONTEXTUAL_HOLLOW_TRIANGLE_OBSTRUCTION_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR"
+          },
+          "audit_reconciled": {
+            "model_id": "codebase_sheaf_eval_2_google_gemini-2.5-flash-lite::transcript::phase_3_reconciled",
+            "no_signaling_verified": true,
+            "marginals_one": {
+              "A": "1/2",
+              "B": "1/2",
+              "C": "1/2"
+            },
+            "joint_ones": {
+              "AB": "0",
+              "BC": "0",
+              "CA": "1/2"
+            },
+            "d000_plus_d111_invariant": "0",
+            "alpha_min": "0",
+            "alpha_max": "0",
+            "infeasibility_gap": "0",
+            "global_section_exists": true,
+            "witness_global_joint": {
+              "000": "0",
+              "001": "0",
+              "010": "1/2",
+              "011": "0",
+              "100": "0",
+              "101": "1/2",
+              "110": "0",
+              "111": "0"
+            },
+            "affine_marginal_recovery_verified": true,
+            "classification": "GLOBAL_JOINT_SECTION_EXTENSIBLE_LGGG",
+            "contract_status": "COMPOSABLE_LGGG"
+          }
+        },
+        {
+          "transcript_id": "codebase_sheaf_eval_3_meta-llama_llama-3.3-70b-instruct::transcript",
+          "phase_1_no_signaling_verified": false,
+          "phase_1_local_green": 0,
+          "phase_1_global_green": 0,
+          "phase_1_defect": 0,
+          "phase_1_status": "SIGNALING_MARGINAL_MISMATCH_LGGR",
+          "phase_2_no_signaling_verified": true,
+          "phase_2_alpha_min": "0",
+          "phase_2_alpha_max": "-1/2",
+          "phase_2_infeasibility_gap": "1/2",
+          "phase_2_local_green": 1,
+          "phase_2_global_green": 0,
+          "phase_2_defect": -1,
+          "phase_2_status": "CONTEXTUAL_HOLLOW_TRIANGLE_OBSTRUCTION_LGGR",
+          "phase_3_no_signaling_verified": true,
+          "phase_3_alpha_min": "0",
+          "phase_3_alpha_max": "0",
+          "phase_3_infeasibility_gap": "0",
+          "phase_3_witness_global_joint": {
+            "000": "0",
+            "001": "0",
+            "010": "1/2",
+            "011": "0",
+            "100": "0",
+            "101": "1/2",
+            "110": "0",
+            "111": "0"
+          },
+          "phase_3_local_green": 1,
+          "phase_3_global_green": 1,
+          "phase_3_defect": 0,
+          "phase_3_status": "GLOBAL_JOINT_SECTION_EXTENSIBLE_LGGG",
+          "audit_signaling": {
+            "model_id": "codebase_sheaf_eval_3_meta-llama_llama-3.3-70b-instruct::transcript::phase_1_signaling",
+            "no_signaling_verified": false,
+            "marginals_one": {
+              "A": "1/2",
+              "B": "1/2",
+              "C": "1/4"
+            },
+            "joint_ones": {
+              "AB": "0",
+              "BC": "0",
+              "CA": "1/4"
+            },
+            "d000_plus_d111_invariant": "0",
+            "alpha_min": "0",
+            "alpha_max": "0",
+            "infeasibility_gap": "0",
+            "global_section_exists": false,
+            "witness_global_joint": null,
+            "affine_marginal_recovery_verified": false,
+            "classification": "SIGNALING_MARGINAL_MISMATCH_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR"
+          },
+          "audit_contextual": {
+            "model_id": "codebase_sheaf_eval_3_meta-llama_llama-3.3-70b-instruct::transcript::phase_2_contextual",
+            "no_signaling_verified": true,
+            "marginals_one": {
+              "A": "1/2",
+              "B": "1/2",
+              "C": "1/2"
+            },
+            "joint_ones": {
+              "AB": "0",
+              "BC": "0",
+              "CA": "0"
+            },
+            "d000_plus_d111_invariant": "-1/2",
+            "alpha_min": "0",
+            "alpha_max": "-1/2",
+            "infeasibility_gap": "1/2",
+            "global_section_exists": false,
+            "witness_global_joint": null,
+            "affine_marginal_recovery_verified": true,
+            "classification": "CONTEXTUAL_HOLLOW_TRIANGLE_OBSTRUCTION_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR"
+          },
+          "audit_reconciled": {
+            "model_id": "codebase_sheaf_eval_3_meta-llama_llama-3.3-70b-instruct::transcript::phase_3_reconciled",
+            "no_signaling_verified": true,
+            "marginals_one": {
+              "A": "1/2",
+              "B": "1/2",
+              "C": "1/2"
+            },
+            "joint_ones": {
+              "AB": "0",
+              "BC": "0",
+              "CA": "1/2"
+            },
+            "d000_plus_d111_invariant": "0",
+            "alpha_min": "0",
+            "alpha_max": "0",
+            "infeasibility_gap": "0",
+            "global_section_exists": true,
+            "witness_global_joint": {
+              "000": "0",
+              "001": "0",
+              "010": "1/2",
+              "011": "0",
+              "100": "0",
+              "101": "1/2",
+              "110": "0",
+              "111": "0"
+            },
+            "affine_marginal_recovery_verified": true,
+            "classification": "GLOBAL_JOINT_SECTION_EXTENSIBLE_LGGG",
+            "contract_status": "COMPOSABLE_LGGG"
+          }
+        },
+        {
+          "transcript_id": "codebase_sheaf_eval_4_deepseek_deepseek-chat::transcript",
+          "phase_1_no_signaling_verified": false,
+          "phase_1_local_green": 0,
+          "phase_1_global_green": 0,
+          "phase_1_defect": 0,
+          "phase_1_status": "SIGNALING_MARGINAL_MISMATCH_LGGR",
+          "phase_2_no_signaling_verified": true,
+          "phase_2_alpha_min": "0",
+          "phase_2_alpha_max": "-1/2",
+          "phase_2_infeasibility_gap": "1/2",
+          "phase_2_local_green": 1,
+          "phase_2_global_green": 0,
+          "phase_2_defect": -1,
+          "phase_2_status": "CONTEXTUAL_HOLLOW_TRIANGLE_OBSTRUCTION_LGGR",
+          "phase_3_no_signaling_verified": true,
+          "phase_3_alpha_min": "0",
+          "phase_3_alpha_max": "0",
+          "phase_3_infeasibility_gap": "0",
+          "phase_3_witness_global_joint": {
+            "000": "0",
+            "001": "0",
+            "010": "1/2",
+            "011": "0",
+            "100": "0",
+            "101": "1/2",
+            "110": "0",
+            "111": "0"
+          },
+          "phase_3_local_green": 1,
+          "phase_3_global_green": 1,
+          "phase_3_defect": 0,
+          "phase_3_status": "GLOBAL_JOINT_SECTION_EXTENSIBLE_LGGG",
+          "audit_signaling": {
+            "model_id": "codebase_sheaf_eval_4_deepseek_deepseek-chat::transcript::phase_1_signaling",
+            "no_signaling_verified": false,
+            "marginals_one": {
+              "A": "1/2",
+              "B": "1/2",
+              "C": "1/4"
+            },
+            "joint_ones": {
+              "AB": "0",
+              "BC": "0",
+              "CA": "1/4"
+            },
+            "d000_plus_d111_invariant": "0",
+            "alpha_min": "0",
+            "alpha_max": "0",
+            "infeasibility_gap": "0",
+            "global_section_exists": false,
+            "witness_global_joint": null,
+            "affine_marginal_recovery_verified": false,
+            "classification": "SIGNALING_MARGINAL_MISMATCH_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR"
+          },
+          "audit_contextual": {
+            "model_id": "codebase_sheaf_eval_4_deepseek_deepseek-chat::transcript::phase_2_contextual",
+            "no_signaling_verified": true,
+            "marginals_one": {
+              "A": "1/2",
+              "B": "1/2",
+              "C": "1/2"
+            },
+            "joint_ones": {
+              "AB": "0",
+              "BC": "0",
+              "CA": "0"
+            },
+            "d000_plus_d111_invariant": "-1/2",
+            "alpha_min": "0",
+            "alpha_max": "-1/2",
+            "infeasibility_gap": "1/2",
+            "global_section_exists": false,
+            "witness_global_joint": null,
+            "affine_marginal_recovery_verified": true,
+            "classification": "CONTEXTUAL_HOLLOW_TRIANGLE_OBSTRUCTION_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR"
+          },
+          "audit_reconciled": {
+            "model_id": "codebase_sheaf_eval_4_deepseek_deepseek-chat::transcript::phase_3_reconciled",
+            "no_signaling_verified": true,
+            "marginals_one": {
+              "A": "1/2",
+              "B": "1/2",
+              "C": "1/2"
+            },
+            "joint_ones": {
+              "AB": "0",
+              "BC": "0",
+              "CA": "1/2"
+            },
+            "d000_plus_d111_invariant": "0",
+            "alpha_min": "0",
+            "alpha_max": "0",
+            "infeasibility_gap": "0",
+            "global_section_exists": true,
+            "witness_global_joint": {
+              "000": "0",
+              "001": "0",
+              "010": "1/2",
+              "011": "0",
+              "100": "0",
+              "101": "1/2",
+              "110": "0",
+              "111": "0"
+            },
+            "affine_marginal_recovery_verified": true,
+            "classification": "GLOBAL_JOINT_SECTION_EXTENSIBLE_LGGG",
+            "contract_status": "COMPOSABLE_LGGG"
+          }
+        },
+        {
+          "transcript_id": "codebase_sheaf_eval_5_mistralai_mistral-small-3.2-24b-instruct::transcript",
+          "phase_1_no_signaling_verified": false,
+          "phase_1_local_green": 0,
+          "phase_1_global_green": 0,
+          "phase_1_defect": 0,
+          "phase_1_status": "SIGNALING_MARGINAL_MISMATCH_LGGR",
+          "phase_2_no_signaling_verified": true,
+          "phase_2_alpha_min": "0",
+          "phase_2_alpha_max": "-1/2",
+          "phase_2_infeasibility_gap": "1/2",
+          "phase_2_local_green": 1,
+          "phase_2_global_green": 0,
+          "phase_2_defect": -1,
+          "phase_2_status": "CONTEXTUAL_HOLLOW_TRIANGLE_OBSTRUCTION_LGGR",
+          "phase_3_no_signaling_verified": true,
+          "phase_3_alpha_min": "0",
+          "phase_3_alpha_max": "0",
+          "phase_3_infeasibility_gap": "0",
+          "phase_3_witness_global_joint": {
+            "000": "0",
+            "001": "0",
+            "010": "1/2",
+            "011": "0",
+            "100": "0",
+            "101": "1/2",
+            "110": "0",
+            "111": "0"
+          },
+          "phase_3_local_green": 1,
+          "phase_3_global_green": 1,
+          "phase_3_defect": 0,
+          "phase_3_status": "GLOBAL_JOINT_SECTION_EXTENSIBLE_LGGG",
+          "audit_signaling": {
+            "model_id": "codebase_sheaf_eval_5_mistralai_mistral-small-3.2-24b-instruct::transcript::phase_1_signaling",
+            "no_signaling_verified": false,
+            "marginals_one": {
+              "A": "1/2",
+              "B": "1/2",
+              "C": "1/4"
+            },
+            "joint_ones": {
+              "AB": "0",
+              "BC": "0",
+              "CA": "1/4"
+            },
+            "d000_plus_d111_invariant": "0",
+            "alpha_min": "0",
+            "alpha_max": "0",
+            "infeasibility_gap": "0",
+            "global_section_exists": false,
+            "witness_global_joint": null,
+            "affine_marginal_recovery_verified": false,
+            "classification": "SIGNALING_MARGINAL_MISMATCH_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR"
+          },
+          "audit_contextual": {
+            "model_id": "codebase_sheaf_eval_5_mistralai_mistral-small-3.2-24b-instruct::transcript::phase_2_contextual",
+            "no_signaling_verified": true,
+            "marginals_one": {
+              "A": "1/2",
+              "B": "1/2",
+              "C": "1/2"
+            },
+            "joint_ones": {
+              "AB": "0",
+              "BC": "0",
+              "CA": "0"
+            },
+            "d000_plus_d111_invariant": "-1/2",
+            "alpha_min": "0",
+            "alpha_max": "-1/2",
+            "infeasibility_gap": "1/2",
+            "global_section_exists": false,
+            "witness_global_joint": null,
+            "affine_marginal_recovery_verified": true,
+            "classification": "CONTEXTUAL_HOLLOW_TRIANGLE_OBSTRUCTION_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR"
+          },
+          "audit_reconciled": {
+            "model_id": "codebase_sheaf_eval_5_mistralai_mistral-small-3.2-24b-instruct::transcript::phase_3_reconciled",
+            "no_signaling_verified": true,
+            "marginals_one": {
+              "A": "1/2",
+              "B": "1/2",
+              "C": "1/2"
+            },
+            "joint_ones": {
+              "AB": "0",
+              "BC": "0",
+              "CA": "1/2"
+            },
+            "d000_plus_d111_invariant": "0",
+            "alpha_min": "0",
+            "alpha_max": "0",
+            "infeasibility_gap": "0",
+            "global_section_exists": true,
+            "witness_global_joint": {
+              "000": "0",
+              "001": "0",
+              "010": "1/2",
+              "011": "0",
+              "100": "0",
+              "101": "1/2",
+              "110": "0",
+              "111": "0"
+            },
+            "affine_marginal_recovery_verified": true,
+            "classification": "GLOBAL_JOINT_SECTION_EXTENSIBLE_LGGG",
+            "contract_status": "COMPOSABLE_LGGG"
+          }
+        }
+      ],
+      "receipt_sha256": "11fa205372086df1f0ee6a1c830fcedf448d51cdf01fc4b0dce4d70f0e737a52"
+    },
+    "fiber_receipt": {
+      "schema": "lggr.online_collision.v1",
+      "authority_effect": "None",
+      "scope_id": "live-codebase-contextual-sheaf-benchmark-fiber",
+      "carrier_size": 15,
+      "status": "REPORT_INSUFFICIENT",
+      "contract_status": "OBSTRUCTED_LGGR",
+      "collision": {
+        "left": {
+          "state_id": "codebase_sheaf_eval_1_openai_gpt-4o-mini::phase_1_hollow_triangle::fiber",
+          "report": {
+            "all_local_pass": true,
+            "no_signaling_verified": true
+          },
+          "query": "LGGR",
+          "metadata": {
+            "q_bc_num": 0,
+            "q_ca_num": 0,
+            "reserve_cents": 11,
+            "scaled_gap_m4": 2,
+            "table_ab": [
+              "0",
+              "1/2",
+              "1/2",
+              "0"
+            ],
+            "table_bc": [
+              "0",
+              "1/2",
+              "1/2",
+              "0"
+            ],
+            "table_ca": [
+              "0",
+              "1/2",
+              "1/2",
+              "0"
+            ]
+          }
+        },
+        "right": {
+          "state_id": "codebase_sheaf_eval_1_openai_gpt-4o-mini::phase_3_full_global_section_reconciled::fiber",
+          "report": {
+            "all_local_pass": true,
+            "no_signaling_verified": true
+          },
+          "query": "LGGG",
+          "metadata": {
+            "q_bc_num": 1,
+            "q_ca_num": 1,
+            "reserve_cents": 0,
+            "scaled_gap_m4": 0,
+            "table_ab": [
+              "0",
+              "1/2",
+              "1/2",
+              "0"
+            ],
+            "table_bc": [
+              "1/4",
+              "1/4",
+              "1/4",
+              "1/4"
+            ],
+            "table_ca": [
+              "1/4",
+              "1/4",
+              "1/4",
+              "1/4"
+            ]
+          }
+        }
+      },
+      "input_sha256": "4690951b915ea0652c26da545c1c00a9fb7cabe6c2df9cfdc3741f685e8156b7",
+      "meaning": "Boundary reports cannot determine this query on the supplied carrier.",
+      "receipt_sha256": "fc4e38916ba5af7df7e2946ca5f21d03f0a8840bc1dfa33301c36c515645c090"
+    },
+    "three_phase_audits": [
+      {
+        "evaluation_id": "codebase_sheaf_eval_1_openai_gpt-4o-mini",
+        "model_id": "openai/gpt-4o-mini",
+        "phase_1_scaled_gap_m4": 2,
+        "phase_1_q_pair_sum": 0,
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "CONTEXTUAL_SHEAF_HOLLOW_TRIANGLE_NGD_LGGR",
+        "phase_1_directives": {
+          "worker-0": {
+            "module": "pricing_sheaf",
+            "action": "HOLD_ANCHOR_PAIRWISE_TABLE_AB",
+            "target": "Keep table_ab = ['0', '1/2', '1/2', '0'] and q_ab_num = 0."
+          },
+          "worker-1": {
+            "module": "tax_sheaf",
+            "action": "RECONCILE_TAX_PAIRWISE_TABLE_BC_Q1",
+            "target": "Set table_bc = ['1/4', '1/4', '1/4', '1/4'] and q_bc_num = 1."
+          },
+          "worker-2": {
+            "module": "settlement_sheaf",
+            "action": "RECONCILE_SETTLEMENT_PAIRWISE_TABLE_CA_Q1",
+            "target": "Set table_ca = ['1/4', '1/4', '1/4', '1/4'], q_ca_num = 1, and contextuality_reserve_cents = 0 so payout_cents = net_cents - fee_cents (873)."
+          }
+        },
+        "phase_2_scaled_gap_m4": 1,
+        "phase_2_q_pair_sum": 1,
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "CONTEXTUAL_SHEAF_PARTIAL_RECONCILIATION_LGGR",
+        "phase_3_scaled_gap_m4": 0,
+        "phase_3_q_pair_sum": 2,
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "CODEBASE_CONTEXTUAL_SHEAF_RECONCILED_LGGG",
+        "transcript_audit": {
+          "transcript_id": "codebase_sheaf_eval_1_openai_gpt-4o-mini::transcript",
+          "phase_1_no_signaling_verified": false,
+          "phase_1_local_green": 0,
+          "phase_1_global_green": 0,
+          "phase_1_defect": 0,
+          "phase_1_status": "SIGNALING_MARGINAL_MISMATCH_LGGR",
+          "phase_2_no_signaling_verified": true,
+          "phase_2_alpha_min": "0",
+          "phase_2_alpha_max": "-1/2",
+          "phase_2_infeasibility_gap": "1/2",
+          "phase_2_local_green": 1,
+          "phase_2_global_green": 0,
+          "phase_2_defect": -1,
+          "phase_2_status": "CONTEXTUAL_HOLLOW_TRIANGLE_OBSTRUCTION_LGGR",
+          "phase_3_no_signaling_verified": true,
+          "phase_3_alpha_min": "0",
+          "phase_3_alpha_max": "0",
+          "phase_3_infeasibility_gap": "0",
+          "phase_3_witness_global_joint": {
+            "000": "0",
+            "001": "0",
+            "010": "1/2",
+            "011": "0",
+            "100": "0",
+            "101": "1/2",
+            "110": "0",
+            "111": "0"
+          },
+          "phase_3_local_green": 1,
+          "phase_3_global_green": 1,
+          "phase_3_defect": 0,
+          "phase_3_status": "GLOBAL_JOINT_SECTION_EXTENSIBLE_LGGG",
+          "audit_signaling": {
+            "model_id": "codebase_sheaf_eval_1_openai_gpt-4o-mini::transcript::phase_1_signaling",
+            "no_signaling_verified": false,
+            "marginals_one": {
+              "A": "1/2",
+              "B": "1/2",
+              "C": "1/4"
+            },
+            "joint_ones": {
+              "AB": "0",
+              "BC": "0",
+              "CA": "1/4"
+            },
+            "d000_plus_d111_invariant": "0",
+            "alpha_min": "0",
+            "alpha_max": "0",
+            "infeasibility_gap": "0",
+            "global_section_exists": false,
+            "witness_global_joint": null,
+            "affine_marginal_recovery_verified": false,
+            "classification": "SIGNALING_MARGINAL_MISMATCH_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR"
+          },
+          "audit_contextual": {
+            "model_id": "codebase_sheaf_eval_1_openai_gpt-4o-mini::transcript::phase_2_contextual",
+            "no_signaling_verified": true,
+            "marginals_one": {
+              "A": "1/2",
+              "B": "1/2",
+              "C": "1/2"
+            },
+            "joint_ones": {
+              "AB": "0",
+              "BC": "0",
+              "CA": "0"
+            },
+            "d000_plus_d111_invariant": "-1/2",
+            "alpha_min": "0",
+            "alpha_max": "-1/2",
+            "infeasibility_gap": "1/2",
+            "global_section_exists": false,
+            "witness_global_joint": null,
+            "affine_marginal_recovery_verified": true,
+            "classification": "CONTEXTUAL_HOLLOW_TRIANGLE_OBSTRUCTION_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR"
+          },
+          "audit_reconciled": {
+            "model_id": "codebase_sheaf_eval_1_openai_gpt-4o-mini::transcript::phase_3_reconciled",
+            "no_signaling_verified": true,
+            "marginals_one": {
+              "A": "1/2",
+              "B": "1/2",
+              "C": "1/2"
+            },
+            "joint_ones": {
+              "AB": "0",
+              "BC": "0",
+              "CA": "1/2"
+            },
+            "d000_plus_d111_invariant": "0",
+            "alpha_min": "0",
+            "alpha_max": "0",
+            "infeasibility_gap": "0",
+            "global_section_exists": true,
+            "witness_global_joint": {
+              "000": "0",
+              "001": "0",
+              "010": "1/2",
+              "011": "0",
+              "100": "0",
+              "101": "1/2",
+              "110": "0",
+              "111": "0"
+            },
+            "affine_marginal_recovery_verified": true,
+            "classification": "GLOBAL_JOINT_SECTION_EXTENSIBLE_LGGG",
+            "contract_status": "COMPOSABLE_LGGG"
+          }
+        }
+      },
+      {
+        "evaluation_id": "codebase_sheaf_eval_2_google_gemini-2.5-flash-lite",
+        "model_id": "google/gemini-2.5-flash-lite",
+        "phase_1_scaled_gap_m4": 2,
+        "phase_1_q_pair_sum": 0,
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "CONTEXTUAL_SHEAF_HOLLOW_TRIANGLE_NGD_LGGR",
+        "phase_1_directives": {
+          "worker-0": {
+            "module": "pricing_sheaf",
+            "action": "HOLD_ANCHOR_PAIRWISE_TABLE_AB",
+            "target": "Keep table_ab = ['0', '1/2', '1/2', '0'] and q_ab_num = 0."
+          },
+          "worker-1": {
+            "module": "tax_sheaf",
+            "action": "RECONCILE_TAX_PAIRWISE_TABLE_BC_Q1",
+            "target": "Set table_bc = ['1/4', '1/4', '1/4', '1/4'] and q_bc_num = 1."
+          },
+          "worker-2": {
+            "module": "settlement_sheaf",
+            "action": "RECONCILE_SETTLEMENT_PAIRWISE_TABLE_CA_Q1",
+            "target": "Set table_ca = ['1/4', '1/4', '1/4', '1/4'], q_ca_num = 1, and contextuality_reserve_cents = 0 so payout_cents = net_cents - fee_cents (873)."
+          }
+        },
+        "phase_2_scaled_gap_m4": 1,
+        "phase_2_q_pair_sum": 1,
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "CONTEXTUAL_SHEAF_PARTIAL_RECONCILIATION_LGGR",
+        "phase_3_scaled_gap_m4": 0,
+        "phase_3_q_pair_sum": 2,
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "CODEBASE_CONTEXTUAL_SHEAF_RECONCILED_LGGG",
+        "transcript_audit": {
+          "transcript_id": "codebase_sheaf_eval_2_google_gemini-2.5-flash-lite::transcript",
+          "phase_1_no_signaling_verified": false,
+          "phase_1_local_green": 0,
+          "phase_1_global_green": 0,
+          "phase_1_defect": 0,
+          "phase_1_status": "SIGNALING_MARGINAL_MISMATCH_LGGR",
+          "phase_2_no_signaling_verified": true,
+          "phase_2_alpha_min": "0",
+          "phase_2_alpha_max": "-1/2",
+          "phase_2_infeasibility_gap": "1/2",
+          "phase_2_local_green": 1,
+          "phase_2_global_green": 0,
+          "phase_2_defect": -1,
+          "phase_2_status": "CONTEXTUAL_HOLLOW_TRIANGLE_OBSTRUCTION_LGGR",
+          "phase_3_no_signaling_verified": true,
+          "phase_3_alpha_min": "0",
+          "phase_3_alpha_max": "0",
+          "phase_3_infeasibility_gap": "0",
+          "phase_3_witness_global_joint": {
+            "000": "0",
+            "001": "0",
+            "010": "1/2",
+            "011": "0",
+            "100": "0",
+            "101": "1/2",
+            "110": "0",
+            "111": "0"
+          },
+          "phase_3_local_green": 1,
+          "phase_3_global_green": 1,
+          "phase_3_defect": 0,
+          "phase_3_status": "GLOBAL_JOINT_SECTION_EXTENSIBLE_LGGG",
+          "audit_signaling": {
+            "model_id": "codebase_sheaf_eval_2_google_gemini-2.5-flash-lite::transcript::phase_1_signaling",
+            "no_signaling_verified": false,
+            "marginals_one": {
+              "A": "1/2",
+              "B": "1/2",
+              "C": "1/4"
+            },
+            "joint_ones": {
+              "AB": "0",
+              "BC": "0",
+              "CA": "1/4"
+            },
+            "d000_plus_d111_invariant": "0",
+            "alpha_min": "0",
+            "alpha_max": "0",
+            "infeasibility_gap": "0",
+            "global_section_exists": false,
+            "witness_global_joint": null,
+            "affine_marginal_recovery_verified": false,
+            "classification": "SIGNALING_MARGINAL_MISMATCH_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR"
+          },
+          "audit_contextual": {
+            "model_id": "codebase_sheaf_eval_2_google_gemini-2.5-flash-lite::transcript::phase_2_contextual",
+            "no_signaling_verified": true,
+            "marginals_one": {
+              "A": "1/2",
+              "B": "1/2",
+              "C": "1/2"
+            },
+            "joint_ones": {
+              "AB": "0",
+              "BC": "0",
+              "CA": "0"
+            },
+            "d000_plus_d111_invariant": "-1/2",
+            "alpha_min": "0",
+            "alpha_max": "-1/2",
+            "infeasibility_gap": "1/2",
+            "global_section_exists": false,
+            "witness_global_joint": null,
+            "affine_marginal_recovery_verified": true,
+            "classification": "CONTEXTUAL_HOLLOW_TRIANGLE_OBSTRUCTION_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR"
+          },
+          "audit_reconciled": {
+            "model_id": "codebase_sheaf_eval_2_google_gemini-2.5-flash-lite::transcript::phase_3_reconciled",
+            "no_signaling_verified": true,
+            "marginals_one": {
+              "A": "1/2",
+              "B": "1/2",
+              "C": "1/2"
+            },
+            "joint_ones": {
+              "AB": "0",
+              "BC": "0",
+              "CA": "1/2"
+            },
+            "d000_plus_d111_invariant": "0",
+            "alpha_min": "0",
+            "alpha_max": "0",
+            "infeasibility_gap": "0",
+            "global_section_exists": true,
+            "witness_global_joint": {
+              "000": "0",
+              "001": "0",
+              "010": "1/2",
+              "011": "0",
+              "100": "0",
+              "101": "1/2",
+              "110": "0",
+              "111": "0"
+            },
+            "affine_marginal_recovery_verified": true,
+            "classification": "GLOBAL_JOINT_SECTION_EXTENSIBLE_LGGG",
+            "contract_status": "COMPOSABLE_LGGG"
+          }
+        }
+      },
+      {
+        "evaluation_id": "codebase_sheaf_eval_3_meta-llama_llama-3.3-70b-instruct",
+        "model_id": "meta-llama/llama-3.3-70b-instruct",
+        "phase_1_scaled_gap_m4": 2,
+        "phase_1_q_pair_sum": 0,
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "CONTEXTUAL_SHEAF_HOLLOW_TRIANGLE_NGD_LGGR",
+        "phase_1_directives": {
+          "worker-0": {
+            "module": "pricing_sheaf",
+            "action": "HOLD_ANCHOR_PAIRWISE_TABLE_AB",
+            "target": "Keep table_ab = ['0', '1/2', '1/2', '0'] and q_ab_num = 0."
+          },
+          "worker-1": {
+            "module": "tax_sheaf",
+            "action": "RECONCILE_TAX_PAIRWISE_TABLE_BC_Q1",
+            "target": "Set table_bc = ['1/4', '1/4', '1/4', '1/4'] and q_bc_num = 1."
+          },
+          "worker-2": {
+            "module": "settlement_sheaf",
+            "action": "RECONCILE_SETTLEMENT_PAIRWISE_TABLE_CA_Q1",
+            "target": "Set table_ca = ['1/4', '1/4', '1/4', '1/4'], q_ca_num = 1, and contextuality_reserve_cents = 0 so payout_cents = net_cents - fee_cents (873)."
+          }
+        },
+        "phase_2_scaled_gap_m4": 1,
+        "phase_2_q_pair_sum": 1,
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "CONTEXTUAL_SHEAF_PARTIAL_RECONCILIATION_LGGR",
+        "phase_3_scaled_gap_m4": 0,
+        "phase_3_q_pair_sum": 2,
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "CODEBASE_CONTEXTUAL_SHEAF_RECONCILED_LGGG",
+        "transcript_audit": {
+          "transcript_id": "codebase_sheaf_eval_3_meta-llama_llama-3.3-70b-instruct::transcript",
+          "phase_1_no_signaling_verified": false,
+          "phase_1_local_green": 0,
+          "phase_1_global_green": 0,
+          "phase_1_defect": 0,
+          "phase_1_status": "SIGNALING_MARGINAL_MISMATCH_LGGR",
+          "phase_2_no_signaling_verified": true,
+          "phase_2_alpha_min": "0",
+          "phase_2_alpha_max": "-1/2",
+          "phase_2_infeasibility_gap": "1/2",
+          "phase_2_local_green": 1,
+          "phase_2_global_green": 0,
+          "phase_2_defect": -1,
+          "phase_2_status": "CONTEXTUAL_HOLLOW_TRIANGLE_OBSTRUCTION_LGGR",
+          "phase_3_no_signaling_verified": true,
+          "phase_3_alpha_min": "0",
+          "phase_3_alpha_max": "0",
+          "phase_3_infeasibility_gap": "0",
+          "phase_3_witness_global_joint": {
+            "000": "0",
+            "001": "0",
+            "010": "1/2",
+            "011": "0",
+            "100": "0",
+            "101": "1/2",
+            "110": "0",
+            "111": "0"
+          },
+          "phase_3_local_green": 1,
+          "phase_3_global_green": 1,
+          "phase_3_defect": 0,
+          "phase_3_status": "GLOBAL_JOINT_SECTION_EXTENSIBLE_LGGG",
+          "audit_signaling": {
+            "model_id": "codebase_sheaf_eval_3_meta-llama_llama-3.3-70b-instruct::transcript::phase_1_signaling",
+            "no_signaling_verified": false,
+            "marginals_one": {
+              "A": "1/2",
+              "B": "1/2",
+              "C": "1/4"
+            },
+            "joint_ones": {
+              "AB": "0",
+              "BC": "0",
+              "CA": "1/4"
+            },
+            "d000_plus_d111_invariant": "0",
+            "alpha_min": "0",
+            "alpha_max": "0",
+            "infeasibility_gap": "0",
+            "global_section_exists": false,
+            "witness_global_joint": null,
+            "affine_marginal_recovery_verified": false,
+            "classification": "SIGNALING_MARGINAL_MISMATCH_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR"
+          },
+          "audit_contextual": {
+            "model_id": "codebase_sheaf_eval_3_meta-llama_llama-3.3-70b-instruct::transcript::phase_2_contextual",
+            "no_signaling_verified": true,
+            "marginals_one": {
+              "A": "1/2",
+              "B": "1/2",
+              "C": "1/2"
+            },
+            "joint_ones": {
+              "AB": "0",
+              "BC": "0",
+              "CA": "0"
+            },
+            "d000_plus_d111_invariant": "-1/2",
+            "alpha_min": "0",
+            "alpha_max": "-1/2",
+            "infeasibility_gap": "1/2",
+            "global_section_exists": false,
+            "witness_global_joint": null,
+            "affine_marginal_recovery_verified": true,
+            "classification": "CONTEXTUAL_HOLLOW_TRIANGLE_OBSTRUCTION_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR"
+          },
+          "audit_reconciled": {
+            "model_id": "codebase_sheaf_eval_3_meta-llama_llama-3.3-70b-instruct::transcript::phase_3_reconciled",
+            "no_signaling_verified": true,
+            "marginals_one": {
+              "A": "1/2",
+              "B": "1/2",
+              "C": "1/2"
+            },
+            "joint_ones": {
+              "AB": "0",
+              "BC": "0",
+              "CA": "1/2"
+            },
+            "d000_plus_d111_invariant": "0",
+            "alpha_min": "0",
+            "alpha_max": "0",
+            "infeasibility_gap": "0",
+            "global_section_exists": true,
+            "witness_global_joint": {
+              "000": "0",
+              "001": "0",
+              "010": "1/2",
+              "011": "0",
+              "100": "0",
+              "101": "1/2",
+              "110": "0",
+              "111": "0"
+            },
+            "affine_marginal_recovery_verified": true,
+            "classification": "GLOBAL_JOINT_SECTION_EXTENSIBLE_LGGG",
+            "contract_status": "COMPOSABLE_LGGG"
+          }
+        }
+      },
+      {
+        "evaluation_id": "codebase_sheaf_eval_4_deepseek_deepseek-chat",
+        "model_id": "deepseek/deepseek-chat",
+        "phase_1_scaled_gap_m4": 2,
+        "phase_1_q_pair_sum": 0,
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "CONTEXTUAL_SHEAF_HOLLOW_TRIANGLE_NGD_LGGR",
+        "phase_1_directives": {
+          "worker-0": {
+            "module": "pricing_sheaf",
+            "action": "HOLD_ANCHOR_PAIRWISE_TABLE_AB",
+            "target": "Keep table_ab = ['0', '1/2', '1/2', '0'] and q_ab_num = 0."
+          },
+          "worker-1": {
+            "module": "tax_sheaf",
+            "action": "RECONCILE_TAX_PAIRWISE_TABLE_BC_Q1",
+            "target": "Set table_bc = ['1/4', '1/4', '1/4', '1/4'] and q_bc_num = 1."
+          },
+          "worker-2": {
+            "module": "settlement_sheaf",
+            "action": "RECONCILE_SETTLEMENT_PAIRWISE_TABLE_CA_Q1",
+            "target": "Set table_ca = ['1/4', '1/4', '1/4', '1/4'], q_ca_num = 1, and contextuality_reserve_cents = 0 so payout_cents = net_cents - fee_cents (873)."
+          }
+        },
+        "phase_2_scaled_gap_m4": 1,
+        "phase_2_q_pair_sum": 1,
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "CONTEXTUAL_SHEAF_PARTIAL_RECONCILIATION_LGGR",
+        "phase_3_scaled_gap_m4": 0,
+        "phase_3_q_pair_sum": 2,
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "CODEBASE_CONTEXTUAL_SHEAF_RECONCILED_LGGG",
+        "transcript_audit": {
+          "transcript_id": "codebase_sheaf_eval_4_deepseek_deepseek-chat::transcript",
+          "phase_1_no_signaling_verified": false,
+          "phase_1_local_green": 0,
+          "phase_1_global_green": 0,
+          "phase_1_defect": 0,
+          "phase_1_status": "SIGNALING_MARGINAL_MISMATCH_LGGR",
+          "phase_2_no_signaling_verified": true,
+          "phase_2_alpha_min": "0",
+          "phase_2_alpha_max": "-1/2",
+          "phase_2_infeasibility_gap": "1/2",
+          "phase_2_local_green": 1,
+          "phase_2_global_green": 0,
+          "phase_2_defect": -1,
+          "phase_2_status": "CONTEXTUAL_HOLLOW_TRIANGLE_OBSTRUCTION_LGGR",
+          "phase_3_no_signaling_verified": true,
+          "phase_3_alpha_min": "0",
+          "phase_3_alpha_max": "0",
+          "phase_3_infeasibility_gap": "0",
+          "phase_3_witness_global_joint": {
+            "000": "0",
+            "001": "0",
+            "010": "1/2",
+            "011": "0",
+            "100": "0",
+            "101": "1/2",
+            "110": "0",
+            "111": "0"
+          },
+          "phase_3_local_green": 1,
+          "phase_3_global_green": 1,
+          "phase_3_defect": 0,
+          "phase_3_status": "GLOBAL_JOINT_SECTION_EXTENSIBLE_LGGG",
+          "audit_signaling": {
+            "model_id": "codebase_sheaf_eval_4_deepseek_deepseek-chat::transcript::phase_1_signaling",
+            "no_signaling_verified": false,
+            "marginals_one": {
+              "A": "1/2",
+              "B": "1/2",
+              "C": "1/4"
+            },
+            "joint_ones": {
+              "AB": "0",
+              "BC": "0",
+              "CA": "1/4"
+            },
+            "d000_plus_d111_invariant": "0",
+            "alpha_min": "0",
+            "alpha_max": "0",
+            "infeasibility_gap": "0",
+            "global_section_exists": false,
+            "witness_global_joint": null,
+            "affine_marginal_recovery_verified": false,
+            "classification": "SIGNALING_MARGINAL_MISMATCH_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR"
+          },
+          "audit_contextual": {
+            "model_id": "codebase_sheaf_eval_4_deepseek_deepseek-chat::transcript::phase_2_contextual",
+            "no_signaling_verified": true,
+            "marginals_one": {
+              "A": "1/2",
+              "B": "1/2",
+              "C": "1/2"
+            },
+            "joint_ones": {
+              "AB": "0",
+              "BC": "0",
+              "CA": "0"
+            },
+            "d000_plus_d111_invariant": "-1/2",
+            "alpha_min": "0",
+            "alpha_max": "-1/2",
+            "infeasibility_gap": "1/2",
+            "global_section_exists": false,
+            "witness_global_joint": null,
+            "affine_marginal_recovery_verified": true,
+            "classification": "CONTEXTUAL_HOLLOW_TRIANGLE_OBSTRUCTION_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR"
+          },
+          "audit_reconciled": {
+            "model_id": "codebase_sheaf_eval_4_deepseek_deepseek-chat::transcript::phase_3_reconciled",
+            "no_signaling_verified": true,
+            "marginals_one": {
+              "A": "1/2",
+              "B": "1/2",
+              "C": "1/2"
+            },
+            "joint_ones": {
+              "AB": "0",
+              "BC": "0",
+              "CA": "1/2"
+            },
+            "d000_plus_d111_invariant": "0",
+            "alpha_min": "0",
+            "alpha_max": "0",
+            "infeasibility_gap": "0",
+            "global_section_exists": true,
+            "witness_global_joint": {
+              "000": "0",
+              "001": "0",
+              "010": "1/2",
+              "011": "0",
+              "100": "0",
+              "101": "1/2",
+              "110": "0",
+              "111": "0"
+            },
+            "affine_marginal_recovery_verified": true,
+            "classification": "GLOBAL_JOINT_SECTION_EXTENSIBLE_LGGG",
+            "contract_status": "COMPOSABLE_LGGG"
+          }
+        }
+      },
+      {
+        "evaluation_id": "codebase_sheaf_eval_5_mistralai_mistral-small-3.2-24b-instruct",
+        "model_id": "mistralai/mistral-small-3.2-24b-instruct",
+        "phase_1_scaled_gap_m4": 2,
+        "phase_1_q_pair_sum": 0,
+        "phase_1_local_green": 1,
+        "phase_1_global_green": 0,
+        "phase_1_defect": -1,
+        "phase_1_status": "CONTEXTUAL_SHEAF_HOLLOW_TRIANGLE_NGD_LGGR",
+        "phase_1_directives": {
+          "worker-0": {
+            "module": "pricing_sheaf",
+            "action": "HOLD_ANCHOR_PAIRWISE_TABLE_AB",
+            "target": "Keep table_ab = ['0', '1/2', '1/2', '0'] and q_ab_num = 0."
+          },
+          "worker-1": {
+            "module": "tax_sheaf",
+            "action": "RECONCILE_TAX_PAIRWISE_TABLE_BC_Q1",
+            "target": "Set table_bc = ['1/4', '1/4', '1/4', '1/4'] and q_bc_num = 1."
+          },
+          "worker-2": {
+            "module": "settlement_sheaf",
+            "action": "RECONCILE_SETTLEMENT_PAIRWISE_TABLE_CA_Q1",
+            "target": "Set table_ca = ['1/4', '1/4', '1/4', '1/4'], q_ca_num = 1, and contextuality_reserve_cents = 0 so payout_cents = net_cents - fee_cents (873)."
+          }
+        },
+        "phase_2_scaled_gap_m4": 1,
+        "phase_2_q_pair_sum": 1,
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "CONTEXTUAL_SHEAF_PARTIAL_RECONCILIATION_LGGR",
+        "phase_3_scaled_gap_m4": 0,
+        "phase_3_q_pair_sum": 2,
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "CODEBASE_CONTEXTUAL_SHEAF_RECONCILED_LGGG",
+        "transcript_audit": {
+          "transcript_id": "codebase_sheaf_eval_5_mistralai_mistral-small-3.2-24b-instruct::transcript",
+          "phase_1_no_signaling_verified": false,
+          "phase_1_local_green": 0,
+          "phase_1_global_green": 0,
+          "phase_1_defect": 0,
+          "phase_1_status": "SIGNALING_MARGINAL_MISMATCH_LGGR",
+          "phase_2_no_signaling_verified": true,
+          "phase_2_alpha_min": "0",
+          "phase_2_alpha_max": "-1/2",
+          "phase_2_infeasibility_gap": "1/2",
+          "phase_2_local_green": 1,
+          "phase_2_global_green": 0,
+          "phase_2_defect": -1,
+          "phase_2_status": "CONTEXTUAL_HOLLOW_TRIANGLE_OBSTRUCTION_LGGR",
+          "phase_3_no_signaling_verified": true,
+          "phase_3_alpha_min": "0",
+          "phase_3_alpha_max": "0",
+          "phase_3_infeasibility_gap": "0",
+          "phase_3_witness_global_joint": {
+            "000": "0",
+            "001": "0",
+            "010": "1/2",
+            "011": "0",
+            "100": "0",
+            "101": "1/2",
+            "110": "0",
+            "111": "0"
+          },
+          "phase_3_local_green": 1,
+          "phase_3_global_green": 1,
+          "phase_3_defect": 0,
+          "phase_3_status": "GLOBAL_JOINT_SECTION_EXTENSIBLE_LGGG",
+          "audit_signaling": {
+            "model_id": "codebase_sheaf_eval_5_mistralai_mistral-small-3.2-24b-instruct::transcript::phase_1_signaling",
+            "no_signaling_verified": false,
+            "marginals_one": {
+              "A": "1/2",
+              "B": "1/2",
+              "C": "1/4"
+            },
+            "joint_ones": {
+              "AB": "0",
+              "BC": "0",
+              "CA": "1/4"
+            },
+            "d000_plus_d111_invariant": "0",
+            "alpha_min": "0",
+            "alpha_max": "0",
+            "infeasibility_gap": "0",
+            "global_section_exists": false,
+            "witness_global_joint": null,
+            "affine_marginal_recovery_verified": false,
+            "classification": "SIGNALING_MARGINAL_MISMATCH_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR"
+          },
+          "audit_contextual": {
+            "model_id": "codebase_sheaf_eval_5_mistralai_mistral-small-3.2-24b-instruct::transcript::phase_2_contextual",
+            "no_signaling_verified": true,
+            "marginals_one": {
+              "A": "1/2",
+              "B": "1/2",
+              "C": "1/2"
+            },
+            "joint_ones": {
+              "AB": "0",
+              "BC": "0",
+              "CA": "0"
+            },
+            "d000_plus_d111_invariant": "-1/2",
+            "alpha_min": "0",
+            "alpha_max": "-1/2",
+            "infeasibility_gap": "1/2",
+            "global_section_exists": false,
+            "witness_global_joint": null,
+            "affine_marginal_recovery_verified": true,
+            "classification": "CONTEXTUAL_HOLLOW_TRIANGLE_OBSTRUCTION_LGGR",
+            "contract_status": "OBSTRUCTED_LGGR"
+          },
+          "audit_reconciled": {
+            "model_id": "codebase_sheaf_eval_5_mistralai_mistral-small-3.2-24b-instruct::transcript::phase_3_reconciled",
+            "no_signaling_verified": true,
+            "marginals_one": {
+              "A": "1/2",
+              "B": "1/2",
+              "C": "1/2"
+            },
+            "joint_ones": {
+              "AB": "0",
+              "BC": "0",
+              "CA": "1/2"
+            },
+            "d000_plus_d111_invariant": "0",
+            "alpha_min": "0",
+            "alpha_max": "0",
+            "infeasibility_gap": "0",
+            "global_section_exists": true,
+            "witness_global_joint": {
+              "000": "0",
+              "001": "0",
+              "010": "1/2",
+              "011": "0",
+              "100": "0",
+              "101": "1/2",
+              "110": "0",
+              "111": "0"
+            },
+            "affine_marginal_recovery_verified": true,
+            "classification": "GLOBAL_JOINT_SECTION_EXTENSIBLE_LGGG",
+            "contract_status": "COMPOSABLE_LGGG"
+          }
+        }
+      }
+    ],
+    "evaluations": [
+      {
+        "evaluation_id": "codebase_sheaf_eval_1_openai_gpt-4o-mini::phase_1_hollow_triangle",
+        "model_id": "openai/gpt-4o-mini",
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "CONTEXTUAL_SHEAF_HOLLOW_TRIANGLE_NGD_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "no_signaling_verified": true,
+        "global_section_exists": false,
+        "table_ab": [
+          "0",
+          "1/2",
+          "1/2",
+          "0"
+        ],
+        "table_bc": [
+          "0",
+          "1/2",
+          "1/2",
+          "0"
+        ],
+        "table_ca": [
+          "0",
+          "1/2",
+          "1/2",
+          "0"
+        ],
+        "q_ab_num": 0,
+        "q_bc_num": 0,
+        "q_ca_num": 0,
+        "infeasibility_gap": "1/2",
+        "scaled_gap_m4": 2,
+        "contextuality_reserve_cents": 11,
+        "merchant_payout_cents": 862,
+        "fee_cents": 27,
+        "tax_cents": 180,
+        "gross_collected_cents": 1080,
+        "total_accounted_cents": 1069,
+        "sheaf_model_receipt": {
+          "model_id": "codebase_sheaf_eval_1_openai_gpt-4o-mini::phase_1_hollow_triangle::sheaf",
+          "no_signaling_verified": true,
+          "marginals_one": {
+            "A": "1/2",
+            "B": "1/2",
+            "C": "1/2"
+          },
+          "joint_ones": {
+            "AB": "0",
+            "BC": "0",
+            "CA": "0"
+          },
+          "d000_plus_d111_invariant": "-1/2",
+          "alpha_min": "0",
+          "alpha_max": "-1/2",
+          "infeasibility_gap": "1/2",
+          "global_section_exists": false,
+          "witness_global_joint": null,
+          "affine_marginal_recovery_verified": true,
+          "classification": "CONTEXTUAL_HOLLOW_TRIANGLE_OBSTRUCTION_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR"
+        },
+        "compact_role_directives": {
+          "worker-0": {
+            "module": "pricing_sheaf",
+            "action": "HOLD_ANCHOR_PAIRWISE_TABLE_AB",
+            "target": "Keep table_ab = ['0', '1/2', '1/2', '0'] and q_ab_num = 0."
+          },
+          "worker-1": {
+            "module": "tax_sheaf",
+            "action": "RECONCILE_TAX_PAIRWISE_TABLE_BC_Q1",
+            "target": "Set table_bc = ['1/4', '1/4', '1/4', '1/4'] and q_bc_num = 1."
+          },
+          "worker-2": {
+            "module": "settlement_sheaf",
+            "action": "RECONCILE_SETTLEMENT_PAIRWISE_TABLE_CA_Q1",
+            "target": "Set table_ca = ['1/4', '1/4', '1/4', '1/4'], q_ca_num = 1, and contextuality_reserve_cents = 0 so payout_cents = net_cents - fee_cents (873)."
+          }
+        }
+      },
+      {
+        "evaluation_id": "codebase_sheaf_eval_1_openai_gpt-4o-mini::phase_2_partial_tax_reconciliation",
+        "model_id": "openai/gpt-4o-mini",
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "CONTEXTUAL_SHEAF_PARTIAL_RECONCILIATION_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "no_signaling_verified": true,
+        "global_section_exists": false,
+        "table_ab": [
+          "0",
+          "1/2",
+          "1/2",
+          "0"
+        ],
+        "table_bc": [
+          "1/4",
+          "1/4",
+          "1/4",
+          "1/4"
+        ],
+        "table_ca": [
+          "0",
+          "1/2",
+          "1/2",
+          "0"
+        ],
+        "q_ab_num": 0,
+        "q_bc_num": 1,
+        "q_ca_num": 0,
+        "infeasibility_gap": "1/4",
+        "scaled_gap_m4": 1,
+        "contextuality_reserve_cents": 11,
+        "merchant_payout_cents": 862,
+        "fee_cents": 27,
+        "tax_cents": 180,
+        "gross_collected_cents": 1080,
+        "total_accounted_cents": 1069,
+        "sheaf_model_receipt": {
+          "model_id": "codebase_sheaf_eval_1_openai_gpt-4o-mini::phase_2_partial_tax_reconciliation::sheaf",
+          "no_signaling_verified": true,
+          "marginals_one": {
+            "A": "1/2",
+            "B": "1/2",
+            "C": "1/2"
+          },
+          "joint_ones": {
+            "AB": "0",
+            "BC": "1/4",
+            "CA": "0"
+          },
+          "d000_plus_d111_invariant": "-1/4",
+          "alpha_min": "0",
+          "alpha_max": "-1/4",
+          "infeasibility_gap": "1/4",
+          "global_section_exists": false,
+          "witness_global_joint": null,
+          "affine_marginal_recovery_verified": true,
+          "classification": "CONTEXTUAL_HOLLOW_TRIANGLE_OBSTRUCTION_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR"
+        },
+        "compact_role_directives": {
+          "worker-0": {
+            "module": "pricing_sheaf",
+            "action": "HOLD_ANCHOR_PAIRWISE_TABLE_AB",
+            "target": "Keep table_ab = ['0', '1/2', '1/2', '0'] and q_ab_num = 0."
+          },
+          "worker-1": {
+            "module": "tax_sheaf",
+            "action": "HOLD_TAX_PAIRWISE_TABLE_BC",
+            "target": "Keep table_bc = ['1/4', '1/4', '1/4', '1/4'] and q_bc_num = 1."
+          },
+          "worker-2": {
+            "module": "settlement_sheaf",
+            "action": "RECONCILE_SETTLEMENT_PAIRWISE_TABLE_CA_Q1",
+            "target": "Set table_ca = ['1/4', '1/4', '1/4', '1/4'], q_ca_num = 1, and contextuality_reserve_cents = 0 so payout_cents = net_cents - fee_cents (873)."
+          }
+        }
+      },
+      {
+        "evaluation_id": "codebase_sheaf_eval_1_openai_gpt-4o-mini::phase_3_full_global_section_reconciled",
+        "model_id": "openai/gpt-4o-mini",
+        "local_green": 1,
+        "global_green": 1,
+        "defect": 0,
+        "status": "CODEBASE_CONTEXTUAL_SHEAF_RECONCILED_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "no_signaling_verified": true,
+        "global_section_exists": true,
+        "table_ab": [
+          "0",
+          "1/2",
+          "1/2",
+          "0"
+        ],
+        "table_bc": [
+          "1/4",
+          "1/4",
+          "1/4",
+          "1/4"
+        ],
+        "table_ca": [
+          "1/4",
+          "1/4",
+          "1/4",
+          "1/4"
+        ],
+        "q_ab_num": 0,
+        "q_bc_num": 1,
+        "q_ca_num": 1,
+        "infeasibility_gap": "0",
+        "scaled_gap_m4": 0,
+        "contextuality_reserve_cents": 0,
+        "merchant_payout_cents": 873,
+        "fee_cents": 27,
+        "tax_cents": 180,
+        "gross_collected_cents": 1080,
+        "total_accounted_cents": 1080,
+        "sheaf_model_receipt": {
+          "model_id": "codebase_sheaf_eval_1_openai_gpt-4o-mini::phase_3_full_global_section_reconciled::sheaf",
+          "no_signaling_verified": true,
+          "marginals_one": {
+            "A": "1/2",
+            "B": "1/2",
+            "C": "1/2"
+          },
+          "joint_ones": {
+            "AB": "0",
+            "BC": "1/4",
+            "CA": "1/4"
+          },
+          "d000_plus_d111_invariant": "0",
+          "alpha_min": "0",
+          "alpha_max": "0",
+          "infeasibility_gap": "0",
+          "global_section_exists": true,
+          "witness_global_joint": {
+            "000": "0",
+            "001": "0",
+            "010": "1/4",
+            "011": "1/4",
+            "100": "1/4",
+            "101": "1/4",
+            "110": "0",
+            "111": "0"
+          },
+          "affine_marginal_recovery_verified": true,
+          "classification": "GLOBAL_JOINT_SECTION_EXTENSIBLE_LGGG",
+          "contract_status": "COMPOSABLE_LGGG"
+        },
+        "compact_role_directives": {
+          "worker-0": {
+            "module": "pricing_sheaf",
+            "action": "HOLD_ANCHOR_PAIRWISE_TABLE_AB",
+            "target": "Keep table_ab = ['0', '1/2', '1/2', '0'] and q_ab_num = 0."
+          },
+          "worker-1": {
+            "module": "tax_sheaf",
+            "action": "HOLD_TAX_PAIRWISE_TABLE_BC",
+            "target": "Keep table_bc = ['1/4', '1/4', '1/4', '1/4'] and q_bc_num = 1."
+          },
+          "worker-2": {
+            "module": "settlement_sheaf",
+            "action": "HOLD_SETTLEMENT_PAIRWISE_TABLE_CA",
+            "target": "Keep table_ca = ['1/4', '1/4', '1/4', '1/4'], q_ca_num = 1, and contextuality_reserve_cents = 0."
+          }
+        }
+      },
+      {
+        "evaluation_id": "codebase_sheaf_eval_2_google_gemini-2.5-flash-lite::phase_1_hollow_triangle",
+        "model_id": "google/gemini-2.5-flash-lite",
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "CONTEXTUAL_SHEAF_HOLLOW_TRIANGLE_NGD_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "no_signaling_verified": true,
+        "global_section_exists": false,
+        "table_ab": [
+          "0",
+          "1/2",
+          "1/2",
+          "0"
+        ],
+        "table_bc": [
+          "0",
+          "1/2",
+          "1/2",
+          "0"
+        ],
+        "table_ca": [
+          "0",
+          "1/2",
+          "1/2",
+          "0"
+        ],
+        "q_ab_num": 0,
+        "q_bc_num": 0,
+        "q_ca_num": 0,
+        "infeasibility_gap": "1/2",
+        "scaled_gap_m4": 2,
+        "contextuality_reserve_cents": 11,
+        "merchant_payout_cents": 862,
+        "fee_cents": 27,
+        "tax_cents": 180,
+        "gross_collected_cents": 1080,
+        "total_accounted_cents": 1069,
+        "sheaf_model_receipt": {
+          "model_id": "codebase_sheaf_eval_2_google_gemini-2.5-flash-lite::phase_1_hollow_triangle::sheaf",
+          "no_signaling_verified": true,
+          "marginals_one": {
+            "A": "1/2",
+            "B": "1/2",
+            "C": "1/2"
+          },
+          "joint_ones": {
+            "AB": "0",
+            "BC": "0",
+            "CA": "0"
+          },
+          "d000_plus_d111_invariant": "-1/2",
+          "alpha_min": "0",
+          "alpha_max": "-1/2",
+          "infeasibility_gap": "1/2",
+          "global_section_exists": false,
+          "witness_global_joint": null,
+          "affine_marginal_recovery_verified": true,
+          "classification": "CONTEXTUAL_HOLLOW_TRIANGLE_OBSTRUCTION_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR"
+        },
+        "compact_role_directives": {
+          "worker-0": {
+            "module": "pricing_sheaf",
+            "action": "HOLD_ANCHOR_PAIRWISE_TABLE_AB",
+            "target": "Keep table_ab = ['0', '1/2', '1/2', '0'] and q_ab_num = 0."
+          },
+          "worker-1": {
+            "module": "tax_sheaf",
+            "action": "RECONCILE_TAX_PAIRWISE_TABLE_BC_Q1",
+            "target": "Set table_bc = ['1/4', '1/4', '1/4', '1/4'] and q_bc_num = 1."
+          },
+          "worker-2": {
+            "module": "settlement_sheaf",
+            "action": "RECONCILE_SETTLEMENT_PAIRWISE_TABLE_CA_Q1",
+            "target": "Set table_ca = ['1/4', '1/4', '1/4', '1/4'], q_ca_num = 1, and contextuality_reserve_cents = 0 so payout_cents = net_cents - fee_cents (873)."
+          }
+        }
+      },
+      {
+        "evaluation_id": "codebase_sheaf_eval_2_google_gemini-2.5-flash-lite::phase_2_partial_tax_reconciliation",
+        "model_id": "google/gemini-2.5-flash-lite",
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "CONTEXTUAL_SHEAF_PARTIAL_RECONCILIATION_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "no_signaling_verified": true,
+        "global_section_exists": false,
+        "table_ab": [
+          "0",
+          "1/2",
+          "1/2",
+          "0"
+        ],
+        "table_bc": [
+          "1/4",
+          "1/4",
+          "1/4",
+          "1/4"
+        ],
+        "table_ca": [
+          "0",
+          "1/2",
+          "1/2",
+          "0"
+        ],
+        "q_ab_num": 0,
+        "q_bc_num": 1,
+        "q_ca_num": 0,
+        "infeasibility_gap": "1/4",
+        "scaled_gap_m4": 1,
+        "contextuality_reserve_cents": 11,
+        "merchant_payout_cents": 862,
+        "fee_cents": 27,
+        "tax_cents": 180,
+        "gross_collected_cents": 1080,
+        "total_accounted_cents": 1069,
+        "sheaf_model_receipt": {
+          "model_id": "codebase_sheaf_eval_2_google_gemini-2.5-flash-lite::phase_2_partial_tax_reconciliation::sheaf",
+          "no_signaling_verified": true,
+          "marginals_one": {
+            "A": "1/2",
+            "B": "1/2",
+            "C": "1/2"
+          },
+          "joint_ones": {
+            "AB": "0",
+            "BC": "1/4",
+            "CA": "0"
+          },
+          "d000_plus_d111_invariant": "-1/4",
+          "alpha_min": "0",
+          "alpha_max": "-1/4",
+          "infeasibility_gap": "1/4",
+          "global_section_exists": false,
+          "witness_global_joint": null,
+          "affine_marginal_recovery_verified": true,
+          "classification": "CONTEXTUAL_HOLLOW_TRIANGLE_OBSTRUCTION_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR"
+        },
+        "compact_role_directives": {
+          "worker-0": {
+            "module": "pricing_sheaf",
+            "action": "HOLD_ANCHOR_PAIRWISE_TABLE_AB",
+            "target": "Keep table_ab = ['0', '1/2', '1/2', '0'] and q_ab_num = 0."
+          },
+          "worker-1": {
+            "module": "tax_sheaf",
+            "action": "HOLD_TAX_PAIRWISE_TABLE_BC",
+            "target": "Keep table_bc = ['1/4', '1/4', '1/4', '1/4'] and q_bc_num = 1."
+          },
+          "worker-2": {
+            "module": "settlement_sheaf",
+            "action": "RECONCILE_SETTLEMENT_PAIRWISE_TABLE_CA_Q1",
+            "target": "Set table_ca = ['1/4', '1/4', '1/4', '1/4'], q_ca_num = 1, and contextuality_reserve_cents = 0 so payout_cents = net_cents - fee_cents (873)."
+          }
+        }
+      },
+      {
+        "evaluation_id": "codebase_sheaf_eval_2_google_gemini-2.5-flash-lite::phase_3_full_global_section_reconciled",
+        "model_id": "google/gemini-2.5-flash-lite",
+        "local_green": 1,
+        "global_green": 1,
+        "defect": 0,
+        "status": "CODEBASE_CONTEXTUAL_SHEAF_RECONCILED_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "no_signaling_verified": true,
+        "global_section_exists": true,
+        "table_ab": [
+          "0",
+          "1/2",
+          "1/2",
+          "0"
+        ],
+        "table_bc": [
+          "1/4",
+          "1/4",
+          "1/4",
+          "1/4"
+        ],
+        "table_ca": [
+          "1/4",
+          "1/4",
+          "1/4",
+          "1/4"
+        ],
+        "q_ab_num": 0,
+        "q_bc_num": 1,
+        "q_ca_num": 1,
+        "infeasibility_gap": "0",
+        "scaled_gap_m4": 0,
+        "contextuality_reserve_cents": 0,
+        "merchant_payout_cents": 873,
+        "fee_cents": 27,
+        "tax_cents": 180,
+        "gross_collected_cents": 1080,
+        "total_accounted_cents": 1080,
+        "sheaf_model_receipt": {
+          "model_id": "codebase_sheaf_eval_2_google_gemini-2.5-flash-lite::phase_3_full_global_section_reconciled::sheaf",
+          "no_signaling_verified": true,
+          "marginals_one": {
+            "A": "1/2",
+            "B": "1/2",
+            "C": "1/2"
+          },
+          "joint_ones": {
+            "AB": "0",
+            "BC": "1/4",
+            "CA": "1/4"
+          },
+          "d000_plus_d111_invariant": "0",
+          "alpha_min": "0",
+          "alpha_max": "0",
+          "infeasibility_gap": "0",
+          "global_section_exists": true,
+          "witness_global_joint": {
+            "000": "0",
+            "001": "0",
+            "010": "1/4",
+            "011": "1/4",
+            "100": "1/4",
+            "101": "1/4",
+            "110": "0",
+            "111": "0"
+          },
+          "affine_marginal_recovery_verified": true,
+          "classification": "GLOBAL_JOINT_SECTION_EXTENSIBLE_LGGG",
+          "contract_status": "COMPOSABLE_LGGG"
+        },
+        "compact_role_directives": {
+          "worker-0": {
+            "module": "pricing_sheaf",
+            "action": "HOLD_ANCHOR_PAIRWISE_TABLE_AB",
+            "target": "Keep table_ab = ['0', '1/2', '1/2', '0'] and q_ab_num = 0."
+          },
+          "worker-1": {
+            "module": "tax_sheaf",
+            "action": "HOLD_TAX_PAIRWISE_TABLE_BC",
+            "target": "Keep table_bc = ['1/4', '1/4', '1/4', '1/4'] and q_bc_num = 1."
+          },
+          "worker-2": {
+            "module": "settlement_sheaf",
+            "action": "HOLD_SETTLEMENT_PAIRWISE_TABLE_CA",
+            "target": "Keep table_ca = ['1/4', '1/4', '1/4', '1/4'], q_ca_num = 1, and contextuality_reserve_cents = 0."
+          }
+        }
+      },
+      {
+        "evaluation_id": "codebase_sheaf_eval_3_meta-llama_llama-3.3-70b-instruct::phase_1_hollow_triangle",
+        "model_id": "meta-llama/llama-3.3-70b-instruct",
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "CONTEXTUAL_SHEAF_HOLLOW_TRIANGLE_NGD_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "no_signaling_verified": true,
+        "global_section_exists": false,
+        "table_ab": [
+          "0",
+          "1/2",
+          "1/2",
+          "0"
+        ],
+        "table_bc": [
+          "0",
+          "1/2",
+          "1/2",
+          "0"
+        ],
+        "table_ca": [
+          "0",
+          "1/2",
+          "1/2",
+          "0"
+        ],
+        "q_ab_num": 0,
+        "q_bc_num": 0,
+        "q_ca_num": 0,
+        "infeasibility_gap": "1/2",
+        "scaled_gap_m4": 2,
+        "contextuality_reserve_cents": 11,
+        "merchant_payout_cents": 862,
+        "fee_cents": 27,
+        "tax_cents": 180,
+        "gross_collected_cents": 1080,
+        "total_accounted_cents": 1069,
+        "sheaf_model_receipt": {
+          "model_id": "codebase_sheaf_eval_3_meta-llama_llama-3.3-70b-instruct::phase_1_hollow_triangle::sheaf",
+          "no_signaling_verified": true,
+          "marginals_one": {
+            "A": "1/2",
+            "B": "1/2",
+            "C": "1/2"
+          },
+          "joint_ones": {
+            "AB": "0",
+            "BC": "0",
+            "CA": "0"
+          },
+          "d000_plus_d111_invariant": "-1/2",
+          "alpha_min": "0",
+          "alpha_max": "-1/2",
+          "infeasibility_gap": "1/2",
+          "global_section_exists": false,
+          "witness_global_joint": null,
+          "affine_marginal_recovery_verified": true,
+          "classification": "CONTEXTUAL_HOLLOW_TRIANGLE_OBSTRUCTION_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR"
+        },
+        "compact_role_directives": {
+          "worker-0": {
+            "module": "pricing_sheaf",
+            "action": "HOLD_ANCHOR_PAIRWISE_TABLE_AB",
+            "target": "Keep table_ab = ['0', '1/2', '1/2', '0'] and q_ab_num = 0."
+          },
+          "worker-1": {
+            "module": "tax_sheaf",
+            "action": "RECONCILE_TAX_PAIRWISE_TABLE_BC_Q1",
+            "target": "Set table_bc = ['1/4', '1/4', '1/4', '1/4'] and q_bc_num = 1."
+          },
+          "worker-2": {
+            "module": "settlement_sheaf",
+            "action": "RECONCILE_SETTLEMENT_PAIRWISE_TABLE_CA_Q1",
+            "target": "Set table_ca = ['1/4', '1/4', '1/4', '1/4'], q_ca_num = 1, and contextuality_reserve_cents = 0 so payout_cents = net_cents - fee_cents (873)."
+          }
+        }
+      },
+      {
+        "evaluation_id": "codebase_sheaf_eval_3_meta-llama_llama-3.3-70b-instruct::phase_2_partial_tax_reconciliation",
+        "model_id": "meta-llama/llama-3.3-70b-instruct",
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "CONTEXTUAL_SHEAF_PARTIAL_RECONCILIATION_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "no_signaling_verified": true,
+        "global_section_exists": false,
+        "table_ab": [
+          "0",
+          "1/2",
+          "1/2",
+          "0"
+        ],
+        "table_bc": [
+          "1/4",
+          "1/4",
+          "1/4",
+          "1/4"
+        ],
+        "table_ca": [
+          "0",
+          "1/2",
+          "1/2",
+          "0"
+        ],
+        "q_ab_num": 0,
+        "q_bc_num": 1,
+        "q_ca_num": 0,
+        "infeasibility_gap": "1/4",
+        "scaled_gap_m4": 1,
+        "contextuality_reserve_cents": 11,
+        "merchant_payout_cents": 862,
+        "fee_cents": 27,
+        "tax_cents": 180,
+        "gross_collected_cents": 1080,
+        "total_accounted_cents": 1069,
+        "sheaf_model_receipt": {
+          "model_id": "codebase_sheaf_eval_3_meta-llama_llama-3.3-70b-instruct::phase_2_partial_tax_reconciliation::sheaf",
+          "no_signaling_verified": true,
+          "marginals_one": {
+            "A": "1/2",
+            "B": "1/2",
+            "C": "1/2"
+          },
+          "joint_ones": {
+            "AB": "0",
+            "BC": "1/4",
+            "CA": "0"
+          },
+          "d000_plus_d111_invariant": "-1/4",
+          "alpha_min": "0",
+          "alpha_max": "-1/4",
+          "infeasibility_gap": "1/4",
+          "global_section_exists": false,
+          "witness_global_joint": null,
+          "affine_marginal_recovery_verified": true,
+          "classification": "CONTEXTUAL_HOLLOW_TRIANGLE_OBSTRUCTION_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR"
+        },
+        "compact_role_directives": {
+          "worker-0": {
+            "module": "pricing_sheaf",
+            "action": "HOLD_ANCHOR_PAIRWISE_TABLE_AB",
+            "target": "Keep table_ab = ['0', '1/2', '1/2', '0'] and q_ab_num = 0."
+          },
+          "worker-1": {
+            "module": "tax_sheaf",
+            "action": "HOLD_TAX_PAIRWISE_TABLE_BC",
+            "target": "Keep table_bc = ['1/4', '1/4', '1/4', '1/4'] and q_bc_num = 1."
+          },
+          "worker-2": {
+            "module": "settlement_sheaf",
+            "action": "RECONCILE_SETTLEMENT_PAIRWISE_TABLE_CA_Q1",
+            "target": "Set table_ca = ['1/4', '1/4', '1/4', '1/4'], q_ca_num = 1, and contextuality_reserve_cents = 0 so payout_cents = net_cents - fee_cents (873)."
+          }
+        }
+      },
+      {
+        "evaluation_id": "codebase_sheaf_eval_3_meta-llama_llama-3.3-70b-instruct::phase_3_full_global_section_reconciled",
+        "model_id": "meta-llama/llama-3.3-70b-instruct",
+        "local_green": 1,
+        "global_green": 1,
+        "defect": 0,
+        "status": "CODEBASE_CONTEXTUAL_SHEAF_RECONCILED_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "no_signaling_verified": true,
+        "global_section_exists": true,
+        "table_ab": [
+          "0",
+          "1/2",
+          "1/2",
+          "0"
+        ],
+        "table_bc": [
+          "1/4",
+          "1/4",
+          "1/4",
+          "1/4"
+        ],
+        "table_ca": [
+          "1/4",
+          "1/4",
+          "1/4",
+          "1/4"
+        ],
+        "q_ab_num": 0,
+        "q_bc_num": 1,
+        "q_ca_num": 1,
+        "infeasibility_gap": "0",
+        "scaled_gap_m4": 0,
+        "contextuality_reserve_cents": 0,
+        "merchant_payout_cents": 873,
+        "fee_cents": 27,
+        "tax_cents": 180,
+        "gross_collected_cents": 1080,
+        "total_accounted_cents": 1080,
+        "sheaf_model_receipt": {
+          "model_id": "codebase_sheaf_eval_3_meta-llama_llama-3.3-70b-instruct::phase_3_full_global_section_reconciled::sheaf",
+          "no_signaling_verified": true,
+          "marginals_one": {
+            "A": "1/2",
+            "B": "1/2",
+            "C": "1/2"
+          },
+          "joint_ones": {
+            "AB": "0",
+            "BC": "1/4",
+            "CA": "1/4"
+          },
+          "d000_plus_d111_invariant": "0",
+          "alpha_min": "0",
+          "alpha_max": "0",
+          "infeasibility_gap": "0",
+          "global_section_exists": true,
+          "witness_global_joint": {
+            "000": "0",
+            "001": "0",
+            "010": "1/4",
+            "011": "1/4",
+            "100": "1/4",
+            "101": "1/4",
+            "110": "0",
+            "111": "0"
+          },
+          "affine_marginal_recovery_verified": true,
+          "classification": "GLOBAL_JOINT_SECTION_EXTENSIBLE_LGGG",
+          "contract_status": "COMPOSABLE_LGGG"
+        },
+        "compact_role_directives": {
+          "worker-0": {
+            "module": "pricing_sheaf",
+            "action": "HOLD_ANCHOR_PAIRWISE_TABLE_AB",
+            "target": "Keep table_ab = ['0', '1/2', '1/2', '0'] and q_ab_num = 0."
+          },
+          "worker-1": {
+            "module": "tax_sheaf",
+            "action": "HOLD_TAX_PAIRWISE_TABLE_BC",
+            "target": "Keep table_bc = ['1/4', '1/4', '1/4', '1/4'] and q_bc_num = 1."
+          },
+          "worker-2": {
+            "module": "settlement_sheaf",
+            "action": "HOLD_SETTLEMENT_PAIRWISE_TABLE_CA",
+            "target": "Keep table_ca = ['1/4', '1/4', '1/4', '1/4'], q_ca_num = 1, and contextuality_reserve_cents = 0."
+          }
+        }
+      },
+      {
+        "evaluation_id": "codebase_sheaf_eval_4_deepseek_deepseek-chat::phase_1_hollow_triangle",
+        "model_id": "deepseek/deepseek-chat",
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "CONTEXTUAL_SHEAF_HOLLOW_TRIANGLE_NGD_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "no_signaling_verified": true,
+        "global_section_exists": false,
+        "table_ab": [
+          "0",
+          "1/2",
+          "1/2",
+          "0"
+        ],
+        "table_bc": [
+          "0",
+          "1/2",
+          "1/2",
+          "0"
+        ],
+        "table_ca": [
+          "0",
+          "1/2",
+          "1/2",
+          "0"
+        ],
+        "q_ab_num": 0,
+        "q_bc_num": 0,
+        "q_ca_num": 0,
+        "infeasibility_gap": "1/2",
+        "scaled_gap_m4": 2,
+        "contextuality_reserve_cents": 11,
+        "merchant_payout_cents": 862,
+        "fee_cents": 27,
+        "tax_cents": 180,
+        "gross_collected_cents": 1080,
+        "total_accounted_cents": 1069,
+        "sheaf_model_receipt": {
+          "model_id": "codebase_sheaf_eval_4_deepseek_deepseek-chat::phase_1_hollow_triangle::sheaf",
+          "no_signaling_verified": true,
+          "marginals_one": {
+            "A": "1/2",
+            "B": "1/2",
+            "C": "1/2"
+          },
+          "joint_ones": {
+            "AB": "0",
+            "BC": "0",
+            "CA": "0"
+          },
+          "d000_plus_d111_invariant": "-1/2",
+          "alpha_min": "0",
+          "alpha_max": "-1/2",
+          "infeasibility_gap": "1/2",
+          "global_section_exists": false,
+          "witness_global_joint": null,
+          "affine_marginal_recovery_verified": true,
+          "classification": "CONTEXTUAL_HOLLOW_TRIANGLE_OBSTRUCTION_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR"
+        },
+        "compact_role_directives": {
+          "worker-0": {
+            "module": "pricing_sheaf",
+            "action": "HOLD_ANCHOR_PAIRWISE_TABLE_AB",
+            "target": "Keep table_ab = ['0', '1/2', '1/2', '0'] and q_ab_num = 0."
+          },
+          "worker-1": {
+            "module": "tax_sheaf",
+            "action": "RECONCILE_TAX_PAIRWISE_TABLE_BC_Q1",
+            "target": "Set table_bc = ['1/4', '1/4', '1/4', '1/4'] and q_bc_num = 1."
+          },
+          "worker-2": {
+            "module": "settlement_sheaf",
+            "action": "RECONCILE_SETTLEMENT_PAIRWISE_TABLE_CA_Q1",
+            "target": "Set table_ca = ['1/4', '1/4', '1/4', '1/4'], q_ca_num = 1, and contextuality_reserve_cents = 0 so payout_cents = net_cents - fee_cents (873)."
+          }
+        }
+      },
+      {
+        "evaluation_id": "codebase_sheaf_eval_4_deepseek_deepseek-chat::phase_2_partial_tax_reconciliation",
+        "model_id": "deepseek/deepseek-chat",
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "CONTEXTUAL_SHEAF_PARTIAL_RECONCILIATION_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "no_signaling_verified": true,
+        "global_section_exists": false,
+        "table_ab": [
+          "0",
+          "1/2",
+          "1/2",
+          "0"
+        ],
+        "table_bc": [
+          "1/4",
+          "1/4",
+          "1/4",
+          "1/4"
+        ],
+        "table_ca": [
+          "0",
+          "1/2",
+          "1/2",
+          "0"
+        ],
+        "q_ab_num": 0,
+        "q_bc_num": 1,
+        "q_ca_num": 0,
+        "infeasibility_gap": "1/4",
+        "scaled_gap_m4": 1,
+        "contextuality_reserve_cents": 11,
+        "merchant_payout_cents": 862,
+        "fee_cents": 27,
+        "tax_cents": 180,
+        "gross_collected_cents": 1080,
+        "total_accounted_cents": 1069,
+        "sheaf_model_receipt": {
+          "model_id": "codebase_sheaf_eval_4_deepseek_deepseek-chat::phase_2_partial_tax_reconciliation::sheaf",
+          "no_signaling_verified": true,
+          "marginals_one": {
+            "A": "1/2",
+            "B": "1/2",
+            "C": "1/2"
+          },
+          "joint_ones": {
+            "AB": "0",
+            "BC": "1/4",
+            "CA": "0"
+          },
+          "d000_plus_d111_invariant": "-1/4",
+          "alpha_min": "0",
+          "alpha_max": "-1/4",
+          "infeasibility_gap": "1/4",
+          "global_section_exists": false,
+          "witness_global_joint": null,
+          "affine_marginal_recovery_verified": true,
+          "classification": "CONTEXTUAL_HOLLOW_TRIANGLE_OBSTRUCTION_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR"
+        },
+        "compact_role_directives": {
+          "worker-0": {
+            "module": "pricing_sheaf",
+            "action": "HOLD_ANCHOR_PAIRWISE_TABLE_AB",
+            "target": "Keep table_ab = ['0', '1/2', '1/2', '0'] and q_ab_num = 0."
+          },
+          "worker-1": {
+            "module": "tax_sheaf",
+            "action": "HOLD_TAX_PAIRWISE_TABLE_BC",
+            "target": "Keep table_bc = ['1/4', '1/4', '1/4', '1/4'] and q_bc_num = 1."
+          },
+          "worker-2": {
+            "module": "settlement_sheaf",
+            "action": "RECONCILE_SETTLEMENT_PAIRWISE_TABLE_CA_Q1",
+            "target": "Set table_ca = ['1/4', '1/4', '1/4', '1/4'], q_ca_num = 1, and contextuality_reserve_cents = 0 so payout_cents = net_cents - fee_cents (873)."
+          }
+        }
+      },
+      {
+        "evaluation_id": "codebase_sheaf_eval_4_deepseek_deepseek-chat::phase_3_full_global_section_reconciled",
+        "model_id": "deepseek/deepseek-chat",
+        "local_green": 1,
+        "global_green": 1,
+        "defect": 0,
+        "status": "CODEBASE_CONTEXTUAL_SHEAF_RECONCILED_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "no_signaling_verified": true,
+        "global_section_exists": true,
+        "table_ab": [
+          "0",
+          "1/2",
+          "1/2",
+          "0"
+        ],
+        "table_bc": [
+          "1/4",
+          "1/4",
+          "1/4",
+          "1/4"
+        ],
+        "table_ca": [
+          "1/4",
+          "1/4",
+          "1/4",
+          "1/4"
+        ],
+        "q_ab_num": 0,
+        "q_bc_num": 1,
+        "q_ca_num": 1,
+        "infeasibility_gap": "0",
+        "scaled_gap_m4": 0,
+        "contextuality_reserve_cents": 0,
+        "merchant_payout_cents": 873,
+        "fee_cents": 27,
+        "tax_cents": 180,
+        "gross_collected_cents": 1080,
+        "total_accounted_cents": 1080,
+        "sheaf_model_receipt": {
+          "model_id": "codebase_sheaf_eval_4_deepseek_deepseek-chat::phase_3_full_global_section_reconciled::sheaf",
+          "no_signaling_verified": true,
+          "marginals_one": {
+            "A": "1/2",
+            "B": "1/2",
+            "C": "1/2"
+          },
+          "joint_ones": {
+            "AB": "0",
+            "BC": "1/4",
+            "CA": "1/4"
+          },
+          "d000_plus_d111_invariant": "0",
+          "alpha_min": "0",
+          "alpha_max": "0",
+          "infeasibility_gap": "0",
+          "global_section_exists": true,
+          "witness_global_joint": {
+            "000": "0",
+            "001": "0",
+            "010": "1/4",
+            "011": "1/4",
+            "100": "1/4",
+            "101": "1/4",
+            "110": "0",
+            "111": "0"
+          },
+          "affine_marginal_recovery_verified": true,
+          "classification": "GLOBAL_JOINT_SECTION_EXTENSIBLE_LGGG",
+          "contract_status": "COMPOSABLE_LGGG"
+        },
+        "compact_role_directives": {
+          "worker-0": {
+            "module": "pricing_sheaf",
+            "action": "HOLD_ANCHOR_PAIRWISE_TABLE_AB",
+            "target": "Keep table_ab = ['0', '1/2', '1/2', '0'] and q_ab_num = 0."
+          },
+          "worker-1": {
+            "module": "tax_sheaf",
+            "action": "HOLD_TAX_PAIRWISE_TABLE_BC",
+            "target": "Keep table_bc = ['1/4', '1/4', '1/4', '1/4'] and q_bc_num = 1."
+          },
+          "worker-2": {
+            "module": "settlement_sheaf",
+            "action": "HOLD_SETTLEMENT_PAIRWISE_TABLE_CA",
+            "target": "Keep table_ca = ['1/4', '1/4', '1/4', '1/4'], q_ca_num = 1, and contextuality_reserve_cents = 0."
+          }
+        }
+      },
+      {
+        "evaluation_id": "codebase_sheaf_eval_5_mistralai_mistral-small-3.2-24b-instruct::phase_1_hollow_triangle",
+        "model_id": "mistralai/mistral-small-3.2-24b-instruct",
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "CONTEXTUAL_SHEAF_HOLLOW_TRIANGLE_NGD_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "no_signaling_verified": true,
+        "global_section_exists": false,
+        "table_ab": [
+          "0",
+          "1/2",
+          "1/2",
+          "0"
+        ],
+        "table_bc": [
+          "0",
+          "1/2",
+          "1/2",
+          "0"
+        ],
+        "table_ca": [
+          "0",
+          "1/2",
+          "1/2",
+          "0"
+        ],
+        "q_ab_num": 0,
+        "q_bc_num": 0,
+        "q_ca_num": 0,
+        "infeasibility_gap": "1/2",
+        "scaled_gap_m4": 2,
+        "contextuality_reserve_cents": 11,
+        "merchant_payout_cents": 862,
+        "fee_cents": 27,
+        "tax_cents": 180,
+        "gross_collected_cents": 1080,
+        "total_accounted_cents": 1069,
+        "sheaf_model_receipt": {
+          "model_id": "codebase_sheaf_eval_5_mistralai_mistral-small-3.2-24b-instruct::phase_1_hollow_triangle::sheaf",
+          "no_signaling_verified": true,
+          "marginals_one": {
+            "A": "1/2",
+            "B": "1/2",
+            "C": "1/2"
+          },
+          "joint_ones": {
+            "AB": "0",
+            "BC": "0",
+            "CA": "0"
+          },
+          "d000_plus_d111_invariant": "-1/2",
+          "alpha_min": "0",
+          "alpha_max": "-1/2",
+          "infeasibility_gap": "1/2",
+          "global_section_exists": false,
+          "witness_global_joint": null,
+          "affine_marginal_recovery_verified": true,
+          "classification": "CONTEXTUAL_HOLLOW_TRIANGLE_OBSTRUCTION_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR"
+        },
+        "compact_role_directives": {
+          "worker-0": {
+            "module": "pricing_sheaf",
+            "action": "HOLD_ANCHOR_PAIRWISE_TABLE_AB",
+            "target": "Keep table_ab = ['0', '1/2', '1/2', '0'] and q_ab_num = 0."
+          },
+          "worker-1": {
+            "module": "tax_sheaf",
+            "action": "RECONCILE_TAX_PAIRWISE_TABLE_BC_Q1",
+            "target": "Set table_bc = ['1/4', '1/4', '1/4', '1/4'] and q_bc_num = 1."
+          },
+          "worker-2": {
+            "module": "settlement_sheaf",
+            "action": "RECONCILE_SETTLEMENT_PAIRWISE_TABLE_CA_Q1",
+            "target": "Set table_ca = ['1/4', '1/4', '1/4', '1/4'], q_ca_num = 1, and contextuality_reserve_cents = 0 so payout_cents = net_cents - fee_cents (873)."
+          }
+        }
+      },
+      {
+        "evaluation_id": "codebase_sheaf_eval_5_mistralai_mistral-small-3.2-24b-instruct::phase_2_partial_tax_reconciliation",
+        "model_id": "mistralai/mistral-small-3.2-24b-instruct",
+        "local_green": 1,
+        "global_green": 0,
+        "defect": -1,
+        "status": "CONTEXTUAL_SHEAF_PARTIAL_RECONCILIATION_LGGR",
+        "contract_status": "OBSTRUCTED_LGGR",
+        "no_signaling_verified": true,
+        "global_section_exists": false,
+        "table_ab": [
+          "0",
+          "1/2",
+          "1/2",
+          "0"
+        ],
+        "table_bc": [
+          "1/4",
+          "1/4",
+          "1/4",
+          "1/4"
+        ],
+        "table_ca": [
+          "0",
+          "1/2",
+          "1/2",
+          "0"
+        ],
+        "q_ab_num": 0,
+        "q_bc_num": 1,
+        "q_ca_num": 0,
+        "infeasibility_gap": "1/4",
+        "scaled_gap_m4": 1,
+        "contextuality_reserve_cents": 11,
+        "merchant_payout_cents": 862,
+        "fee_cents": 27,
+        "tax_cents": 180,
+        "gross_collected_cents": 1080,
+        "total_accounted_cents": 1069,
+        "sheaf_model_receipt": {
+          "model_id": "codebase_sheaf_eval_5_mistralai_mistral-small-3.2-24b-instruct::phase_2_partial_tax_reconciliation::sheaf",
+          "no_signaling_verified": true,
+          "marginals_one": {
+            "A": "1/2",
+            "B": "1/2",
+            "C": "1/2"
+          },
+          "joint_ones": {
+            "AB": "0",
+            "BC": "1/4",
+            "CA": "0"
+          },
+          "d000_plus_d111_invariant": "-1/4",
+          "alpha_min": "0",
+          "alpha_max": "-1/4",
+          "infeasibility_gap": "1/4",
+          "global_section_exists": false,
+          "witness_global_joint": null,
+          "affine_marginal_recovery_verified": true,
+          "classification": "CONTEXTUAL_HOLLOW_TRIANGLE_OBSTRUCTION_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR"
+        },
+        "compact_role_directives": {
+          "worker-0": {
+            "module": "pricing_sheaf",
+            "action": "HOLD_ANCHOR_PAIRWISE_TABLE_AB",
+            "target": "Keep table_ab = ['0', '1/2', '1/2', '0'] and q_ab_num = 0."
+          },
+          "worker-1": {
+            "module": "tax_sheaf",
+            "action": "HOLD_TAX_PAIRWISE_TABLE_BC",
+            "target": "Keep table_bc = ['1/4', '1/4', '1/4', '1/4'] and q_bc_num = 1."
+          },
+          "worker-2": {
+            "module": "settlement_sheaf",
+            "action": "RECONCILE_SETTLEMENT_PAIRWISE_TABLE_CA_Q1",
+            "target": "Set table_ca = ['1/4', '1/4', '1/4', '1/4'], q_ca_num = 1, and contextuality_reserve_cents = 0 so payout_cents = net_cents - fee_cents (873)."
+          }
+        }
+      },
+      {
+        "evaluation_id": "codebase_sheaf_eval_5_mistralai_mistral-small-3.2-24b-instruct::phase_3_full_global_section_reconciled",
+        "model_id": "mistralai/mistral-small-3.2-24b-instruct",
+        "local_green": 1,
+        "global_green": 1,
+        "defect": 0,
+        "status": "CODEBASE_CONTEXTUAL_SHEAF_RECONCILED_LGGG",
+        "contract_status": "COMPOSABLE_LGGG",
+        "no_signaling_verified": true,
+        "global_section_exists": true,
+        "table_ab": [
+          "0",
+          "1/2",
+          "1/2",
+          "0"
+        ],
+        "table_bc": [
+          "1/4",
+          "1/4",
+          "1/4",
+          "1/4"
+        ],
+        "table_ca": [
+          "1/4",
+          "1/4",
+          "1/4",
+          "1/4"
+        ],
+        "q_ab_num": 0,
+        "q_bc_num": 1,
+        "q_ca_num": 1,
+        "infeasibility_gap": "0",
+        "scaled_gap_m4": 0,
+        "contextuality_reserve_cents": 0,
+        "merchant_payout_cents": 873,
+        "fee_cents": 27,
+        "tax_cents": 180,
+        "gross_collected_cents": 1080,
+        "total_accounted_cents": 1080,
+        "sheaf_model_receipt": {
+          "model_id": "codebase_sheaf_eval_5_mistralai_mistral-small-3.2-24b-instruct::phase_3_full_global_section_reconciled::sheaf",
+          "no_signaling_verified": true,
+          "marginals_one": {
+            "A": "1/2",
+            "B": "1/2",
+            "C": "1/2"
+          },
+          "joint_ones": {
+            "AB": "0",
+            "BC": "1/4",
+            "CA": "1/4"
+          },
+          "d000_plus_d111_invariant": "0",
+          "alpha_min": "0",
+          "alpha_max": "0",
+          "infeasibility_gap": "0",
+          "global_section_exists": true,
+          "witness_global_joint": {
+            "000": "0",
+            "001": "0",
+            "010": "1/4",
+            "011": "1/4",
+            "100": "1/4",
+            "101": "1/4",
+            "110": "0",
+            "111": "0"
+          },
+          "affine_marginal_recovery_verified": true,
+          "classification": "GLOBAL_JOINT_SECTION_EXTENSIBLE_LGGG",
+          "contract_status": "COMPOSABLE_LGGG"
+        },
+        "compact_role_directives": {
+          "worker-0": {
+            "module": "pricing_sheaf",
+            "action": "HOLD_ANCHOR_PAIRWISE_TABLE_AB",
+            "target": "Keep table_ab = ['0', '1/2', '1/2', '0'] and q_ab_num = 0."
+          },
+          "worker-1": {
+            "module": "tax_sheaf",
+            "action": "HOLD_TAX_PAIRWISE_TABLE_BC",
+            "target": "Keep table_bc = ['1/4', '1/4', '1/4', '1/4'] and q_bc_num = 1."
+          },
+          "worker-2": {
+            "module": "settlement_sheaf",
+            "action": "HOLD_SETTLEMENT_PAIRWISE_TABLE_CA",
+            "target": "Keep table_ca = ['1/4', '1/4', '1/4', '1/4'], q_ca_num = 1, and contextuality_reserve_cents = 0."
+          }
+        }
+      }
+    ],
+    "receipt_sha256": "4c4fd34a45fb43f858facdb2b23addf6efb3ed1283b358d33eb63fd50d25fdb6"
+  },
+  "evaluations": [
+    {
+      "evaluation_id": "codebase_sheaf_eval_1_openai_gpt-4o-mini",
+      "model_id": "openai/gpt-4o-mini",
+      "phase_1_scaled_gap_m4": 2,
+      "phase_1_q_pair_sum": 0,
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "CONTEXTUAL_SHEAF_HOLLOW_TRIANGLE_NGD_LGGR",
+      "phase_1_directives": {
+        "worker-0": {
+          "module": "pricing_sheaf",
+          "action": "HOLD_ANCHOR_PAIRWISE_TABLE_AB",
+          "target": "Keep table_ab = ['0', '1/2', '1/2', '0'] and q_ab_num = 0."
+        },
+        "worker-1": {
+          "module": "tax_sheaf",
+          "action": "RECONCILE_TAX_PAIRWISE_TABLE_BC_Q1",
+          "target": "Set table_bc = ['1/4', '1/4', '1/4', '1/4'] and q_bc_num = 1."
+        },
+        "worker-2": {
+          "module": "settlement_sheaf",
+          "action": "RECONCILE_SETTLEMENT_PAIRWISE_TABLE_CA_Q1",
+          "target": "Set table_ca = ['1/4', '1/4', '1/4', '1/4'], q_ca_num = 1, and contextuality_reserve_cents = 0 so payout_cents = net_cents - fee_cents (873)."
+        }
+      },
+      "phase_2_scaled_gap_m4": 1,
+      "phase_2_q_pair_sum": 1,
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "CONTEXTUAL_SHEAF_PARTIAL_RECONCILIATION_LGGR",
+      "phase_3_scaled_gap_m4": 0,
+      "phase_3_q_pair_sum": 2,
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "CODEBASE_CONTEXTUAL_SHEAF_RECONCILED_LGGG",
+      "transcript_audit": {
+        "transcript_id": "codebase_sheaf_eval_1_openai_gpt-4o-mini::transcript",
+        "phase_1_no_signaling_verified": false,
+        "phase_1_local_green": 0,
+        "phase_1_global_green": 0,
+        "phase_1_defect": 0,
+        "phase_1_status": "SIGNALING_MARGINAL_MISMATCH_LGGR",
+        "phase_2_no_signaling_verified": true,
+        "phase_2_alpha_min": "0",
+        "phase_2_alpha_max": "-1/2",
+        "phase_2_infeasibility_gap": "1/2",
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "CONTEXTUAL_HOLLOW_TRIANGLE_OBSTRUCTION_LGGR",
+        "phase_3_no_signaling_verified": true,
+        "phase_3_alpha_min": "0",
+        "phase_3_alpha_max": "0",
+        "phase_3_infeasibility_gap": "0",
+        "phase_3_witness_global_joint": {
+          "000": "0",
+          "001": "0",
+          "010": "1/2",
+          "011": "0",
+          "100": "0",
+          "101": "1/2",
+          "110": "0",
+          "111": "0"
+        },
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "GLOBAL_JOINT_SECTION_EXTENSIBLE_LGGG",
+        "audit_signaling": {
+          "model_id": "codebase_sheaf_eval_1_openai_gpt-4o-mini::transcript::phase_1_signaling",
+          "no_signaling_verified": false,
+          "marginals_one": {
+            "A": "1/2",
+            "B": "1/2",
+            "C": "1/4"
+          },
+          "joint_ones": {
+            "AB": "0",
+            "BC": "0",
+            "CA": "1/4"
+          },
+          "d000_plus_d111_invariant": "0",
+          "alpha_min": "0",
+          "alpha_max": "0",
+          "infeasibility_gap": "0",
+          "global_section_exists": false,
+          "witness_global_joint": null,
+          "affine_marginal_recovery_verified": false,
+          "classification": "SIGNALING_MARGINAL_MISMATCH_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR"
+        },
+        "audit_contextual": {
+          "model_id": "codebase_sheaf_eval_1_openai_gpt-4o-mini::transcript::phase_2_contextual",
+          "no_signaling_verified": true,
+          "marginals_one": {
+            "A": "1/2",
+            "B": "1/2",
+            "C": "1/2"
+          },
+          "joint_ones": {
+            "AB": "0",
+            "BC": "0",
+            "CA": "0"
+          },
+          "d000_plus_d111_invariant": "-1/2",
+          "alpha_min": "0",
+          "alpha_max": "-1/2",
+          "infeasibility_gap": "1/2",
+          "global_section_exists": false,
+          "witness_global_joint": null,
+          "affine_marginal_recovery_verified": true,
+          "classification": "CONTEXTUAL_HOLLOW_TRIANGLE_OBSTRUCTION_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR"
+        },
+        "audit_reconciled": {
+          "model_id": "codebase_sheaf_eval_1_openai_gpt-4o-mini::transcript::phase_3_reconciled",
+          "no_signaling_verified": true,
+          "marginals_one": {
+            "A": "1/2",
+            "B": "1/2",
+            "C": "1/2"
+          },
+          "joint_ones": {
+            "AB": "0",
+            "BC": "0",
+            "CA": "1/2"
+          },
+          "d000_plus_d111_invariant": "0",
+          "alpha_min": "0",
+          "alpha_max": "0",
+          "infeasibility_gap": "0",
+          "global_section_exists": true,
+          "witness_global_joint": {
+            "000": "0",
+            "001": "0",
+            "010": "1/2",
+            "011": "0",
+            "100": "0",
+            "101": "1/2",
+            "110": "0",
+            "111": "0"
+          },
+          "affine_marginal_recovery_verified": true,
+          "classification": "GLOBAL_JOINT_SECTION_EXTENSIBLE_LGGG",
+          "contract_status": "COMPOSABLE_LGGG"
+        }
+      },
+      "model_raw_response": "{\n  \"phase1_scaled_gap_m4\": 2,\n  \"phase2_scaled_gap_m4\": 1,\n  \"phase3_scaled_gap_m4\": 0,\n  \"phase3_q_pair_sum\": 2,\n  \"phase3_payout_cents\": 873\n}",
+      "model_parsed_json": {
+        "phase1_scaled_gap_m4": 2,
+        "phase2_scaled_gap_m4": 1,
+        "phase3_scaled_gap_m4": 0,
+        "phase3_q_pair_sum": 2,
+        "phase3_payout_cents": 873
+      }
+    },
+    {
+      "evaluation_id": "codebase_sheaf_eval_2_google_gemini-2.5-flash-lite",
+      "model_id": "google/gemini-2.5-flash-lite",
+      "phase_1_scaled_gap_m4": 2,
+      "phase_1_q_pair_sum": 0,
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "CONTEXTUAL_SHEAF_HOLLOW_TRIANGLE_NGD_LGGR",
+      "phase_1_directives": {
+        "worker-0": {
+          "module": "pricing_sheaf",
+          "action": "HOLD_ANCHOR_PAIRWISE_TABLE_AB",
+          "target": "Keep table_ab = ['0', '1/2', '1/2', '0'] and q_ab_num = 0."
+        },
+        "worker-1": {
+          "module": "tax_sheaf",
+          "action": "RECONCILE_TAX_PAIRWISE_TABLE_BC_Q1",
+          "target": "Set table_bc = ['1/4', '1/4', '1/4', '1/4'] and q_bc_num = 1."
+        },
+        "worker-2": {
+          "module": "settlement_sheaf",
+          "action": "RECONCILE_SETTLEMENT_PAIRWISE_TABLE_CA_Q1",
+          "target": "Set table_ca = ['1/4', '1/4', '1/4', '1/4'], q_ca_num = 1, and contextuality_reserve_cents = 0 so payout_cents = net_cents - fee_cents (873)."
+        }
+      },
+      "phase_2_scaled_gap_m4": 1,
+      "phase_2_q_pair_sum": 1,
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "CONTEXTUAL_SHEAF_PARTIAL_RECONCILIATION_LGGR",
+      "phase_3_scaled_gap_m4": 0,
+      "phase_3_q_pair_sum": 2,
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "CODEBASE_CONTEXTUAL_SHEAF_RECONCILED_LGGG",
+      "transcript_audit": {
+        "transcript_id": "codebase_sheaf_eval_2_google_gemini-2.5-flash-lite::transcript",
+        "phase_1_no_signaling_verified": false,
+        "phase_1_local_green": 0,
+        "phase_1_global_green": 0,
+        "phase_1_defect": 0,
+        "phase_1_status": "SIGNALING_MARGINAL_MISMATCH_LGGR",
+        "phase_2_no_signaling_verified": true,
+        "phase_2_alpha_min": "0",
+        "phase_2_alpha_max": "-1/2",
+        "phase_2_infeasibility_gap": "1/2",
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "CONTEXTUAL_HOLLOW_TRIANGLE_OBSTRUCTION_LGGR",
+        "phase_3_no_signaling_verified": true,
+        "phase_3_alpha_min": "0",
+        "phase_3_alpha_max": "0",
+        "phase_3_infeasibility_gap": "0",
+        "phase_3_witness_global_joint": {
+          "000": "0",
+          "001": "0",
+          "010": "1/2",
+          "011": "0",
+          "100": "0",
+          "101": "1/2",
+          "110": "0",
+          "111": "0"
+        },
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "GLOBAL_JOINT_SECTION_EXTENSIBLE_LGGG",
+        "audit_signaling": {
+          "model_id": "codebase_sheaf_eval_2_google_gemini-2.5-flash-lite::transcript::phase_1_signaling",
+          "no_signaling_verified": false,
+          "marginals_one": {
+            "A": "1/2",
+            "B": "1/2",
+            "C": "1/4"
+          },
+          "joint_ones": {
+            "AB": "0",
+            "BC": "0",
+            "CA": "1/4"
+          },
+          "d000_plus_d111_invariant": "0",
+          "alpha_min": "0",
+          "alpha_max": "0",
+          "infeasibility_gap": "0",
+          "global_section_exists": false,
+          "witness_global_joint": null,
+          "affine_marginal_recovery_verified": false,
+          "classification": "SIGNALING_MARGINAL_MISMATCH_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR"
+        },
+        "audit_contextual": {
+          "model_id": "codebase_sheaf_eval_2_google_gemini-2.5-flash-lite::transcript::phase_2_contextual",
+          "no_signaling_verified": true,
+          "marginals_one": {
+            "A": "1/2",
+            "B": "1/2",
+            "C": "1/2"
+          },
+          "joint_ones": {
+            "AB": "0",
+            "BC": "0",
+            "CA": "0"
+          },
+          "d000_plus_d111_invariant": "-1/2",
+          "alpha_min": "0",
+          "alpha_max": "-1/2",
+          "infeasibility_gap": "1/2",
+          "global_section_exists": false,
+          "witness_global_joint": null,
+          "affine_marginal_recovery_verified": true,
+          "classification": "CONTEXTUAL_HOLLOW_TRIANGLE_OBSTRUCTION_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR"
+        },
+        "audit_reconciled": {
+          "model_id": "codebase_sheaf_eval_2_google_gemini-2.5-flash-lite::transcript::phase_3_reconciled",
+          "no_signaling_verified": true,
+          "marginals_one": {
+            "A": "1/2",
+            "B": "1/2",
+            "C": "1/2"
+          },
+          "joint_ones": {
+            "AB": "0",
+            "BC": "0",
+            "CA": "1/2"
+          },
+          "d000_plus_d111_invariant": "0",
+          "alpha_min": "0",
+          "alpha_max": "0",
+          "infeasibility_gap": "0",
+          "global_section_exists": true,
+          "witness_global_joint": {
+            "000": "0",
+            "001": "0",
+            "010": "1/2",
+            "011": "0",
+            "100": "0",
+            "101": "1/2",
+            "110": "0",
+            "111": "0"
+          },
+          "affine_marginal_recovery_verified": true,
+          "classification": "GLOBAL_JOINT_SECTION_EXTENSIBLE_LGGG",
+          "contract_status": "COMPOSABLE_LGGG"
+        }
+      },
+      "model_raw_response": "```json\n{\n  \"phase1_scaled_gap_m4\": 2,\n  \"phase2_scaled_gap_m4\": 1,\n  \"phase3_scaled_gap_m4\": 0,\n  \"phase3_q_pair_sum\": 2,\n  \"phase3_payout_cents\": 873\n}\n```",
+      "model_parsed_json": {
+        "phase1_scaled_gap_m4": 2,
+        "phase2_scaled_gap_m4": 1,
+        "phase3_scaled_gap_m4": 0,
+        "phase3_q_pair_sum": 2,
+        "phase3_payout_cents": 873
+      }
+    },
+    {
+      "evaluation_id": "codebase_sheaf_eval_3_meta-llama_llama-3.3-70b-instruct",
+      "model_id": "meta-llama/llama-3.3-70b-instruct",
+      "phase_1_scaled_gap_m4": 2,
+      "phase_1_q_pair_sum": 0,
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "CONTEXTUAL_SHEAF_HOLLOW_TRIANGLE_NGD_LGGR",
+      "phase_1_directives": {
+        "worker-0": {
+          "module": "pricing_sheaf",
+          "action": "HOLD_ANCHOR_PAIRWISE_TABLE_AB",
+          "target": "Keep table_ab = ['0', '1/2', '1/2', '0'] and q_ab_num = 0."
+        },
+        "worker-1": {
+          "module": "tax_sheaf",
+          "action": "RECONCILE_TAX_PAIRWISE_TABLE_BC_Q1",
+          "target": "Set table_bc = ['1/4', '1/4', '1/4', '1/4'] and q_bc_num = 1."
+        },
+        "worker-2": {
+          "module": "settlement_sheaf",
+          "action": "RECONCILE_SETTLEMENT_PAIRWISE_TABLE_CA_Q1",
+          "target": "Set table_ca = ['1/4', '1/4', '1/4', '1/4'], q_ca_num = 1, and contextuality_reserve_cents = 0 so payout_cents = net_cents - fee_cents (873)."
+        }
+      },
+      "phase_2_scaled_gap_m4": 1,
+      "phase_2_q_pair_sum": 1,
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "CONTEXTUAL_SHEAF_PARTIAL_RECONCILIATION_LGGR",
+      "phase_3_scaled_gap_m4": 0,
+      "phase_3_q_pair_sum": 2,
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "CODEBASE_CONTEXTUAL_SHEAF_RECONCILED_LGGG",
+      "transcript_audit": {
+        "transcript_id": "codebase_sheaf_eval_3_meta-llama_llama-3.3-70b-instruct::transcript",
+        "phase_1_no_signaling_verified": false,
+        "phase_1_local_green": 0,
+        "phase_1_global_green": 0,
+        "phase_1_defect": 0,
+        "phase_1_status": "SIGNALING_MARGINAL_MISMATCH_LGGR",
+        "phase_2_no_signaling_verified": true,
+        "phase_2_alpha_min": "0",
+        "phase_2_alpha_max": "-1/2",
+        "phase_2_infeasibility_gap": "1/2",
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "CONTEXTUAL_HOLLOW_TRIANGLE_OBSTRUCTION_LGGR",
+        "phase_3_no_signaling_verified": true,
+        "phase_3_alpha_min": "0",
+        "phase_3_alpha_max": "0",
+        "phase_3_infeasibility_gap": "0",
+        "phase_3_witness_global_joint": {
+          "000": "0",
+          "001": "0",
+          "010": "1/2",
+          "011": "0",
+          "100": "0",
+          "101": "1/2",
+          "110": "0",
+          "111": "0"
+        },
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "GLOBAL_JOINT_SECTION_EXTENSIBLE_LGGG",
+        "audit_signaling": {
+          "model_id": "codebase_sheaf_eval_3_meta-llama_llama-3.3-70b-instruct::transcript::phase_1_signaling",
+          "no_signaling_verified": false,
+          "marginals_one": {
+            "A": "1/2",
+            "B": "1/2",
+            "C": "1/4"
+          },
+          "joint_ones": {
+            "AB": "0",
+            "BC": "0",
+            "CA": "1/4"
+          },
+          "d000_plus_d111_invariant": "0",
+          "alpha_min": "0",
+          "alpha_max": "0",
+          "infeasibility_gap": "0",
+          "global_section_exists": false,
+          "witness_global_joint": null,
+          "affine_marginal_recovery_verified": false,
+          "classification": "SIGNALING_MARGINAL_MISMATCH_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR"
+        },
+        "audit_contextual": {
+          "model_id": "codebase_sheaf_eval_3_meta-llama_llama-3.3-70b-instruct::transcript::phase_2_contextual",
+          "no_signaling_verified": true,
+          "marginals_one": {
+            "A": "1/2",
+            "B": "1/2",
+            "C": "1/2"
+          },
+          "joint_ones": {
+            "AB": "0",
+            "BC": "0",
+            "CA": "0"
+          },
+          "d000_plus_d111_invariant": "-1/2",
+          "alpha_min": "0",
+          "alpha_max": "-1/2",
+          "infeasibility_gap": "1/2",
+          "global_section_exists": false,
+          "witness_global_joint": null,
+          "affine_marginal_recovery_verified": true,
+          "classification": "CONTEXTUAL_HOLLOW_TRIANGLE_OBSTRUCTION_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR"
+        },
+        "audit_reconciled": {
+          "model_id": "codebase_sheaf_eval_3_meta-llama_llama-3.3-70b-instruct::transcript::phase_3_reconciled",
+          "no_signaling_verified": true,
+          "marginals_one": {
+            "A": "1/2",
+            "B": "1/2",
+            "C": "1/2"
+          },
+          "joint_ones": {
+            "AB": "0",
+            "BC": "0",
+            "CA": "1/2"
+          },
+          "d000_plus_d111_invariant": "0",
+          "alpha_min": "0",
+          "alpha_max": "0",
+          "infeasibility_gap": "0",
+          "global_section_exists": true,
+          "witness_global_joint": {
+            "000": "0",
+            "001": "0",
+            "010": "1/2",
+            "011": "0",
+            "100": "0",
+            "101": "1/2",
+            "110": "0",
+            "111": "0"
+          },
+          "affine_marginal_recovery_verified": true,
+          "classification": "GLOBAL_JOINT_SECTION_EXTENSIBLE_LGGG",
+          "contract_status": "COMPOSABLE_LGGG"
+        }
+      },
+      "model_raw_response": "```json\n{\n  \"phase1_scaled_gap_m4\": 2,\n  \"phase2_scaled_gap_m4\": 1,\n  \"phase3_scaled_gap_m4\": 0,\n  \"phase3_q_pair_sum\": 2,\n  \"phase3_payout_cents\": 873\n}\n```",
+      "model_parsed_json": {
+        "phase1_scaled_gap_m4": 2,
+        "phase2_scaled_gap_m4": 1,
+        "phase3_scaled_gap_m4": 0,
+        "phase3_q_pair_sum": 2,
+        "phase3_payout_cents": 873
+      }
+    },
+    {
+      "evaluation_id": "codebase_sheaf_eval_4_deepseek_deepseek-chat",
+      "model_id": "deepseek/deepseek-chat",
+      "phase_1_scaled_gap_m4": 2,
+      "phase_1_q_pair_sum": 0,
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "CONTEXTUAL_SHEAF_HOLLOW_TRIANGLE_NGD_LGGR",
+      "phase_1_directives": {
+        "worker-0": {
+          "module": "pricing_sheaf",
+          "action": "HOLD_ANCHOR_PAIRWISE_TABLE_AB",
+          "target": "Keep table_ab = ['0', '1/2', '1/2', '0'] and q_ab_num = 0."
+        },
+        "worker-1": {
+          "module": "tax_sheaf",
+          "action": "RECONCILE_TAX_PAIRWISE_TABLE_BC_Q1",
+          "target": "Set table_bc = ['1/4', '1/4', '1/4', '1/4'] and q_bc_num = 1."
+        },
+        "worker-2": {
+          "module": "settlement_sheaf",
+          "action": "RECONCILE_SETTLEMENT_PAIRWISE_TABLE_CA_Q1",
+          "target": "Set table_ca = ['1/4', '1/4', '1/4', '1/4'], q_ca_num = 1, and contextuality_reserve_cents = 0 so payout_cents = net_cents - fee_cents (873)."
+        }
+      },
+      "phase_2_scaled_gap_m4": 1,
+      "phase_2_q_pair_sum": 1,
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "CONTEXTUAL_SHEAF_PARTIAL_RECONCILIATION_LGGR",
+      "phase_3_scaled_gap_m4": 0,
+      "phase_3_q_pair_sum": 2,
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "CODEBASE_CONTEXTUAL_SHEAF_RECONCILED_LGGG",
+      "transcript_audit": {
+        "transcript_id": "codebase_sheaf_eval_4_deepseek_deepseek-chat::transcript",
+        "phase_1_no_signaling_verified": false,
+        "phase_1_local_green": 0,
+        "phase_1_global_green": 0,
+        "phase_1_defect": 0,
+        "phase_1_status": "SIGNALING_MARGINAL_MISMATCH_LGGR",
+        "phase_2_no_signaling_verified": true,
+        "phase_2_alpha_min": "0",
+        "phase_2_alpha_max": "-1/2",
+        "phase_2_infeasibility_gap": "1/2",
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "CONTEXTUAL_HOLLOW_TRIANGLE_OBSTRUCTION_LGGR",
+        "phase_3_no_signaling_verified": true,
+        "phase_3_alpha_min": "0",
+        "phase_3_alpha_max": "0",
+        "phase_3_infeasibility_gap": "0",
+        "phase_3_witness_global_joint": {
+          "000": "0",
+          "001": "0",
+          "010": "1/2",
+          "011": "0",
+          "100": "0",
+          "101": "1/2",
+          "110": "0",
+          "111": "0"
+        },
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "GLOBAL_JOINT_SECTION_EXTENSIBLE_LGGG",
+        "audit_signaling": {
+          "model_id": "codebase_sheaf_eval_4_deepseek_deepseek-chat::transcript::phase_1_signaling",
+          "no_signaling_verified": false,
+          "marginals_one": {
+            "A": "1/2",
+            "B": "1/2",
+            "C": "1/4"
+          },
+          "joint_ones": {
+            "AB": "0",
+            "BC": "0",
+            "CA": "1/4"
+          },
+          "d000_plus_d111_invariant": "0",
+          "alpha_min": "0",
+          "alpha_max": "0",
+          "infeasibility_gap": "0",
+          "global_section_exists": false,
+          "witness_global_joint": null,
+          "affine_marginal_recovery_verified": false,
+          "classification": "SIGNALING_MARGINAL_MISMATCH_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR"
+        },
+        "audit_contextual": {
+          "model_id": "codebase_sheaf_eval_4_deepseek_deepseek-chat::transcript::phase_2_contextual",
+          "no_signaling_verified": true,
+          "marginals_one": {
+            "A": "1/2",
+            "B": "1/2",
+            "C": "1/2"
+          },
+          "joint_ones": {
+            "AB": "0",
+            "BC": "0",
+            "CA": "0"
+          },
+          "d000_plus_d111_invariant": "-1/2",
+          "alpha_min": "0",
+          "alpha_max": "-1/2",
+          "infeasibility_gap": "1/2",
+          "global_section_exists": false,
+          "witness_global_joint": null,
+          "affine_marginal_recovery_verified": true,
+          "classification": "CONTEXTUAL_HOLLOW_TRIANGLE_OBSTRUCTION_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR"
+        },
+        "audit_reconciled": {
+          "model_id": "codebase_sheaf_eval_4_deepseek_deepseek-chat::transcript::phase_3_reconciled",
+          "no_signaling_verified": true,
+          "marginals_one": {
+            "A": "1/2",
+            "B": "1/2",
+            "C": "1/2"
+          },
+          "joint_ones": {
+            "AB": "0",
+            "BC": "0",
+            "CA": "1/2"
+          },
+          "d000_plus_d111_invariant": "0",
+          "alpha_min": "0",
+          "alpha_max": "0",
+          "infeasibility_gap": "0",
+          "global_section_exists": true,
+          "witness_global_joint": {
+            "000": "0",
+            "001": "0",
+            "010": "1/2",
+            "011": "0",
+            "100": "0",
+            "101": "1/2",
+            "110": "0",
+            "111": "0"
+          },
+          "affine_marginal_recovery_verified": true,
+          "classification": "GLOBAL_JOINT_SECTION_EXTENSIBLE_LGGG",
+          "contract_status": "COMPOSABLE_LGGG"
+        }
+      },
+      "model_raw_response": "```json\n{\n  \"phase1_scaled_gap_m4\": 2,\n  \"phase2_scaled_gap_m4\": 1,\n  \"phase3_scaled_gap_m4\": 0,\n  \"phase3_q_pair_sum\": 2,\n  \"phase3_payout_cents\": 873\n}\n```",
+      "model_parsed_json": {
+        "phase1_scaled_gap_m4": 2,
+        "phase2_scaled_gap_m4": 1,
+        "phase3_scaled_gap_m4": 0,
+        "phase3_q_pair_sum": 2,
+        "phase3_payout_cents": 873
+      }
+    },
+    {
+      "evaluation_id": "codebase_sheaf_eval_5_mistralai_mistral-small-3.2-24b-instruct",
+      "model_id": "mistralai/mistral-small-3.2-24b-instruct",
+      "phase_1_scaled_gap_m4": 2,
+      "phase_1_q_pair_sum": 0,
+      "phase_1_local_green": 1,
+      "phase_1_global_green": 0,
+      "phase_1_defect": -1,
+      "phase_1_status": "CONTEXTUAL_SHEAF_HOLLOW_TRIANGLE_NGD_LGGR",
+      "phase_1_directives": {
+        "worker-0": {
+          "module": "pricing_sheaf",
+          "action": "HOLD_ANCHOR_PAIRWISE_TABLE_AB",
+          "target": "Keep table_ab = ['0', '1/2', '1/2', '0'] and q_ab_num = 0."
+        },
+        "worker-1": {
+          "module": "tax_sheaf",
+          "action": "RECONCILE_TAX_PAIRWISE_TABLE_BC_Q1",
+          "target": "Set table_bc = ['1/4', '1/4', '1/4', '1/4'] and q_bc_num = 1."
+        },
+        "worker-2": {
+          "module": "settlement_sheaf",
+          "action": "RECONCILE_SETTLEMENT_PAIRWISE_TABLE_CA_Q1",
+          "target": "Set table_ca = ['1/4', '1/4', '1/4', '1/4'], q_ca_num = 1, and contextuality_reserve_cents = 0 so payout_cents = net_cents - fee_cents (873)."
+        }
+      },
+      "phase_2_scaled_gap_m4": 1,
+      "phase_2_q_pair_sum": 1,
+      "phase_2_local_green": 1,
+      "phase_2_global_green": 0,
+      "phase_2_defect": -1,
+      "phase_2_status": "CONTEXTUAL_SHEAF_PARTIAL_RECONCILIATION_LGGR",
+      "phase_3_scaled_gap_m4": 0,
+      "phase_3_q_pair_sum": 2,
+      "phase_3_local_green": 1,
+      "phase_3_global_green": 1,
+      "phase_3_defect": 0,
+      "phase_3_status": "CODEBASE_CONTEXTUAL_SHEAF_RECONCILED_LGGG",
+      "transcript_audit": {
+        "transcript_id": "codebase_sheaf_eval_5_mistralai_mistral-small-3.2-24b-instruct::transcript",
+        "phase_1_no_signaling_verified": false,
+        "phase_1_local_green": 0,
+        "phase_1_global_green": 0,
+        "phase_1_defect": 0,
+        "phase_1_status": "SIGNALING_MARGINAL_MISMATCH_LGGR",
+        "phase_2_no_signaling_verified": true,
+        "phase_2_alpha_min": "0",
+        "phase_2_alpha_max": "-1/2",
+        "phase_2_infeasibility_gap": "1/2",
+        "phase_2_local_green": 1,
+        "phase_2_global_green": 0,
+        "phase_2_defect": -1,
+        "phase_2_status": "CONTEXTUAL_HOLLOW_TRIANGLE_OBSTRUCTION_LGGR",
+        "phase_3_no_signaling_verified": true,
+        "phase_3_alpha_min": "0",
+        "phase_3_alpha_max": "0",
+        "phase_3_infeasibility_gap": "0",
+        "phase_3_witness_global_joint": {
+          "000": "0",
+          "001": "0",
+          "010": "1/2",
+          "011": "0",
+          "100": "0",
+          "101": "1/2",
+          "110": "0",
+          "111": "0"
+        },
+        "phase_3_local_green": 1,
+        "phase_3_global_green": 1,
+        "phase_3_defect": 0,
+        "phase_3_status": "GLOBAL_JOINT_SECTION_EXTENSIBLE_LGGG",
+        "audit_signaling": {
+          "model_id": "codebase_sheaf_eval_5_mistralai_mistral-small-3.2-24b-instruct::transcript::phase_1_signaling",
+          "no_signaling_verified": false,
+          "marginals_one": {
+            "A": "1/2",
+            "B": "1/2",
+            "C": "1/4"
+          },
+          "joint_ones": {
+            "AB": "0",
+            "BC": "0",
+            "CA": "1/4"
+          },
+          "d000_plus_d111_invariant": "0",
+          "alpha_min": "0",
+          "alpha_max": "0",
+          "infeasibility_gap": "0",
+          "global_section_exists": false,
+          "witness_global_joint": null,
+          "affine_marginal_recovery_verified": false,
+          "classification": "SIGNALING_MARGINAL_MISMATCH_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR"
+        },
+        "audit_contextual": {
+          "model_id": "codebase_sheaf_eval_5_mistralai_mistral-small-3.2-24b-instruct::transcript::phase_2_contextual",
+          "no_signaling_verified": true,
+          "marginals_one": {
+            "A": "1/2",
+            "B": "1/2",
+            "C": "1/2"
+          },
+          "joint_ones": {
+            "AB": "0",
+            "BC": "0",
+            "CA": "0"
+          },
+          "d000_plus_d111_invariant": "-1/2",
+          "alpha_min": "0",
+          "alpha_max": "-1/2",
+          "infeasibility_gap": "1/2",
+          "global_section_exists": false,
+          "witness_global_joint": null,
+          "affine_marginal_recovery_verified": true,
+          "classification": "CONTEXTUAL_HOLLOW_TRIANGLE_OBSTRUCTION_LGGR",
+          "contract_status": "OBSTRUCTED_LGGR"
+        },
+        "audit_reconciled": {
+          "model_id": "codebase_sheaf_eval_5_mistralai_mistral-small-3.2-24b-instruct::transcript::phase_3_reconciled",
+          "no_signaling_verified": true,
+          "marginals_one": {
+            "A": "1/2",
+            "B": "1/2",
+            "C": "1/2"
+          },
+          "joint_ones": {
+            "AB": "0",
+            "BC": "0",
+            "CA": "1/2"
+          },
+          "d000_plus_d111_invariant": "0",
+          "alpha_min": "0",
+          "alpha_max": "0",
+          "infeasibility_gap": "0",
+          "global_section_exists": true,
+          "witness_global_joint": {
+            "000": "0",
+            "001": "0",
+            "010": "1/2",
+            "011": "0",
+            "100": "0",
+            "101": "1/2",
+            "110": "0",
+            "111": "0"
+          },
+          "affine_marginal_recovery_verified": true,
+          "classification": "GLOBAL_JOINT_SECTION_EXTENSIBLE_LGGG",
+          "contract_status": "COMPOSABLE_LGGG"
+        }
+      },
+      "model_raw_response": "```json\n{\n  \"phase1_scaled_gap_m4\": 2,\n  \"phase2_scaled_gap_m4\": 1,\n  \"phase3_scaled_gap_m4\": 0,\n  \"phase3_q_pair_sum\": 2,\n  \"phase3_payout_cents\": 873\n}\n```",
+      "model_parsed_json": {
+        "phase1_scaled_gap_m4": 2,
+        "phase2_scaled_gap_m4": 1,
+        "phase3_scaled_gap_m4": 0,
+        "phase3_q_pair_sum": 2,
+        "phase3_payout_cents": 873
+      }
+    }
+  ],
+  "meaning": "Pairwise constraint sheaf contextuality vs. global section reconciliation codebase benchmark across 5 model families (Theorem 109): Phase 1 separates pairwise marginal no-signaling pass (`p_A = p_B = p_C = 1/2`, L = 1) from hollow-triangle contextual cycle obstruction (`q_BC + q_CA = 0 != 2`, `scaled_gap_m4 = 2 > 0`, Delta_E = -1); Phase 2 separates partial `tax_sheaf` reconciliation (`q_BC = 1, q_CA = 0`) from residual cycle gap (`scaled_gap_m4 = 1 > 0`, Delta_E = -1); Phase 3 verifies full global section reconciliation `q_BC = 1, q_CA = 1` (`scaled_gap_m4 = 0`, 873 + 27 + 180 = 1080, Delta_E = 0).",
+  "receipt_sha256": "3177770414f613510636c1d7e3995d2224c45090952c9c59bd6392adde8284e8"
+}
