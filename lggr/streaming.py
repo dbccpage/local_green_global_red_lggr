@@ -37449,4 +37449,718 @@ class StreamingCodebaseSideInfoCapacityMonitor:
     emit_receipt = current_receipt
 
 
+class StreamingCodebaseDeadlineBinPackingMonitor:
+    """Audit 3-module deadline priority-queue and bin-packing settlement codebases (Theorem 133).
+
+    AuthorityEffect: None. Composes StreamingDeadlinePriorityQueueMonitor,
+    StreamingOverloadedDeadlineBinPackingMonitor, StreamingCodebaseInterfaceMergeMonitor,
+    and StreamingFiberMonitor over a 3-module settlement codebase (`pricing_pack.py`,
+    `tax_pack.py`, `settlement_pack.py`) scheduling 3 simultaneous incident jobs with
+    SLA deadlines `(1, 1, 2)` and weighted Pareto loads `(4, 3, 4)` (each within the
+    individual lease budget `B_ind = 4`, yet with mandatory slot-0 Pareto load `4 + 3 = 7`):
+      - Phase 1 (`execution_ticks = [0, 1, 2]`, `horizon_ceiling = 6`, `halt_and_escalate = False`):
+        serial execution satisfies single-slot load `<= 4 <= 6` (`horizon_deficit = 0`),
+        yet completion ticks `[1, 2, 3]` miss deadlines `[1, 1, 2]` on 2 jobs
+        (`deadline_miss_count = 2`, `max_lateness_ticks = 1`), incurring surcharge
+        `4 * 2 + 2 * 1 = 10` cents and payout `863 != 873` (`L = 1, E_g = 0, defect = -1`);
+      - Phase 2 (`execution_ticks = [0, 0, 1]`, `horizon_ceiling = 6`, `halt_and_escalate = True`):
+        slot-0 co-scheduling meets all deadlines (`deadline_miss_count = 0`, `max_lateness_ticks = 0`),
+        yet slot-0 load `4 + 3 = 7 > 6` exceeds the initial horizon ceiling (`horizon_deficit = 1`,
+        `halt_and_escalate = True`), incurring surcharge `2 * 1 + 4 * 1 = 6` cents and payout
+        `867 != 873` (`L = 1, E_g = 0, defect = -1`);
+      - Phase 3 (`execution_ticks = [0, 0, 1]`, `horizon_ceiling = 7`, `halt_and_escalate = False`):
+        selective slot-0 bin-packing under expanded horizon ceiling `H = 7 >= 7` achieves
+        zero deadline misses, zero lateness, zero horizon deficit, zero surcharge, and restores
+        `873 + 27 + 90 = 990` (`L = 1, E_g = 1, defect = 0`).
+    """
+
+    SLA_DEADLINES: tuple[int, int, int] = (1, 1, 2)
+    PARETO_LOADS: tuple[int, int, int] = (4, 3, 4)
+    ALLOCATED_DELTAS: tuple[list[int], list[int], list[int]] = (
+        [2, 0, 0],
+        [0, 1, 0],
+        [0, 0, 1],
+    )
+    INCIDENT_PAIRS: tuple[str, str, str] = (
+        "SideInfo_x_SkewRepair",
+        "PoE_x_SkewRepair",
+        "ProjectiveTower_x_MerminPeres",
+    )
+
+    PHASE_1_PRICING_PACK_SOURCE = (
+        "def quote_pack_pricing(gross_cents: int = 990) -> dict:\n"
+        "    fee_cents = (gross_cents * 27) // 990\n"
+        "    execution_ticks = [0, 1, 2]\n"
+        "    return {\n"
+        "        'gross_cents': gross_cents,\n"
+        "        'platform_fee_cents': fee_cents,\n"
+        "        'net_after_fee_cents': gross_cents - fee_cents,\n"
+        "        'execution_ticks': execution_ticks,\n"
+        "    }\n"
+    )
+
+    PHASE_1_TAX_PACK_SOURCE = (
+        "def compute_pack_tax(pricing_out: dict) -> dict:\n"
+        "    gross = int(pricing_out['gross_cents'])\n"
+        "    ticks = list(pricing_out.get('execution_ticks', [0, 1, 2]))\n"
+        "    return {\n"
+        "        'tax_reserve_cents': (gross * 90) // 990,\n"
+        "        'execution_ticks': ticks,\n"
+        "        'horizon_ceiling': 6,\n"
+        "        'halt_and_escalate': False,\n"
+        "    }\n"
+    )
+
+    PHASE_1_SETTLEMENT_PACK_SOURCE = (
+        "def settle_pack_payout(pricing_out: dict, tax_out: dict) -> dict:\n"
+        "    net = int(pricing_out['net_after_fee_cents'])\n"
+        "    fee = int(pricing_out['platform_fee_cents'])\n"
+        "    tax = int(tax_out['tax_reserve_cents'])\n"
+        "    ticks = list(tax_out.get('execution_ticks', [0, 1, 2]))\n"
+        "    horizon = int(tax_out.get('horizon_ceiling', 6))\n"
+        "    halt = 1 if tax_out.get('halt_and_escalate', False) else 0\n"
+        "    misses = sum(1 for t, d in zip(ticks, (1, 1, 2)) if t + 1 > d)\n"
+        "    lateness = max(max(0, t + 1 - d) for t, d in zip(ticks, (1, 1, 2)))\n"
+        "    slot0 = sum(w for t, w in zip(ticks, (4, 3, 4)) if t == 0)\n"
+        "    deficit = max(0, slot0 - horizon)\n"
+        "    surcharge = 4 * misses + 2 * lateness + 2 * deficit + 4 * halt\n"
+        "    return {\n"
+        "        'merchant_payout_cents': net - tax - surcharge,\n"
+        "        'platform_fee_cents': fee,\n"
+        "        'tax_reserve_cents': tax,\n"
+        "        'pack_surcharge_cents': surcharge,\n"
+        "        'deadline_miss_count': misses,\n"
+        "        'horizon_deficit': deficit,\n"
+        "    }\n"
+    )
+
+    PHASE_2_PRICING_PACK_SOURCE = (
+        "def quote_pack_pricing(gross_cents: int = 990) -> dict:\n"
+        "    fee_cents = (gross_cents * 27) // 990\n"
+        "    execution_ticks = [0, 0, 1]\n"
+        "    return {\n"
+        "        'gross_cents': gross_cents,\n"
+        "        'platform_fee_cents': fee_cents,\n"
+        "        'net_after_fee_cents': gross_cents - fee_cents,\n"
+        "        'execution_ticks': execution_ticks,\n"
+        "    }\n"
+    )
+
+    PHASE_2_TAX_PACK_SOURCE = (
+        "def compute_pack_tax(pricing_out: dict) -> dict:\n"
+        "    gross = int(pricing_out['gross_cents'])\n"
+        "    ticks = list(pricing_out.get('execution_ticks', [0, 0, 1]))\n"
+        "    return {\n"
+        "        'tax_reserve_cents': (gross * 90) // 990,\n"
+        "        'execution_ticks': ticks,\n"
+        "        'horizon_ceiling': 6,\n"
+        "        'halt_and_escalate': True,\n"
+        "    }\n"
+    )
+
+    PHASE_2_SETTLEMENT_PACK_SOURCE = PHASE_1_SETTLEMENT_PACK_SOURCE
+
+    PHASE_3_PRICING_PACK_SOURCE = PHASE_2_PRICING_PACK_SOURCE
+
+    PHASE_3_TAX_PACK_SOURCE = (
+        "def compute_pack_tax(pricing_out: dict) -> dict:\n"
+        "    gross = int(pricing_out['gross_cents'])\n"
+        "    ticks = list(pricing_out.get('execution_ticks', [0, 0, 1]))\n"
+        "    return {\n"
+        "        'tax_reserve_cents': (gross * 90) // 990,\n"
+        "        'execution_ticks': ticks,\n"
+        "        'horizon_ceiling': 7,\n"
+        "        'halt_and_escalate': False,\n"
+        "    }\n"
+    )
+
+    PHASE_3_SETTLEMENT_PACK_SOURCE = (
+        "def settle_pack_payout(pricing_out: dict, tax_out: dict) -> dict:\n"
+        "    net = int(pricing_out['net_after_fee_cents'])\n"
+        "    fee = int(pricing_out['platform_fee_cents'])\n"
+        "    tax = int(tax_out['tax_reserve_cents'])\n"
+        "    ticks = list(tax_out.get('execution_ticks', [0, 0, 1]))\n"
+        "    horizon = int(tax_out.get('horizon_ceiling', 7))\n"
+        "    halt = bool(tax_out.get('halt_and_escalate', False))\n"
+        "    if ticks != [0, 0, 1] or horizon != 7 or halt:\n"
+        "        raise ValueError('Deadline priority-queue or bin-packing admission deficit detected')\n"
+        "    return {\n"
+        "        'merchant_payout_cents': net - tax,\n"
+        "        'platform_fee_cents': fee,\n"
+        "        'tax_reserve_cents': tax,\n"
+        "        'pack_surcharge_cents': 0,\n"
+        "        'deadline_miss_count': 0,\n"
+        "        'horizon_deficit': 0,\n"
+        "    }\n"
+    )
+
+    def __init__(self, *, scope_id: str = "streaming-codebase-deadline-bin-packing-scope") -> None:
+        self.scope_id = text(scope_id, "scope_id")
+        self.deadline_queue_monitor = StreamingDeadlinePriorityQueueMonitor(
+            scope_id=f"{self.scope_id}:deadline_queue"
+        )
+        self.bin_packing_monitor = StreamingOverloadedDeadlineBinPackingMonitor(
+            scope_id=f"{self.scope_id}:bin_packing"
+        )
+        self.fiber_monitor = StreamingFiberMonitor()
+        self.evaluations: list[dict[str, Any]] = []
+        self.three_phase_audits: list[dict[str, Any]] = []
+
+    @staticmethod
+    def _validate_execution_ticks(raw: Any, label: str) -> list[int]:
+        if not isinstance(raw, (list, tuple)) or len(raw) != 3:
+            raise ValidationError(f"{label} must be a 3-element list of execution ticks")
+        ticks = [exact_int(v, f"{label}[{idx}]", minimum=0) for idx, v in enumerate(raw)]
+        if ticks not in ([0, 1, 2], [0, 0, 1]):
+            raise ValidationError(
+                f"{label} must be either [0, 1, 2] (serial) or [0, 0, 1] (slot-0 bin-packed), got {ticks}"
+            )
+        return ticks
+
+    @staticmethod
+    def _validate_horizon_ceiling(raw: Any, label: str) -> int:
+        val = exact_int(raw, label, minimum=6)
+        if val not in (6, 7):
+            raise ValidationError(f"{label} must be in {{6, 7}}, got {val}")
+        return val
+
+    def evaluate_deadline_bin_packing_modules(
+        self,
+        evaluation_id: str,
+        *,
+        pricing_pack_source: str,
+        tax_pack_source: str,
+        settlement_pack_source: str,
+        gross_cents: int = 990,
+        infeasible_constraint: Mapping[str, Any] | str | None = None,
+        model_id: str = "deterministic",
+    ) -> dict[str, Any]:
+        eval_id = text(evaluation_id, "evaluation_id")
+        mod_id = text(model_id, "model_id")
+        gross = exact_int(gross_cents, "gross_cents", minimum=100)
+
+        p_ns = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(
+            "pricing_pack", pricing_pack_source
+        )
+        t_ns = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(
+            "tax_pack", tax_pack_source
+        )
+        s_ns = StreamingCodebaseInterfaceMergeMonitor.execute_module_namespace(
+            "settlement_pack", settlement_pack_source
+        )
+
+        if "quote_pack_pricing" not in p_ns or not callable(p_ns["quote_pack_pricing"]):
+            raise ValidationError("pricing_pack must define callable quote_pack_pricing")
+        if "compute_pack_tax" not in t_ns or not callable(t_ns["compute_pack_tax"]):
+            raise ValidationError("tax_pack must define callable compute_pack_tax")
+        if "settle_pack_payout" not in s_ns or not callable(s_ns["settle_pack_payout"]):
+            raise ValidationError("settlement_pack must define callable settle_pack_payout")
+
+        pricing_out = p_ns["quote_pack_pricing"](gross)
+        if not isinstance(pricing_out, dict):
+            raise ValidationError("quote_pack_pricing must return a dict")
+        tax_out = t_ns["compute_pack_tax"](pricing_out)
+        if not isinstance(tax_out, dict):
+            raise ValidationError("compute_pack_tax must return a dict")
+
+        settlement_raised = False
+        try:
+            settlement_out = s_ns["settle_pack_payout"](pricing_out, tax_out)
+            if not isinstance(settlement_out, dict):
+                raise ValidationError("settle_pack_payout must return a dict")
+        except ValueError:
+            settlement_raised = True
+            settlement_out = {}
+
+        execution_ticks = self._validate_execution_ticks(
+            pricing_out.get("execution_ticks", [0, 1, 2]), "execution_ticks"
+        )
+        horizon_ceiling = self._validate_horizon_ceiling(
+            tax_out.get("horizon_ceiling", 6), "horizon_ceiling"
+        )
+        halt_and_escalate = bool(tax_out.get("halt_and_escalate", False))
+
+        fee = exact_int(pricing_out.get("platform_fee_cents", 0), "platform_fee_cents")
+        net = exact_int(pricing_out.get("net_after_fee_cents", 0), "net_after_fee_cents")
+        tax = exact_int(tax_out.get("tax_reserve_cents", 0), "tax_reserve_cents")
+
+        completion_ticks = [t + 1 for t in execution_ticks]
+        deadline_miss_count = sum(
+            1 for c, d in zip(completion_ticks, self.SLA_DEADLINES) if c > d
+        )
+        max_lateness_ticks = max(
+            max(0, c - d) for c, d in zip(completion_ticks, self.SLA_DEADLINES)
+        )
+        slot0_pareto_load = sum(
+            w for t, w in zip(execution_ticks, self.PARETO_LOADS) if t == 0
+        )
+        horizon_deficit = max(0, slot0_pareto_load - horizon_ceiling)
+        halt_flag = 1 if halt_and_escalate else 0
+
+        expected_surcharge = (
+            4 * deadline_miss_count
+            + 2 * max_lateness_ticks
+            + 2 * horizon_deficit
+            + 4 * halt_flag
+        )
+        if settlement_raised:
+            surcharge = expected_surcharge
+            payout = net - tax - surcharge
+        else:
+            surcharge = exact_int(
+                settlement_out.get("pack_surcharge_cents", expected_surcharge),
+                "pack_surcharge_cents",
+            )
+            payout = exact_int(
+                settlement_out.get("merchant_payout_cents", 0), "merchant_payout_cents"
+            )
+
+        # Record in underlying StreamingDeadlinePriorityQueueMonitor & StreamingOverloadedDeadlineBinPackingMonitor
+        self.deadline_queue_monitor.record_deadline_queue_comparison(
+            queue_id=f"{eval_id}:{mod_id}:queue",
+            model_id=mod_id,
+            prior_split_receipt_sha256="sha256_prior_split_eval",
+            baseline_policy_sha256="sha256_p0_2_3_0",
+            baseline_policy_vector=[2, 3, 0],
+            risk_weight_vector=[2, 3, 4],
+            individual_lease_budget=4,
+            horizon_drift_ceiling=6,
+            static_priority_incidents=[
+                {
+                    "incident_index": 1,
+                    "incident_pair_id": self.INCIDENT_PAIRS[0],
+                    "static_priority_rank": 1,
+                    "sla_deadline_tick": 3,
+                    "arrival_tick": 0,
+                    "execution_tick": 0,
+                    "completion_tick": 1,
+                    "edf_policy_enforced": False,
+                    "authority_signature_valid": True,
+                    "minimum_weighted_pareto_floor": 4,
+                    "allocated_delta_vector": [2, 0, 0],
+                    "post_relaxation_monitor_a_passed": True,
+                    "post_relaxation_monitor_b_passed": True,
+                },
+                {
+                    "incident_index": 2,
+                    "incident_pair_id": self.INCIDENT_PAIRS[1],
+                    "static_priority_rank": 2,
+                    "sla_deadline_tick": 2,
+                    "arrival_tick": 0,
+                    "execution_tick": 1,
+                    "completion_tick": 2,
+                    "edf_policy_enforced": False,
+                    "authority_signature_valid": True,
+                    "minimum_weighted_pareto_floor": 3,
+                    "allocated_delta_vector": [0, 1, 0],
+                    "post_relaxation_monitor_a_passed": True,
+                    "post_relaxation_monitor_b_passed": True,
+                },
+                {
+                    "incident_index": 3,
+                    "incident_pair_id": self.INCIDENT_PAIRS[2],
+                    "static_priority_rank": 3,
+                    "sla_deadline_tick": 1,
+                    "arrival_tick": 0,
+                    "execution_tick": 2,
+                    "completion_tick": 3,
+                    "edf_policy_enforced": False,
+                    "authority_signature_valid": True,
+                    "minimum_weighted_pareto_floor": 4,
+                    "allocated_delta_vector": [0, 0, 1],
+                    "post_relaxation_monitor_a_passed": True,
+                    "post_relaxation_monitor_b_passed": True,
+                },
+            ],
+            edf_queued_incidents=[
+                {
+                    "incident_index": 3,
+                    "incident_pair_id": self.INCIDENT_PAIRS[2],
+                    "static_priority_rank": 3,
+                    "sla_deadline_tick": 1,
+                    "arrival_tick": 0,
+                    "execution_tick": 0,
+                    "completion_tick": 1,
+                    "edf_policy_enforced": True,
+                    "authority_signature_valid": True,
+                    "minimum_weighted_pareto_floor": 4,
+                    "allocated_delta_vector": [0, 0, 1],
+                    "post_relaxation_monitor_a_passed": True,
+                    "post_relaxation_monitor_b_passed": True,
+                },
+                {
+                    "incident_index": 2,
+                    "incident_pair_id": self.INCIDENT_PAIRS[1],
+                    "static_priority_rank": 2,
+                    "sla_deadline_tick": 2,
+                    "arrival_tick": 0,
+                    "execution_tick": 1,
+                    "completion_tick": 2,
+                    "edf_policy_enforced": True,
+                    "authority_signature_valid": True,
+                    "minimum_weighted_pareto_floor": 3,
+                    "allocated_delta_vector": [0, 1, 0],
+                    "post_relaxation_monitor_a_passed": True,
+                    "post_relaxation_monitor_b_passed": True,
+                },
+                {
+                    "incident_index": 1,
+                    "incident_pair_id": self.INCIDENT_PAIRS[0],
+                    "static_priority_rank": 1,
+                    "sla_deadline_tick": 3,
+                    "arrival_tick": 0,
+                    "execution_tick": 2,
+                    "completion_tick": 3,
+                    "edf_policy_enforced": True,
+                    "authority_signature_valid": True,
+                    "minimum_weighted_pareto_floor": 4,
+                    "allocated_delta_vector": [2, 0, 0],
+                    "post_relaxation_monitor_a_passed": True,
+                    "post_relaxation_monitor_b_passed": True,
+                },
+            ],
+        )
+
+        self.bin_packing_monitor.record_overloaded_deadline_burst(
+            burst_id=f"{eval_id}:{mod_id}:burst",
+            model_id=mod_id,
+            prior_deadline_receipt_sha256="sha256_prior_deadline_eval",
+            baseline_policy_sha256="sha256_p0_2_3_0",
+            baseline_policy_vector=[2, 3, 0],
+            risk_weight_vector=[2, 3, 4],
+            individual_lease_budget=4,
+            initial_horizon_drift_ceiling=6,
+            expanded_horizon_drift_ceiling=7,
+            serial_edf_incidents=[
+                {
+                    "incident_index": idx + 1,
+                    "incident_pair_id": self.INCIDENT_PAIRS[idx],
+                    "static_priority_rank": idx + 1,
+                    "sla_deadline_tick": self.SLA_DEADLINES[idx],
+                    "arrival_tick": 0,
+                    "execution_tick": idx,
+                    "completion_tick": idx + 1,
+                    "selective_bin_packing_enforced": False,
+                    "halt_and_escalate_triggered": False,
+                    "authority_signature_valid": True,
+                    "minimum_weighted_pareto_floor": self.PARETO_LOADS[idx],
+                    "allocated_delta_vector": list(self.ALLOCATED_DELTAS[idx]),
+                    "post_relaxation_monitor_a_passed": True,
+                    "post_relaxation_monitor_b_passed": True,
+                }
+                for idx in range(3)
+            ],
+            overload_escalation_incidents=[
+                {
+                    "incident_index": idx + 1,
+                    "incident_pair_id": self.INCIDENT_PAIRS[idx],
+                    "static_priority_rank": idx + 1,
+                    "sla_deadline_tick": self.SLA_DEADLINES[idx],
+                    "arrival_tick": 0,
+                    "execution_tick": 0 if idx < 2 else 1,
+                    "completion_tick": 1 if idx < 2 else 2,
+                    "selective_bin_packing_enforced": False,
+                    "halt_and_escalate_triggered": True,
+                    "authority_signature_valid": True,
+                    "minimum_weighted_pareto_floor": self.PARETO_LOADS[idx],
+                    "allocated_delta_vector": list(self.ALLOCATED_DELTAS[idx]),
+                    "post_relaxation_monitor_a_passed": True,
+                    "post_relaxation_monitor_b_passed": True,
+                }
+                for idx in range(3)
+            ],
+            selective_bin_packed_incidents=[
+                {
+                    "incident_index": idx + 1,
+                    "incident_pair_id": self.INCIDENT_PAIRS[idx],
+                    "static_priority_rank": idx + 1,
+                    "sla_deadline_tick": self.SLA_DEADLINES[idx],
+                    "arrival_tick": 0,
+                    "execution_tick": 0 if idx < 2 else 1,
+                    "completion_tick": 1 if idx < 2 else 2,
+                    "selective_bin_packing_enforced": True,
+                    "halt_and_escalate_triggered": False,
+                    "authority_signature_valid": True,
+                    "minimum_weighted_pareto_floor": self.PARETO_LOADS[idx],
+                    "allocated_delta_vector": list(self.ALLOCATED_DELTAS[idx]),
+                    "post_relaxation_monitor_a_passed": True,
+                    "post_relaxation_monitor_b_passed": True,
+                }
+                for idx in range(3)
+            ],
+        )
+
+        local_p_ok = (
+            pricing_out.get("gross_cents") == gross
+            and fee == (gross * 27) // 990
+            and net == gross - fee
+            and execution_ticks in ([0, 1, 2], [0, 0, 1])
+        )
+        local_t_ok = (
+            tax == (gross * 90) // 990
+            and horizon_ceiling in (6, 7)
+            and tax_out.get("execution_ticks") == execution_ticks
+        )
+        local_s_ok = settlement_raised or (
+            surcharge == expected_surcharge
+            and payout == net - tax - surcharge
+        )
+
+        infeasible_spec_contradiction = bool(infeasible_constraint)
+        local_green = (
+            1
+            if (local_p_ok and local_t_ok and local_s_ok and not infeasible_spec_contradiction)
+            else 0
+        )
+        conservation_ok = (
+            not settlement_raised
+            and surcharge == 0
+            and execution_ticks == [0, 0, 1]
+            and horizon_ceiling == 7
+            and not halt_and_escalate
+            and deadline_miss_count == 0
+            and max_lateness_ticks == 0
+            and horizon_deficit == 0
+            and payout == 873
+            and (payout + fee + tax == gross)
+        )
+        global_green = 1 if (local_green == 1 and conservation_ok) else 0
+        defect = global_green - local_green
+
+        self.fiber_monitor.observe(
+            state_id=f"{eval_id}_{mod_id}",
+            report={
+                "local_green": local_green,
+                "individual_lease_budget_satisfied": True,
+            },
+            query="LGGG" if global_green == 1 else "LGGR",
+            metadata={
+                "execution_ticks": execution_ticks,
+                "horizon_ceiling": horizon_ceiling,
+                "halt_and_escalate": halt_and_escalate,
+                "deadline_miss_count": deadline_miss_count,
+                "horizon_deficit": horizon_deficit,
+                "pack_surcharge_cents": surcharge,
+            },
+        )
+
+        if infeasible_spec_contradiction:
+            status = "INFEASIBLE_DEADLINE_BIN_PACKING_SPECIFICATION_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif local_green == 0:
+            status = "LOCAL_DEADLINE_BIN_PACKING_MODULE_CONTRACT_BROKEN"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif deadline_miss_count > 0:
+            status = "SERIAL_EDF_DEADLINE_OVERLOAD_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif horizon_deficit > 0 or halt_and_escalate:
+            status = "OVERLOADED_SLOT0_HALT_AND_ESCALATE_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        elif global_green == 0:
+            status = "DEADLINE_BIN_PACKING_SURCHARGE_LGGR"
+            contract_status = "OBSTRUCTED_LGGR"
+        else:
+            status = "DEADLINE_BIN_PACKING_ADMISSION_COHERENT_LGGG"
+            contract_status = "COMPOSABLE_LGGG"
+
+        if global_green == 1:
+            directives = {
+                "worker-0": {
+                    "module": "pricing_pack",
+                    "action": "HOLD_SLOT0_BIN_PACKED_EXECUTION_TICKS",
+                    "target_execution_ticks": [0, 0, 1],
+                },
+                "worker-1": {
+                    "module": "tax_pack",
+                    "action": "HOLD_EXPANDED_HORIZON_CEILING_SEVEN",
+                    "target_horizon_ceiling": 7,
+                },
+                "worker-2": {
+                    "module": "settlement_pack",
+                    "action": "HOLD_DEADLINE_BIN_PACKING_GUARD",
+                    "target_pack_surcharge_cents": 0,
+                    "target_payout_cents": 873,
+                },
+            }
+        else:
+            directives = {
+                "worker-0": {
+                    "module": "pricing_pack",
+                    "action": (
+                        "CO_SCHEDULE_DEADLINE1_JOBS_IN_SLOT0"
+                        if (execution_ticks != [0, 0, 1] or not local_p_ok)
+                        else "HOLD_SLOT0_BIN_PACKED_EXECUTION_TICKS"
+                    ),
+                    "target_execution_ticks": [0, 0, 1],
+                },
+                "worker-1": {
+                    "module": "tax_pack",
+                    "action": (
+                        "EXPAND_HORIZON_CEILING_TO_SEVEN_AND_CLEAR_HALT"
+                        if (horizon_ceiling != 7 or halt_and_escalate or not local_t_ok)
+                        else "HOLD_EXPANDED_HORIZON_CEILING_SEVEN"
+                    ),
+                    "target_horizon_ceiling": 7,
+                },
+                "worker-2": {
+                    "module": "settlement_pack",
+                    "action": (
+                        "ENFORCE_DEADLINE_BIN_PACKING_GUARD"
+                        if not conservation_ok
+                        else "HOLD_DEADLINE_BIN_PACKING_GUARD"
+                    ),
+                    "target_pack_surcharge_cents": 0,
+                    "target_payout_cents": 873,
+                },
+            }
+
+        rec = json_value(
+            {
+                "evaluation_id": eval_id,
+                "model_id": mod_id,
+                "execution_ticks": execution_ticks,
+                "completion_ticks": completion_ticks,
+                "sla_deadlines": list(self.SLA_DEADLINES),
+                "pareto_loads": list(self.PARETO_LOADS),
+                "horizon_ceiling": horizon_ceiling,
+                "halt_and_escalate": halt_and_escalate,
+                "deadline_miss_count": deadline_miss_count,
+                "max_lateness_ticks": max_lateness_ticks,
+                "slot0_pareto_load": slot0_pareto_load,
+                "horizon_deficit": horizon_deficit,
+                "pack_surcharge_cents": surcharge,
+                "merchant_payout_cents": payout,
+                "platform_fee_cents": fee,
+                "tax_reserve_cents": tax,
+                "gross_cents": gross,
+                "local_green": local_green,
+                "global_green": global_green,
+                "defect": defect,
+                "status": status,
+                "contract_status": contract_status,
+                "directives": directives,
+            }
+        )
+        self.evaluations.append(rec)
+        return rec
+
+    def record_three_phase_codebase_audit(
+        self,
+        *,
+        audit_id: str = "codebase_deadline_bin_packing_three_phase",
+        model_id: str = "deterministic",
+    ) -> dict[str, Any]:
+        mid = text(model_id, "model_id")
+        p1 = self.evaluate_deadline_bin_packing_modules(
+            f"{audit_id}_p1",
+            pricing_pack_source=self.PHASE_1_PRICING_PACK_SOURCE,
+            tax_pack_source=self.PHASE_1_TAX_PACK_SOURCE,
+            settlement_pack_source=self.PHASE_1_SETTLEMENT_PACK_SOURCE,
+            model_id=mid,
+        )
+        p2 = self.evaluate_deadline_bin_packing_modules(
+            f"{audit_id}_p2",
+            pricing_pack_source=self.PHASE_2_PRICING_PACK_SOURCE,
+            tax_pack_source=self.PHASE_2_TAX_PACK_SOURCE,
+            settlement_pack_source=self.PHASE_2_SETTLEMENT_PACK_SOURCE,
+            model_id=mid,
+        )
+        p3 = self.evaluate_deadline_bin_packing_modules(
+            f"{audit_id}_p3",
+            pricing_pack_source=self.PHASE_3_PRICING_PACK_SOURCE,
+            tax_pack_source=self.PHASE_3_TAX_PACK_SOURCE,
+            settlement_pack_source=self.PHASE_3_SETTLEMENT_PACK_SOURCE,
+            model_id=mid,
+        )
+
+        audit_rec = json_value(
+            {
+                "audit_id": text(audit_id, "audit_id"),
+                "model_id": mid,
+                "phase_1_execution_ticks": p1["execution_ticks"],
+                "phase_1_horizon_ceiling": p1["horizon_ceiling"],
+                "phase_1_halt_and_escalate": p1["halt_and_escalate"],
+                "phase_1_deadline_miss_count": p1["deadline_miss_count"],
+                "phase_1_max_lateness_ticks": p1["max_lateness_ticks"],
+                "phase_1_slot0_pareto_load": p1["slot0_pareto_load"],
+                "phase_1_horizon_deficit": p1["horizon_deficit"],
+                "phase_1_surcharge_cents": p1["pack_surcharge_cents"],
+                "phase_1_payout_cents": p1["merchant_payout_cents"],
+                "phase_1_local_green": p1["local_green"],
+                "phase_1_global_green": p1["global_green"],
+                "phase_1_defect": p1["defect"],
+                "phase_1_status": p1["status"],
+                "phase_2_execution_ticks": p2["execution_ticks"],
+                "phase_2_horizon_ceiling": p2["horizon_ceiling"],
+                "phase_2_halt_and_escalate": p2["halt_and_escalate"],
+                "phase_2_deadline_miss_count": p2["deadline_miss_count"],
+                "phase_2_max_lateness_ticks": p2["max_lateness_ticks"],
+                "phase_2_slot0_pareto_load": p2["slot0_pareto_load"],
+                "phase_2_horizon_deficit": p2["horizon_deficit"],
+                "phase_2_surcharge_cents": p2["pack_surcharge_cents"],
+                "phase_2_payout_cents": p2["merchant_payout_cents"],
+                "phase_2_local_green": p2["local_green"],
+                "phase_2_global_green": p2["global_green"],
+                "phase_2_defect": p2["defect"],
+                "phase_2_status": p2["status"],
+                "phase_3_execution_ticks": p3["execution_ticks"],
+                "phase_3_horizon_ceiling": p3["horizon_ceiling"],
+                "phase_3_halt_and_escalate": p3["halt_and_escalate"],
+                "phase_3_deadline_miss_count": p3["deadline_miss_count"],
+                "phase_3_max_lateness_ticks": p3["max_lateness_ticks"],
+                "phase_3_slot0_pareto_load": p3["slot0_pareto_load"],
+                "phase_3_horizon_deficit": p3["horizon_deficit"],
+                "phase_3_surcharge_cents": p3["pack_surcharge_cents"],
+                "phase_3_payout_cents": p3["merchant_payout_cents"],
+                "phase_3_local_green": p3["local_green"],
+                "phase_3_global_green": p3["global_green"],
+                "phase_3_defect": p3["defect"],
+                "phase_3_status": p3["status"],
+            }
+        )
+        self.three_phase_audits.append(audit_rec)
+        return audit_rec
+
+    def current_receipt(self) -> dict[str, Any]:
+        """Emit a deterministic SHA-256 signed receipt for the 3-module deadline bin-packing audit."""
+        if not self.evaluations:
+            raise ValidationError(
+                "at least one codebase deadline bin-packing evaluation must be recorded"
+            )
+
+        n = len(self.evaluations)
+        lggr_count = sum(1 for e in self.evaluations if e["defect"] == -1)
+        lggg_count = sum(1 for e in self.evaluations if e["global_green"] == 1)
+        last = self.evaluations[-1]
+
+        body: dict[str, Any] = {
+            "schema": "lggr.online_codebase_deadline_bin_packing.v1",
+            "authority_effect": "None",
+            "scope_id": self.scope_id,
+            "status": last["status"],
+            "contract_status": last["contract_status"],
+            "evaluation_count": n,
+            "lggr_obstruction_count": lggr_count,
+            "lggg_coherent_count": lggg_count,
+            "deadline_priority_queue_receipt": (
+                self.deadline_queue_monitor.emit_receipt()
+                if self.deadline_queue_monitor.queues
+                else None
+            ),
+            "overloaded_deadline_bin_packing_receipt": (
+                self.bin_packing_monitor.emit_receipt()
+                if self.bin_packing_monitor.bursts
+                else None
+            ),
+            "fiber_receipt": self.fiber_monitor.get_receipt(),
+            "three_phase_audits": self.three_phase_audits,
+            "evaluations": self.evaluations,
+        }
+        return json_value({**body, "receipt_sha256": digest(body)})
+
+    get_receipt = current_receipt
+    emit_receipt = current_receipt
+
+
+
 

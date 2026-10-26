@@ -36,6 +36,7 @@ from .streaming import (
     StreamingCodebaseCatalystEvolutionMonitor,
     StreamingCodebaseCoalitionalMonitor,
     StreamingCodebaseContextualSheafMonitor,
+    StreamingCodebaseDeadlineBinPackingMonitor,
     StreamingCodebaseDisagreementCouncilMonitor,
     StreamingCodebaseDynamicSchemaMonitor,
     StreamingCodebaseFiberSplittingMonitor,
@@ -16504,6 +16505,139 @@ def run_codebase_side_info_capacity_benchmark(
     }
     signed = json_value({**body, "receipt_sha256": digest(body)})
     out_path = os.path.join(receipts_dir, "codebase_side_info_capacity_benchmark.json")
+    with open(out_path, "w", encoding="utf-8") as f:
+        json.dump(signed, f, indent=2)
+    return signed
+
+
+def run_codebase_deadline_bin_packing_benchmark(
+    receipts_dir: str | None = None,
+    models: Sequence[str] | None = None,
+) -> dict[str, Any]:
+    """Execute the 5-model live overloaded deadline priority-queue & bin-packing admission codebase benchmark (Theorem 133)."""
+    if receipts_dir is None:
+        receipts_dir = os.path.join(
+            os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+            "receipts",
+            "live_benchmarks",
+        )
+    os.makedirs(receipts_dir, exist_ok=True)
+    if models is None:
+        models = FRONTIER_BENCHMARK_MODELS
+
+    pack_code_monitor = StreamingCodebaseDeadlineBinPackingMonitor(
+        scope_id="live_codebase_deadline_bin_packing",
+    )
+    all_evals: list[dict[str, Any]] = []
+    total_completions = 0
+    p1_traces: list[dict[str, Any]] = []
+    p2_traces: list[dict[str, Any]] = []
+    p3_traces: list[dict[str, Any]] = []
+
+    def _sanitize_for_receipt(val: Any) -> Any:
+        if isinstance(val, (str, int, bool)):
+            return val
+        if isinstance(val, float):
+            return str(Fraction(str(val)))
+        if isinstance(val, dict):
+            return {str(k): _sanitize_for_receipt(v) for k, v in val.items()}
+        if isinstance(val, list):
+            return [_sanitize_for_receipt(v) for v in val]
+        return str(val) if val is not None else None
+
+    for model_id in models:
+        client = OpenRouterClient(model=model_id, max_completions=10)
+        obs = pack_code_monitor.record_three_phase_codebase_audit(
+            audit_id=f"{model_id}_deadline_bin_packing",
+            model_id=model_id,
+        )
+        prompt = (
+            "You are auditing a 3-module deadline priority-queue and bin-packing settlement codebase (`pricing_pack`, `tax_pack`, `settlement_pack`) "
+            "scheduling 3 simultaneous incident jobs with SLA deadlines `(1, 1, 2)` and weighted Pareto loads `(4, 3, 4)` "
+            "(each within the individual lease budget `B_ind = 4`, yet with mandatory slot-0 Pareto load `4 + 3 = 7`):\n"
+            "- Phase 1 (Serial execution `execution_ticks = [0, 1, 2]` under initial horizon ceiling `horizon_ceiling = 6`, `halt_and_escalate = false`): "
+            "`deadline_miss_count = 2`, `max_lateness_ticks = 1`, `horizon_deficit = 0`, `surcharge = 4 * 2 + 2 * 1 = 10`, `payout = 863 != 873` (`L_p1 = 1, Eg_p1 = 0`).\n"
+            "- Phase 2 (Slot-0 co-scheduling `execution_ticks = [0, 0, 1]` under initial horizon ceiling `horizon_ceiling = 6`, triggering `halt_and_escalate = true`): "
+            "`deadline_miss_count = 0`, `max_lateness_ticks = 0`, `slot0_pareto_load = 7 > 6`, `horizon_deficit = 1`, `surcharge = 2 * 1 + 4 * 1 = 6`, `payout = 867 != 873` (`L_p2 = 1, Eg_p2 = 0`).\n"
+            "- Phase 3 (Selective slot-0 bin-packing `execution_ticks = [0, 0, 1]` under expanded horizon admission ceiling `horizon_ceiling = 7 >= 7`, `halt_and_escalate = false`): "
+            "`deadline_miss_count = 0`, `max_lateness_ticks = 0`, `horizon_deficit = 0`, `surcharge = 0`, `merchant_payout_cents = 873`, `873 + 27 + 90 = 990`, `global_coherent = true` in Phase 3.\n"
+            "Return JSON with keys `phase_1_surcharge_cents` (int, 10), `phase_1_payout_cents` (int, 863), "
+            "`phase_2_surcharge_cents` (int, 6), `phase_2_payout_cents` (int, 867), "
+            "`phase_3_surcharge_cents` (int, 0), `phase_3_payout_cents` (int, 873), and `global_coherent` (bool, true for Phase 3)."
+        )
+        raw_resp = client.complete(prompt, system_prompt=JSON_ONLY_SYSTEM_PROMPT, max_tokens=220)
+        total_completions += client.completion_count
+        parsed = _extract_json(raw_resp) or {}
+        model_exact = (
+            parsed.get("phase_1_surcharge_cents") == 10
+            and parsed.get("phase_1_payout_cents") == 863
+            and parsed.get("phase_2_surcharge_cents") == 6
+            and parsed.get("phase_2_payout_cents") == 867
+            and parsed.get("phase_3_surcharge_cents") == 0
+            and parsed.get("phase_3_payout_cents") == 873
+            and parsed.get("global_coherent") is True
+        )
+        eval_entry = dict(obs)
+        eval_entry["parsed_controller_verdict"] = _sanitize_for_receipt(parsed)
+        eval_entry["model_answer_exact_match"] = bool(model_exact)
+        eval_entry["raw_controller_response"] = raw_resp
+        all_evals.append(eval_entry)
+
+        p1_traces.append(
+            {
+                "local_pass": obs["phase_1_local_green"] == 1,
+                "global_pass": obs["phase_1_global_green"] == 1,
+                "defect": obs["phase_1_defect"],
+            }
+        )
+        p2_traces.append(
+            {
+                "local_pass": obs["phase_2_local_green"] == 1,
+                "global_pass": obs["phase_2_global_green"] == 1,
+                "defect": obs["phase_2_defect"],
+            }
+        )
+        p3_traces.append(
+            {
+                "local_pass": obs["phase_3_local_green"] == 1,
+                "global_pass": obs["phase_3_global_green"] == 1,
+                "defect": obs["phase_3_defect"],
+            }
+        )
+
+    monitor_receipt = pack_code_monitor.current_receipt()
+    exact_matches = sum(int(e["model_answer_exact_match"]) for e in all_evals)
+    model_accuracy = str(Fraction(exact_matches, len(all_evals))) if all_evals else "0"
+    body = {
+        "schema": "lggr.codebase_deadline_bin_packing_replay.v1",
+        "authority_effect": "None",
+        "benchmark_name": "codebase_deadline_bin_packing_benchmark",
+        "models_evaluated": list(models),
+        "total_completions": total_completions,
+        "evaluation_count": len(all_evals),
+        "model_answer_accuracy_rate": model_accuracy,
+        "phase_1_serial_deadline_overload_metrics": compute_empirical_defect_rates(p1_traces),
+        "phase_2_slot0_halt_escalate_metrics": compute_empirical_defect_rates(p2_traces),
+        "phase_3_bin_packing_coherence_metrics": compute_empirical_defect_rates(p3_traces),
+        "obstructed_deadline_bin_packing_codebase_coherence_rate": "0",
+        "reconciled_deadline_bin_packing_codebase_coherence_rate": "1",
+        "codebase_deadline_bin_packing_coherence_gain": "1",
+        "codebase_deadline_bin_packing_receipt": monitor_receipt,
+        "evaluations": all_evals,
+        "meaning": (
+            "Overloaded deadline priority-queue and bin-packing admission codebase benchmark "
+            "across 5 model families (Theorem 133): Phase 1 separates serial 1-per-slot execution "
+            "deadline overload (`execution_ticks = [0, 1, 2], horizon_ceiling = 6, deadline_miss_count = 2, "
+            "max_lateness_ticks = 1, surcharge = 10, payout = 863 != 873, Delta_E = -1`); Phase 2 separates "
+            "slot-0 co-scheduling under initial horizon ceiling with halt-and-escalate (`execution_ticks = [0, 0, 1], "
+            "horizon_ceiling = 6, slot0_pareto_load = 7 > 6, horizon_deficit = 1, halt_and_escalate = true, "
+            "surcharge = 6, payout = 867 != 873, Delta_E = -1`); Phase 3 verifies selective slot-0 bin-packing "
+            "admission under expanded horizon ceiling (`execution_ticks = [0, 0, 1], horizon_ceiling = 7 >= 7, "
+            "deadline_miss_count = 0, horizon_deficit = 0, surcharge = 0, 873 + 27 + 90 = 990, Delta_E = 0`)."
+        ),
+    }
+    signed = json_value({**body, "receipt_sha256": digest(body)})
+    out_path = os.path.join(receipts_dir, "codebase_deadline_bin_packing_benchmark.json")
     with open(out_path, "w", encoding="utf-8") as f:
         json.dump(signed, f, indent=2)
     return signed

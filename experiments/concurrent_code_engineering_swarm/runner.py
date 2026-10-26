@@ -31,6 +31,7 @@ from lggr.streaming import (
     StreamingCodebaseCatalystEvolutionMonitor,
     StreamingCodebaseCoalitionalMonitor,
     StreamingCodebaseContextualSheafMonitor,
+    StreamingCodebaseDeadlineBinPackingMonitor,
     StreamingCodebaseDisagreementCouncilMonitor,
     StreamingCodebaseDynamicSchemaMonitor,
     StreamingCodebaseFiberSplittingMonitor,
@@ -71,6 +72,7 @@ from .domain import (
     CODE_SWARM_MODELS,
     COUNCIL_WORKER_MODULES,
     CPTP_WORKER_MODULES,
+    DEADLINE_BIN_PACKING_WORKER_MODULES,
     DFA_WORKER_MODULES,
     DIAMOND_SWARM_MODELS,
     DIAMOND_WORKER_MODULES,
@@ -114,6 +116,7 @@ from .domain import (
     CoalitionalCodeWorkspace,
     CodeWorkspace,
     ContextualSheafCodeWorkspace,
+    DeadlineBinPackingCodeWorkspace,
     DiamondCodeWorkspace,
     DisagreementCouncilCodeWorkspace,
     DynamicSchemaCodeWorkspace,
@@ -151,6 +154,7 @@ from .domain import (
     coalitional_fixture,
     council_fixture,
     cptp_fixture,
+    deadline_bin_packing_fixture,
     dfa_fixture,
     diamond_fixture,
     figure_eight_wedge_fixture,
@@ -173,6 +177,7 @@ from .domain import (
     quorum_fixture,
     regge_fixture,
     replay_fixture,
+    run_deadline_bin_packing_local_unit_tests,
     run_figure_eight_wedge_local_unit_tests,
     run_governed_relaxation_local_unit_tests,
     run_mermin_peres_local_unit_tests,
@@ -9405,6 +9410,287 @@ def side_info_capacity_campaign(
     return summary
 
 
+# ---------------------------------------------------------------------------
+# Overloaded Deadline Priority-Queue & Bin-Packing Admission Campaign (Test 68, Theorem 133)
+# ---------------------------------------------------------------------------
+
+
+def deadline_bin_packing_system_prompt(worker: str, arm: str) -> str:
+    mod_name = DEADLINE_BIN_PACKING_WORKER_MODULES[worker]
+    base = (
+        f"You are `{worker}`, responsible SOLELY for `{mod_name}.py` in a 3-module "
+        "deadline priority-queue & bin-packing settlement pipeline (`pricing_pack.py` -> `tax_pack.py` -> "
+        "`settlement_pack.py`). Call `inspect_workspace` first.\n"
+        "CRITICAL: Emit tool calls immediately with ZERO explanatory prose or preamble before the tool call so output never truncates.\n"
+        "IMPORTANT: Only call `escalate` if `infeasible_constraint` in the `inspect_workspace` result is a non-null string! "
+        "When `infeasible_constraint` is `null` and `locked` is `false`, NEVER call `escalate` — instead follow your Arm instructions below.\n"
+    )
+    if arm == "A":
+        return base + (
+            "Arm A (`local_single_lease_budget_only_gate`): If `local_unit_test.passed` "
+            "is true and `action_required` is `HOLD_LOCAL_SERIAL_EXECUTION_SCHEDULE`, do NOT call "
+            "`submit_module_patch`; reply concisely confirming local unit tests pass."
+        )
+    if arm == "B":
+        if worker == "worker-0":
+            return base + (
+                "Arm B (`slot0_co_scheduling_with_halt_and_escalate_gate`): Immediately call `submit_module_patch` with:\n"
+                "```python\n"
+                + StreamingCodebaseDeadlineBinPackingMonitor.PHASE_2_PRICING_PACK_SOURCE
+                + "```\n"
+            )
+        if worker == "worker-1":
+            return base + (
+                "Arm B (`slot0_co_scheduling_with_halt_and_escalate_gate`): Immediately call `submit_module_patch` with:\n"
+                "```python\n"
+                + StreamingCodebaseDeadlineBinPackingMonitor.PHASE_2_TAX_PACK_SOURCE
+                + "```\n"
+            )
+        return base + (
+            "Arm B (`slot0_co_scheduling_with_halt_and_escalate_gate`): If `local_unit_test.passed` "
+            "is true, do NOT call `submit_module_patch`; reply concisely confirming local unit tests pass."
+        )
+    if worker == "worker-0":
+        return base + (
+            "Arm C (`explicit_lggr_bin_packing_admission_directive`): Immediately call `submit_module_patch` with:\n"
+            "```python\n"
+            + StreamingCodebaseDeadlineBinPackingMonitor.PHASE_3_PRICING_PACK_SOURCE
+            + "```\n"
+        )
+    if worker == "worker-1":
+        return base + (
+            "Arm C (`explicit_lggr_bin_packing_admission_directive`): Immediately call `submit_module_patch` with:\n"
+            "```python\n"
+            + StreamingCodebaseDeadlineBinPackingMonitor.PHASE_3_TAX_PACK_SOURCE
+            + "```\n"
+        )
+    return base + (
+        "Arm C (`explicit_lggr_bin_packing_admission_directive`): Immediately call `submit_module_patch` with:\n"
+        "```python\n"
+        + StreamingCodebaseDeadlineBinPackingMonitor.PHASE_3_SETTLEMENT_PACK_SOURCE
+        + "```\n"
+    )
+
+
+def deadline_bin_packing_merge_gate(
+    events: Events,
+    ws: DeadlineBinPackingCodeWorkspace,
+    monitor: StreamingCodebaseDeadlineBinPackingMonitor,
+    arm: str,
+    wave_label: str,
+) -> tuple[dict[str, Any], dict[str, dict[str, Any]], dict[str, Any]]:
+    sources = ws.state["sources"]
+    verdicts = {
+        m: bool(run_deadline_bin_packing_local_unit_tests(m, sources[m]).get("passed"))
+        for m in ("pricing_pack", "tax_pack", "settlement_pack")
+    }
+    eval_res = monitor.evaluate_deadline_bin_packing_modules(
+        f"{arm}-{wave_label}",
+        pricing_pack_source=sources["pricing_pack"],
+        tax_pack_source=sources["tax_pack"],
+        settlement_pack_source=sources["settlement_pack"],
+        infeasible_constraint=(
+            ws.state["infeasible_constraint"]
+            if ws.state["infeasible_constraint"] is not None
+            else None
+        ),
+    )
+    receipt = monitor.current_receipt()
+    events.emit(
+        "gate",
+        {
+            "arm": arm,
+            "wave": wave_label,
+            "local_green": eval_res["local_green"],
+            "global_green": eval_res["global_green"],
+            "defect": eval_res["defect"],
+            "status": eval_res["status"],
+            "execution_ticks": eval_res["execution_ticks"],
+            "horizon_ceiling": eval_res["horizon_ceiling"],
+            "halt_and_escalate": eval_res["halt_and_escalate"],
+            "deadline_miss_count": eval_res["deadline_miss_count"],
+            "max_lateness_ticks": eval_res["max_lateness_ticks"],
+            "slot0_pareto_load": eval_res["slot0_pareto_load"],
+            "horizon_deficit": eval_res["horizon_deficit"],
+            "pack_surcharge_cents": eval_res["pack_surcharge_cents"],
+            "receipt_sha256": receipt["receipt_sha256"],
+            "receipt": receipt,
+        },
+    )
+
+    per_worker_fb: dict[str, dict[str, Any]] = {}
+    for w, mod_name in DEADLINE_BIN_PACKING_WORKER_MODULES.items():
+        if ws.state["infeasible_constraint"] is not None:
+            per_worker_fb[w] = {
+                "arm": arm,
+                "wave": wave_label,
+                "action_required": "ESCALATE_INFEASIBLE",
+                "infeasible_constraint": ws.state["infeasible_constraint"],
+                "compact_role_directive": eval_res["directives"][w],
+            }
+            continue
+
+        if arm == "A":
+            per_worker_fb[w] = {
+                "arm": "A",
+                "wave": wave_label,
+                "local_unit_test_passed": verdicts[mod_name],
+                "action_required": "HOLD_LOCAL_SERIAL_EXECUTION_SCHEDULE",
+                "note": "Each individual incident job satisfies its single-lease Pareto budget w_i <= 4.",
+            }
+        elif arm == "B":
+            per_worker_fb[w] = {
+                "arm": "B",
+                "wave": wave_label,
+                "local_unit_test_passed": verdicts[mod_name],
+                "action_required": "CO_SCHEDULE_SLOT0_UNDER_INITIAL_HORIZON_CEILING",
+                "deadline_miss_count": eval_res["deadline_miss_count"],
+                "horizon_deficit": eval_res["horizon_deficit"],
+                "pack_surcharge_cents": eval_res["pack_surcharge_cents"],
+                "note": "Co-scheduling ticks=[0,0,1] eliminates deadline misses but exceeds horizon_ceiling=6 (slot0_load=7, surcharge=6).",
+            }
+        else:
+            per_worker_fb[w] = {
+                "arm": "C",
+                "wave": wave_label,
+                "local_unit_test_passed": verdicts[mod_name],
+                "global_green": eval_res["global_green"],
+                "defect": eval_res["defect"],
+                "status": eval_res["status"],
+                "execution_ticks": eval_res["execution_ticks"],
+                "horizon_ceiling": eval_res["horizon_ceiling"],
+                "halt_and_escalate": eval_res["halt_and_escalate"],
+                "deadline_miss_count": eval_res["deadline_miss_count"],
+                "horizon_deficit": eval_res["horizon_deficit"],
+                "pack_surcharge_cents": eval_res["pack_surcharge_cents"],
+                "action_required": "ENFORCE_SELECTIVE_SLOT0_BIN_PACKING_ADMISSION",
+                "compact_role_directive": eval_res["directives"][w],
+            }
+    return eval_res, per_worker_fb, receipt
+
+
+def deadline_bin_packing_campaign(
+    client: CodeBatchClient,
+    events: Events,
+    config: dict[str, Any],
+) -> dict[str, Any]:
+    seeds: list[int] = list(config["seeds"])
+    workers = list(DEADLINE_BIN_PACKING_WORKER_MODULES.keys())
+    cases: list[dict[str, Any]] = []
+
+    for seed in seeds:
+        base_state = deadline_bin_packing_fixture(seed)
+        arm_results: list[dict[str, Any]] = []
+
+        for arm in ("A", "B", "C"):
+            ws = DeadlineBinPackingCodeWorkspace(base_state)
+            monitor = StreamingCodebaseDeadlineBinPackingMonitor(
+                scope_id=f"deadline-bin-packing-seed-{seed}-arm-{arm}"
+            )
+            arm_start_calls = client.calls
+            arm_start_spent = client.spent
+
+            eval_res, per_worker_fb, receipt = deadline_bin_packing_merge_gate(
+                events, ws, monitor, arm, "wave-0"
+            )
+            waves_executed = 0
+            status = "blocked_unresolved"
+
+            max_waves = 2 if base_state["infeasible_constraint"] is None else 1
+            for wave_idx in range(1, max_waves + 1):
+                waves_executed = wave_idx
+                histories = {
+                    w: [
+                        {"role": "system", "content": deadline_bin_packing_system_prompt(w, arm)},
+                        {
+                            "role": "user",
+                            "content": (
+                                f"Wave {wave_idx} for `{DEADLINE_BIN_PACKING_WORKER_MODULES[w]}.py` (seed {seed}, arm {arm}). "
+                                "Inspect workspace and execute your required module action."
+                            ),
+                        },
+                    ]
+                    for w in workers
+                }
+                round_turns(
+                    client,
+                    events,
+                    ws,
+                    histories,
+                    workers,
+                    per_worker_fb,
+                )
+                eval_res, per_worker_fb, receipt = deadline_bin_packing_merge_gate(
+                    events, ws, monitor, arm, f"wave-{wave_idx}"
+                )
+                if ws.state["infeasible_constraint"] is not None and len(ws.state["escalations"]) > 0:
+                    status = "safe_escalated"
+                    break
+                if eval_res["global_green"] == 1:
+                    status = "completed"
+                    break
+
+            final_status = (
+                "INFEASIBLE_DEADLINE_BIN_PACKING_SPECIFICATION_LGGR"
+                if status == "safe_escalated"
+                else eval_res["status"]
+            )
+            arm_summary = {
+                "arm": arm,
+                "status": status,
+                "waves_executed": waves_executed,
+                "final_local_green": eval_res["local_green"],
+                "final_global_green": eval_res["global_green"],
+                "final_defect": eval_res["defect"],
+                "final_execution_ticks": eval_res["execution_ticks"],
+                "final_horizon_ceiling": eval_res["horizon_ceiling"],
+                "final_halt_and_escalate": eval_res["halt_and_escalate"],
+                "final_deadline_miss_count": eval_res["deadline_miss_count"],
+                "final_max_lateness_ticks": eval_res["max_lateness_ticks"],
+                "final_slot0_pareto_load": eval_res["slot0_pareto_load"],
+                "final_horizon_deficit": eval_res["horizon_deficit"],
+                "final_pack_surcharge_cents": eval_res["pack_surcharge_cents"],
+                "final_merchant_payout_cents": eval_res["merchant_payout_cents"],
+                "final_status": final_status,
+                "final_receipt_sha256": receipt["receipt_sha256"],
+                "final_receipt": receipt,
+                "escalations": dict(ws.state["escalations"]),
+                "api_attempts": client.calls - arm_start_calls,
+                "cost_usd": str(client.spent - arm_start_spent),
+            }
+            events.emit("arm", {"seed": seed, **arm_summary})
+            arm_results.append(arm_summary)
+
+        cases.append(
+            {
+                "seed": seed,
+                "kind": base_state["kind"],
+                "arms": arm_results,
+            }
+        )
+
+    summary = {
+        "schema": "lggr.deadline_bin_packing_code_engineering_swarm.v1",
+        "topology": "deadline_bin_packing",
+        "authority_effect": "None",
+        "cases": cases,
+        "api_attempts": client.calls,
+        "charged_or_reserved_usd": str(client.spent),
+        "max_inflight_requests": client.max_inflight,
+        "concurrent_waves": client.concurrent_waves,
+        "scope": (
+            "Concurrent 3-agent overloaded deadline priority-queue & bin-packing admission "
+            "Python code-engineering swarm (`pricing_pack` -> `tax_pack` -> `settlement_pack`) comparing "
+            "serial execution ticks = [0, 1, 2] under initial horizon ceiling H = 6 (A), "
+            "slot-0 co-scheduling ticks = [0, 0, 1] with halt-and-escalate under H = 6 (B), "
+            "and selective slot-0 bin-packing admission ticks = [0, 0, 1] under expanded horizon ceiling H = 7 (C) "
+            "with full cryptographic receipts."
+        ),
+    }
+    events.emit("summary", summary)
+    return summary
+
+
 def replay(path: str | Path) -> dict[str, Any]:
     records = [json.loads(line) for line in Path(path).read_text(encoding="utf-8").splitlines()]
     metadata = records[0]["data"]
@@ -9491,6 +9777,8 @@ def replay(path: str | Path) -> dict[str, Any]:
             summary = mermin_peres_campaign(client, events, config)
         elif config.get("topology") == "side_info_capacity":
             summary = side_info_capacity_campaign(client, events, config)
+        elif config.get("topology") == "deadline_bin_packing":
+            summary = deadline_bin_packing_campaign(client, events, config)
         else:
             summary = campaign(client, events, config)
     except RunStopped as error:
@@ -9554,6 +9842,7 @@ def main() -> None:
             "simultaneous_split",
             "mermin_peres",
             "side_info_capacity",
+            "deadline_bin_packing",
         ],
         default="linear",
     )
@@ -9655,6 +9944,8 @@ def main() -> None:
         seeds = [12800, 12801, 12802]
     elif args.topology == "side_info_capacity":
         seeds = [12900, 12901, 12902]
+    elif args.topology == "deadline_bin_packing":
+        seeds = [13000, 13001, 13002]
     else:
         seeds = [6100, 6101, 6102]
     if args.topology == "diamond":
@@ -10076,6 +10367,17 @@ def main() -> None:
         events.emit("start", {"config": config})
         client = CodeBatchClient(events, args.budget)
         summary = side_info_capacity_campaign(client, events, config)
+    elif args.topology == "deadline_bin_packing":
+        config = {
+            "topology": "deadline_bin_packing",
+            "seeds": seeds,
+            "models": CODE_SWARM_MODELS,
+            "budget_usd": str(args.budget),
+        }
+        events = Events(events_path)
+        events.emit("start", {"config": config})
+        client = CodeBatchClient(events, args.budget)
+        summary = deadline_bin_packing_campaign(client, events, config)
     else:
         config = {
             "seeds": seeds,

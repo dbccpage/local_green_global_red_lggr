@@ -149,5 +149,6 @@ import LggrVIII
 #print axioms LggrVIII.simultaneous_split_codebase_budget_starvation_and_joint_guard_audit
 #print axioms LggrVIII.mermin_peres_codebase_parity_obstruction_and_noncontextual_audit
 #print axioms LggrVIII.side_info_capacity_codebase_ambiguity_and_bit_budget_audit
+#print axioms LggrVIII.deadline_bin_packing_codebase_edf_and_overload_admission_audit
 
 
