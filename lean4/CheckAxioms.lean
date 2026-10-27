@@ -1,5 +1,6 @@
 import LggrVII
 import LggrVIII
+import WorldLGGRWitness
 
 #print axioms LggrVII.collision_blocks_factorization
 #print axioms LggrVII.postprocessing_preserves_collision
@@ -157,6 +158,11 @@ import LggrVIII
 #print axioms LggrVIII.closed_loop_repair_codebase_open_loop_residual_and_witness_convergence_audit
 #print axioms LggrVIII.product_retraction_codebase_non_injective_projection_and_section_lift_audit
 
-
-
-
+-- Imported 2026-10-27 from the_symbol_game lean4/quantum_mechanics (see README).
+#print axioms OmegaWorld.LGGRWitness.exactLGGRFromInstance
+#print axioms OmegaWorld.LGGRWitness.exactPairFactorOrLGGRWitness
+#print axioms OmegaWorld.LGGRWitness.setoidLGGRFromInstance
+#print axioms OmegaWorld.LGGRWitness.setoidPairFactorOrLGGRWitness
+#print axioms OmegaWorld.LGGRWitness.boolExactLGGRRegression
+#print axioms OmegaWorld.LGGRWitness.boolSetoidLGGRRegression
+#print axioms OmegaWorld.LGGRWitness.scope_boundary_snapshot

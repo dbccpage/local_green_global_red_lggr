@@ -11,5 +11,7 @@ lean_lib «LGGR» where
   roots := #[
     `LggrVII,
     `LggrVIII,
+    `PrimitiveDifference,
+    `WorldLGGRWitness,
     `CheckAxioms
   ]

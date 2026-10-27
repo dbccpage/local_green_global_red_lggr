@@ -31,3 +31,16 @@ Building `CheckAxioms` runs `#print axioms` on all 15 theorems in [`LggrVII.lean
 | 4 | `LggrVII.observer_fiber_two_point_minimax` | On a two-point fiber with target values $a \le b$, any integer prediction $z$ has $2 \max(|a-z|, |b-z|) \ge b - a$, attained at midpoint $m$. |
 | 4 | `LggrVII.contextual_fraction_packing_mass_identity` | Scaled $m$-context mass identity $U - R = S - (mN - N)$ and packing bound $S - \Gamma \le (m - 1) N$. |
 | 4 | `LggrVII.ghz_rnd2_cf_gt_two_neg_mass_and_order_reversal` | Exact rational-scaled certification (denominator $768$) of $CF(p_*) = 19/64 > 2 N_{\min}(p_*) = 25/128$ and order reversal against $Q_{5/8}$. |
+
+## Imported LGGR witness classes
+
+`WorldLGGRWitness.lean` and its only import, `PrimitiveDifference.lean`, were copied byte for byte on 2026-10-27 from `dbccpage/the_symbol_game` at `ad9dc4eb5bed958a9b18c951b44ce6acc06d9725`. They come from `lean4/quantum_mechanics/`, where no paper cited them. AuthorityEffect: None. They build with core Lean 4.35.0 and import nothing else.
+
+| File | SHA-256 | Graded |
+|---|---|---|
+| `PrimitiveDifference.lean` | `3b292fc7544be02d7e7afaae62c70e6ed20a1d152644f0897ba8dfe5db596e1b` | L3D |
+| `WorldLGGRWitness.lean` | `480f36d099bd082b4fd04d0af0dbae65d36a25337876df21416d08eb116e9819` | L3D |
+
+`OmegaWorld.LGGRWitness` wraps the primitive-difference pair obstruction in two type classes. `ExactLGGRWitness` compares observer outputs by equality; `SetoidLGGRWitness` compares them modulo supplied setoids. An instance must already supply the two source points, their `ZeroRel` proof, local congruence and global separation. The module has no generic instance and does no search; its only instances are the Bool regressions. `CheckAxioms` prints the axioms of its seven declarations, which use at most `propext`, `Classical.choice` and `Quot.sound`.
+
+The grades follow the_symbol_game `SCORING.md` v2.0.0. The re-homing report is `reports/lean4_rehoming_2026-10-27/report.md` in the project files. FQM `lean4/WorldLGGRWitness.lean` holds the same code, with the namespace renamed to `ObserverWorld` and the docs stripped.
