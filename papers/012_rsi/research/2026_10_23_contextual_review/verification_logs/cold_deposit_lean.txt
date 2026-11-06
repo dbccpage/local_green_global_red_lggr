@@ -1,8 +1,0 @@
-OK: live memory trial evidence replayed offline, including failed arithmetic.
-OK: Review source custody and uncertainty-adjusted example replayed.
-PASS: six source-pinned illustration groups, 19 assertions (standard library only)
-OK: Manifest and two-way sweep checks passed.
-OK: Lean proofs and axiom census verified.
-OK: original sealed bytes and final two-way sweep preserved.
-
-Verification PASSED.
