@@ -1,1 +1,0 @@
-{"status": "PASS", "review_math_groups": 3, "raw_defect": "1/50", "radius": "1/50", "adjusted_margin": "0"}
