@@ -1,7 +1,0 @@
-OK: live memory trial evidence replayed offline, including failed arithmetic.
-OK: source-bound rendered manuscript verified.
-OK: Manifest and two-way sweep checks passed.
-OK: Release archive and manifests agree.
-OK: Lean proofs and axiom census verified.
-
-Verification PASSED.

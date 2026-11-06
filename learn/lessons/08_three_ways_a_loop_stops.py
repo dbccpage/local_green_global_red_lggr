@@ -51,7 +51,7 @@ def prepared() -> dict:
         "status": "THREE_STOPS_RECORDED" if matched else "STOP_MAP_MISMATCH",
         "reading": trace["reading"],
         "stops": stops,
-        "paper": "papers/012_rsi/000_relational_reasoning_and_rsi_impossibility/",
+        "paper": "https://github.com/dbccpage/local_green_global_red_lggr/tree/90d941cece517b55caf011a5524570e7507e97e4/papers/012_rsi/000_relational_reasoning_and_rsi_impossibility",
     })
 
 

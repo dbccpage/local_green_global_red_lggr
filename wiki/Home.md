@@ -42,12 +42,7 @@ Welcome to the documentation wiki for **Local Green, Global Red (`local_green_gl
 
 1. **The `lggr` Python Witness-Audit & Online Streaming Package (`lggr/`):** Standard-library, exact rational and finite-table verifiers for report-fiber decoder/collision certification, **45 online streaming runtime monitors** (`lggr.streaming`), signed transition-history composition, weighted $\ell^1$ primal/dual repair optimality, 1-cochain closure vs. exactness classification, Hodge decomposition, Mayer-Vietoris subcomplex gluing, side-information capacity auditing, and left-inverse chain-retraction transport.
 2. **The Eight-Volume LGGR Research Series (`papers/lggr_i_*` to `papers/lggr_viii_*`):** Volumes I through VIII uniting *Evaluated Path Kernels*, *Organizational Gluing*, *Six-Role Overlays*, *Completion-Relative Obstruction*, *Finite No-Recovery*, *Nonlinear Aggregation & Adjoint Probing*, *Projection Residuals & Witness Composition*, and *Online Streaming Discovery for Agentic Swarms*.
-3. **The Four-Paper RSI & Bell Series (`papers/012_rsi/`):**
-   - [Paper 000: Relational Reasoning, Memory, and Embedded Knowledge](RSI-Paper-000-Relational-Reasoning-Memory-and-Embedded-Knowledge) (`000_relational_reasoning_and_rsi_impossibility`)
-   - [Paper 001: Contextual Prediction and Self-Certification](RSI-Paper-001-Contextual-Prediction-and-Self-Certification) (`001_contextual_prediction_and_self_certification`)
-   - [Paper 002: Institutions That Can Know](RSI-Paper-002-Institutions-That-Can-Know) (`002_institutions_that_can_know`)
-   - [Paper 003: Bell's Theorem as a Positive-Extension Obstruction](RSI-Paper-003-Bell-Positive-Extensions-and-Projection-Residuals) (`003_bell_positive_extensions_and_projection_residuals`)
-4. **Standalone Lean 4.35.0 Formalizations (`lean4/`):** **80 machine-checked, sorry-free, zero-custom-axiom Lean 4 proofs** in the root package (`15` in `LggrVII.lean` and `65` in `LggrVIII.lean`, audited by `CheckAxioms.lean`), plus over 700 volume-scoped Lean 4 theorems across `papers/` and `papers/012_rsi/`.
+3. **Standalone Lean 4.35.0 Formalizations (`lean4/`):** **80 machine-checked, sorry-free, zero-custom-axiom Lean 4 proofs** in the root package (`15` in `LggrVII.lean` and `65` in `LggrVIII.lean`, audited by `CheckAxioms.lean`), plus volume-scoped Lean 4 theorems across `papers/`.
 
 ---
 
@@ -84,13 +79,7 @@ flowchart TD
 - [Volume VII: Projection Residuals, Positive Extensions, and Witness Composition](LGGR-Volume-VII-Projection-Residuals-and-Witness-Composition) — Synthesis of report-fiber descent, prefix vs. endpoint drift, chain-retraction reflection, observer-fiber minimax floors, and $CF$ vs. $N_{\min}$ separation.
 - [Volume VIII: Online Streaming LGGG vs. LGGR Discovery for Agentic Swarms](Volume-VIII) — Complete online streaming discovery architecture across 45 runtime monitors and 65 Lean 4 theorems.
 
-### 2. [RSI and Bell Series (`papers/012_rsi/`)](RSI-and-Bell-Series-Overview)
-- [RSI Paper 000: Relational Reasoning, Memory, and Embedded Knowledge](RSI-Paper-000-Relational-Reasoning-Memory-and-Embedded-Knowledge) — Why ungrounded self-reflection loops hit an invariance ceiling without fiber-splitting evidence, and how gated persistent memory (`LiveMemory`) preserves invariants across restarts.
-- [RSI Paper 001: Contextual Prediction and Self-Certification](RSI-Paper-001-Contextual-Prediction-and-Self-Certification) — Exact rational simplex LP certificates for contextuality, scalar minimax recovery, and memory-state capacity regret bounds.
-- [RSI Paper 002: Institutions That Can Know](RSI-Paper-002-Institutions-That-Can-Know) — Question-preserving institutional records, the $K - S$ side-information channel capacity error floor, and why premature consensus erases witnessed disagreement in multi-agent councils.
-- [RSI Paper 003: Bell's Theorem as a Positive-Extension Obstruction](RSI-Paper-003-Bell-Positive-Extensions-and-Projection-Residuals) — Four distinct obstruction classes, $CF \le (m-1)N_{\min}$, unbounded Clifford/Born $CF/N_{\min}$ families, and Mermin-Peres parity grids.
-
-### 3. Practitioner Guides & Reference
+### 2. Practitioner Guides & Reference
 - **[Learn: add LGGR to your harness](https://github.com/dbccpage/local_green_global_red_lggr/blob/main/learn/README.md)**: Step-by-step guides 00–04, runnable recipes, diagrams, and the JSON-lines sidecar. Start here if you build agents.
 - **[Online LGGG vs. LGGR Discovery for Agentic Swarms](Online-LGGG-vs-LGGR-Discovery-for-Agentic-Swarms)** — Practical guide for hooking streaming runtime monitors into live agent handoffs, tool trajectories, and cyclic topologies.
 - **[Positive Extensions and Projection Residuals](Positive-Extensions-and-Projection-Residuals)** — Four distinct obstruction questions, $CF$ vs. $N_{\min}$ separation, and observer-fiber minimax error floors.
