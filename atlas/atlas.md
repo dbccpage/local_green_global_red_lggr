@@ -14,6 +14,7 @@ repository.
 | [`atlas/atlas_claim_ledger.md`](atlas_claim_ledger.md) | Human-readable claim ledger: one row per claim, with status and evidence. |
 | [`atlas/atlas_change_log.md`](atlas_change_log.md) | Dated record of structural and ledger changes. |
 | [`atlas/archive/papers/`](archive/papers/README.md) | The research papers (LGGR I–VIII and companions), moved from `papers/`. Read-only source material. |
+| [`atlas/reproduce.md`](reproduce.md) | Current commands for archived papers whose READMEs still name the old `papers/` path. |
 | [`atlas/archive/source/`](archive/source/) | The originally supplied report, moved from `source/`. |
 | [`dag/derivations/derivation_dag.json`](../dag/derivations/derivation_dag.json) | Machine-readable derivation DAG: the same claims as the ledger, with dependency edges. |
 | [`lean4/`](../lean4/README.md) | Lean 4 proofs (existing package, unchanged). |
