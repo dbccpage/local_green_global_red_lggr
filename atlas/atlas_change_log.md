@@ -38,3 +38,22 @@
 - No status was raised beyond its replayed evidence. Where Lean proves only an instance, or only the
   arithmetic step, the claim's `scope` says so.
 - Observation, not changed here: `wiki/Home.md` counts 65 theorems in `LggrVIII.lean`; the file has 142.
+
+## 2026-11-14: fixes from the joint review of #156/#157
+
+- `code/rust/src/linear.rs`: `matvec`, `matmul`, `sub`, `solve_exact` and `classify_cochain` now check
+  every shape and return an error instead of truncating with `zip`. `classify_cochain` requires
+  `len(h) = rows(D0)` and `cols(D1) = rows(D0)`. Added exact `rank`.
+- `code/rust/src/transport.rs`: all six shapes are checked before any product; ill-typed input is
+  `InvalidTransport`. `zero_map_admits_left_inverse` is replaced by `admits_left_inverse`
+  (rank = column count), which rejects nonzero non-injective maps such as `[[1, 0]]`.
+- `code/rust/tests/boundary.rs`: the reviewer's fixtures as regressions.
+- LGGR-C21 rescoped to what the Lean theorem proves (lower bound; attainment only when a + b = 2m).
+  New LGGR-C37 (`TESTED_RUST`): the integer two-point optimum is ceil((b - a)/2). LGGR-C22 now says the
+  midpoint attainment is over rational predictors.
+- DAG: new `claim_correspondence` field separates proof existence from claim correspondence
+  (`AUTHOR_MATCHED` for core claims, `DOCSTRING_ONLY` for the Lean inventory; none `REVIEWED` yet).
+- CI: `.github/workflows/derivations.yml` runs `cargo test`, `lake build`, the Lean axiom census
+  (`lean_census`, which fails if any cited theorem gains or loses `Classical.choice` or uses another
+  axiom such as `sorryAx`) and the Python app tests.
+- Counts: 171 nodes; 148 `PROVED_LEAN`, 11 `TESTED_RUST`, 7 `EMPIRICAL`, 5 `OPEN`.

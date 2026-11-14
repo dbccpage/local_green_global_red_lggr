@@ -440,9 +440,9 @@ fn c34_zero_verdict_pairs_iff_resolved() {
 #[test]
 fn c16_triangle_budget_differences_exact() {
     let d0: linear::Matrix = vec![vec![q(-1), q(1), q(0)], vec![q(0), q(-1), q(1)], vec![q(-1), q(0), q(1)]];
-    let x = linear::solve_exact(&d0, &[q(1), q(1), q(2)]).unwrap();
-    assert_eq!(linear::matvec(&d0, &x), vec![q(1), q(1), q(2)]);
-    assert!(linear::solve_exact(&d0, &[q(1), q(1), q(1)]).is_none());
+    let x = linear::solve_exact(&d0, &[q(1), q(1), q(2)]).unwrap().unwrap();
+    assert_eq!(linear::matvec(&d0, &x).unwrap(), vec![q(1), q(1), q(2)]);
+    assert!(linear::solve_exact(&d0, &[q(1), q(1), q(1)]).unwrap().is_none());
     let _ = BTreeMap::<u8, u8>::new();
     let _: Value = json!(null);
     assert!(Q::zero().is_zero());
@@ -456,8 +456,8 @@ fn c20_non_injective_projection_blocks_retraction() {
     assert_eq!(drop([1, 1, 2]), drop([1, 1, 1]));
     // Exact source vs frustrated source: they differ in repairability yet share an image.
     let d0: linear::Matrix = vec![vec![q(-1), q(1), q(0)], vec![q(0), q(-1), q(1)], vec![q(-1), q(0), q(1)]];
-    assert!(linear::solve_exact(&d0, &[q(1), q(1), q(2)]).is_some());
-    assert!(linear::solve_exact(&d0, &[q(1), q(1), q(1)]).is_none());
+    assert!(linear::solve_exact(&d0, &[q(1), q(1), q(2)]).unwrap().is_some());
+    assert!(linear::solve_exact(&d0, &[q(1), q(1), q(1)]).unwrap().is_none());
     let zero: linear::Matrix = vec![vec![q(0), q(0), q(0)]];
-    assert!(!transport::zero_map_admits_left_inverse(&zero));
+    assert!(!transport::admits_left_inverse(&zero).unwrap());
 }

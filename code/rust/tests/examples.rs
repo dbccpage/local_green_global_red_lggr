@@ -80,20 +80,20 @@ fn c15_triangle_l1_optimality_example() {
 #[test]
 fn c16_filled_triangle_closure_vs_exactness_examples() {
     let f = load("examples/triangle_filled.json");
-    let (st, _) = linear::classify_cochain(&mat(&f["D0"]), &vecq(&f["h"]), &mat(&f["D1"]));
+    let (st, _) = linear::classify_cochain(&mat(&f["D0"]), &vecq(&f["h"]), &mat(&f["D1"])).unwrap();
     assert_eq!(st, linear::CochainStatus::ClosureFailure);
-    assert!(linear::is_zero(&linear::matmul(&mat(&f["D1"]), &mat(&f["D0"]))));
+    assert!(linear::is_zero(&linear::matmul(&mat(&f["D1"]), &mat(&f["D0"])).unwrap()));
     let e = load("examples/budget_exact_cochain.json");
-    let (st, pot) = linear::classify_cochain(&mat(&e["D0"]), &vecq(&e["h"]), &mat(&e["D1"]));
+    let (st, pot) = linear::classify_cochain(&mat(&e["D0"]), &vecq(&e["h"]), &mat(&e["D1"])).unwrap();
     assert_eq!(st, linear::CochainStatus::Exact);
-    assert_eq!(linear::matvec(&mat(&e["D0"]), &pot.unwrap()), vecq(&e["h"]));
+    assert_eq!(linear::matvec(&mat(&e["D0"]), &pot.unwrap()).unwrap(), vecq(&e["h"]));
 }
 
 // LGGR-C17 (example form): unfilled triangle: (1,1,1) is closed and nonexact, a nonzero H^1 class.
 #[test]
 fn c17_unfilled_triangle_nonzero_h1_example() {
     let u = load("examples/triangle_unfilled.json");
-    let (st, pot) = linear::classify_cochain(&mat(&u["D0"]), &vecq(&u["h"]), &mat(&u["D1"]));
+    let (st, pot) = linear::classify_cochain(&mat(&u["D0"]), &vecq(&u["h"]), &mat(&u["D1"])).unwrap();
     assert_eq!(st, linear::CochainStatus::ClosedNonexact);
     assert!(pot.is_none());
 }
@@ -107,7 +107,7 @@ fn c19_transport_examples() {
     let l = load("examples/lossy_transport.json");
     let st = transport::verify_transport(&mat(&l["D_source"]), &mat(&l["D_target"]), &mat(&l["F0"]), &mat(&l["F1"]), None);
     assert_eq!(st, transport::TransportStatus::CommutingTransportVerified);
-    assert!(!transport::zero_map_admits_left_inverse(&mat(&l["F1"])));
+    assert!(!transport::admits_left_inverse(&mat(&l["F1"])).unwrap());
 }
 
 // LGGR-C35: every recorded example receipt's status is re-derived by the Rust kernels.
@@ -131,7 +131,7 @@ fn c35_receipts_rederived() {
         } else if doc.get("policy").is_some() {
             history::audit(&doc).status.to_string()
         } else if doc.get("D0").is_some() {
-            map(&format!("{:?}", linear::classify_cochain(&mat(&doc["D0"]), &vecq(&doc["h"]), &mat(&doc["D1"])).0))
+            map(&format!("{:?}", linear::classify_cochain(&mat(&doc["D0"]), &vecq(&doc["h"]), &mat(&doc["D1"])).unwrap().0))
         } else if doc.get("dual").is_some() {
             let c = linear::verify_l1(&mat(&doc["D"]), &vecq(&doc["h"]), &vecq(&doc["weights"]), &vecq(&doc["potential"]), &vecq(&doc["dual"])).unwrap();
             if c.status == linear::L1Status::OptimalityVerified { "OPTIMALITY_VERIFIED".into() } else { format!("{:?}", c.status) }

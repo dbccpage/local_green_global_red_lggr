@@ -25,7 +25,7 @@ pub fn derive(name: &str, doc: &Value) -> Value {
     }
     if doc.get("D0").is_some() {
         let h = linear::vector_from_json(&doc["h"]).unwrap();
-        let (st, pot) = linear::classify_cochain(&mat(&doc["D0"]), &h, &mat(&doc["D1"]));
+        let (st, pot) = linear::classify_cochain(&mat(&doc["D0"]), &h, &mat(&doc["D1"])).expect("cochain input");
         return json!({"kind": "cochain", "status": format!("{st:?}"),
                       "potential": pot.map(|p| p.iter().map(|x| x.to_string()).collect::<Vec<_>>())});
     }
@@ -43,7 +43,7 @@ pub fn derive(name: &str, doc: &Value) -> Value {
             _ => None,
         };
         let st = transport::verify_transport(&mat(&doc["D_source"]), &mat(&doc["D_target"]), &mat(&doc["F0"]), &mat(&doc["F1"]), g);
-        let reflection_possible = transport::zero_map_admits_left_inverse(&mat(&doc["F0"]));
+        let reflection_possible = transport::admits_left_inverse(&mat(&doc["F1"])).expect("F1");
         return json!({"kind": "transport", "status": format!("{st:?}"), "left_inverse_possible": reflection_possible});
     }
     json!({"kind": "unknown", "name": name})

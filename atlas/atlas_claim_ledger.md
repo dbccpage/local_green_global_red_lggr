@@ -4,12 +4,14 @@
 
 First pass, 2026-11-14. Claims derived from `examples/`, `cookbooks/`, `code/`, `lean4/` and `workflows/`. The machine-readable copy, with dependency edges, is [`dag/derivations/derivation_dag.json`](../dag/derivations/derivation_dag.json); `cargo test` in `code/rust` checks that the two agree and that every cited Lean theorem and Rust test exists. Statuses are defined in [`atlas.md`](atlas.md). Claims from `atlas/archive/papers/` are the next phase.
 
+`PROVED_LEAN` records proof existence (cited theorem builds, zero `sorry`). Whether a theorem says exactly what its ledger row says is tracked separately as `claim_correspondence` in the DAG: every core row is `AUTHOR_MATCHED` (not yet independently reviewed) and every Lean-inventory row is `DOCSTRING_ONLY`.
+
 | Status | Count |
 |---|---|
 | `EMPIRICAL` | 7 |
 | `OPEN` | 5 |
 | `PROVED_LEAN` | 148 |
-| `TESTED_RUST` | 10 |
+| `TESTED_RUST` | 11 |
 
 ## Descent: decoders, collisions, evaluator defect
 
@@ -58,8 +60,9 @@ First pass, 2026-11-14. Claims derived from `examples/`, `cookbooks/`, `code/`, 
 
 | ID | Claim | Status | Scope | Evidence | Depends on |
 |---|---|---|---|---|---|
-| LGGR-C21 | **Two-point fiber minimax floor.** On a fiber with target values a <= b, every integer prediction z has 2 max(\|a - z\|, \|b - z\|) >= b - a, with equality at the midpoint. | `PROVED_LEAN` | two-point fibers, integers | Lean `observer_fiber_two_point_minimax`; Lean `streaming_observer_fiber_minimax_monotonicity`; Rust `c21_two_point_fiber_minimax` | LGGR-C04 |
-| LGGR-C22 | **General fiber minimax floor on a finite table.** For O : H -> Y and f : H -> Z, inf_g max_h \|f(h) - g(O(h))\| = (1/2) max_y W_f(y), attained by the fiber midpoint. _Note: General multi-point statement is not yet in Lean._ | `TESTED_RUST` | exhaustive over all 3-history tables with binary observations and targets in {-2..2} | Rust `c22_general_fiber_minimax_floor` | LGGR-C21 |
+| LGGR-C21 | **Two-point fiber minimax lower bound (integer predictors).** On a fiber with integer target values a <= b, every integer prediction z has 2 max(\|a - z\|, \|b - z\|) >= b - a, with equality at m when a + b = 2m for an integer m. _Note: Rescoped 2026-11-14 after review: the theorem does not cover odd a + b; see LGGR-C37._ | `PROVED_LEAN` | lower bound for every integer z; attainment only under the hypothesis a + b = 2m (m an integer) | Lean `observer_fiber_two_point_minimax`; Lean `streaming_observer_fiber_minimax_monotonicity`; Rust `c21_two_point_fiber_minimax` | LGGR-C04 |
+| LGGR-C37 | **Integer two-point optimum is the ceiling.** Over integer predictors, min_z max(\|a - z\|, \|b - z\|) = ceil((b - a)/2). When a + b is odd (e.g. a = 0, b = 1, optimum 1) the value (b - a)/2 is reached only by a rational predictor. _Note: Added 2026-11-14 from review finding 3. Not yet in Lean._ | `TESTED_RUST` | exhaustive for -5 <= a <= b <= 5 | Rust `boundary_integer_two_point_optimum_is_ceiling` | LGGR-C21 |
+| LGGR-C22 | **General fiber minimax floor on a finite table.** For O : H -> Y and integer f : H -> Z, over rational predictors g : Y -> Q, inf_g max_h \|f(h) - g(O(h))\| = (1/2) max_y W_f(y), attained by the fiber midpoint (which may be a half-integer). Every integer-valued predictor is bounded below by the same value. _Note: Rust checks the lower bound over integer predictors and attainment by the rational midpoint (in doubled units). General multi-point statement is not yet in Lean._ | `TESTED_RUST` | exhaustive over all 3-history tables with binary observations and targets in {-2..2} | Rust `c22_general_fiber_minimax_floor` | LGGR-C21 |
 | LGGR-C23 | **Evidence-preserving recursion keeps the floor.** Any finite chain of self-updates that sees only the fixed evidence y = O(h) yields one output per fiber, so its worst-case error stays >= W_f(y)/2. _Note: Deterministic updates only in the Rust check; the randomized statement in the README is prose._ | `PROVED_LEAN` | Lean: two update operators on a colliding pair; Rust: composed update instances | Lean `evidence_preserving_rsi_invariance_bound`; Rust `c23_evidence_preserving_recursion_keeps_floor` | LGGR-C21, LGGR-C03 |
 
 ## Contextuality and Bell

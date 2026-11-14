@@ -10,11 +10,18 @@
   "PROSE_ONLY": "Stated in documentation only.",
   "OPEN": "A goal; neither proved nor tested."
  },
+ "claim_correspondence": {
+  "AUTHOR_MATCHED": "The ledger statement was written against the cited Lean theorem by the author of this pass; not independently reviewed, and not machine-checked against the theorem type.",
+  "DOCSTRING_ONLY": "The statement is the Lean docstring; the theorem type itself was not compared.",
+  "REVIEWED": "An independent reviewer compared the ledger statement with the theorem type.",
+  "NOT_APPLICABLE": "No Lean theorem is cited."
+ },
+ "proof_existence_vs_correspondence": "PROVED_LEAN means a cited theorem exists and the package builds with zero sorry (checked in CI). Whether the theorem says what the ledger says is tracked separately in claim_correspondence.",
  "counts": {
   "EMPIRICAL": 7,
   "OPEN": 5,
   "PROVED_LEAN": 148,
-  "TESTED_RUST": 10
+  "TESTED_RUST": 11
  },
  "replay": {
   "lean": {
@@ -127,6 +134,7 @@
    "rust_tests": [
     "c01_collision_refutes_every_decoder"
    ],
+   "claim_correspondence": "AUTHOR_MATCHED",
    "depends_on": [],
    "archive_refs": [],
    "notes": ""
@@ -149,6 +157,7 @@
    "rust_tests": [
     "c02_decoder_or_collision_exhaustive_census"
    ],
+   "claim_correspondence": "AUTHOR_MATCHED",
    "depends_on": [
     "LGGR-C01",
     "LGGR-L-PrimitiveDifference"
@@ -173,6 +182,7 @@
    "rust_tests": [
     "c03_postprocessing_preserves_collision"
    ],
+   "claim_correspondence": "AUTHOR_MATCHED",
    "depends_on": [
     "LGGR-C01"
    ],
@@ -197,6 +207,7 @@
    "rust_tests": [
     "c04_verdict_ceiling_on_collision"
    ],
+   "claim_correspondence": "AUTHOR_MATCHED",
    "depends_on": [
     "LGGR-C01"
    ],
@@ -220,6 +231,7 @@
    "rust_tests": [
     "c05_evaluator_defect_partition"
    ],
+   "claim_correspondence": "AUTHOR_MATCHED",
    "depends_on": [],
    "archive_refs": [],
    "notes": ""
@@ -241,6 +253,7 @@
     "c31_metadata_refinement_eliminates_collision",
     "c09_report_examples_collision_and_refinement"
    ],
+   "claim_correspondence": "AUTHOR_MATCHED",
    "depends_on": [
     "LGGR-C01"
    ],
@@ -265,6 +278,7 @@
     "c11_online_collision_monotonicity",
     "cookbook01_online_fiber_collision"
    ],
+   "claim_correspondence": "AUTHOR_MATCHED",
    "depends_on": [
     "LGGR-C01"
    ],
@@ -288,6 +302,7 @@
     "c29_boundary_sufficient_gluing_zero_defect",
     "cookbook04_boundary_sufficient_lggg"
    ],
+   "claim_correspondence": "AUTHOR_MATCHED",
    "depends_on": [
     "LGGR-C05"
    ],
@@ -310,6 +325,7 @@
    "rust_tests": [
     "c30_boundary_insufficiency_forces_ngd"
    ],
+   "claim_correspondence": "AUTHOR_MATCHED",
    "depends_on": [
     "LGGR-C04",
     "LGGR-C05"
@@ -335,6 +351,7 @@
    "rust_tests": [
     "c06_telescoping_all_short_histories"
    ],
+   "claim_correspondence": "AUTHOR_MATCHED",
    "depends_on": [],
    "archive_refs": [],
    "notes": ""
@@ -355,6 +372,7 @@
    "rust_tests": [
     "c07_local_steps_do_not_imply_endpoint_bound"
    ],
+   "claim_correspondence": "AUTHOR_MATCHED",
    "depends_on": [
     "LGGR-C06"
    ],
@@ -380,6 +398,7 @@
    "rust_tests": [
     "c08_every_prefix_strictly_stronger_than_endpoint"
    ],
+   "claim_correspondence": "AUTHOR_MATCHED",
    "depends_on": [
     "LGGR-C06"
    ],
@@ -405,6 +424,7 @@
     "c09_unsigned_reports_collide_signed_reports_separate",
     "c09_report_examples_collision_and_refinement"
    ],
+   "claim_correspondence": "AUTHOR_MATCHED",
    "depends_on": [
     "LGGR-C01",
     "LGGR-C07"
@@ -430,6 +450,7 @@
     "c10_prefix_violation_latches",
     "cookbook02_prefix_excursion_alert"
    ],
+   "claim_correspondence": "AUTHOR_MATCHED",
    "depends_on": [
     "LGGR-C08"
    ],
@@ -455,6 +476,7 @@
    "rust_tests": [
     "c12_history_examples_audit_outcomes"
    ],
+   "claim_correspondence": "NOT_APPLICABLE",
    "depends_on": [
     "LGGR-C06",
     "LGGR-C07"
@@ -477,6 +499,7 @@
    "rust_tests": [
     "c13_policy_digest_replays"
    ],
+   "claim_correspondence": "NOT_APPLICABLE",
    "depends_on": [],
    "archive_refs": [],
    "notes": "A digest binds data; it does not establish truth or grant authority."
@@ -495,6 +518,7 @@
    "rust_tests": [
     "c14_l1_weak_duality_on_triangle"
    ],
+   "claim_correspondence": "NOT_APPLICABLE",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Weak duality holds in general (one-line triangle inequality); no general Lean theorem in this repository yet."
@@ -515,6 +539,7 @@
    "rust_tests": [
     "c15_triangle_l1_optimality_example"
    ],
+   "claim_correspondence": "AUTHOR_MATCHED",
    "depends_on": [
     "LGGR-C14"
    ],
@@ -539,6 +564,7 @@
     "c16_filled_triangle_closure_vs_exactness_examples",
     "c16_triangle_budget_differences_exact"
    ],
+   "claim_correspondence": "AUTHOR_MATCHED",
    "depends_on": [],
    "archive_refs": [],
    "notes": ""
@@ -563,6 +589,7 @@
     "c17_incremental_cycle_closure_certificate",
     "c17_unfilled_triangle_nonzero_h1_example"
    ],
+   "claim_correspondence": "AUTHOR_MATCHED",
    "depends_on": [
     "LGGR-C14"
    ],
@@ -585,6 +612,7 @@
    "rust_tests": [
     "c18_open_chain_exactness"
    ],
+   "claim_correspondence": "AUTHOR_MATCHED",
    "depends_on": [],
    "archive_refs": [],
    "notes": ""
@@ -606,6 +634,7 @@
    "rust_tests": [
     "c19_transport_examples"
    ],
+   "claim_correspondence": "AUTHOR_MATCHED",
    "depends_on": [
     "LGGR-C16"
    ],
@@ -631,6 +660,7 @@
     "c20_non_injective_projection_blocks_retraction",
     "c19_transport_examples"
    ],
+   "claim_correspondence": "AUTHOR_MATCHED",
    "depends_on": [
     "LGGR-C19",
     "LGGR-C16"
@@ -641,10 +671,10 @@
   {
    "id": "LGGR-C21",
    "layer": "5_observer_floor",
-   "title": "Two-point fiber minimax floor",
-   "statement": "On a fiber with target values a <= b, every integer prediction z has 2 max(|a - z|, |b - z|) >= b - a, with equality at the midpoint.",
+   "title": "Two-point fiber minimax lower bound (integer predictors)",
+   "statement": "On a fiber with integer target values a <= b, every integer prediction z has 2 max(|a - z|, |b - z|) >= b - a, with equality at m when a + b = 2m for an integer m.",
    "status": "PROVED_LEAN",
-   "scope": "two-point fibers, integers",
+   "scope": "lower bound for every integer z; attainment only under the hypothesis a + b = 2m (m an integer)",
    "sources": [
     "README.md (observer-fiber minimax)"
    ],
@@ -655,17 +685,39 @@
    "rust_tests": [
     "c21_two_point_fiber_minimax"
    ],
+   "claim_correspondence": "AUTHOR_MATCHED",
    "depends_on": [
     "LGGR-C04"
    ],
    "archive_refs": [],
-   "notes": ""
+   "notes": "Rescoped 2026-11-14 after review: the theorem does not cover odd a + b; see LGGR-C37."
+  },
+  {
+   "id": "LGGR-C37",
+   "layer": "5_observer_floor",
+   "title": "Integer two-point optimum is the ceiling",
+   "statement": "Over integer predictors, min_z max(|a - z|, |b - z|) = ceil((b - a)/2). When a + b is odd (e.g. a = 0, b = 1, optimum 1) the value (b - a)/2 is reached only by a rational predictor.",
+   "status": "TESTED_RUST",
+   "scope": "exhaustive for -5 <= a <= b <= 5",
+   "sources": [
+    "README.md (observer-fiber minimax)"
+   ],
+   "lean_theorems": [],
+   "rust_tests": [
+    "boundary_integer_two_point_optimum_is_ceiling"
+   ],
+   "claim_correspondence": "NOT_APPLICABLE",
+   "depends_on": [
+    "LGGR-C21"
+   ],
+   "archive_refs": [],
+   "notes": "Added 2026-11-14 from review finding 3. Not yet in Lean."
   },
   {
    "id": "LGGR-C22",
    "layer": "5_observer_floor",
    "title": "General fiber minimax floor on a finite table",
-   "statement": "For O : H -> Y and f : H -> Z, inf_g max_h |f(h) - g(O(h))| = (1/2) max_y W_f(y), attained by the fiber midpoint.",
+   "statement": "For O : H -> Y and integer f : H -> Z, over rational predictors g : Y -> Q, inf_g max_h |f(h) - g(O(h))| = (1/2) max_y W_f(y), attained by the fiber midpoint (which may be a half-integer). Every integer-valued predictor is bounded below by the same value.",
    "status": "TESTED_RUST",
    "scope": "exhaustive over all 3-history tables with binary observations and targets in {-2..2}",
    "sources": [
@@ -675,11 +727,12 @@
    "rust_tests": [
     "c22_general_fiber_minimax_floor"
    ],
+   "claim_correspondence": "NOT_APPLICABLE",
    "depends_on": [
     "LGGR-C21"
    ],
    "archive_refs": [],
-   "notes": "General multi-point statement is not yet in Lean."
+   "notes": "Rust checks the lower bound over integer predictors and attainment by the rational midpoint (in doubled units). General multi-point statement is not yet in Lean."
   },
   {
    "id": "LGGR-C23",
@@ -698,6 +751,7 @@
    "rust_tests": [
     "c23_evidence_preserving_recursion_keeps_floor"
    ],
+   "claim_correspondence": "AUTHOR_MATCHED",
    "depends_on": [
     "LGGR-C21",
     "LGGR-C03"
@@ -721,6 +775,7 @@
    "rust_tests": [
     "c24_chsh_local_bound_and_pr_box"
    ],
+   "claim_correspondence": "AUTHOR_MATCHED",
    "depends_on": [],
    "archive_refs": [],
    "notes": ""
@@ -741,6 +796,7 @@
    "rust_tests": [
     "c25_odd_cycle_local_green_global_red"
    ],
+   "claim_correspondence": "AUTHOR_MATCHED",
    "depends_on": [],
    "archive_refs": [],
    "notes": ""
@@ -761,6 +817,7 @@
    "rust_tests": [
     "c26_mermin_peres_parity_obstruction"
    ],
+   "claim_correspondence": "AUTHOR_MATCHED",
    "depends_on": [
     "LGGR-C25"
    ],
@@ -783,6 +840,7 @@
    "rust_tests": [
     "c27_contextual_fraction_packing_identity"
    ],
+   "claim_correspondence": "AUTHOR_MATCHED",
    "depends_on": [],
    "archive_refs": [],
    "notes": "The Lean theorem assumes the mass identities U = S + N and R = mN; their derivation from an LP signed extension is not formalized here."
@@ -803,6 +861,7 @@
    "rust_tests": [
     "c28_ghz_rnd2_cf_vs_neg_mass_arithmetic"
    ],
+   "claim_correspondence": "AUTHOR_MATCHED",
    "depends_on": [
     "LGGR-C27"
    ],
@@ -825,6 +884,7 @@
    "rust_tests": [
     "c32_host_rule_no_false_accept_in_model"
    ],
+   "claim_correspondence": "NOT_APPLICABLE",
    "depends_on": [],
    "archive_refs": [],
    "notes": ""
@@ -844,6 +904,7 @@
    "rust_tests": [
     "c33_host_rule_false_accept_out_of_model"
    ],
+   "claim_correspondence": "NOT_APPLICABLE",
    "depends_on": [
     "LGGR-C32"
    ],
@@ -864,6 +925,7 @@
    "rust_tests": [
     "c34_zero_verdict_pairs_iff_resolved"
    ],
+   "claim_correspondence": "NOT_APPLICABLE",
    "depends_on": [
     "LGGR-C32"
    ],
@@ -885,6 +947,7 @@
    "rust_tests": [
     "c35_receipts_rederived"
    ],
+   "claim_correspondence": "NOT_APPLICABLE",
    "depends_on": [
     "LGGR-C02",
     "LGGR-C12",
@@ -911,6 +974,7 @@
    "rust_tests": [
     "c36_workflow_event_chains_verify"
    ],
+   "claim_correspondence": "NOT_APPLICABLE",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Tamper evidence only; a hash chain does not authenticate who wrote it."
@@ -928,6 +992,7 @@
    ],
    "lean_theorems": [],
    "rust_tests": [],
+   "claim_correspondence": "NOT_APPLICABLE",
    "depends_on": [
     "LGGR-C32",
     "LGGR-C34"
@@ -947,6 +1012,7 @@
    ],
    "lean_theorems": [],
    "rust_tests": [],
+   "claim_correspondence": "NOT_APPLICABLE",
    "depends_on": [
     "LGGR-E01"
    ],
@@ -966,6 +1032,7 @@
    ],
    "lean_theorems": [],
    "rust_tests": [],
+   "claim_correspondence": "NOT_APPLICABLE",
    "depends_on": [
     "LGGR-C32",
     "LGGR-C33"
@@ -985,6 +1052,7 @@
    ],
    "lean_theorems": [],
    "rust_tests": [],
+   "claim_correspondence": "NOT_APPLICABLE",
    "depends_on": [
     "LGGR-C23"
    ],
@@ -1003,6 +1071,7 @@
    ],
    "lean_theorems": [],
    "rust_tests": [],
+   "claim_correspondence": "NOT_APPLICABLE",
    "depends_on": [],
    "archive_refs": [],
    "notes": ""
@@ -1019,6 +1088,7 @@
    ],
    "lean_theorems": [],
    "rust_tests": [],
+   "claim_correspondence": "NOT_APPLICABLE",
    "depends_on": [],
    "archive_refs": [],
    "notes": ""
@@ -1035,6 +1105,7 @@
    ],
    "lean_theorems": [],
    "rust_tests": [],
+   "claim_correspondence": "NOT_APPLICABLE",
    "depends_on": [
     "LGGR-C05",
     "LGGR-C30"
@@ -1054,6 +1125,7 @@
    ],
    "lean_theorems": [],
    "rust_tests": [],
+   "claim_correspondence": "NOT_APPLICABLE",
    "depends_on": [
     "LGGR-C02"
    ],
@@ -1070,6 +1142,7 @@
    "sources": [],
    "lean_theorems": [],
    "rust_tests": [],
+   "claim_correspondence": "NOT_APPLICABLE",
    "depends_on": [
     "LGGR-C14",
     "LGGR-C22"
@@ -1089,6 +1162,7 @@
    ],
    "lean_theorems": [],
    "rust_tests": [],
+   "claim_correspondence": "NOT_APPLICABLE",
    "depends_on": [],
    "archive_refs": [],
    "notes": ""
@@ -1105,6 +1179,7 @@
    ],
    "lean_theorems": [],
    "rust_tests": [],
+   "claim_correspondence": "NOT_APPLICABLE",
    "depends_on": [
     "LGGR-C27",
     "LGGR-C28"
@@ -1125,6 +1200,7 @@
    ],
    "lean_theorems": [],
    "rust_tests": [],
+   "claim_correspondence": "NOT_APPLICABLE",
    "depends_on": [
     "LGGR-E07"
    ],
@@ -1145,6 +1221,7 @@
     "LggrVIII.historyEndpoint_mem"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -1163,6 +1240,7 @@
     "LggrVIII.cross_branch_audit_splice_budget_breach"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -1181,6 +1259,7 @@
     "LggrVIII.multi_stage_gluing_associativity_and_defect_bound"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -1199,6 +1278,7 @@
     "LggrVIII.coarsened_macro_stage_masks_internal_prefix_breach"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -1217,6 +1297,7 @@
     "LggrVIII.deferred_obligation_and_scope_migration_separation"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -1235,6 +1316,7 @@
     "LggrVIII.l1_dual_witness_subgradient_weight_sensitivity"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -1253,6 +1335,7 @@
     "LggrVIII.cycle_bottleneck_weight_pivot_threshold"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -1271,6 +1354,7 @@
     "LggrVIII.six_role_sample_defect_and_cancellation_masking"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -1289,6 +1373,7 @@
     "LggrVIII.completion_relative_obstruction_on_carrier_extension"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -1307,6 +1392,7 @@
     "LggrVIII.disjoint_colliding_pairs_additive_error_lower_bound"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -1325,6 +1411,7 @@
     "LggrVIII.centered_gram_kernel_nullspace_obstruction"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -1343,6 +1430,7 @@
     "LggrVIII.path_kernel_composition_discrepancy_identity"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -1361,6 +1449,7 @@
     "LggrVIII.boundary_sufficiency_without_quotient_factorization"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -1379,6 +1468,7 @@
     "LggrVIII.realizable_defect_soundness_kernel_intersection"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -1397,6 +1487,7 @@
     "LggrVIII.dashboard_summary_reconstruction_and_collapsing_detector"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -1415,6 +1506,7 @@
     "LggrVIII.product_retraction_residual_vs_local_extension"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -1433,6 +1525,7 @@
     "LggrVIII.two_player_shapley_efficiency_and_symmetry"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -1451,6 +1544,7 @@
     "LggrVIII.quorum_threshold_vs_product_defect_separation"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -1469,6 +1563,7 @@
     "LggrVIII.kraus_trace_preservation_and_blindspot_residual"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -1487,6 +1582,7 @@
     "LggrVIII.sliding_window_green_vs_horizon_drift_breach"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -1505,6 +1601,7 @@
     "LggrVIII.arrival_order_endpoint_invariance_vs_prefix_divergence"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -1523,6 +1620,7 @@
     "LggrVIII.simplicial_cup_product_and_leibniz_cocycle_identity"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -1541,6 +1639,7 @@
     "LggrVIII.mayer_vietoris_local_exactness_gluing_obstruction"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -1559,6 +1658,7 @@
     "LggrVIII.discrete_hodge_harmonic_orthogonality_and_decomposition"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -1577,6 +1677,7 @@
     "LggrVIII.dfa_concatenation_state_mismatch_obstruction"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -1595,6 +1696,7 @@
     "LggrVIII.catalyst_residual_accumulation_and_cycle_ceiling"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -1613,6 +1715,7 @@
     "LggrVIII.hodge_laplacian_energy_sum_of_squares_kernel"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -1631,6 +1734,7 @@
     "LggrVIII.discrete_regge_hinge_deficit_and_gauss_bonnet"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -1649,6 +1753,7 @@
     "LggrVIII.fibered_pullback_compatibility_and_mediator_uniqueness"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -1667,6 +1772,7 @@
     "LggrVIII.optional_stopping_expectation_conservation_vs_skew"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -1685,6 +1791,7 @@
     "LggrVIII.derived_limit_projective_tower_lifting_obstruction"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -1703,6 +1810,7 @@
     "LggrVIII.skew_repair_norm_attainment_divergence_and_obstruction"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -1721,6 +1829,7 @@
     "LggrVIII.side_information_channel_capacity_and_fiber_error_floor"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -1739,6 +1848,7 @@
     "LggrVIII.product_of_experts_disjoint_support_collapse_vs_mixture"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -1757,6 +1867,7 @@
     "LggrVIII.closed_loop_receipt_feedback_repair_convergence_vs_uninformed_retry"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -1775,6 +1886,7 @@
     "LggrVIII.coupled_multi_monitor_joint_repair_whack_a_mole_vs_pareto_convergence"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -1793,6 +1905,7 @@
     "LggrVIII.infeasible_coupled_multi_monitor_empty_intersection_oscillation_vs_escalation"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -1811,6 +1924,7 @@
     "LggrVIII.governed_policy_relaxation_handoff_restores_pareto_vs_self_relaxation"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -1829,6 +1943,7 @@
     "LggrVIII.minimum_slack_pareto_policy_relaxation_vs_over_permissive_grant"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -1847,6 +1962,7 @@
     "LggrVIII.asymmetric_weighted_policy_relaxation_tie_breaking_vs_unweighted_slack"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -1865,6 +1981,7 @@
     "LggrVIII.cumulative_policy_ratchet_drift_vs_lease_revocation"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -1883,6 +2000,7 @@
     "LggrVIII.concurrent_lease_overlap_horizon_breach_vs_overlap_accounting"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -1901,6 +2019,7 @@
     "LggrVIII.non_preemptible_simultaneous_budget_split_vs_priority_queueing"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -1919,6 +2038,7 @@
     "LggrVIII.deadline_constrained_priority_queue_static_inversion_vs_edf"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -1937,6 +2057,7 @@
     "LggrVIII.overloaded_deadline_burst_serial_edf_vs_bin_packing_and_escalation"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -1955,6 +2076,7 @@
     "LggrVIII.variable_duration_burst_and_graceful_degradation_shedding"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -1973,6 +2095,7 @@
     "LggrVIII.linearized_pipeline_jacobian_soundness_vs_stealth_blindspot"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -1991,6 +2114,7 @@
     "LggrVIII.watcher_dropout_gram_rank_deficiency_and_critical_blindspot"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -2009,6 +2133,7 @@
     "LggrVIII.multi_evaluator_policy_ranking_cf_vs_neg_mass_order_reversal"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -2027,6 +2152,7 @@
     "LggrVIII.rsi_unassisted_self_reflection_vs_tool_assisted_fiber_splitting"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -2045,6 +2171,7 @@
     "LggrVIII.multi_turn_pairwise_transcript_contextuality_and_reconciliation"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -2063,6 +2190,7 @@
     "LggrVIII.disagreement_preserving_side_channel_council_vs_collapsing_consensus"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -2081,6 +2209,7 @@
     "LggrVIII.bounded_depth_k_induction_tower_and_carrier_completion"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -2099,6 +2228,7 @@
     "LggrVIII.boundary_mixing_and_quorum_masking_interface_schema_audit"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -2117,6 +2247,7 @@
     "LggrVIII.cross_role_schema_validation_and_double_count_audit"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -2135,6 +2266,7 @@
     "LggrVIII.stage_unit_vs_e2e_integration_kernel_and_dashboard_audit"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -2153,6 +2285,7 @@
     "LggrVIII.three_party_no_signalling_c3_interval_family_audit"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -2171,6 +2304,7 @@
     "LggrVIII.dynamic_boundary_schema_synthesis_under_online_collisions"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -2189,6 +2323,7 @@
     "LggrVIII.adversarial_prompt_injection_schema_and_side_channel_audit"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -2207,6 +2342,7 @@
     "LggrVIII.equal_info_baseline_vs_lggr_migration_and_obligation_audit"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -2225,6 +2361,7 @@
     "LggrVIII.multi_cycle_catalyst_wear_vs_periodic_rejuvenation_schedule"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -2243,6 +2380,7 @@
     "LggrVIII.dfa_non_resetting_concatenation_vs_explicit_reset_gluing"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -2261,6 +2399,7 @@
     "LggrVIII.cptp_state_blindspot_vs_operator_residual_and_completion"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -2279,6 +2418,7 @@
     "LggrVIII.mayer_vietoris_disconnected_overlap_and_coboundary_reconciliation"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -2297,6 +2437,7 @@
     "LggrVIII.asynchronous_replay_order_prefix_peak_envelope_and_robustness"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -2315,6 +2456,7 @@
     "LggrVIII.sliding_window_truncation_vs_horizon_rebalancing_audit"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -2333,6 +2475,7 @@
     "LggrVIII.optional_stopping_early_gain_skew_vs_tail_drawdown_cap"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -2351,6 +2494,7 @@
     "LggrVIII.regge_hinge_deficit_curvature_and_boundary_gauss_bonnet_holonomy"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -2369,6 +2513,7 @@
     "LggrVIII.coalitional_shapley_attribution_under_synergistic_fault_masking"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -2387,6 +2532,7 @@
     "LggrVIII.pullback_square_mediator_uniqueness_and_interface_factorization_audit"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -2405,6 +2551,7 @@
     "LggrVIII.multi_loop_two_complex_cup_product_and_hodge_harmonic_kernel_audit"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -2423,6 +2570,7 @@
     "LggrVIII.figure_eight_wedge_junction_gauge_shift_and_mayer_vietoris_hodge_audit"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -2441,6 +2589,7 @@
     "LggrVIII.shared_chord_bicyclic_diamond_hodge_and_mayer_vietoris_audit"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -2459,6 +2608,7 @@
     "LggrVIII.concurrent_code_swarm_symmetry_broken_directive_vs_bilateral_oscillation"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -2477,6 +2627,7 @@
     "LggrVIII.diamond_codebase_pullback_mediator_contract_synthesis_audit"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -2495,6 +2646,7 @@
     "LggrVIII.iterative_codebase_feature_evolution_catalyst_debt_and_rejuvenation_audit"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -2513,6 +2665,7 @@
     "LggrVIII.stateful_codebase_transaction_dfa_reset_gluing_audit"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -2531,6 +2684,7 @@
     "LggrVIII.async_codebase_replay_order_prefix_envelope_and_barrier_gluing_audit"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -2549,6 +2703,7 @@
     "LggrVIII.coalitional_codebase_synergistic_fault_masking_and_shapley_audit"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -2567,6 +2722,7 @@
     "LggrVIII.mayer_vietoris_codebase_disconnected_overlap_and_coboundary_audit"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -2585,6 +2741,7 @@
     "LggrVIII.windowed_drift_codebase_horizon_truncation_and_rebalancing_audit"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -2603,6 +2760,7 @@
     "LggrVIII.optional_stopping_codebase_early_gain_skew_and_drawdown_cap_audit"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -2621,6 +2779,7 @@
     "LggrVIII.cptp_codebase_state_blindspot_and_operator_completion_audit"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -2639,6 +2798,7 @@
     "LggrVIII.regge_codebase_hinge_deficit_and_gauss_bonnet_holonomy_audit"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -2657,6 +2817,7 @@
     "LggrVIII.kinduction_codebase_bounded_unrolling_and_invariant_strengthening_audit"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -2675,6 +2836,7 @@
     "LggrVIII.jacobian_codebase_stealth_blindspot_and_observability_audit"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -2693,6 +2855,7 @@
     "LggrVIII.boundary_quorum_codebase_mixing_and_quorum_masking_audit"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -2711,6 +2874,7 @@
     "LggrVIII.lease_overlap_codebase_split_brain_and_fencing_token_audit"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -2729,6 +2893,7 @@
     "LggrVIII.contextual_sheaf_codebase_hollow_triangle_and_reconciliation_audit"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -2747,6 +2912,7 @@
     "LggrVIII.watcher_dropout_codebase_gram_rank_deficiency_and_restoration_audit"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -2765,6 +2931,7 @@
     "LggrVIII.policy_reversal_codebase_cf_vs_neg_mass_ranking_audit"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -2783,6 +2950,7 @@
     "LggrVIII.fiber_splitting_codebase_unassisted_reflection_and_tool_probe_audit"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -2801,6 +2969,7 @@
     "LggrVIII.disagreement_council_codebase_collapsing_consensus_and_side_channel_audit"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -2819,6 +2988,7 @@
     "LggrVIII.six_role_codebase_schema_validation_and_double_count_deduplication_audit"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -2837,6 +3007,7 @@
     "LggrVIII.path_kernel_codebase_stage_vs_e2e_and_dashboard_adequacy_audit"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -2855,6 +3026,7 @@
     "LggrVIII.dynamic_schema_codebase_online_collision_and_refinement_audit"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -2873,6 +3045,7 @@
     "LggrVIII.adversarial_schema_codebase_spoofed_metadata_and_side_channel_audit"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -2891,6 +3064,7 @@
     "LggrVIII.graceful_shedding_codebase_variable_duration_burst_audit"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -2909,6 +3083,7 @@
     "LggrVIII.obligation_migration_codebase_equal_info_audit"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -2927,6 +3102,7 @@
     "LggrVIII.three_party_c3_codebase_constant_bound_audit"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -2945,6 +3121,7 @@
     "LggrVIII.multi_loop_hodge_codebase_cup_and_harmonic_kernel_audit"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -2963,6 +3140,7 @@
     "LggrVIII.figure_eight_wedge_codebase_junction_gauge_and_hodge_audit"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -2981,6 +3159,7 @@
     "LggrVIII.shared_chord_diamond_codebase_hodge_and_mayer_vietoris_audit"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -2999,6 +3178,7 @@
     "LggrVIII.governed_relaxation_codebase_authority_gate_and_minimum_slack_audit"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -3017,6 +3197,7 @@
     "LggrVIII.non_abelian_braid_codebase_word_ordering_and_yang_baxter_audit"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -3035,6 +3216,7 @@
     "LggrVIII.subgradient_pivot_codebase_weight_sensitivity_and_bottleneck_audit"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -3053,6 +3235,7 @@
     "LggrVIII.policy_ratchet_codebase_cumulative_drift_and_sunset_revocation_audit"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -3071,6 +3254,7 @@
     "LggrVIII.skew_repair_codebase_norm_attainment_divergence_audit"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -3089,6 +3273,7 @@
     "LggrVIII.poe_veto_codebase_zero_collapse_and_compromise_mass_audit"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -3107,6 +3292,7 @@
     "LggrVIII.simultaneous_split_codebase_budget_starvation_and_joint_guard_audit"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -3125,6 +3311,7 @@
     "LggrVIII.mermin_peres_codebase_parity_obstruction_and_noncontextual_audit"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -3143,6 +3330,7 @@
     "LggrVIII.side_info_capacity_codebase_ambiguity_and_bit_budget_audit"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -3161,6 +3349,7 @@
     "LggrVIII.deadline_bin_packing_codebase_edf_and_overload_admission_audit"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -3179,6 +3368,7 @@
     "LggrVIII.projective_tower_codebase_r1_limit_and_integral_lift_audit"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -3197,6 +3387,7 @@
     "LggrVIII.bell_polytope_codebase_chsh_violation_and_lhv_audit"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -3215,6 +3406,7 @@
     "LggrVIII.weighted_relaxation_codebase_pareto_tie_and_minimum_weighted_slack_audit"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -3233,6 +3425,7 @@
     "LggrVIII.threshold_governance_codebase_prefix_excursion_and_endpoint_audit"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -3251,6 +3444,7 @@
     "LggrVIII.closed_loop_repair_codebase_open_loop_residual_and_witness_convergence_audit"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -3269,6 +3463,7 @@
     "LggrVIII.product_retraction_codebase_non_injective_projection_and_section_lift_audit"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -3287,6 +3482,7 @@
     "OmegaWorld.LGGRWitness.setoidPairFactorOrLGGRWitness"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -3305,6 +3501,7 @@
     "OmegaWorld.LGGRWitness.scope_boundary_snapshot"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Not yet curated into a core claim; extracted from the Lean source."
@@ -3397,6 +3594,7 @@
     "PrimitiveDifference.diff_cocycle"
    ],
    "rust_tests": [],
+   "claim_correspondence": "DOCSTRING_ONLY",
    "depends_on": [],
    "archive_refs": [],
    "notes": "Module-level node; its 75 lemmas are not individual claims."
@@ -3511,6 +3709,11 @@
   {
    "from": "LGGR-C04",
    "to": "LGGR-C21",
+   "kind": "depends_on"
+  },
+  {
+   "from": "LGGR-C21",
+   "to": "LGGR-C37",
    "kind": "depends_on"
   },
   {

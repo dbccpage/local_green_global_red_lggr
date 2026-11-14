@@ -10,7 +10,7 @@ which stays as it is.
 
 ```console
 cd code/rust
-cargo test                       # 48 tests: claims, examples, receipts, event chains, DAG integrity
+cargo test                       # 52 tests: claims, examples, receipts, event chains, boundary regressions, DAG integrity
 cargo run --bin lggr_derive      # re-derive the verdict of every file in examples/
 ```
 
@@ -30,6 +30,9 @@ cargo run --bin lggr_derive      # re-derive the verdict of every file in exampl
 |---|---|
 | `tests/derivations.rs` | one test per claim (`cNN_*`, cited by name in the DAG) |
 | `tests/examples.rs` | all 13 `examples/`, 11 `receipts/`, cookbook instances, three recorded `workflows/` event chains |
+| `tests/boundary.rs` | malformed or ill-typed input is rejected, never truncated into evidence |
 | `tests/dag.rs` | DAG ids, edges, acyclicity, status evidence, cited Lean theorems and Rust tests exist, ledger agreement |
+
+`cargo run --bin lean_census -- emit|check` runs the Lean axiom census used in CI (see `.github/workflows/derivations.yml`).
 
 No floats, solver or tolerance. A passing test describes the supplied finite instances only.

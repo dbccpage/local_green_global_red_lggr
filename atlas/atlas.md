@@ -34,6 +34,9 @@ been replayed.
 | `PROSE_ONLY` | Stated in documentation only; no Lean theorem or Rust test yet. |
 | `OPEN` | Stated as a goal or conjecture; neither proved nor tested. |
 
+`PROVED_LEAN` records proof existence. Whether the theorem says exactly what the ledger row says is tracked
+separately as `claim_correspondence` in the DAG (`AUTHOR_MATCHED`, `DOCSTRING_ONLY`, `REVIEWED`).
+
 ## Phases
 
 1. **Done (this pass):** consolidate folders; first-pass claims from `examples/`, `cookbooks/`, `code/`,
