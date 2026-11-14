@@ -16,5 +16,7 @@
   them are historical records.
 - `MANIFEST.sha256`: paths renamed. A hash was refreshed only where the old entry matched the old file
   and this change edited that file (11 entries). Entries that were already stale stay stale.
+- Added `atlas/reproduce.md`: current commands for archived READMEs that still name `papers/` (review
+  finding 5). The archive itself is not rewritten.
 - Created `atlas/`, `dag/` and `code/rust/`, matching the Omega Codex layout. `lean4/` already existed
   and is unchanged.
