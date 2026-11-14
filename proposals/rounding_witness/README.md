@@ -47,11 +47,23 @@ so to first order the defect is at most √(Σ a_k² τ_k²) ≤ Σ |a_k| τ_k. 
 - *A finite-ε linear bound does hold.* Telescoping one angle at a time, each rotation moves the vector by at most |ε_k| times the current mass, which is at most 1, so |Δu| ≤ Σ τ_k exactly. This is the honest analogue of `cycle_defect_bound` and is a better first Lean target than the quadrature form.
 - *One vector only.* The corollary says nothing about the aggregate score in §5, which couples many vectors through weights and a nonzero fit residual (see §5).
 
+**Exact regression for the √k gap.** The fixture's quarter-turn chain 0 → 1 → … → k, with every θ_j = π/2 (half-angle t_j = 1), has a_j = 1 and JᵀJ = I_k. With ε_j = 1/7, |Σ ε_j J_j|² = k/49 while (Σ |a_j ε_j|)² = k²/49. Checked exactly for k = 2, 3, 5, 8.
+
+### OPEN Lean targets, in order
+
+None is written. Each is a candidate, not a theorem of LGGR.
+
+1. **Gram identity.** J(θ)ᵀ J(θ) = diag(a_1², …, a_{n−1}²) under the freshness rule. This packages claims 1 and 2.
+2. **Finite-ε triangle bound.** ‖u(θ+ε) − u(θ)‖₂ ≤ Σ_k |ε_k|. Exact at every ε, and the direct analogue of `cycle_defect_bound`.
+3. **Explicit second-order remainder.** Replace the unspecified O(|ε|³) in the squared expansion with a stated bound, so the quadrature form becomes a finite-ε statement.
+
 ## 5. Worked example: projection after optimization
 
 **Pattern.** A move that is green in one presentation (continuous angles) becomes red after the forced projection to the admitted presentation (the integer word grid). Each coordinate's snap is within half a step. The aggregate is not.
 
-Source: the Google VQCC dfthcsos verifier formula, run by the proposer. Rows marked † are measured on the public sample submission with pinned hashes. Other rows are measured on Syed Asad Ali's public Apache-2.0 entry (H200 runs, 2026-11-13). Scores are float64 from the verifier's own functions, not exact arithmetic. Gate: error_2 ≤ 20 mHa.
+**Evidence status: reported external evidence, not a replayable LGGR witness.** The table stays in that status until every row has a filled entry in [`provenance_manifest.json`](provenance_manifest.json) (verifier revision and digest, input digests, configuration, command, environment, measured values). The manifest is currently an unfilled template.
+
+Source: the Google VQCC dfthcsos verifier formula, run by the proposer. Rows marked † are reported as measured on the public sample submission with pinned hashes; the hashes are not yet recorded here. Other rows are measured on Syed Asad Ali's public Apache-2.0 entry (H200 runs, 2026-11-13). Scores are float64 from the verifier's own functions, not exact arithmetic. Gate: error_2 ≤ 20 mHa.
 
 | Case | Each word | error_2 | Verdict |
 |---|---|---|---|
@@ -65,12 +77,23 @@ Source: the Google VQCC dfthcsos verifier formula, run by the proposer. Rows mar
 
 The last two rows are the witness: better in the continuous presentation (20.0 to 15.1 mHa), about 7× worse once projected back.
 
-**Why the aggregate is red even though one vector's errors add in quadrature.** error_2 couples 1,220 vectors through their weights and a nonzero fit residual r. Its expansion has a linear term 2⟨r, dH·ε⟩ and cross terms between words, and the orthogonality claims remove none of them. Letting each word pick its other neighbour (joint lifts) moved 11-bit error_2 only from 19.14 to 18.85 mHa. That expansion is open.
+**Why the aggregate is red even though one vector's errors add in quadrature.**
+
+*Objective.* Write H(θ) for the rebuilt two-body tensor (a weighted sum over 1,220 vectors), H* for the target, and r(θ) = H(θ) − H* for the residual. The reported score is the norm E(θ) = ‖r(θ)‖_F, gated at 20 mHa. Expand the *square*, with D = ∂H/∂θ:
+
+    E(θ+ε)² = E(θ)² + 2⟨r, Dε⟩ + ‖Dε‖² + ⟨r, D²[ε, ε]⟩ + O(|ε|³).
+
+So 2⟨r, Dε⟩ is the first-order term of E², not of E. Then E(θ+ε) = √(E² + that increment).
+
+*After optimization the first-order term can vanish.* At an unconstrained least-squares stationary point, Dᵀr = 0, so ⟨r, Dε⟩ = 0 for every ε, even though r ≠ 0. The snap is then governed by the second-order form εᵀ(DᵀD + ⟨r, D²⟩)ε. That is exactly the regime of the free-float refit row. A small objective gain from drifting off the lattice buys nothing once the snap ε is applied, because the curvature term then decides the outcome. If the refit optimised a different objective under a gate (for example λ_eff subject to the error gates), Dᵀr need not vanish, and the run's receipt should say which objective was optimised.
+
+*What orthogonality does not remove.* The tree claims make each vector's own Jacobian block diagonal in its angles. DᵀD still couples words in different vectors through the weights and the shared tensor, and ⟨r, D²⟩ adds curvature that is not sign-definite. These coupled and curvature terms can dominate after optimization. Measured effect: letting each word pick its other neighbour (joint lifts) moved 11-bit error_2 only from 19.14 to 18.85 mHa. A bound on this second-order form is open.
 
 **Local tightness (measured, scoped).** At the 8-bit point, no single ±1 move among the 8,000 words with the largest gradient improved the objective under the error gate. Single moves lowered error_1 (19.61 to 18.75 mHa) but error_2 stayed at 20.0 mHa. This is a finite check on that ranked neighbourhood only.
 
 ## 6. Limits
 
 - No physical claim. This is a finite rounding map and a score.
-- The table is float64 and comes from the proposer's runs; this repository does not reproduce it.
+- The table is float64 and comes from the proposer's runs; this repository does not reproduce it. It is reported external evidence until the provenance manifest is filled.
+- The units of error_1 are not stated in the source table and need to be confirmed.
 - Contest data and derived factorizations stay out of this repository. Only the data-free fixture and published numbers are here.

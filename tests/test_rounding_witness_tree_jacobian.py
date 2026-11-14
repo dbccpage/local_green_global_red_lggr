@@ -15,6 +15,8 @@ Checked here, under the freshness rule (c_k carries no mass when split off):
   linearised quadrature  |sum_k eps_k J_k|^2 = sum_k a_k^2 eps_k^2, and
   sqrt of that <= sum_k |a_k eps_k|, with equality iff at most one term is
   nonzero (checked on squares, so it stays exact).
+  sqrt(k) gap: on the quarter-turn chain J^T J = I_k, so k equal errors give
+  linearised defect^2 = k eps^2 against tolerance-sum bound^2 = k^2 eps^2.
 Negative control: re-splitting into a child that already carries mass
 breaks claim 1.
 
@@ -131,11 +133,23 @@ class TreeJacobianExactTests(unittest.TestCase):
                 saw_strict = True
         self.assertTrue(saw_strict and saw_equal)
 
-    def test_sqrt_k_ratio_for_equal_weighted_errors(self):
-        # k equal weighted errors x: quadrature^2 = k x^2, linear^2 = k^2 x^2.
-        for k in range(1, 9):
-            x = Fraction(1, 7)
-            self.assertEqual((k * x) ** 2 / (k * x * x), k)
+    def test_sqrt_k_gap_on_quarter_turn_chain(self):
+        # Chain 0 -> 1 -> ... -> k, every theta_j = pi/2 (half-angle t = 1).
+        # Then a_j = 1 and J^T J = I_k. With eps_j = 1/7 the linearised
+        # defect^2 is k/49 while the tolerance-sum bound^2 is k^2/49.
+        eps = Fraction(1, 7)
+        for k in (2, 3, 5, 8):
+            steps = [(j - 1, j) for j in range(1, k + 1)]
+            u, cols, a = build(k + 1, steps, [Fraction(1)] * k)
+            self.assertEqual(u, [Fraction(0)] * k + [Fraction(1)])
+            self.assertEqual(a, [Fraction(1)] * k)
+            gram = [[dot(cols[i], cols[j]) for j in range(k)] for i in range(k)]
+            self.assertEqual(gram, [[int(i == j) for j in range(k)] for i in range(k)])
+            d = [sum(eps * col[i] for col in cols) for i in range(k + 1)]
+            self.assertEqual(dot(d, d), Fraction(k, 49))
+            linear = sum(abs(aj * eps) for aj in a)
+            self.assertEqual(linear * linear, Fraction(k * k, 49))
+            self.assertEqual(linear * linear / dot(d, d), k)
 
     def test_negative_control_non_fresh_child_breaks_claim1(self):
         # Fixed witness: split 0 -> 1, then rotate (0, 1) again while 1 has mass.
