@@ -230,3 +230,5 @@ lean4/b/
 # Lean axiom census scratch (generated in CI)
 lean4/Census.lean
 census.txt
+lean4/Types.lean
+types.txt

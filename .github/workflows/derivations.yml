@@ -34,6 +34,11 @@ jobs:
           cargo run -q --locked --manifest-path code/rust/Cargo.toml --bin lean_census -- emit > lean4/Census.lean
           (cd lean4 && lake env lean Census.lean) > census.txt
           cargo run -q --locked --manifest-path code/rust/Cargo.toml --bin lean_census -- check < census.txt
+      - name: Theorem statements match dag/derivations/lean_signatures.json
+        run: |
+          cargo run -q --locked --manifest-path code/rust/Cargo.toml --bin lean_census -- emit-types > lean4/Types.lean
+          (cd lean4 && lake env lean Types.lean) > types.txt
+          cargo run -q --locked --manifest-path code/rust/Cargo.toml --bin lean_census -- check-types < types.txt
 
   python:
     runs-on: ubuntu-latest

@@ -130,3 +130,21 @@ fn ledger_lists_every_node_with_its_status() {
         }
     }
 }
+
+/// Every cited LggrVII/LggrVIII/World theorem has a pinned statement; CI compares the pins with
+/// `#check` output, so a changed statement fails until it is re-reviewed against its claim.
+#[test]
+fn dag_cited_theorems_have_pinned_statements() {
+    let d = dag();
+    let sigs: Value = serde_json::from_str(&std::fs::read_to_string(root().join("dag/derivations/lean_signatures.json")).unwrap()).unwrap();
+    let sigs = sigs.as_object().unwrap();
+    for n in nodes(&d) {
+        for t in n["lean_theorems"].as_array().unwrap() {
+            let t = t.as_str().unwrap();
+            if t.starts_with("LggrVII.") || t.starts_with("LggrVIII.") || t.starts_with("OmegaWorld.") {
+                let ty = sigs.get(t).and_then(|v| v.as_str()).unwrap_or_else(|| panic!("{t} has no pinned statement"));
+                assert!(!ty.is_empty() && !ty.contains("sorry"), "{t}: bad pinned statement");
+            }
+        }
+    }
+}

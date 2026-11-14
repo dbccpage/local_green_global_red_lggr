@@ -55,5 +55,7 @@
   (`AUTHOR_MATCHED` for core claims, `DOCSTRING_ONLY` for the Lean inventory; none `REVIEWED` yet).
 - CI: `.github/workflows/derivations.yml` runs `cargo test`, `lake build`, the Lean axiom census
   (`lean_census`, which fails if any cited theorem gains or loses `Classical.choice` or uses another
-  axiom such as `sorryAx`) and the Python app tests.
+  axiom such as `sorryAx`), a theorem-statement check against `dag/derivations/lean_signatures.json`
+  (160 pinned `#check` statements; a changed statement fails CI until it is re-reviewed), and the
+  Python app tests.
 - Counts: 171 nodes; 148 `PROVED_LEAN`, 11 `TESTED_RUST`, 7 `EMPIRICAL`, 5 `OPEN`.

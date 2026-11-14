@@ -36,6 +36,8 @@ been replayed.
 
 `PROVED_LEAN` records proof existence. Whether the theorem says exactly what the ledger row says is tracked
 separately as `claim_correspondence` in the DAG (`AUTHOR_MATCHED`, `DOCSTRING_ONLY`, `REVIEWED`).
+Each cited theorem's statement is pinned in `dag/derivations/lean_signatures.json`; CI fails if a statement
+changes, so the correspondence must be re-reviewed before the pin is updated.
 
 ## Phases
 
