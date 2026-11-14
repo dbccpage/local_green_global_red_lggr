@@ -1,0 +1,22 @@
+[package]
+name = "lggr_derivations"
+version = "0.1.0"
+edition = "2021"
+description = "Exact rational and integer derivation kernels for the LGGR claim ledger. AuthorityEffect: None."
+license = "Apache-2.0"
+publish = false
+
+[lib]
+name = "lggr_derivations"
+path = "src/lib.rs"
+
+[[bin]]
+name = "lggr_derive"
+path = "src/bin/lggr_derive.rs"
+
+[dependencies]
+num-bigint = "0.4"
+num-rational = "0.4"
+num-traits = "0.2"
+serde_json = { version = "1", features = ["arbitrary_precision"] }
+sha2 = "0.10"
