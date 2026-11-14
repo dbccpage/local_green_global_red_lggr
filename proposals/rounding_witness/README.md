@@ -2,7 +2,7 @@
 
 **AuthorityEffect:** None
 **Status:** proposal, 2026-11-13. Nothing here is admitted into LGGR, and no claim status changes.
-**Data:** none. No contest data, fitted factorization or derived tensor is stored here. The table in §4 repeats published scores only.
+**Data:** none. No contest data, fitted factorization or derived tensor is stored here. The table in §5 repeats published scores only.
 
 ## 1. Question
 
