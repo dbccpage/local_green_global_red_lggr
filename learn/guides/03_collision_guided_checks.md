@@ -2,7 +2,7 @@
 
 **AuthorityEffect: None.** Recipe: [`recipes/check_selector.py`](../recipes/check_selector.py).
 
-> **Measured, with a split result** ([swarm report](../../experiments/lggr_rsi_swarm/REPORT.md)). This recipe is a simplified form of selection policy C. The full policy was run on 400 generated instances, with 3 Claude Haiku 5.5 draws each and a budget of 4 of 16 units:
+> **Measured, with a split result** ([swarm report](../../workflows/lggr_rsi_swarm/REPORT.md)). This recipe is a simplified form of selection policy C. The full policy was run on 400 generated instances, with 3 Claude Haiku 5.5 draws each and a budget of 4 of 16 units:
 >
 > - **As the host's own selector it helps.** C resolved **+26.8 points** more cases correctly than expected-uncertainty-reduction selection (B), with 95% CI [22.5, 30.9]. That is 76% versus 50% correct.
 > - **As advice to a live agent it adds nothing.** Controllers given C's collision witness or B's ranking both reached about 85% correct, and so did controllers given no advice at all. The difference was −0.1 points, CI [−1.3, 1.3]. The agent already does what the advice suggests.

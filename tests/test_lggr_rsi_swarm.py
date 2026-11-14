@@ -10,8 +10,8 @@ import tempfile
 import threading
 import unittest
 
-from experiments.lggr_rsi_swarm import runner
-from experiments.lggr_rsi_swarm.generate import build, build_v2, generate, load
+from workflows.lggr_rsi_swarm import runner
+from workflows.lggr_rsi_swarm.generate import build, build_v2, generate, load
 from swarm.advisors import note
 from swarm.domain import MALFORMED, local_report
 from swarm.evidence_access import Denied as CheckDenied, Gateway

@@ -13,6 +13,15 @@ import zipfile
 ROOT = Path(__file__).resolve().parents[3]
 
 
+
+def snapshot_package(names):
+    """Package root inside a recorded source snapshot.
+
+    Runs recorded before the experiments/ -> workflows/ rename snapshot their
+    sources under experiments/, so replay must import that historical name.
+    """
+    return "workflows" if any(str(n).startswith("workflows/") for n in names) else "experiments"
+
 def verify(directory):
     directory = Path(directory).resolve()
     rows = [json.loads(line) for line in (directory / "events.jsonl").read_text(encoding="utf-8").splitlines()]
@@ -35,7 +44,7 @@ def verify(directory):
             target = Path(td) / name
             target.parent.mkdir(parents=True, exist_ok=True)
             target.write_bytes(raw)
-        result = subprocess.run([sys.executable, "-m", "experiments.live_five_agent_swarm.runner", "replay", str(directory / "events.jsonl")],
+        result = subprocess.run([sys.executable, "-m", snapshot_package(metadata["source_hashes"]) + ".live_five_agent_swarm.runner", "replay", str(directory / "events.jsonl")],
                                 cwd=td, text=True, capture_output=True)
         if result.returncode:
             raise ValueError(result.stderr)

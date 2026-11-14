@@ -7,7 +7,7 @@ The selector buys a check that separates that pair, preferring the one that
 removes the most opposite-verdict pairs in the worst case, per unit cost.
 
 This is a simplified form of policy C in the LGGR/RSI swarm experiment
-(experiments/lggr_rsi_swarm/REPORT.md). There the full policy beat
+(workflows/lggr_rsi_swarm/REPORT.md). There the full policy beat
 expected-uncertainty-reduction selection under the host rule (+0.268 at 4
 units) and added nothing as advice to live agents. This recipe's own
 performance was not measured.

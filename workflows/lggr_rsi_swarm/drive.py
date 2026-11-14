@@ -1,6 +1,6 @@
 """Run evaluation chunks sequentially with a cumulative spend gate. Never retries a failed chunk.
 
-python -m experiments.lggr_rsi_swarm.drive --target 100
+python -m workflows.lggr_rsi_swarm.drive --target 100
 Stops before a chunk if committed spend plus that chunk's worst-case cost (twice the largest chunk
 cost so far, or the full reservation of its request count before any chunk ran) would exceed the target.
 """
@@ -41,7 +41,7 @@ def main():
         if before + 2 * largest > args.target:
             print(json.dumps({"stop": "spend gate", "committed_usd": str(before), "next": out.name}), flush=True)
             return 3
-        result = subprocess.run([sys.executable, "-m", "experiments.lggr_rsi_swarm.runner", "live", str(out), "--split", "evaluation",
+        result = subprocess.run([sys.executable, "-m", "workflows.lggr_rsi_swarm.runner", "live", str(out), "--split", "evaluation",
                                  "--part", part, "--chunk", str(chunk), "--concurrency", str(args.concurrency),
                                  "--resolved-model", args.resolved_model])
         spent = committed() - before

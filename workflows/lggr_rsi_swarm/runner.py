@@ -1,8 +1,8 @@
 """LGGR/RSI live swarm: proposal waves, offline arms, live controllers, repair and RSI.
 
 Usage:
-  python -m experiments.lggr_rsi_swarm.runner live  OUTDIR --split development|evaluation --part swarm|rsi --chunk N
-  python -m experiments.lggr_rsi_swarm.runner replay OUTDIR/events.jsonl[.gz]
+  python -m workflows.lggr_rsi_swarm.runner live  OUTDIR --split development|evaluation --part swarm|rsi --chunk N
+  python -m workflows.lggr_rsi_swarm.runner replay OUTDIR/events.jsonl[.gz]
 The same `campaign` code runs live and in replay; replay feeds recorded provider
 results back and requires every event to be reproduced exactly.
 """

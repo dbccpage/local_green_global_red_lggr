@@ -20,8 +20,8 @@ Offline verification (no API calls):
 
 ```powershell
 python -m unittest tests.test_concurrent_five_agent_swarm -v
-python -m experiments.concurrent_five_agent_swarm.verify experiments/concurrent_five_agent_swarm/evidence/development experiments/concurrent_five_agent_swarm/evidence/evaluation experiments/concurrent_five_agent_swarm/evidence/continuation
-python -m experiments.concurrent_five_agent_swarm.tools.summarize
+python -m workflows.concurrent_five_agent_swarm.verify workflows/concurrent_five_agent_swarm/evidence/development workflows/concurrent_five_agent_swarm/evidence/evaluation workflows/concurrent_five_agent_swarm/evidence/continuation
+python -m workflows.concurrent_five_agent_swarm.tools.summarize
 ```
 
 The verifier hashes source_snapshot.zip against the recorded source hashes, then
@@ -37,7 +37,7 @@ recorded client observation.
 Provider-side verification is read-only and requires the same OpenRouter account:
 
 ```powershell
-python experiments/live_five_agent_swarm/tools/verify_provider.py experiments/concurrent_five_agent_swarm/evidence/development experiments/concurrent_five_agent_swarm/evidence/evaluation experiments/concurrent_five_agent_swarm/evidence/continuation
+python workflows/live_five_agent_swarm/tools/verify_provider.py workflows/concurrent_five_agent_swarm/evidence/development workflows/concurrent_five_agent_swarm/evidence/evaluation workflows/concurrent_five_agent_swarm/evidence/continuation
 ```
 
 A new paid run requires committed source, an unused direct child of `evidence/`,
@@ -50,7 +50,7 @@ remove reservations merely to rerun a failed case. Evaluation failures are part
 of the evidence, not invitations to replace seeds.
 
 ```powershell
-python -m experiments.concurrent_five_agent_swarm.runner live experiments/concurrent_five_agent_swarm/evidence/new-run --phase development --budget 0.50
+python -m workflows.concurrent_five_agent_swarm.runner live workflows/concurrent_five_agent_swarm/evidence/new-run --phase development --budget 0.50
 ```
 
 This is a small synthetic experiment across three model families. It does not

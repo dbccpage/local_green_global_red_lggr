@@ -97,7 +97,7 @@ if report["verdict"] == "reject":
 ## Why these pieces (evidence)
 
 This repository includes a 3,600-session live experiment with Claude agent swarms
-([report](https://github.com/dbccpage/local_green_global_red_lggr/blob/lggr-rsi-swarm-live/experiments/lggr_rsi_swarm/REPORT.md), PR #143). Two findings shaped this package:
+([report](https://github.com/dbccpage/local_green_global_red_lggr/blob/lggr-rsi-swarm-live/workflows/lggr_rsi_swarm/REPORT.md), PR #143). Two findings shaped this package:
 
 1. **The deterministic host check carries the weight.** Applied to the same evidence, agents'
    verdicts and a fixed elimination rule had the same false-accept rate (3.5% vs 3.5%) and

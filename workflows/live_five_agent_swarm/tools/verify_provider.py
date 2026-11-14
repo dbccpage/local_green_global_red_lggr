@@ -11,7 +11,7 @@ import urllib.parse
 ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT))
 from lggr.benchmarks import load_openrouter_credentials
-from experiments.live_five_agent_swarm.client import open_private
+from workflows.live_five_agent_swarm.client import open_private
 
 
 def verify(directory):

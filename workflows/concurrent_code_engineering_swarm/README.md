@@ -1,4 +1,4 @@
-# Concurrent Multi-Agent Code-Engineering Swarm (`experiments/concurrent_code_engineering_swarm`)
+# Concurrent Multi-Agent Code-Engineering Swarm (`workflows/concurrent_code_engineering_swarm`)
 
 This package implements a real multi-agent software engineering swarm where three concurrent LLM agents (`openai/gpt-4o-mini`, `anthropic/claude-haiku-4.5`, and `deepseek/deepseek-chat`) independently inspect, test, and patch coupled Python modules in a 3-stage financial settlement codebase:
 
@@ -702,7 +702,7 @@ In the `weighted_relaxation` topology (`StreamingCodebaseWeightedRelaxationMonit
 
 ## 44. Live 3-Agent Threshold Governance Prefix Excursion vs. Endpoint Cancellation Codebase Campaign (`--topology threshold_governance`, Theorem 137)
 
-- **Evidence path:** `experiments/concurrent_code_engineering_swarm/evidence/threshold_governance_pilot_run/`
+- **Evidence path:** `workflows/concurrent_code_engineering_swarm/evidence/threshold_governance_pilot_run/`
 - **5-model benchmark receipt:** `receipts/live_benchmarks/codebase_threshold_governance_benchmark.json` (`SHA-256: f1ac88c6542faf6567c09215cc43c0d303e3559a8e5476f305ea9bd7bfad3fab`)
 - **Total API calls:** `96` (`max_inflight_requests = 3`, `concurrent_waves = 15`)
 - **Total OpenRouter spend:** `$0.0855950557`
@@ -721,7 +721,7 @@ In the `weighted_relaxation` topology (`StreamingCodebaseWeightedRelaxationMonit
 
 ## 45. Live 3-Agent Closed-Loop Witness-Guided Boundary Repair vs. Single-Shot Open-Loop Residual Codebase Campaign (`--topology closed_loop_repair`, Theorem 138)
 
-- **Evidence path:** `experiments/concurrent_code_engineering_swarm/evidence/closed_loop_repair_pilot_run/`
+- **Evidence path:** `workflows/concurrent_code_engineering_swarm/evidence/closed_loop_repair_pilot_run/`
 - **5-model benchmark receipt:** `receipts/live_benchmarks/codebase_closed_loop_repair_benchmark.json` (`SHA-256: 41ceea3ebf74309a7d6b01f984133a4d4de6dce3bb0e0414e4ea9b57adccfc57`)
 - **Total API calls:** `92` (`max_inflight_requests = 3`, `concurrent_waves = 30`)
 - **Total OpenRouter spend:** `$0.0896549792`
@@ -761,50 +761,50 @@ Executed across `3` concurrent LLM workers (`openai/gpt-4o-mini`, `anthropic/cla
 python -m unittest tests.test_concurrent_code_engineering_swarm -v
 
 # Replay archived live 3-agent linear, 4-agent diamond, 3-agent catalyst, 3-agent stateful DFA, 3-agent replay-order, 3-agent coalitional, 3-agent Mayer-Vietoris, 3-agent windowed-drift, 3-agent optional-stopping, 3-agent CPTP channel, 3-agent Regge holonomy, 3-agent k-induction, 3-agent Jacobian, 3-agent boundary-quorum, 3-agent lease-overlap, 3-agent contextual-sheaf, 3-agent watcher-dropout, 3-agent policy-reversal, 3-agent fiber-splitting, 3-agent disagreement-council, 3-agent six-role deduplication, 3-agent path-kernel dashboard, 3-agent dynamic-schema synthesis, 3-agent adversarial-schema side-channel, 3-agent graceful-shedding, 3-agent obligation-migration, 3-agent three-party-c3, 3-agent multi-loop-hodge, 3-agent figure-eight-wedge, 3-agent shared-chord-diamond, 3-agent governed-relaxation, 3-agent non-abelian-braid, 3-agent subgradient-pivot, 3-agent policy-ratchet, 3-agent skew-repair, 3-agent poe-veto, 3-agent simultaneous-split, 3-agent mermin-peres, 3-agent side-info-capacity, 3-agent deadline-bin-packing, and 3-agent projective-tower evidence (no API calls)
-python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/pilot_run/events.jsonl
-python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/diamond_pilot_run/events.jsonl
-python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/catalyst_pilot_run/events.jsonl
-python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/dfa_pilot_run/events.jsonl
-python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/replay_pilot_run/events.jsonl
-python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/coalitional_pilot_run/events.jsonl
-python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/mayer_vietoris_pilot_run/events.jsonl
-python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/windowed_drift_pilot_run/events.jsonl
-python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/optional_stopping_pilot_run/events.jsonl
-python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/cptp_pilot_run/events.jsonl
-python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/regge_pilot_run/events.jsonl
-python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/kinduction_pilot_run/events.jsonl
-python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/jacobian_pilot_run/events.jsonl
-python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/quorum_pilot_run/events.jsonl
-python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/lease_pilot_run/events.jsonl
-python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/contextuality_pilot_run/events.jsonl
-python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/gram_dropout_pilot_run/events.jsonl
-python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/policy_reversal_pilot_run/events.jsonl
-python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/fiber_splitting_pilot_run/events.jsonl
-python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/council_pilot_run/events.jsonl
-python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/six_role_pilot_run/events.jsonl
-python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/path_kernel_pilot_run/events.jsonl
-python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/schema_synthesis_pilot_run/events.jsonl
-python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/adversarial_schema_pilot_run/events.jsonl
-python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/graceful_shedding_pilot_run/events.jsonl
-python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/obligation_migration_pilot_run/events.jsonl
-python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/three_party_c3_pilot_run/events.jsonl
-python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/multi_loop_hodge_pilot_run/events.jsonl
-python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/figure_eight_wedge_pilot_run/events.jsonl
-python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/shared_chord_diamond_pilot_run/events.jsonl
-python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/governed_relaxation_pilot_run/events.jsonl
-python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/non_abelian_braid_pilot_run/events.jsonl
-python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/subgradient_pivot_pilot_run/events.jsonl
-python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/policy_ratchet_pilot_run/events.jsonl
-python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/skew_repair_pilot_run/events.jsonl
-python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/poe_veto_pilot_run/events.jsonl
-python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/simultaneous_split_pilot_run/events.jsonl
-python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/mermin_peres_pilot_run/events.jsonl
-python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/side_info_capacity_pilot_run/events.jsonl
-python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/deadline_bin_packing_pilot_run/events.jsonl
-python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/projective_tower_pilot_run/events.jsonl
-python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/bell_polytope_pilot_run/events.jsonl
-python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/weighted_relaxation_pilot_run/events.jsonl
-python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/threshold_governance_pilot_run/events.jsonl
-python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/closed_loop_repair_pilot_run/events.jsonl
-python -m experiments.concurrent_code_engineering_swarm.runner replay experiments/concurrent_code_engineering_swarm/evidence/product_retraction_pilot_run/events.jsonl
+python -m workflows.concurrent_code_engineering_swarm.runner replay workflows/concurrent_code_engineering_swarm/evidence/pilot_run/events.jsonl
+python -m workflows.concurrent_code_engineering_swarm.runner replay workflows/concurrent_code_engineering_swarm/evidence/diamond_pilot_run/events.jsonl
+python -m workflows.concurrent_code_engineering_swarm.runner replay workflows/concurrent_code_engineering_swarm/evidence/catalyst_pilot_run/events.jsonl
+python -m workflows.concurrent_code_engineering_swarm.runner replay workflows/concurrent_code_engineering_swarm/evidence/dfa_pilot_run/events.jsonl
+python -m workflows.concurrent_code_engineering_swarm.runner replay workflows/concurrent_code_engineering_swarm/evidence/replay_pilot_run/events.jsonl
+python -m workflows.concurrent_code_engineering_swarm.runner replay workflows/concurrent_code_engineering_swarm/evidence/coalitional_pilot_run/events.jsonl
+python -m workflows.concurrent_code_engineering_swarm.runner replay workflows/concurrent_code_engineering_swarm/evidence/mayer_vietoris_pilot_run/events.jsonl
+python -m workflows.concurrent_code_engineering_swarm.runner replay workflows/concurrent_code_engineering_swarm/evidence/windowed_drift_pilot_run/events.jsonl
+python -m workflows.concurrent_code_engineering_swarm.runner replay workflows/concurrent_code_engineering_swarm/evidence/optional_stopping_pilot_run/events.jsonl
+python -m workflows.concurrent_code_engineering_swarm.runner replay workflows/concurrent_code_engineering_swarm/evidence/cptp_pilot_run/events.jsonl
+python -m workflows.concurrent_code_engineering_swarm.runner replay workflows/concurrent_code_engineering_swarm/evidence/regge_pilot_run/events.jsonl
+python -m workflows.concurrent_code_engineering_swarm.runner replay workflows/concurrent_code_engineering_swarm/evidence/kinduction_pilot_run/events.jsonl
+python -m workflows.concurrent_code_engineering_swarm.runner replay workflows/concurrent_code_engineering_swarm/evidence/jacobian_pilot_run/events.jsonl
+python -m workflows.concurrent_code_engineering_swarm.runner replay workflows/concurrent_code_engineering_swarm/evidence/quorum_pilot_run/events.jsonl
+python -m workflows.concurrent_code_engineering_swarm.runner replay workflows/concurrent_code_engineering_swarm/evidence/lease_pilot_run/events.jsonl
+python -m workflows.concurrent_code_engineering_swarm.runner replay workflows/concurrent_code_engineering_swarm/evidence/contextuality_pilot_run/events.jsonl
+python -m workflows.concurrent_code_engineering_swarm.runner replay workflows/concurrent_code_engineering_swarm/evidence/gram_dropout_pilot_run/events.jsonl
+python -m workflows.concurrent_code_engineering_swarm.runner replay workflows/concurrent_code_engineering_swarm/evidence/policy_reversal_pilot_run/events.jsonl
+python -m workflows.concurrent_code_engineering_swarm.runner replay workflows/concurrent_code_engineering_swarm/evidence/fiber_splitting_pilot_run/events.jsonl
+python -m workflows.concurrent_code_engineering_swarm.runner replay workflows/concurrent_code_engineering_swarm/evidence/council_pilot_run/events.jsonl
+python -m workflows.concurrent_code_engineering_swarm.runner replay workflows/concurrent_code_engineering_swarm/evidence/six_role_pilot_run/events.jsonl
+python -m workflows.concurrent_code_engineering_swarm.runner replay workflows/concurrent_code_engineering_swarm/evidence/path_kernel_pilot_run/events.jsonl
+python -m workflows.concurrent_code_engineering_swarm.runner replay workflows/concurrent_code_engineering_swarm/evidence/schema_synthesis_pilot_run/events.jsonl
+python -m workflows.concurrent_code_engineering_swarm.runner replay workflows/concurrent_code_engineering_swarm/evidence/adversarial_schema_pilot_run/events.jsonl
+python -m workflows.concurrent_code_engineering_swarm.runner replay workflows/concurrent_code_engineering_swarm/evidence/graceful_shedding_pilot_run/events.jsonl
+python -m workflows.concurrent_code_engineering_swarm.runner replay workflows/concurrent_code_engineering_swarm/evidence/obligation_migration_pilot_run/events.jsonl
+python -m workflows.concurrent_code_engineering_swarm.runner replay workflows/concurrent_code_engineering_swarm/evidence/three_party_c3_pilot_run/events.jsonl
+python -m workflows.concurrent_code_engineering_swarm.runner replay workflows/concurrent_code_engineering_swarm/evidence/multi_loop_hodge_pilot_run/events.jsonl
+python -m workflows.concurrent_code_engineering_swarm.runner replay workflows/concurrent_code_engineering_swarm/evidence/figure_eight_wedge_pilot_run/events.jsonl
+python -m workflows.concurrent_code_engineering_swarm.runner replay workflows/concurrent_code_engineering_swarm/evidence/shared_chord_diamond_pilot_run/events.jsonl
+python -m workflows.concurrent_code_engineering_swarm.runner replay workflows/concurrent_code_engineering_swarm/evidence/governed_relaxation_pilot_run/events.jsonl
+python -m workflows.concurrent_code_engineering_swarm.runner replay workflows/concurrent_code_engineering_swarm/evidence/non_abelian_braid_pilot_run/events.jsonl
+python -m workflows.concurrent_code_engineering_swarm.runner replay workflows/concurrent_code_engineering_swarm/evidence/subgradient_pivot_pilot_run/events.jsonl
+python -m workflows.concurrent_code_engineering_swarm.runner replay workflows/concurrent_code_engineering_swarm/evidence/policy_ratchet_pilot_run/events.jsonl
+python -m workflows.concurrent_code_engineering_swarm.runner replay workflows/concurrent_code_engineering_swarm/evidence/skew_repair_pilot_run/events.jsonl
+python -m workflows.concurrent_code_engineering_swarm.runner replay workflows/concurrent_code_engineering_swarm/evidence/poe_veto_pilot_run/events.jsonl
+python -m workflows.concurrent_code_engineering_swarm.runner replay workflows/concurrent_code_engineering_swarm/evidence/simultaneous_split_pilot_run/events.jsonl
+python -m workflows.concurrent_code_engineering_swarm.runner replay workflows/concurrent_code_engineering_swarm/evidence/mermin_peres_pilot_run/events.jsonl
+python -m workflows.concurrent_code_engineering_swarm.runner replay workflows/concurrent_code_engineering_swarm/evidence/side_info_capacity_pilot_run/events.jsonl
+python -m workflows.concurrent_code_engineering_swarm.runner replay workflows/concurrent_code_engineering_swarm/evidence/deadline_bin_packing_pilot_run/events.jsonl
+python -m workflows.concurrent_code_engineering_swarm.runner replay workflows/concurrent_code_engineering_swarm/evidence/projective_tower_pilot_run/events.jsonl
+python -m workflows.concurrent_code_engineering_swarm.runner replay workflows/concurrent_code_engineering_swarm/evidence/bell_polytope_pilot_run/events.jsonl
+python -m workflows.concurrent_code_engineering_swarm.runner replay workflows/concurrent_code_engineering_swarm/evidence/weighted_relaxation_pilot_run/events.jsonl
+python -m workflows.concurrent_code_engineering_swarm.runner replay workflows/concurrent_code_engineering_swarm/evidence/threshold_governance_pilot_run/events.jsonl
+python -m workflows.concurrent_code_engineering_swarm.runner replay workflows/concurrent_code_engineering_swarm/evidence/closed_loop_repair_pilot_run/events.jsonl
+python -m workflows.concurrent_code_engineering_swarm.runner replay workflows/concurrent_code_engineering_swarm/evidence/product_retraction_pilot_run/events.jsonl
 ```

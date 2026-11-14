@@ -1,7 +1,7 @@
 # Preserve revised laboratory source/evidence hashes across checkout platforms.
-experiments/grok_swarm_lab/current/** -text
+workflows/grok_swarm_lab/current/** -text
 
 # Preserve live pilot source freezes, raw provider evidence, and SQLite outputs.
-experiments/live_five_agent_swarm/** -text
+workflows/live_five_agent_swarm/** -text
 
-experiments/concurrent_five_agent_swarm/** -text
+workflows/concurrent_five_agent_swarm/** -text

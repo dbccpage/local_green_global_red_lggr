@@ -1,6 +1,6 @@
 """Deterministic generator for LGGR/RSI swarm instances, subsets and arm orders.
 
-Run `python -m experiments.lggr_rsi_swarm.generate` to (re)write instances.json and
+Run `python -m workflows.lggr_rsi_swarm.generate` to (re)write instances.json and
 print its digest. The digest is recorded in every run's start event.
 """
 from copy import deepcopy

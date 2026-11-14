@@ -2,7 +2,7 @@
 
 ## Requested basis
 
-The user supplied *Local Green, Global Red: cumulative drift under protected local evaluation*, dated 23 October 2026. The preserved input is `source/research_response.txt`.
+The user supplied *Local Green, Global Red: cumulative drift under protected local evaluation*, dated 23 October 2026. The preserved input is `atlas/archive/source/research_response.txt`.
 
 The input reports two pinned repositories:
 

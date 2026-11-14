@@ -8,7 +8,7 @@ import tempfile
 from typing import Any
 import unittest
 
-from experiments.concurrent_code_engineering_swarm.domain import (
+from workflows.concurrent_code_engineering_swarm.domain import (
     ADV_PRICING_ANCHOR_SRC,
     ADV_SETTLEMENT_AUTHENTICATED_2BIT_SRC,
     ADV_SETTLEMENT_HOST_1BIT_SRC,
@@ -393,7 +393,7 @@ from experiments.concurrent_code_engineering_swarm.domain import (
     weighted_relaxation_fixture,
     win_fixture,
 )
-from experiments.concurrent_code_engineering_swarm.runner import (
+from workflows.concurrent_code_engineering_swarm.runner import (
     CodeBatchClient,
     adversarial_schema_campaign,
     bell_polytope_campaign,
@@ -443,7 +443,7 @@ from experiments.concurrent_code_engineering_swarm.runner import (
     weighted_relaxation_campaign,
     win_campaign,
 )
-from experiments.live_five_agent_swarm.client import Events, event_digest
+from workflows.live_five_agent_swarm.client import Events, event_digest
 from lggr.streaming import (
     StreamingCodebaseAdversarialSchemaMonitor,
     StreamingCodebaseBellPolytopeMonitor,
@@ -615,7 +615,7 @@ class ConcurrentCodeEngineeringSwarmTests(unittest.TestCase):
     def test_live_pilot_evidence_replay_if_present(self) -> None:
         pilot_events = (
             Path(__file__).resolve().parents[1]
-            / "experiments"
+            / "workflows"
             / "concurrent_code_engineering_swarm"
             / "evidence"
             / "pilot_run"
@@ -765,7 +765,7 @@ class ConcurrentCodeEngineeringSwarmTests(unittest.TestCase):
     def test_live_diamond_pilot_evidence_replay_if_present(self) -> None:
         diamond_events = (
             Path(__file__).resolve().parents[1]
-            / "experiments"
+            / "workflows"
             / "concurrent_code_engineering_swarm"
             / "evidence"
             / "diamond_pilot_run"
@@ -860,7 +860,7 @@ class ConcurrentCodeEngineeringSwarmTests(unittest.TestCase):
     def test_live_catalyst_pilot_evidence_replay_if_present(self) -> None:
         cat_events = (
             Path(__file__).resolve().parents[1]
-            / "experiments"
+            / "workflows"
             / "concurrent_code_engineering_swarm"
             / "evidence"
             / "catalyst_pilot_run"
@@ -999,7 +999,7 @@ class ConcurrentCodeEngineeringSwarmTests(unittest.TestCase):
     def test_live_dfa_pilot_evidence_replay_if_present(self) -> None:
         dfa_events = (
             Path(__file__).resolve().parents[1]
-            / "experiments"
+            / "workflows"
             / "concurrent_code_engineering_swarm"
             / "evidence"
             / "dfa_pilot_run"
@@ -1141,7 +1141,7 @@ class ConcurrentCodeEngineeringSwarmTests(unittest.TestCase):
     def test_live_replay_pilot_evidence_replay_if_present(self) -> None:
         rep_events = (
             Path(__file__).resolve().parents[1]
-            / "experiments"
+            / "workflows"
             / "concurrent_code_engineering_swarm"
             / "evidence"
             / "replay_pilot_run"
@@ -1298,7 +1298,7 @@ class ConcurrentCodeEngineeringSwarmTests(unittest.TestCase):
     def test_live_coalitional_pilot_evidence_replay_if_present(self) -> None:
         coal_events = (
             Path(__file__).resolve().parents[1]
-            / "experiments"
+            / "workflows"
             / "concurrent_code_engineering_swarm"
             / "evidence"
             / "coalitional_pilot_run"
@@ -1439,7 +1439,7 @@ class ConcurrentCodeEngineeringSwarmTests(unittest.TestCase):
     def test_live_mayer_vietoris_pilot_evidence_replay_if_present(self) -> None:
         mv_events = (
             Path(__file__).resolve().parents[1]
-            / "experiments"
+            / "workflows"
             / "concurrent_code_engineering_swarm"
             / "evidence"
             / "mayer_vietoris_pilot_run"
@@ -1578,7 +1578,7 @@ class ConcurrentCodeEngineeringSwarmTests(unittest.TestCase):
     def test_live_windowed_drift_pilot_evidence_replay_if_present(self) -> None:
         win_events = (
             Path(__file__).resolve().parents[1]
-            / "experiments"
+            / "workflows"
             / "concurrent_code_engineering_swarm"
             / "evidence"
             / "windowed_drift_pilot_run"
@@ -1716,7 +1716,7 @@ class ConcurrentCodeEngineeringSwarmTests(unittest.TestCase):
     def test_live_optional_stopping_pilot_evidence_replay_if_present(self) -> None:
         stop_events = (
             Path(__file__).resolve().parents[1]
-            / "experiments"
+            / "workflows"
             / "concurrent_code_engineering_swarm"
             / "evidence"
             / "optional_stopping_pilot_run"
@@ -1899,7 +1899,7 @@ class ConcurrentCodeEngineeringSwarmTests(unittest.TestCase):
     def test_live_cptp_pilot_evidence_replay_if_present(self) -> None:
         cptp_events = (
             Path(__file__).resolve().parents[1]
-            / "experiments"
+            / "workflows"
             / "concurrent_code_engineering_swarm"
             / "evidence"
             / "cptp_pilot_run"
@@ -2081,7 +2081,7 @@ class ConcurrentCodeEngineeringSwarmTests(unittest.TestCase):
     def test_live_regge_pilot_evidence_replay_if_present(self) -> None:
         regge_events = (
             Path(__file__).resolve().parents[1]
-            / "experiments"
+            / "workflows"
             / "concurrent_code_engineering_swarm"
             / "evidence"
             / "regge_pilot_run"
@@ -2285,7 +2285,7 @@ class ConcurrentCodeEngineeringSwarmTests(unittest.TestCase):
     def test_live_kinduction_pilot_evidence_replay_if_present(self) -> None:
         kinduction_events = (
             Path(__file__).resolve().parents[1]
-            / "experiments"
+            / "workflows"
             / "concurrent_code_engineering_swarm"
             / "evidence"
             / "kinduction_pilot_run"
@@ -2485,7 +2485,7 @@ class ConcurrentCodeEngineeringSwarmTests(unittest.TestCase):
     def test_live_jacobian_pilot_evidence_replay_if_present(self) -> None:
         jacobian_events = (
             Path(__file__).resolve().parents[1]
-            / "experiments"
+            / "workflows"
             / "concurrent_code_engineering_swarm"
             / "evidence"
             / "jacobian_pilot_run"
@@ -2686,7 +2686,7 @@ class ConcurrentCodeEngineeringSwarmTests(unittest.TestCase):
     def test_live_quorum_pilot_evidence_replay_if_present(self) -> None:
         quorum_events = (
             Path(__file__).resolve().parents[1]
-            / "experiments"
+            / "workflows"
             / "concurrent_code_engineering_swarm"
             / "evidence"
             / "quorum_pilot_run"
@@ -2892,7 +2892,7 @@ class ConcurrentCodeEngineeringSwarmTests(unittest.TestCase):
     def test_live_lease_pilot_evidence_replay_if_present(self) -> None:
         lease_events = (
             Path(__file__).resolve().parents[1]
-            / "experiments"
+            / "workflows"
             / "concurrent_code_engineering_swarm"
             / "evidence"
             / "lease_pilot_run"
@@ -3138,7 +3138,7 @@ class ConcurrentCodeEngineeringSwarmTests(unittest.TestCase):
     def test_live_contextuality_pilot_evidence_replay_if_present(self) -> None:
         sheaf_events = (
             Path(__file__).resolve().parents[1]
-            / "experiments"
+            / "workflows"
             / "concurrent_code_engineering_swarm"
             / "evidence"
             / "contextuality_pilot_run"
@@ -3384,7 +3384,7 @@ class ConcurrentCodeEngineeringSwarmTests(unittest.TestCase):
     def test_live_gram_dropout_pilot_evidence_replay_if_present(self) -> None:
         gram_events = (
             Path(__file__).resolve().parents[1]
-            / "experiments"
+            / "workflows"
             / "concurrent_code_engineering_swarm"
             / "evidence"
             / "gram_dropout_pilot_run"
@@ -3594,7 +3594,7 @@ class ConcurrentCodeEngineeringSwarmTests(unittest.TestCase):
     def test_live_policy_reversal_pilot_evidence_replay_if_present(self) -> None:
         policy_events = (
             Path(__file__).resolve().parents[1]
-            / "experiments"
+            / "workflows"
             / "concurrent_code_engineering_swarm"
             / "evidence"
             / "policy_reversal_pilot_run"
@@ -3807,7 +3807,7 @@ class ConcurrentCodeEngineeringSwarmTests(unittest.TestCase):
     def test_live_fiber_splitting_pilot_evidence_replay_if_present(self) -> None:
         split_events = (
             Path(__file__).resolve().parents[1]
-            / "experiments"
+            / "workflows"
             / "concurrent_code_engineering_swarm"
             / "evidence"
             / "fiber_splitting_pilot_run"
@@ -4037,7 +4037,7 @@ class ConcurrentCodeEngineeringSwarmTests(unittest.TestCase):
     def test_live_disagreement_council_pilot_evidence_replay_if_present(self) -> None:
         council_events = (
             Path(__file__).resolve().parents[1]
-            / "experiments"
+            / "workflows"
             / "concurrent_code_engineering_swarm"
             / "evidence"
             / "council_pilot_run"
@@ -4261,7 +4261,7 @@ class ConcurrentCodeEngineeringSwarmTests(unittest.TestCase):
         """Replay live six-role pilot evidence offline if present."""
         six_role_events = (
             Path(__file__).resolve().parents[1]
-            / "experiments"
+            / "workflows"
             / "concurrent_code_engineering_swarm"
             / "evidence"
             / "six_role_pilot_run"
@@ -4485,7 +4485,7 @@ class ConcurrentCodeEngineeringSwarmTests(unittest.TestCase):
         """Replay live path-kernel pilot evidence offline if present."""
         pk_events = (
             Path(__file__).resolve().parents[1]
-            / "experiments"
+            / "workflows"
             / "concurrent_code_engineering_swarm"
             / "evidence"
             / "path_kernel_pilot_run"
@@ -4722,7 +4722,7 @@ class ConcurrentCodeEngineeringSwarmTests(unittest.TestCase):
         """Replay live schema_synthesis pilot evidence offline if present."""
         ss_events = (
             Path(__file__).resolve().parents[1]
-            / "experiments"
+            / "workflows"
             / "concurrent_code_engineering_swarm"
             / "evidence"
             / "schema_synthesis_pilot_run"
@@ -4956,7 +4956,7 @@ class ConcurrentCodeEngineeringSwarmTests(unittest.TestCase):
         """Replay live adversarial_schema pilot evidence offline if present."""
         adv_events = (
             Path(__file__).resolve().parents[1]
-            / "experiments"
+            / "workflows"
             / "concurrent_code_engineering_swarm"
             / "evidence"
             / "adversarial_schema_pilot_run"
@@ -5178,7 +5178,7 @@ class GracefulSheddingCodeEngineeringSwarmTests(unittest.TestCase):
         """Replay live graceful_shedding pilot evidence offline if present."""
         shed_events = (
             Path(__file__).resolve().parents[1]
-            / "experiments"
+            / "workflows"
             / "concurrent_code_engineering_swarm"
             / "evidence"
             / "graceful_shedding_pilot_run"
@@ -5421,7 +5421,7 @@ class GracefulSheddingCodeEngineeringSwarmTests(unittest.TestCase):
         """Replay live obligation_migration pilot evidence offline if present."""
         mig_events = (
             Path(__file__).resolve().parents[1]
-            / "experiments"
+            / "workflows"
             / "concurrent_code_engineering_swarm"
             / "evidence"
             / "obligation_migration_pilot_run"
@@ -5668,7 +5668,7 @@ class GracefulSheddingCodeEngineeringSwarmTests(unittest.TestCase):
         """Replay live three_party_c3 pilot evidence offline if present."""
         c3_events = (
             Path(__file__).resolve().parents[1]
-            / "experiments"
+            / "workflows"
             / "concurrent_code_engineering_swarm"
             / "evidence"
             / "three_party_c3_pilot_run"
@@ -5921,7 +5921,7 @@ class GracefulSheddingCodeEngineeringSwarmTests(unittest.TestCase):
         """Replay live multi_loop_hodge pilot evidence offline if present."""
         hodge_events = (
             Path(__file__).resolve().parents[1]
-            / "experiments"
+            / "workflows"
             / "concurrent_code_engineering_swarm"
             / "evidence"
             / "multi_loop_hodge_pilot_run"
@@ -6161,7 +6161,7 @@ class GracefulSheddingCodeEngineeringSwarmTests(unittest.TestCase):
         """Replay live figure_eight_wedge pilot evidence offline if present."""
         wedge_events = (
             Path(__file__).resolve().parents[1]
-            / "experiments"
+            / "workflows"
             / "concurrent_code_engineering_swarm"
             / "evidence"
             / "figure_eight_wedge_pilot_run"
@@ -6401,7 +6401,7 @@ class GracefulSheddingCodeEngineeringSwarmTests(unittest.TestCase):
         """Replay live shared_chord_diamond pilot evidence offline if present."""
         chord_events = (
             Path(__file__).resolve().parents[1]
-            / "experiments"
+            / "workflows"
             / "concurrent_code_engineering_swarm"
             / "evidence"
             / "shared_chord_diamond_pilot_run"
@@ -6644,7 +6644,7 @@ class GracefulSheddingCodeEngineeringSwarmTests(unittest.TestCase):
         """Replay live governed_relaxation pilot evidence offline if present."""
         relax_events = (
             Path(__file__).resolve().parents[1]
-            / "experiments"
+            / "workflows"
             / "concurrent_code_engineering_swarm"
             / "evidence"
             / "governed_relaxation_pilot_run"
@@ -6883,7 +6883,7 @@ class GracefulSheddingCodeEngineeringSwarmTests(unittest.TestCase):
         """Replay live non_abelian_braid pilot evidence offline if present."""
         braid_events = (
             Path(__file__).resolve().parents[1]
-            / "experiments"
+            / "workflows"
             / "concurrent_code_engineering_swarm"
             / "evidence"
             / "non_abelian_braid_pilot_run"
@@ -7123,7 +7123,7 @@ class GracefulSheddingCodeEngineeringSwarmTests(unittest.TestCase):
         """Replay live subgradient_pivot pilot evidence offline if present."""
         pivot_events = (
             Path(__file__).resolve().parents[1]
-            / "experiments"
+            / "workflows"
             / "concurrent_code_engineering_swarm"
             / "evidence"
             / "subgradient_pivot_pilot_run"
@@ -7331,7 +7331,7 @@ class GracefulSheddingCodeEngineeringSwarmTests(unittest.TestCase):
         """Replay live policy_ratchet pilot evidence offline if present."""
         ratchet_events = (
             Path(__file__).resolve().parents[1]
-            / "experiments"
+            / "workflows"
             / "concurrent_code_engineering_swarm"
             / "evidence"
             / "policy_ratchet_pilot_run"
@@ -7542,7 +7542,7 @@ class GracefulSheddingCodeEngineeringSwarmTests(unittest.TestCase):
         """Replay live skew_repair pilot evidence offline if present."""
         skew_events = (
             Path(__file__).resolve().parents[1]
-            / "experiments"
+            / "workflows"
             / "concurrent_code_engineering_swarm"
             / "evidence"
             / "skew_repair_pilot_run"
@@ -7750,7 +7750,7 @@ class GracefulSheddingCodeEngineeringSwarmTests(unittest.TestCase):
         """Replay live poe_veto pilot evidence offline if present."""
         poe_events = (
             Path(__file__).resolve().parents[1]
-            / "experiments"
+            / "workflows"
             / "concurrent_code_engineering_swarm"
             / "evidence"
             / "poe_veto_pilot_run"
@@ -7955,7 +7955,7 @@ class GracefulSheddingCodeEngineeringSwarmTests(unittest.TestCase):
         """Replay live simultaneous_split pilot evidence offline if present."""
         sim_events = (
             Path(__file__).resolve().parents[1]
-            / "experiments"
+            / "workflows"
             / "concurrent_code_engineering_swarm"
             / "evidence"
             / "simultaneous_split_pilot_run"
@@ -8207,7 +8207,7 @@ class GracefulSheddingCodeEngineeringSwarmTests(unittest.TestCase):
         """Replay live mermin_peres pilot evidence offline if present."""
         mp_events = (
             Path(__file__).resolve().parents[1]
-            / "experiments"
+            / "workflows"
             / "concurrent_code_engineering_swarm"
             / "evidence"
             / "mermin_peres_pilot_run"
@@ -8462,7 +8462,7 @@ class GracefulSheddingCodeEngineeringSwarmTests(unittest.TestCase):
         """Replay live side_info_capacity pilot evidence offline if present."""
         cap_events = (
             Path(__file__).resolve().parents[1]
-            / "experiments"
+            / "workflows"
             / "concurrent_code_engineering_swarm"
             / "evidence"
             / "side_info_capacity_pilot_run"
@@ -8726,7 +8726,7 @@ class GracefulSheddingCodeEngineeringSwarmTests(unittest.TestCase):
         """Replay live deadline_bin_packing pilot evidence offline if present."""
         pack_events = (
             Path(__file__).resolve().parents[1]
-            / "experiments"
+            / "workflows"
             / "concurrent_code_engineering_swarm"
             / "evidence"
             / "deadline_bin_packing_pilot_run"
@@ -8949,7 +8949,7 @@ class GracefulSheddingCodeEngineeringSwarmTests(unittest.TestCase):
         """Replay live projective_tower pilot evidence offline if present."""
         tower_events = (
             Path(__file__).resolve().parents[1]
-            / "experiments"
+            / "workflows"
             / "concurrent_code_engineering_swarm"
             / "evidence"
             / "projective_tower_pilot_run"
@@ -9172,7 +9172,7 @@ class GracefulSheddingCodeEngineeringSwarmTests(unittest.TestCase):
         """Replay live bell_polytope pilot evidence offline if present."""
         bell_events = (
             Path(__file__).resolve().parents[1]
-            / "experiments"
+            / "workflows"
             / "concurrent_code_engineering_swarm"
             / "evidence"
             / "bell_polytope_pilot_run"
@@ -9440,7 +9440,7 @@ class GracefulSheddingCodeEngineeringSwarmTests(unittest.TestCase):
         """Replay live weighted_relaxation pilot evidence offline if present."""
         wrel_events = (
             Path(__file__).resolve().parents[1]
-            / "experiments"
+            / "workflows"
             / "concurrent_code_engineering_swarm"
             / "evidence"
             / "weighted_relaxation_pilot_run"
@@ -9711,7 +9711,7 @@ class GracefulSheddingCodeEngineeringSwarmTests(unittest.TestCase):
         """Replay live threshold_governance pilot evidence offline if present."""
         thresh_events = (
             Path(__file__).resolve().parents[1]
-            / "experiments"
+            / "workflows"
             / "concurrent_code_engineering_swarm"
             / "evidence"
             / "threshold_governance_pilot_run"
@@ -9981,7 +9981,7 @@ class GracefulSheddingCodeEngineeringSwarmTests(unittest.TestCase):
         """Replay live closed_loop_repair pilot evidence offline if present."""
         loop_events = (
             Path(__file__).resolve().parents[1]
-            / "experiments"
+            / "workflows"
             / "concurrent_code_engineering_swarm"
             / "evidence"
             / "closed_loop_repair_pilot_run"
@@ -10242,7 +10242,7 @@ class GracefulSheddingCodeEngineeringSwarmTests(unittest.TestCase):
         """Replay live product_retraction pilot evidence offline if present."""
         ret_events = (
             Path(__file__).resolve().parents[1]
-            / "experiments"
+            / "workflows"
             / "concurrent_code_engineering_swarm"
             / "evidence"
             / "product_retraction_pilot_run"

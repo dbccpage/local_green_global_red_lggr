@@ -17,7 +17,7 @@ Start with [guide 00](guides/00_where_lggr_fits.md) to map your loop's objects t
 | [03 Collision-guided checks](guides/03_collision_guided_checks.md) | A verifier spends its budget on checks that cannot change the verdict | `StreamingFiberMonitor` | Measured: +26.8 pts as host selector; no gain as advice to a live agent |
 | [04 Checked memory](guides/04_checked_memory.md) | An agent acts on a note written against an old contract | `BudgetPolicy.sha256`, obligations | Measured: inconclusive (40/90 vs 36/90) |
 
-Guides 03 and 04 cite the [LGGR/RSI swarm experiment](../experiments/lggr_rsi_swarm/REPORT.md): 400 generated instances run with Claude Haiku 5.5. Their recipes are simplified forms of the measured policies, so the recipes' own numbers were not measured.
+Guides 03 and 04 cite the [LGGR/RSI swarm experiment](../workflows/lggr_rsi_swarm/REPORT.md): 400 generated instances run with Claude Haiku 5.5. Their recipes are simplified forms of the measured policies, so the recipes' own numbers were not measured.
 
 Not Python? `python -m learn.sidecar` reads [contract](HARNESS_CONTRACT.md) events as JSON lines and writes receipts back. [csharp/LggrSidecar.cs](csharp/LggrSidecar.cs) is a C# client.
 
