@@ -1,0 +1,26 @@
+{
+  "status": "TEMPLATE_UNFILLED",
+  "AuthorityEffect": "None",
+  "note": "Fill every TODO from the original run receipts. Do not invent values. No contest data, fitted factorization or derived tensor may be stored here; record digests only.",
+  "verifier": {
+    "name": "Google VQCC dfthcsos verifier",
+    "source_revision": "TODO",
+    "file_sha256": "TODO",
+    "objective_definition": "TODO: exact formula for error_1 and error_2, with units"
+  },
+  "environment": {
+    "hardware": "TODO",
+    "python": "TODO",
+    "numpy": "TODO",
+    "float_contract": "float64; list the non-exact sites"
+  },
+  "runs": [
+    {"row": "Fit before rounding (sample)", "input": "public sample submission", "input_sha256": "TODO", "config": {"bits": null, "rounding": "none"}, "command": "TODO", "error_1": "TODO", "error_2_mHa": 16.133, "receipt": "TODO"},
+    {"row": "Nearest rounding, 12-bit words", "input": "public sample submission", "input_sha256": "TODO", "config": {"bits": 12, "rounding": "nearest"}, "command": "TODO", "error_1": "TODO", "error_2_mHa": 18.640, "receipt": "TODO"},
+    {"row": "Nearest rounding, 11-bit words", "input": "public sample submission", "input_sha256": "TODO", "config": {"bits": 11, "rounding": "nearest"}, "command": "TODO", "error_1": "TODO", "error_2_mHa": 25.035, "receipt": "TODO"},
+    {"row": "Nearest rounding, 10-bit words", "input": "public sample submission", "input_sha256": "TODO", "config": {"bits": 10, "rounding": "nearest"}, "command": "TODO", "error_1": "TODO", "error_2_mHa": 40.015, "receipt": "TODO"},
+    {"row": "8-bit entry rounded to 7 bits", "input": "Syed Asad Ali public entry (Apache-2.0)", "input_revision": "TODO", "input_sha256": "TODO", "config": {"bits": 7, "rounding": "nearest", "from_bits": 8}, "command": "TODO", "error_1": "2137 (units TODO)", "error_2_mHa": 425.1, "receipt": "TODO"},
+    {"row": "Free-float refit of that entry", "input": "Syed Asad Ali public entry (Apache-2.0)", "input_revision": "TODO", "input_sha256": "TODO", "config": {"bits": null, "rounding": "none", "refit_objective": "TODO", "label_as_reported": "(8,143,44)"}, "command": "TODO", "error_1": "TODO", "error_2_mHa": 15.12, "receipt": "TODO"},
+    {"row": "That refit snapped back to the 8-bit grid", "input": "refit above", "input_sha256": "TODO", "config": {"bits": 8, "rounding": "nearest"}, "command": "TODO", "error_1": "TODO", "error_2_mHa": 145.30, "receipt": "TODO"}
+  ]
+}
