@@ -89,8 +89,8 @@ blocked. Development results are not included in the held-out table.
   `af69e3e71d4fc6a09f0c34b3a557b4f448b123cf`.
 
 ```sh
-python experiments/live_five_agent_swarm/tools/verify_run.py experiments/live_five_agent_swarm/evidence/development experiments/live_five_agent_swarm/evidence/development-v2 experiments/live_five_agent_swarm/evidence/evaluation
-python experiments/live_five_agent_swarm/tools/summarize.py
+python workflows/live_five_agent_swarm/tools/verify_run.py workflows/live_five_agent_swarm/evidence/development workflows/live_five_agent_swarm/evidence/development-v2 workflows/live_five_agent_swarm/evidence/evaluation
+python workflows/live_five_agent_swarm/tools/summarize.py
 ```
 
 The verification tool uses each archive's frozen code. Current runtime v3 only

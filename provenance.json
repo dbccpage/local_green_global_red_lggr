@@ -3,7 +3,7 @@
   "implementation": "lggr-witness-audit 0.1.0",
   "basis": "User-supplied research response; no external sources fetched",
   "source": {
-    "file": "source/research_response.txt",
+    "file": "atlas/archive/source/research_response.txt",
     "sha256": "edd16bd95779b4d0f1ce17f55bb96c3ac8ae6645a1251b21775afeb158799f39"
   },
   "reported_repository_pins": {

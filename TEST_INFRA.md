@@ -71,7 +71,7 @@ The testing harness covers nineteen features (F01–F14, F20–F24) specified in
 | **F13** | Live Test 4: Composable LGGG | Benchmarks | M2 | Certification of composable LGGG ($\Delta_E = 0$) under boundary-sufficient schema. |
 | **F14** | Offline deterministic replay | `receipts/` | M2 | Offline replay of recorded trace artifacts without external network requests. |
 | **F20** | Practitioner Cookbooks | `cookbooks/` | M5 | Four standalone runnable Python scripts (`01_` through `04_`) covering streaming integration. |
-| **F21** | Monograph Index update | `papers/` | M5 | `papers/local_green_global_red_monograph_index.md` indexed with Volume VIII entry. |
+| **F21** | Monograph Index update | `atlas/archive/papers/` | M5 | `atlas/archive/papers/local_green_global_red_monograph_index.md` indexed with Volume VIII entry. |
 | **F22** | Cloned Wiki sync | Wiki repo | M5 | Wiki pages created without `\operatorname` macros, matching repository documentation. |
 | **F23** | Git commit & push | VCS | M5 | Working tree clean and properly tracked in git. |
 | **F24** | Manifest verification | Root | M5 | `MANIFEST.sha256` checksums validate against all tracked distribution files. |
@@ -204,7 +204,7 @@ For each feature F01–F14 and F20–F24, at least 5 targeted unit/functional te
   - `test_f20_05_cookbooks_claim_hygiene`: Scan all cookbook scripts for Claim Hygiene Rule compliance.
 
 - **F21 (Monograph Index Update)**:
-  - `test_f21_01_monograph_index_exists`: Verify `papers/local_green_global_red_monograph_index.md` exists.
+  - `test_f21_01_monograph_index_exists`: Verify `atlas/archive/papers/local_green_global_red_monograph_index.md` exists.
   - `test_f21_02_volume_viii_entry_present`: Verify Volume VIII section heading and description are present.
   - `test_f21_03_claim_ledger_reference`: Verify Volume VIII entry references claim ledger and companion code.
   - `test_f21_04_monograph_index_claim_hygiene`: Scan monograph index for forbidden words.

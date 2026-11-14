@@ -219,7 +219,7 @@ sensitivity wave). Per-request cost in evaluation: proposal ~USD 0.0008, control
 
 ## Verification
 
-`python -m experiments.lggr_rsi_swarm.verify <run dirs>` checks the hash chain, that every recorded
+`python -m workflows.lggr_rsi_swarm.verify <run dirs>` checks the hash chain, that every recorded
 source file equals the file at the recorded commit, replays the whole campaign offline in a clean
 checkout of those sources (every request payload hash, tool result, snapshot, offline decision,
 controller verdict, host-rule verdict and charge must be reproduced exactly) and compares the saved

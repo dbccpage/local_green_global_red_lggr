@@ -78,17 +78,21 @@ The companion study *Bell's Theorem as a Positive-Extension Obstruction* (`003_b
 | **Linear cochain repairability** | Does $h \in \mathrm{im}(D_0)$, and if not, is $D_1 h = 0$? | Dual annihilator $D_0^\top z = 0$ with $z^\top h > 0$; closure check $D_1 h$ | `lggr/linear.py` (`classify_cochain`) |
 | **Representation transport** | Do chain maps $(F_0, F_1)$ commute with $D$, and do $(G_0, G_1)$ retract $(F_0, F_1)$? | Nonzero commutation defect or missing left inverse $G_k F_k \ne I$ | `lggr/transport.py` (`verify_transport`) |
 
+## Atlas: claims, derivations and archive
+
+[`atlas/atlas.md`](atlas/atlas.md) indexes every claim this repository makes and how it is checked: the claim ledger ([`atlas/atlas_claim_ledger.md`](atlas/atlas_claim_ledger.md)), the derivation DAG ([`dag/derivations/derivation_dag.json`](dag/derivations/derivation_dag.json)), the Lean proofs (`lean4/`) and the Rust derivation kernels (`code/rust/`). The papers now live in [`atlas/archive/papers/`](atlas/archive/papers/README.md), and the live swarm experiments in [`workflows/`](workflows/).
+
 ## Papers and Lean 4 Formalizations
 
-- **[`papers/`](papers/README.md):** Contains the eight-volume *Local Green, Global Red* series (`lggr_i_evaluated_path_kernels` through `lggr_viii_online_streaming_discovery_and_runtime_gluing`) and the [monograph and implementation index](papers/local_green_global_red_monograph_index.md):
-  - [`papers/lggr_i_evaluated_path_kernels/`](papers/lggr_i_evaluated_path_kernels/lggr_i_evaluated_path_kernels.md) — Volume I: *Evaluated Path Kernels for Composed Agent Reliability*
-  - [`papers/lggr_ii_organizational_gluing/`](papers/lggr_ii_organizational_gluing/lggr_ii_organizational_gluing.md) — Volume II: *Organizational Evaluator Gluing*
-  - [`papers/lggr_iii_epk_gtla_overlay/`](papers/lggr_iii_epk_gtla_overlay/lggr_iii_epk_gtla_overlay.md) — Volume III: *A Finite Evaluator Overlay Across Six System Roles*
-  - [`papers/lggr_iv_finite_presentations_completion_relative/`](papers/lggr_iv_finite_presentations_completion_relative/lggr_iv_finite_presentations_completion_relative.md) — Volume IV: *Finite Presentations and Completion-Relative Obstruction*
-  - [`papers/lggr_v_local_green_global_red/`](papers/lggr_v_local_green_global_red/lggr_v_local_green_global_red.md) — Volume V: *Local Green, Global Red: When Local Evaluators Cannot Certify Global Exactness*
-  - [`papers/lggr_vi_nonlinear_aggregation_and_adjoint_probing/`](papers/lggr_vi_nonlinear_aggregation_and_adjoint_probing/lggr_vi_nonlinear_aggregation_and_adjoint_probing.md) — Volume VI: *Nonlinear Aggregation, Gram Kernels, and Centered Adjoint Probing*
-  - [`papers/lggr_vii_projection_residuals_and_witness_composition/`](papers/lggr_vii_projection_residuals_and_witness_composition/lggr_vii_projection_residuals_and_witness_composition.md) — Volume VII: *Positive-Extension Projection Residuals, Observer-Fiber Minimax Floors, and Witnessed Composition* (with typed [claim ledger](papers/lggr_vii_projection_residuals_and_witness_composition/lggr_vii_projection_residuals_and_witness_composition_claim_ledger.md) and exact rational Python derivations/tests under `code/`).
-  - [`papers/lggr_viii_online_streaming_discovery_and_runtime_gluing/`](papers/lggr_viii_online_streaming_discovery_and_runtime_gluing/lggr_viii_online_streaming_discovery_and_runtime_gluing.md) — Volume VIII: *Online Streaming LGGG vs. LGGR Discovery for Agentic Swarms* (with typed [claim ledger](papers/lggr_viii_online_streaming_discovery_and_runtime_gluing/lggr_viii_online_streaming_discovery_and_runtime_gluing_claim_ledger.md), companion Python derivations/tests under `code/`, and recorded OpenRouter benchmark receipts).
+- **[`atlas/archive/papers/`](atlas/archive/papers/README.md):** Contains the eight-volume *Local Green, Global Red* series (`lggr_i_evaluated_path_kernels` through `lggr_viii_online_streaming_discovery_and_runtime_gluing`) and the [monograph and implementation index](atlas/archive/papers/local_green_global_red_monograph_index.md):
+  - [`atlas/archive/papers/lggr_i_evaluated_path_kernels/`](atlas/archive/papers/lggr_i_evaluated_path_kernels/lggr_i_evaluated_path_kernels.md) — Volume I: *Evaluated Path Kernels for Composed Agent Reliability*
+  - [`atlas/archive/papers/lggr_ii_organizational_gluing/`](atlas/archive/papers/lggr_ii_organizational_gluing/lggr_ii_organizational_gluing.md) — Volume II: *Organizational Evaluator Gluing*
+  - [`atlas/archive/papers/lggr_iii_epk_gtla_overlay/`](atlas/archive/papers/lggr_iii_epk_gtla_overlay/lggr_iii_epk_gtla_overlay.md) — Volume III: *A Finite Evaluator Overlay Across Six System Roles*
+  - [`atlas/archive/papers/lggr_iv_finite_presentations_completion_relative/`](atlas/archive/papers/lggr_iv_finite_presentations_completion_relative/lggr_iv_finite_presentations_completion_relative.md) — Volume IV: *Finite Presentations and Completion-Relative Obstruction*
+  - [`atlas/archive/papers/lggr_v_local_green_global_red/`](atlas/archive/papers/lggr_v_local_green_global_red/lggr_v_local_green_global_red.md) — Volume V: *Local Green, Global Red: When Local Evaluators Cannot Certify Global Exactness*
+  - [`atlas/archive/papers/lggr_vi_nonlinear_aggregation_and_adjoint_probing/`](atlas/archive/papers/lggr_vi_nonlinear_aggregation_and_adjoint_probing/lggr_vi_nonlinear_aggregation_and_adjoint_probing.md) — Volume VI: *Nonlinear Aggregation, Gram Kernels, and Centered Adjoint Probing*
+  - [`atlas/archive/papers/lggr_vii_projection_residuals_and_witness_composition/`](atlas/archive/papers/lggr_vii_projection_residuals_and_witness_composition/lggr_vii_projection_residuals_and_witness_composition.md) — Volume VII: *Positive-Extension Projection Residuals, Observer-Fiber Minimax Floors, and Witnessed Composition* (with typed [claim ledger](atlas/archive/papers/lggr_vii_projection_residuals_and_witness_composition/lggr_vii_projection_residuals_and_witness_composition_claim_ledger.md) and exact rational Python derivations/tests under `code/`).
+  - [`atlas/archive/papers/lggr_viii_online_streaming_discovery_and_runtime_gluing/`](atlas/archive/papers/lggr_viii_online_streaming_discovery_and_runtime_gluing/lggr_viii_online_streaming_discovery_and_runtime_gluing.md) — Volume VIII: *Online Streaming LGGG vs. LGGR Discovery for Agentic Swarms* (with typed [claim ledger](atlas/archive/papers/lggr_viii_online_streaming_discovery_and_runtime_gluing/lggr_viii_online_streaming_discovery_and_runtime_gluing_claim_ledger.md), companion Python derivations/tests under `code/`, and recorded OpenRouter benchmark receipts).
 - **[`lean4/`](lean4/LggrVIII.lean):** Standalone Lean 4 (`v4.35.0`) formalization package (`LGGR` / `LggrVII.lean`, `LggrVIII.lean`, `CheckAxioms.lean`) proving the realized-image decoder/collision theorems, Boolean evaluator defect partition, multi-step history telescoping and prefix vs. endpoint separation, integer $\ell^1$ triangle primal/dual optimality, observer-fiber two-point minimax lower bound, online collision monotonicity under trace extensions, prefix budget violation monotonicity, and boundary-sufficient composable LGGG certificates with zero `sorry` and standard Lean core axioms only. Build with `cd lean4 && lake build`.
 
 ## Run without installing anything
@@ -411,7 +415,7 @@ The current package deliberately has no `approve=True`, owner-signature bypass, 
 
 `receipts/tests.txt` records the actual unit-test run. `receipts/validation.json` records execution details and limitations. The tests include the 216 finite report/query combinations, all eight Boolean verdict triples, all 363 histories of length one through five over the three-state domain, independent certificate replay, tampering and scope-change cases, exact arithmetic, and CLI exit behavior.
 
-`SOURCE_NOTES.md` separates the uploaded report from this new implementation. `source/research_response.txt` preserves the supplied input. `provenance.json` records its SHA-256 and the repository pins **reported by that input**. Those repositories and Lean proofs were not independently fetched or rerun for this implementation.
+`SOURCE_NOTES.md` separates the uploaded report from this new implementation. `atlas/archive/source/research_response.txt` preserves the supplied input. `provenance.json` records its SHA-256 and the repository pins **reported by that input**. Those repositories and Lean proofs were not independently fetched or rerun for this implementation.
 
 The produced status names are adapter vocabulary. NGD/ZDR/PGD reproduce the report's mathematical sign convention; the original `epk_core.py` was not imported. There is no claim of native integration, general self-modification safety, quantum advantage, or stronger detection than a complete fixed-invariant checker.
 
@@ -450,13 +454,13 @@ limitations under the License.
 
 ### Reviewed laboratory and benchmark evidence
 
-The [swarm laboratory review revision](experiments/grok_swarm_lab/current/README.md) ships runnable offline source and regression evidence. The [original v1 archive](experiments/grok_swarm_lab/dist/lggr-swarm-lab-2026-10-24.zip) remains unchanged. v2 requires known scoped auxiliary evidence before admission and replays deterministic labels and counters. Its rerun uses already published fixtures; it is not a new held-out experiment.
+The [swarm laboratory review revision](workflows/grok_swarm_lab/current/README.md) ships runnable offline source and regression evidence. The [original v1 archive](workflows/grok_swarm_lab/dist/lggr-swarm-lab-2026-10-24.zip) remains unchanged. v2 requires known scoped auxiliary evidence before admission and replays deterministic labels and counters. Its rerun uses already published fixtures; it is not a new held-out experiment.
 
 `lggr.benchmarks.verify_frontier_benchmark(receipt)` checks the outer and monitor receipt hashes, regenerates inputs from the saved model responses, checks the prompts, and compares complete traces and metrics. The original 50-trace artifact remains unchanged and is covered by `MANIFEST.sha256`. New live runs reject malformed output explicitly and honor an explicitly requested model over environment defaults. Recorded model names identify client configuration, not independent authentication of the provider.
 
 The frontier prompts often supply exact answers or impose incompatible requirements. The published 24/50 NGD count describes that selected fixture mixture, not a general swarm failure rate or an advantage over conventional checking. Theorem 54 proves an integer positivity statement and a fixed collapse example; the Python monitor's general rational, arbitrary-expert support calculation is not formalized by that theorem.
 
-The RSI and Bell series (`papers/012_rsi/`: Papers 000 to 003 and their research records) moved out of this repository on 5 November 2026. The last commit that contains it is [`90d941c`](https://github.com/dbccpage/local_green_global_red_lggr/tree/90d941cece517b55caf011a5524570e7507e97e4/papers/012_rsi). Its historical research records were restored from commit `103daa366d4cd9ef06fc0def10edee497f547d8e`; the [restoration receipt](receipts/pr51_research_restoration.json) stays here and binds the original Git bytes without upgrading their historical verification claims. Citations such as `012_rsi/002 IK-04` in `lggr/streaming.py`, `lean4/LggrVIII.lean` and the tests name claims in that series.
+The RSI and Bell series (`atlas/archive/papers/012_rsi/`: Papers 000 to 003 and their research records) moved out of this repository on 5 November 2026. The last commit that contains it is [`90d941c`](https://github.com/dbccpage/local_green_global_red_lggr/tree/90d941cece517b55caf011a5524570e7507e97e4/papers/012_rsi). Its historical research records were restored from commit `103daa366d4cd9ef06fc0def10edee497f547d8e`; the [restoration receipt](receipts/pr51_research_restoration.json) stays here and binds the original Git bytes without upgrading their historical verification claims. Citations such as `012_rsi/002 IK-04` in `lggr/streaming.py`, `lean4/LggrVIII.lean` and the tests name claims in that series.
 
 ## Closed-loop benchmark evidence scope
 
@@ -493,7 +497,7 @@ provenance by itself.
 
 ## Five-agent live fault and recovery pilot
 
-The [live pilot report](experiments/live_five_agent_swarm/REPORT.md) retains 343
+The [live pilot report](workflows/live_five_agent_swarm/REPORT.md) retains 343
 actual provider calls, paired recovery trials, independent SQLite output checks,
 frozen-source replay, and provider-side usage verification. Five persistent
 agent sessions experience resource withdrawal after partial execution. The six
@@ -504,7 +508,7 @@ remain available; total measured spending was $0.57951748.
 
 ## Concurrent five-agent expansion
 
-The [concurrent pilot report](experiments/concurrent_five_agent_swarm/REPORT.md)
+The [concurrent pilot report](workflows/concurrent_five_agent_swarm/REPORT.md)
 retains 1,053 additional live API attempts with five overlapping model sessions,
 a complete conventional baseline plus exact capacity diagnostics, and frozen
 replay of all 45 SQLite outputs. Of 18 scheduled evaluation seeds, 13 finished,

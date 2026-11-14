@@ -7,7 +7,7 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT))
-from experiments.concurrent_five_agent_swarm.verify import verify
+from workflows.concurrent_five_agent_swarm.verify import verify
 HERE = Path(__file__).resolve().parents[1]
 
 

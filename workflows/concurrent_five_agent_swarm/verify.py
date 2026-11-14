@@ -13,6 +13,15 @@ import zipfile
 ROOT = Path(__file__).resolve().parents[2]
 
 
+
+def snapshot_package(names):
+    """Package root inside a recorded source snapshot.
+
+    Runs recorded before the experiments/ -> workflows/ rename snapshot their
+    sources under experiments/, so replay must import that historical name.
+    """
+    return "workflows" if any(str(n).startswith("workflows/") for n in names) else "experiments"
+
 def source_commit_blob(commit, name):
     """Return commit:name, or None when that commit object is not in this clone."""
     if not re.fullmatch(r"[0-9a-f]{40}", commit):
@@ -70,7 +79,7 @@ def verify(directory):
             target = Path(td) / name
             target.parent.mkdir(parents=True, exist_ok=True)
             target.write_bytes(raw)
-        result = subprocess.run([sys.executable, "-m", "experiments.concurrent_five_agent_swarm.runner", "replay", str(directory / "events.jsonl")],
+        result = subprocess.run([sys.executable, "-m", snapshot_package(metadata["source_hashes"]) + ".concurrent_five_agent_swarm.runner", "replay", str(directory / "events.jsonl")],
                                 cwd=td, text=True, capture_output=True)
         if result.returncode:
             raise ValueError(result.stderr)

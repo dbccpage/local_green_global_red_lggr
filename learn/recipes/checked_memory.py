@@ -7,7 +7,7 @@ recall. A changed representation is a migration, not a reread.
 
 This applies the audit monitor's manifest pin (POLICY_MANIFEST_CHANGED,
 REPRESENTATION_TRANSPORT_REQUIRED) to memory. It mirrors backend D of the
-LGGR/RSI swarm experiment's RSI battery (experiments/lggr_rsi_swarm/REPORT.md).
+LGGR/RSI swarm experiment's RSI battery (workflows/lggr_rsi_swarm/REPORT.md).
 There it was inconclusive: 40/90 versus 36/90 passes after a contract change,
 p = 0.29. This recipe makes no performance claim.
 

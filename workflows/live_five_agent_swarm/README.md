@@ -14,10 +14,10 @@ From the repository root:
 
 ```sh
 python -m unittest discover -s tests -p test_live_five_agent_swarm.py -v
-python -m experiments.live_five_agent_swarm.runner live experiments/live_five_agent_swarm/evidence/development --development --budget 10
+python -m workflows.live_five_agent_swarm.runner live workflows/live_five_agent_swarm/evidence/development --development --budget 10
 # Deduct development charges from the $10 ceiling before the evaluation run.
-python -m experiments.live_five_agent_swarm.runner live experiments/live_five_agent_swarm/evidence/evaluation --budget REMAINING_DOLLARS
-python experiments/live_five_agent_swarm/tools/verify_run.py experiments/live_five_agent_swarm/evidence/evaluation
+python -m workflows.live_five_agent_swarm.runner live workflows/live_five_agent_swarm/evidence/evaluation --budget REMAINING_DOLLARS
+python workflows/live_five_agent_swarm/tools/verify_run.py workflows/live_five_agent_swarm/evidence/evaluation
 ```
 
 Live output directories must be new. Credentials come from the existing OpenRouter

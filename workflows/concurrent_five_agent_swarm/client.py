@@ -6,7 +6,7 @@ import threading
 import time
 import urllib.request
 
-from experiments.live_five_agent_swarm.client import (
+from workflows.live_five_agent_swarm.client import (
     request, reservation, charge, response_message, open_private, RunStopped,
     load_openrouter_credentials,
 )

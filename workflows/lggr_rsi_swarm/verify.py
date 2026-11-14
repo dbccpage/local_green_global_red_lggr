@@ -12,6 +12,15 @@ from ._path import ROOT
 from swarm.hashing import digest, load_events
 
 
+
+def snapshot_package(names):
+    """Package root inside a recorded source snapshot.
+
+    Runs recorded before the experiments/ -> workflows/ rename snapshot their
+    sources under experiments/, so replay must import that historical name.
+    """
+    return "workflows" if any(str(n).startswith("workflows/") for n in names) else "experiments"
+
 def verify(directory):
     directory = Path(directory).resolve()
     events = next(directory.glob("events.jsonl*"))
@@ -30,7 +39,7 @@ def verify(directory):
             target.write_bytes(blob)
         env = dict(os.environ, PYTHONPATH=tmp)
         env.pop("ANTHROPIC_API_KEY", None)
-        result = subprocess.run([sys.executable, "-m", "experiments.lggr_rsi_swarm.runner", "replay", str(events)],
+        result = subprocess.run([sys.executable, "-m", snapshot_package(meta["source_hashes"]) + ".lggr_rsi_swarm.runner", "replay", str(events)],
                                 cwd=tmp, env=env, text=True, capture_output=True)
         if result.returncode:
             raise ValueError(result.stderr[-2000:])

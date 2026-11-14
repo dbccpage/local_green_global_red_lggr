@@ -1,7 +1,7 @@
 """Frozen analysis: co-primary P1/P2 with Holm, family-stratified cluster bootstrap, secondaries, power.
 
-python -m experiments.lggr_rsi_swarm.analyze results EVIDENCE_DIR   -> RESULTS.json (+ printed summary)
-python -m experiments.lggr_rsi_swarm.analyze power DEV_RUN_DIR     -> power simulation (recorded before evaluation)
+python -m workflows.lggr_rsi_swarm.analyze results EVIDENCE_DIR   -> RESULTS.json (+ printed summary)
+python -m workflows.lggr_rsi_swarm.analyze power DEV_RUN_DIR     -> power simulation (recorded before evaluation)
 """
 import argparse
 from collections import Counter, defaultdict

@@ -823,13 +823,13 @@ class TestTier1FeatureCoverage(unittest.TestCase):
     # F21: Monograph Index update
     # --------------------------------------------------------------------------
     def test_f21_01_monograph_index_exists(self):
-        """F21-1: papers/local_green_global_red_monograph_index.md exists."""
-        target = ROOT / "papers" / "local_green_global_red_monograph_index.md"
+        """F21-1: atlas/archive/papers/local_green_global_red_monograph_index.md exists."""
+        target = ROOT / "atlas" / "archive" / "papers" / "local_green_global_red_monograph_index.md"
         self.assertTrue(target.is_file())
 
     def test_f21_02_volume_viii_entry_present(self):
         """F21-2: Monograph index includes Volume VIII entry."""
-        target = ROOT / "papers" / "local_green_global_red_monograph_index.md"
+        target = ROOT / "atlas" / "archive" / "papers" / "local_green_global_red_monograph_index.md"
         content = target.read_text(encoding="utf-8")
         if "Volume VIII" not in content and "Volume 8" not in content and "viii." not in content.lower():
             self.skipTest("Volume VIII entry in monograph index pending Milestone M5")
@@ -837,7 +837,7 @@ class TestTier1FeatureCoverage(unittest.TestCase):
 
     def test_f21_03_claim_ledger_reference(self):
         """F21-3: Monograph index references the Volume VIII claim ledger."""
-        target = ROOT / "papers" / "local_green_global_red_monograph_index.md"
+        target = ROOT / "atlas" / "archive" / "papers" / "local_green_global_red_monograph_index.md"
         content = target.read_text(encoding="utf-8")
         if "viii" not in content.lower():
             self.skipTest("Volume VIII entry pending Milestone M5")
@@ -845,7 +845,7 @@ class TestTier1FeatureCoverage(unittest.TestCase):
 
     def test_f21_04_monograph_index_claim_hygiene(self):
         """F21-4: Monograph index Volume VIII section satisfies Claim Hygiene Rule."""
-        target = ROOT / "papers" / "local_green_global_red_monograph_index.md"
+        target = ROOT / "atlas" / "archive" / "papers" / "local_green_global_red_monograph_index.md"
         content = target.read_text(encoding="utf-8")
         if "## viii" not in content.lower():
             self.skipTest("Volume VIII entry pending Milestone M5")
@@ -861,7 +861,7 @@ class TestTier1FeatureCoverage(unittest.TestCase):
 
     def test_f21_05_monograph_index_mathjax(self):
         """F21-5: Monograph index contains zero \\operatorname macros."""
-        target = ROOT / "papers" / "local_green_global_red_monograph_index.md"
+        target = ROOT / "atlas" / "archive" / "papers" / "local_green_global_red_monograph_index.md"
         content = target.read_text(encoding="utf-8")
         self.assertNotIn(r"\operatorname", content)
 
@@ -1852,7 +1852,7 @@ class TestTier2BoundaryCases(unittest.TestCase):
     # --------------------------------------------------------------------------
     def test_f21_b01_markdown_heading_structure(self):
         """F21-B1: Headings follow standard hierarchical markdown levels (#, ##, ###)."""
-        idx = ROOT / "papers" / "local_green_global_red_monograph_index.md"
+        idx = ROOT / "atlas" / "archive" / "papers" / "local_green_global_red_monograph_index.md"
         lines = idx.read_text(encoding="utf-8").splitlines()
         for line in lines:
             if line.startswith("#"):
@@ -1860,21 +1860,21 @@ class TestTier2BoundaryCases(unittest.TestCase):
 
     def test_f21_b02_relative_paths_valid(self):
         """F21-B2: Existing volume links resolve to valid directories."""
-        idx = ROOT / "papers" / "local_green_global_red_monograph_index.md"
+        idx = ROOT / "atlas" / "archive" / "papers" / "local_green_global_red_monograph_index.md"
         content = idx.read_text(encoding="utf-8")
         self.assertIn("lggr_i_evaluated_path_kernels", content)
         self.assertIn("lggr_vii_projection_residuals_and_witness_composition", content)
 
     def test_f21_b03_utf8_encoding_clean(self):
         """F21-B3: Monograph index decodes cleanly as UTF-8 without replacement chars."""
-        idx = ROOT / "papers" / "local_green_global_red_monograph_index.md"
+        idx = ROOT / "atlas" / "archive" / "papers" / "local_green_global_red_monograph_index.md"
         raw = idx.read_bytes()
         decoded = raw.decode("utf-8")
         self.assertNotIn("\ufffd", decoded)
 
     def test_f21_b04_consistent_table_columns(self):
         """F21-B4: Markdown tables have matching separator column counts."""
-        idx = ROOT / "papers" / "local_green_global_red_monograph_index.md"
+        idx = ROOT / "atlas" / "archive" / "papers" / "local_green_global_red_monograph_index.md"
         for line in idx.read_text(encoding="utf-8").splitlines():
             if line.startswith("|---|"):
                 col_count = line.count("|")
@@ -1882,7 +1882,7 @@ class TestTier2BoundaryCases(unittest.TestCase):
 
     def test_f21_b05_chronological_ordering(self):
         """F21-B5: Volumes appear in numerical sequence."""
-        idx = ROOT / "papers" / "local_green_global_red_monograph_index.md"
+        idx = ROOT / "atlas" / "archive" / "papers" / "local_green_global_red_monograph_index.md"
         content = idx.read_text(encoding="utf-8").lower()
         pos_i = content.find("## i.")
         pos_vii = content.find("## vii.")
@@ -2114,9 +2114,9 @@ class TestTier3CrossFeatureInteractions(unittest.TestCase):
         """X10 (F21 + F24): Monograph index listed and verified in MANIFEST.sha256."""
         manifest = ROOT / "MANIFEST.sha256"
         content = manifest.read_text(encoding="utf-8")
-        if "papers/local_green_global_red_monograph_index.md" not in content:
+        if "atlas/archive/papers/local_green_global_red_monograph_index.md" not in content:
             self.skipTest("Monograph index inclusion in MANIFEST.sha256 pending Milestone M5")
-        self.assertIn("papers/local_green_global_red_monograph_index.md", content)
+        self.assertIn("atlas/archive/papers/local_green_global_red_monograph_index.md", content)
 
 
 # ==============================================================================

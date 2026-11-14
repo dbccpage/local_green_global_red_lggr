@@ -10,12 +10,12 @@ with live model controllers, repair continuations and an RSI memory study.
 - Shared machinery: `code/operations/swarm/`; tests: `tests/test_lggr_rsi_swarm.py`
 
 ```bash
-python -m experiments.lggr_rsi_swarm.generate                    # rewrite instances.json, print digest
+python -m workflows.lggr_rsi_swarm.generate                    # rewrite instances.json, print digest
 python -m unittest tests.test_lggr_rsi_swarm                     # offline tests (no network)
-python -m experiments.lggr_rsi_swarm.verify experiments/lggr_rsi_swarm/evidence/evaluation/*/
-python -m experiments.lggr_rsi_swarm.analyze results experiments/lggr_rsi_swarm/evidence/evaluation
+python -m workflows.lggr_rsi_swarm.verify workflows/lggr_rsi_swarm/evidence/evaluation/*/
+python -m workflows.lggr_rsi_swarm.analyze results workflows/lggr_rsi_swarm/evidence/evaluation
 ```
 
 Live runs need `ANTHROPIC_API_KEY` (environment or the git-ignored repository `.env`) and the
-`anthropic` SDK (2.3.0 was used); `numpy` for analysis. `python -m experiments.lggr_rsi_swarm.drive`
+`anthropic` SDK (2.3.0 was used); `numpy` for analysis. `python -m workflows.lggr_rsi_swarm.drive`
 runs the evaluation chunks with a cumulative spend gate.

@@ -10,10 +10,10 @@ from pathlib import Path
 import subprocess
 import zipfile
 
-from experiments.live_five_agent_swarm.client import Events, RunStopped, MODELS
-from experiments.live_five_agent_swarm.domain import Board, fixture, findings, local_ok, certificates
-from experiments.live_five_agent_swarm.oracle import feasible, judge
-from experiments.live_five_agent_swarm.runner import inject, system, gate
+from workflows.live_five_agent_swarm.client import Events, RunStopped, MODELS
+from workflows.live_five_agent_swarm.domain import Board, fixture, findings, local_ok, certificates
+from workflows.live_five_agent_swarm.oracle import feasible, judge
+from workflows.live_five_agent_swarm.runner import inject, system, gate
 from .client import BatchClient
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -24,7 +24,7 @@ PRIOR_SPEND = Decimal("0.57951748")
 
 def source_hashes():
     paths = list(HERE.glob("*.py")) + [HERE / "PROTOCOL.md"]
-    paths += list((ROOT / "experiments/live_five_agent_swarm").glob("*.py"))
+    paths += list((ROOT / "workflows/live_five_agent_swarm").glob("*.py"))
     paths += list((ROOT / "lggr").glob("*.py"))
     return {p.relative_to(ROOT).as_posix(): hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(paths)}
 

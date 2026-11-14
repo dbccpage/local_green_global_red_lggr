@@ -10,13 +10,13 @@ import threading
 import time
 import unittest
 
-from experiments.live_five_agent_swarm.client import Events, MODELS, RunStopped, event_digest
-from experiments.live_five_agent_swarm.domain import fixture
-from experiments.live_five_agent_swarm.oracle import feasible
+from workflows.live_five_agent_swarm.client import Events, MODELS, RunStopped, event_digest
+from workflows.live_five_agent_swarm.domain import fixture
+from workflows.live_five_agent_swarm.oracle import feasible
 
-from experiments.concurrent_five_agent_swarm.client import BatchClient
-from experiments.concurrent_five_agent_swarm.runner import campaign, replay, source_hashes, capacity_diagnostics
-from experiments.concurrent_five_agent_swarm.verify import snapshot_matches_commit, source_commit_blob
+from workflows.concurrent_five_agent_swarm.client import BatchClient
+from workflows.concurrent_five_agent_swarm.runner import campaign, replay, source_hashes, capacity_diagnostics
+from workflows.concurrent_five_agent_swarm.verify import snapshot_matches_commit, source_commit_blob
 from tests.test_live_five_agent_swarm import StubClient
 
 
@@ -104,7 +104,7 @@ class ConcurrentSwarmTests(unittest.TestCase):
             self.assertEqual(capacity_diagnostics(state)['feasible'], feasible(state))
 
     def test_continuation_preserves_original_conditions_without_replacing_interrupted_seed(self):
-        from experiments.concurrent_five_agent_swarm.runner import SEEDS
+        from workflows.concurrent_five_agent_swarm.runner import SEEDS
         self.assertEqual(SEEDS['continuation'], [5214, 5215, 5216, 5217])
         events = Events()
         client = BatchClient(events, '1', transport=fake_transport)

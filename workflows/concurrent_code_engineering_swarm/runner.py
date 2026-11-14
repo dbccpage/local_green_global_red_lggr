@@ -13,8 +13,8 @@ from typing import Any
 import urllib.error
 import urllib.request
 
-from experiments.concurrent_five_agent_swarm.client import MAX_CALLS, peak_inflight
-from experiments.live_five_agent_swarm.client import (
+from workflows.concurrent_five_agent_swarm.client import MAX_CALLS, peak_inflight
+from workflows.live_five_agent_swarm.client import (
     Events,
      MAX_OUTPUT,
     RunStopped,

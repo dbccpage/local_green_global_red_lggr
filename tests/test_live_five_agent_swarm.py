@@ -12,11 +12,11 @@ import unittest
 from unittest.mock import Mock, patch
 import urllib.response
 
-from experiments.live_five_agent_swarm.client import Events, LiveClient, RunStopped, MODELS, request, reservation, response_message, charge
-from experiments.live_five_agent_swarm.domain import Board, fixture, findings, certificates
-from experiments.live_five_agent_swarm.oracle import feasible, judge
-from experiments.live_five_agent_swarm.runner import agent_turn, campaign, inject, replay, source_hashes, system
-from experiments.live_five_agent_swarm.client import event_digest as digest
+from workflows.live_five_agent_swarm.client import Events, LiveClient, RunStopped, MODELS, request, reservation, response_message, charge
+from workflows.live_five_agent_swarm.domain import Board, fixture, findings, certificates
+from workflows.live_five_agent_swarm.oracle import feasible, judge
+from workflows.live_five_agent_swarm.runner import agent_turn, campaign, inject, replay, source_hashes, system
+from workflows.live_five_agent_swarm.client import event_digest as digest
 
 
 class StubClient:
@@ -162,7 +162,7 @@ class LiveFiveAgentTests(unittest.TestCase):
         self.assertFalse(judge(state, rows, [])["valid_execution"])
 
     def test_budget_stops_before_network_and_missing_cost_reserves(self):
-        with patch("experiments.live_five_agent_swarm.client.load_openrouter_credentials", return_value=("fake", MODELS[0])):
+        with patch("workflows.live_five_agent_swarm.client.load_openrouter_credentials", return_value=("fake", MODELS[0])):
             client = LiveClient(Events(), "0.000001")
         with patch("urllib.request.build_opener") as send, self.assertRaises(RunStopped):
             client.complete(MODELS[0], [{"role": "user", "content": "hi"}])
@@ -176,7 +176,7 @@ class LiveFiveAgentTests(unittest.TestCase):
         for status in (301, 302, 303, 307, 308):
             with self.subTest(status=status):
                 events = Events()
-                with patch("experiments.live_five_agent_swarm.client.load_openrouter_credentials",
+                with patch("workflows.live_five_agent_swarm.client.load_openrouter_credentials",
                            return_value=("fake", MODELS[0])):
                     client = LiveClient(events, "10")
                 response = urllib.response.addinfourl(io.BytesIO(b""),
@@ -203,14 +203,14 @@ class LiveFiveAgentTests(unittest.TestCase):
             config = {"seeds": [3101], "development": True, "models": MODELS, "budget_usd": "0.000001"}
             events.emit("start", {"schema": "lggr.live_five_agent_events.v1", "config": config,
                                   "source_hashes": source_hashes(), "source_commit": "test-double"})
-            with patch("experiments.live_five_agent_swarm.client.load_openrouter_credentials", return_value=("fake", MODELS[0])):
+            with patch("workflows.live_five_agent_swarm.client.load_openrouter_credentials", return_value=("fake", MODELS[0])):
                 client = LiveClient(events, config["budget_usd"])
             try:
                 campaign(client, events, config)
                 self.fail("budget should stop before any API call")
             except RunStopped as error:
                 events.emit("stopped", {"reason": str(error), "api_attempts": client.calls, "charged_or_reserved_usd": str(client.spent)})
-            completed = subprocess.run([sys.executable, "-m", "experiments.live_five_agent_swarm.runner", "replay", str(path)], capture_output=True, text=True)
+            completed = subprocess.run([sys.executable, "-m", "workflows.live_five_agent_swarm.runner", "replay", str(path)], capture_output=True, text=True)
             self.assertEqual(completed.returncode, 0, completed.stderr)
             self.assertEqual(json.loads(completed.stdout)["status"], "stopped")
 
@@ -233,7 +233,7 @@ class LiveFiveAgentTests(unittest.TestCase):
     def test_redirects_are_rejected_and_malformed_provider_shapes_are_safe(self):
         import urllib.request
         import urllib.error
-        from experiments.live_five_agent_swarm.client import RejectRedirects
+        from workflows.live_five_agent_swarm.client import RejectRedirects
         req = urllib.request.Request("https://openrouter.ai/api/v1/chat/completions", headers={"Authorization": "Bearer fake"})
         with self.assertRaises(urllib.error.HTTPError):
             RejectRedirects().redirect_request(req, None, 302, "redirect", {}, "https://other.invalid")

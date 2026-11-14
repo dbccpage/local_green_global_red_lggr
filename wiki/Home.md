@@ -41,8 +41,8 @@ Not Python? [`learn/sidecar.py`](https://github.com/dbccpage/local_green_global_
 Welcome to the documentation wiki for **Local Green, Global Red (`local_green_global_red_lggr`)**. This repository provides:
 
 1. **The `lggr` Python Witness-Audit & Online Streaming Package (`lggr/`):** Standard-library, exact rational and finite-table verifiers for report-fiber decoder/collision certification, **45 online streaming runtime monitors** (`lggr.streaming`), signed transition-history composition, weighted $\ell^1$ primal/dual repair optimality, 1-cochain closure vs. exactness classification, Hodge decomposition, Mayer-Vietoris subcomplex gluing, side-information capacity auditing, and left-inverse chain-retraction transport.
-2. **The Eight-Volume LGGR Research Series (`papers/lggr_i_*` to `papers/lggr_viii_*`):** Volumes I through VIII uniting *Evaluated Path Kernels*, *Organizational Gluing*, *Six-Role Overlays*, *Completion-Relative Obstruction*, *Finite No-Recovery*, *Nonlinear Aggregation & Adjoint Probing*, *Projection Residuals & Witness Composition*, and *Online Streaming Discovery for Agentic Swarms*.
-3. **Standalone Lean 4.35.0 Formalizations (`lean4/`):** **80 machine-checked, sorry-free, zero-custom-axiom Lean 4 proofs** in the root package (`15` in `LggrVII.lean` and `65` in `LggrVIII.lean`, audited by `CheckAxioms.lean`), plus volume-scoped Lean 4 theorems across `papers/`.
+2. **The Eight-Volume LGGR Research Series (`atlas/archive/papers/lggr_i_*` to `atlas/archive/papers/lggr_viii_*`):** Volumes I through VIII uniting *Evaluated Path Kernels*, *Organizational Gluing*, *Six-Role Overlays*, *Completion-Relative Obstruction*, *Finite No-Recovery*, *Nonlinear Aggregation & Adjoint Probing*, *Projection Residuals & Witness Composition*, and *Online Streaming Discovery for Agentic Swarms*.
+3. **Standalone Lean 4.35.0 Formalizations (`lean4/`):** **80 machine-checked, sorry-free, zero-custom-axiom Lean 4 proofs** in the root package (`15` in `LggrVII.lean` and `65` in `LggrVIII.lean`, audited by `CheckAxioms.lean`), plus volume-scoped Lean 4 theorems across `atlas/archive/papers/`.
 
 ---
 
